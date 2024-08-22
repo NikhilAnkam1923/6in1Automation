@@ -1,0 +1,6 @@
+{
+  "bottom": "string",
+  "left": null,
+  "right": null,
+  "top": null
+}

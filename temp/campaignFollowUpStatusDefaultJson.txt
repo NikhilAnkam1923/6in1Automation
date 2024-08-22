@@ -1,0 +1,33 @@
+{
+   "followUpStatus": [
+      {
+         "value": "New",
+         "label": "New"
+      },
+      {
+         "value": "Support Follow Up Needed",
+         "label": "Support Follow Up Needed"
+      },
+      {
+         "value": "Pharmacist Call Needed",
+         "label": "Pharmacist Call Needed"
+      },
+      {
+         "value": "Pharmacist Follow Up Needed",
+         "label": "Pharmacist Follow Up Needed"
+      },
+      {
+         "value": "Additional Outreach Needed",
+         "label": "Additional Outreach Needed"
+      },
+      {
+         "value": "Outreach Complete",
+         "label": "Outreach Complete"
+      },
+      {
+         "value": "Unable to Reach",
+         "label": "Unable to Reach"
+      }
+   ],
+   "defaultFollowUpStatus": "New"
+}
