@@ -100,7 +100,6 @@ public class CommonSteps {
         }
         logInfo("User go to application "+url);
         launchApplication(url);
-        wait(1000);
         takeScreenshot();
     }
 
