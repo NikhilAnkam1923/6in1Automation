@@ -1,4 +1,0 @@
-{
-    "displayPracticeGroup": true,
-    "practiceGroupLabel": "Practice Site"
-}

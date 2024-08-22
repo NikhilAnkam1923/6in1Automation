@@ -1,9 +1,0 @@
-{
-    "country": "USA",
-    "state": "CA",
-    "city": "Los Angeles",
-    "line": [
-        "Updated Field For Test"
-    ],
-    "postalCode": "00000"
-}

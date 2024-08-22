@@ -1,9 +1,0 @@
-{
-    "country": "USA",
-    "state": "CA",
-    "city": "Palm Springs",
-    "line": [
-        "435 East PL Cielo Road"
-    ],
-    "postalCode": "92264"
-}

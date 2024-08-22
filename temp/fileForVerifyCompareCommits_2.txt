@@ -1,9 +1,0 @@
-{
-    "country": "USA",
-    "state": "CA",
-    "city": "San Diego",
-    "line": [
-        "435 East PL Cielo Road",
-        "275 North El Cielo Road"
-    ]
-}
