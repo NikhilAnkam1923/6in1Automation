@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -157,9 +158,9 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButton() throws AutomationException {
-        WebElement save = driverUtil.getWebElementAndScroll(SAVE);
-        ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript("arguments[0].scrollIntoView(true);", save);
-        save.click();
+        WebElement save = driverUtil.getWebElementAndScroll(SAVE,1);
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(save).click().perform();
         WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
         WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
         boolean successMSG1 = w.isDisplayed();

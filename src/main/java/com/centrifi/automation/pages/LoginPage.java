@@ -93,9 +93,7 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
-        WebElement userMenu = driverUtil.getWebElementAndScroll(USER_MENU);
-        ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript("arguments[0].scrollIntoView(true);", userMenu);
-        userMenu.click();
+        driverUtil.getWebElementAndScroll(USER_MENU,2).click();
         driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
