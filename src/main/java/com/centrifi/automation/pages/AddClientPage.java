@@ -5,13 +5,10 @@ import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-
-import org.openqa.selenium.devtools.v85.network.model.DataReceived;
-import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +92,6 @@ public class AddClientPage extends BasePage {
         }
         CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(SUCCESS_MSG_1));
-
     }
 
     public void enterClientName(String clientName) throws AutomationException {
@@ -104,7 +100,6 @@ public class AddClientPage extends BasePage {
             name.clear();
             name.sendKeys(clientName);
         }
-
     }
 
     public void enterPrimaryContactNumber(String contactName) throws AutomationException {
@@ -131,14 +126,14 @@ public class AddClientPage extends BasePage {
 
     public void selectBusinessSector(String businessSector) throws AutomationException {
         if (businessSector != null && !businessSector.isEmpty()) {
-            driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT).click();
+            driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT,3).click();
             driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
         }
     }
 
     public void selectOrganization(String organization) throws AutomationException {
         if (organization != null && !organization.isEmpty()) {
-            driverUtil.getWebElementAndScroll(ORGANIZATION_INPUT).click();
+            driverUtil.getWebElementAndScroll(ORGANIZATION_INPUT,4).click();
             driverUtil.getWebElementAndScroll(String.format(SELECT_ORGANIZATION, organization)).click();
         }
     }
@@ -162,9 +157,8 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButton() throws AutomationException {
-       WebElement save = driverUtil.getWebElementAndScroll(SAVE);
-        Actions action = new Actions(DriverFactory.drivers.get());
-        action.moveToElement(save).perform();
+        WebElement save = driverUtil.getWebElementAndScroll(SAVE);
+        ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript("arguments[0].scrollIntoView(true);", save);
         save.click();
         WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
         WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
@@ -197,12 +191,10 @@ public class AddClientPage extends BasePage {
         waitForInvisibleElement(By.xpath("//div[contains(text(),'Client successfully deactivated')]"));
     }
 
-
     @Override
     String getName() {
         return "AddClient";
     }
-
     public static Map<String, String> readData(DataTable parameters) {
         Map<String, String> parametersMap = new LinkedHashMap<>();
         List<Map<String, String>> rows = parameters.asMaps();
