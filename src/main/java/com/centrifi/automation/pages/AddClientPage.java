@@ -158,9 +158,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButton() throws AutomationException {
-        WebElement save = driverUtil.getWebElementAndScroll(SAVE,1);
-        Actions actions = new Actions(DriverFactory.drivers.get());
-        actions.moveToElement(save).click().perform();
+       driverUtil.getWebElementAndScroll(SAVE,2).click();
         WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
         WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
         boolean successMSG1 = w.isDisplayed();
