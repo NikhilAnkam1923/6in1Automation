@@ -134,7 +134,11 @@ public class AddClientPage extends BasePage {
            WebElement business = driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT);
             driverUtil.moveToElementAndClick(business);
             WebElement businessSelect = driverUtil.getWebElementAndScroll(String.format(SELECT_BUSINESS_SECTOR, businessSector));
-            driverUtil.moveToElementAndClick(businessSelect);
+            try {
+                driverUtil.moveToElementAndClick(businessSelect);
+            }catch(Exception ex) {
+                driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
+            }
         }
     }
 
