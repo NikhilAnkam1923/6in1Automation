@@ -186,7 +186,7 @@ public class WebDriverUtil {
     public void moveToElementAndClick(WebElement element) {
         Actions action = new Actions(DriverFactory.drivers.get());
         action.moveToElement(element).perform();
-        waitForAWhile(DEFAULT_ELEMENT_WAIT);
+        waitForAWhile(WAIT_2_SEC);
         element.click();
     }
 

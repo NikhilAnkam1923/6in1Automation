@@ -27,6 +27,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebDriver;
 import org.testng.SkipException;
 import runner.BaseRunner;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -56,13 +57,13 @@ public class CommonSteps {
     public static ThreadLocal<Boolean> SETUP_FAILED = new ThreadLocal<>();
 
     public static void logError(String error) {
-        reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + error);
+        reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + error);
         CURRENT_SCENARIO_MESSAGE.set(error);
     }
 
     public static void logError(String error, List<String> screenshot) {
         stepScreenshots.set(screenshot);
-        reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + error);
+        reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + error);
         CURRENT_SCENARIO_MESSAGE.set(error);
     }
 
@@ -70,12 +71,12 @@ public class CommonSteps {
         currentStep.set(data[0]);
     }
 
-    public static void cleanUP(){
+    public static void cleanUP() {
         File logs = new File("./logs");
-        if(logs.exists())
+        if (logs.exists())
             PackageUtil.recursiveDelete(logs);
         File extentReports = new File("./extent-reports");
-        if(extentReports.exists())
+        if (extentReports.exists())
             PackageUtil.recursiveDelete(extentReports);
     }
 
@@ -86,28 +87,27 @@ public class CommonSteps {
             PropertyConfigurator.configure(logPropertyFileName);
             PropertyReader.loadProperties(PropertyReader.CONFIG_PROPERTIES_FILE);
             PropertyReader.loadProperties(PropertyReader.ENV_PROPERTIES_FILE);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Then("^User go to application \"([^\"]*)\"$")
     public void launch(String url) throws InterruptedException {
-        if(url.startsWith("$"))
-        {
-            String env=PropertyReader.getEnv();
-            url=System.getProperty(env+"."+url.substring(1, url.length()));
+        if (url.startsWith("$")) {
+            String env = PropertyReader.getEnv();
+            url = System.getProperty(env + "." + url.substring(1, url.length()));
         }
-        logInfo("User go to application "+url);
+        logInfo("User go to application " + url);
         launchApplication(url);
-        takeScreenshot();
+        //takeScreenshot();
     }
 
 
     @Given("^User launched \"([^\"]*)\"$")
     public void launchBrowser(String browser) throws AutomationException {
-        logInfo("User launched "+browser);
-        if(DriverFactory.drivers.get()==null) {
+        logInfo("User launched " + browser);
+        if (DriverFactory.drivers.get() == null) {
             WebDriver driver = DriverFactory.getInstance().initDriver(browser);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
             driver.manage().window().maximize();
@@ -118,7 +118,7 @@ public class CommonSteps {
 
     @Before
     public void beforeScenario(Scenario scenario) throws AutomationException {
-        REPORT_LOGGER.log(ExtentTestManager.featureFileName.get()+" => " + scenario.getName());
+        REPORT_LOGGER.log(ExtentTestManager.featureFileName.get() + " => " + scenario.getName());
         REPORT_LOGGER.log("----------------------- TEST STARTED -----------------------");
         currentStepIndex.set(0);
         CURRENT_SCENARIO.set(scenario);
@@ -128,24 +128,24 @@ public class CommonSteps {
         String scenarioName = scenario.getName();
         Collection<String> tags = scenario.getSourceTagNames();
         Map<String, TestScenario> mappings = BaseRunner.MAPPING_SHEET_NAME;
-        if(!tags.contains("@Setup") && PropertyReader.groupingBy().equalsIgnoreCase(Constants.GROUPING_BY_EXCEL_MAPPING_DATA)) {
-            String key  =ExtentTestManager.featureFileName.get()+"_"+scenarioName;
-            TestScenario test = mappings.get(ExtentTestManager.featureFileName.get()+"_"+scenarioName);
-            if(test==null || test.isDisable(PropertyReader.suiteType())) {
+        if (!tags.contains("@Setup") && PropertyReader.groupingBy().equalsIgnoreCase(Constants.GROUPING_BY_EXCEL_MAPPING_DATA)) {
+            String key = ExtentTestManager.featureFileName.get() + "_" + scenarioName;
+            TestScenario test = mappings.get(ExtentTestManager.featureFileName.get() + "_" + scenarioName);
+            if (test == null || test.isDisable(PropertyReader.suiteType())) {
                 throw new PendingException("As per the mapping in TestData.xlsx, we are skipping this scenario!");
             }
-        } else if(tags.contains("@Setup") && PropertyReader.groupingBy().equalsIgnoreCase(Constants.GROUPING_BY_EXCEL_MAPPING_DATA)) {
-            if(!TestDataExcelUtil.isFeatureIncluded(mappings,PropertyReader.suiteType(), featureName)) {
+        } else if (tags.contains("@Setup") && PropertyReader.groupingBy().equalsIgnoreCase(Constants.GROUPING_BY_EXCEL_MAPPING_DATA)) {
+            if (!TestDataExcelUtil.isFeatureIncluded(mappings, PropertyReader.suiteType(), featureName)) {
                 throw new PendingException("As per the mapping in TestData.xlsx, we are skipping this scenario!");
             }
         }
         ExtentTest test = ExtentTestManager.startTest(scenario.getName(), scenario.getName());
         ExtentTestManager.assignCategory(test);
-        if(tags.contains("@Setup") && scenarioName.toLowerCase().contains("launch browser")) {
+        if (tags.contains("@Setup") && scenarioName.toLowerCase().contains("launch browser")) {
             SETUP_FAILED.set(Boolean.FALSE);
-        } else if(!tags.contains("@Setup") && SETUP_FAILED.get()!=null && SETUP_FAILED.get()) {
+        } else if (!tags.contains("@Setup") && SETUP_FAILED.get() != null && SETUP_FAILED.get()) {
             throw new SkipException("Skipping this scenario as setup scenario got failed!");
-        } else if(tags.contains("@Setup") && SETUP_FAILED.get()!=null && SETUP_FAILED.get() && scenarioName.toLowerCase().contains("close browser")) {
+        } else if (tags.contains("@Setup") && SETUP_FAILED.get() != null && SETUP_FAILED.get() && scenarioName.toLowerCase().contains("close browser")) {
             throw new SkipException("Skipping this scenario as setup scenario got failed!");
         }
         BasePage.checkAnyPopupAndClose();
@@ -155,13 +155,13 @@ public class CommonSteps {
     public void beforeStep(Scenario scenario) {
         int index = currentStepIndex.get();
         PickleEvent pickleEvent = BaseRunner.CURRENT_SCENARIO_EXECUTION.get();
-        if(pickleEvent!=null) {
+        if (pickleEvent != null) {
             String stepName = pickleEvent.pickle.getSteps().get(index).getText();
             currentStep.set(stepName);
         }
         stepScreenshot.set(null);
         CURRENT_STEP_MESSAGE.set(null);
-        currentStepIndex.set(index+1);
+        currentStepIndex.set(index + 1);
 
     }
 
@@ -169,11 +169,11 @@ public class CommonSteps {
     public void afterStep(Scenario scenario) {
         try {
             String stepName = currentStep.get();
-            if(stepName==null || stepName.toLowerCase().contains("skipped"))
+            if (stepName == null || stepName.toLowerCase().contains("skipped"))
                 return;
-            reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + currentStep.get());
-            ReportUtil.writeReportLog(true,stepName,CURRENT_STEP_MESSAGE.get()!=null?CURRENT_STEP_MESSAGE.get():stepName,stepScreenshot.get());
-        } catch(Exception ex) {
+            reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + currentStep.get());
+            ReportUtil.writeReportLog(true, stepName, CURRENT_STEP_MESSAGE.get() != null ? CURRENT_STEP_MESSAGE.get() : stepName, stepScreenshot.get());
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -183,36 +183,36 @@ public class CommonSteps {
         try {
             String scenarioName = scenario.getName();
             Collection<String> tags = scenario.getSourceTagNames();
-            if(tags.contains("@Setup") && SETUP_FAILED.get()!=null && SETUP_FAILED.get() && scenarioName.toLowerCase().contains("close browser")) {
-                if(DriverFactory.drivers.get()!=null)
+            if (tags.contains("@Setup") && SETUP_FAILED.get() != null && SETUP_FAILED.get() && scenarioName.toLowerCase().contains("close browser")) {
+                if (DriverFactory.drivers.get() != null)
                     takeScreenshot(true);
                 currentStepIndex.set(0);
-                reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + scenario.getName());
+                reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + scenario.getName());
                 reportLogger.log("---------------------- TEST COMPLETED ----------------------");
-                if(DriverFactory.drivers.get()!=null)
+                if (DriverFactory.drivers.get() != null)
                     DriverFactory.drivers.get().quit();
                 DriverFactory.clearDriverSession();
-            } else if(tags.contains("@Setup") && scenario.isFailed() && !scenarioName.toLowerCase().contains("close browser")) {
+            } else if (tags.contains("@Setup") && scenario.isFailed() && !scenarioName.toLowerCase().contains("close browser")) {
                 SETUP_FAILED.set(Boolean.TRUE);
-                if(DriverFactory.drivers.get()!=null)
+                if (DriverFactory.drivers.get() != null)
                     takeScreenshot(true);
                 currentStepIndex.set(0);
-                reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + scenario.getName());
+                reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + scenario.getName());
                 reportLogger.log("---------------------- TEST COMPLETED ----------------------");
-            } else if(!tags.contains("@Setup") && SETUP_FAILED.get()!=null && SETUP_FAILED.get()) {
-                reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + scenario.getName() + " Execution has been skipped!");
-                ReportUtil.writeReportSkipLog(CURRENT_SCENARIO.get().getName(),scenario.getName() + " Execution has been skipped as login failed!");
+            } else if (!tags.contains("@Setup") && SETUP_FAILED.get() != null && SETUP_FAILED.get()) {
+                reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + scenario.getName() + " Execution has been skipped!");
+                ReportUtil.writeReportSkipLog(CURRENT_SCENARIO.get().getName(), scenario.getName() + " Execution has been skipped as login failed!");
                 reportLogger.log("---------------------- TEST COMPLETED ----------------------");
             } else {
-                if(scenario.isFailed())
+                if (scenario.isFailed())
                     takeScreenshot(true);
                 currentStepIndex.set(0);
-                if(!scenario.getStatus().equals(cucumber.api.Result.Type.PENDING)) {
-                    reportLogger.log(ExtentTestManager.featureFileName.get()+" => " + scenario.getName());
+                if (!scenario.getStatus().equals(cucumber.api.Result.Type.PENDING)) {
+                    reportLogger.log(ExtentTestManager.featureFileName.get() + " => " + scenario.getName());
                     reportLogger.log("---------------------- TEST COMPLETED ----------------------");
                 }
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             //logErrorInReport(scenario);
         } finally {
@@ -228,17 +228,17 @@ public class CommonSteps {
             ArrayList<Result> results = (ArrayList<Result>) field.get(scenario);
             for (Result result : results) {
                 if (result.getError() != null)
-                    ReportUtil.writeReportLog(false,currentStep.get(),CURRENT_SCENARIO_MESSAGE.get()!=null?(CURRENT_SCENARIO_MESSAGE.get()+", "):""+result.getError(),true);
+                    ReportUtil.writeReportLog(false, currentStep.get(), CURRENT_SCENARIO_MESSAGE.get() != null ? (CURRENT_SCENARIO_MESSAGE.get() + ", ") : "" + result.getError(), true);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            ReportUtil.writeReportLog(false,currentStep.get(),e.getMessage()+", Error while logging error: "+ Arrays.toString(e.getStackTrace()),true);
+            ReportUtil.writeReportLog(false, currentStep.get(), e.getMessage() + ", Error while logging error: " + Arrays.toString(e.getStackTrace()), true);
         }
     }
 
     private static void logErrorInReport(Scenario scenario, List<String> screenshots) {
         String errorMessage = CURRENT_STEP_MESSAGE.get();
-        if(errorMessage==null)
+        if (errorMessage == null)
             errorMessage = CURRENT_SCENARIO_MESSAGE.get();
         Field field = FieldUtils.getField(((ScenarioImpl) scenario).getClass(), "stepResults", true);
         field.setAccessible(true);
@@ -246,11 +246,11 @@ public class CommonSteps {
             ArrayList<Result> results = (ArrayList<Result>) field.get(scenario);
             for (Result result : results) {
                 if (result.getError() != null)
-                    ReportUtil.writeReportLog(false,currentStep.get(),errorMessage!=null?errorMessage+", ":""+result.getError(),screenshots);
+                    ReportUtil.writeReportLog(false, currentStep.get(), errorMessage != null ? errorMessage + ", " : "" + result.getError(), screenshots);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            ReportUtil.writeReportLog(false,currentStep.get(),e.getMessage()+", Error while logging error: "+ Arrays.toString(e.getStackTrace()),screenshots);
+            ReportUtil.writeReportLog(false, currentStep.get(), e.getMessage() + ", Error while logging error: " + Arrays.toString(e.getStackTrace()), screenshots);
         }
     }
 
@@ -260,12 +260,12 @@ public class CommonSteps {
 
     public static void takeScreenshot(boolean isFailedScenario) {
         String stepMessage = CURRENT_STEP_MESSAGE.get();
-        if(stepMessage==null)
+        if (stepMessage == null)
             stepScreenshot.set(ReportUtil.takeScreenshot());
-        if(isFailedScenario){
-            if(stepMessage!=null)
-                ReportUtil.writeReportLog(false,currentStep.get(),stepMessage,stepScreenshot.get());
-            else if(stepScreenshots.get()!=null && !stepScreenshots.get().isEmpty())
+        if (isFailedScenario) {
+            if (stepMessage != null)
+                ReportUtil.writeReportLog(false, currentStep.get(), stepMessage, stepScreenshot.get());
+            else if (stepScreenshots.get() != null && !stepScreenshots.get().isEmpty())
                 logErrorInReport(CURRENT_SCENARIO.get(), stepScreenshots.get());
             else
                 logErrorInReport(CURRENT_SCENARIO.get());
@@ -278,13 +278,13 @@ public class CommonSteps {
     public void closeBrowser() throws AutomationException {
         logInfo("User close browser");
         try {
-            if(DriverFactory.drivers.get()!=null)
+            if (DriverFactory.drivers.get() != null)
                 DriverFactory.drivers.get().quit();
             DriverFactory.clearDriverSession();
             String featureName = ExtentTestManager.featureFileName.get();
-            if(featureName==null)
+            if (featureName == null)
                 ExtentManager.getExtentReports().flush();
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
         }
     }

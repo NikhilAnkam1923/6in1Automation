@@ -5,8 +5,29 @@ Feature: Centrifi Login Feature
   Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
 
-  Scenario: verify_login_with_valid_email
+  @Smoke
+  Scenario Outline: verify_login_with_valid_email
     Given User go to application "$centrifi_url"
+    Then user verify login page ui attributes
+    And user login using "<user email>" and "<password>"
+    Then user verify home page
+    And user logout from the application
+    Examples:
+      | user email                        | password  |
+      | adityaghosh@benchmarkit.solutions | Aditya@27 |
+
+
+  @Smoke
+  Scenario Outline: User tries to log in with invalid credentials
+#    Given User go to application "$centrifi_url"
+#    Then user verify login page ui attributes
+    And user login using "<user email>" and "<password>"
+    Then user verify "<error message>" for invalid credentials
+    And user logout from the application
+    Examples:
+      | user email                          | password  | error message       |
+      | adityaghosh@bencashmarkit.solutions | Aditya@27 | invalid credentials |
+
 
   @Setup
   Scenario: SETUP: Close Browser

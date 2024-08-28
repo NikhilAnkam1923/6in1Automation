@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
+
 
 public abstract class BasePage {
     private static final Logger LOGGER = Logger.getLogger(BasePage.class.getName());
@@ -48,6 +50,10 @@ public abstract class BasePage {
     public static final String ERROR_POPUP_OK_BUTTON = "//button[text()='OK' and contains(@style,'inline-block;')]";
     public static final String PATIENT_RELOAD_POPUP = "//*[@role='dialog' and .//*[contains(text(),'This patient has been updated')]]//button[text()='OK']";
     public static final String ANY_POPUP_WITH_OK_BUTTON = "//button[@style='display: inline-block;' and text()='OK']";
+    private static final String MENU_ITEM = "//*[contains(@class,'Sidebar')]//*[contains(text(),'%s')]";
+    private static final String SPINNER = "//div[contains(@class,'chakra-spinner')]";
+
+
     public boolean checkErrorPopup() throws AutomationException {
         WebElement element = driverUtil.getWebElement(ERROR_POPUP);
         if(element!=null) {
@@ -184,14 +190,14 @@ public abstract class BasePage {
     }
 
     public static void waitForLoadingPage() {
-        WebDriverUtil.waitForInvisibleElement(By.xpath(LOADING), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
-        WebDriverUtil.waitForInvisibleElement(By.xpath(LOADING_DATA), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
-        WebDriverUtil.waitForInvisibleElement(By.xpath(LOADING_REPORT), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
+        waitForInvisibleElement(By.xpath(LOADING), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
+        waitForInvisibleElement(By.xpath(LOADING_DATA), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
+        waitForInvisibleElement(By.xpath(LOADING_REPORT), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
     }
 
    public void waitForLoadingReport() {
-        WebDriverUtil.waitForInvisibleElement(By.xpath(LOADING), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
-        WebDriverUtil.waitForInvisibleElement(By.xpath(LOADING_REPORT), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
+        waitForInvisibleElement(By.xpath(LOADING), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
+        waitForInvisibleElement(By.xpath(LOADING_REPORT), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
     }
 
     public static Map<String, String> convertDataTableIntoMap(DataTable dataTable) {
@@ -204,6 +210,12 @@ public abstract class BasePage {
             }
         }
         return dataMap;
+    }
+
+    public void clickOnSideBarMenuItem(String item)throws AutomationException{
+        driverUtil.getWebElement(String.format(MENU_ITEM,item)).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
+
     }
 
     abstract String getName();
