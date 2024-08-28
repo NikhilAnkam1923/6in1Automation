@@ -90,9 +90,10 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
-        driverUtil.getWebElement(USER_MENU).click();
-        driverUtil.getWebElement(LOGOUT_BUTTON).click();
-        driverUtil.getWebElement(LOGIN_TEXT);
+        WebElement menu = driverUtil.getWebElementAndScroll(USER_MENU);
+        driverUtil.moveToElementAndClick(menu);
+        driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
+        driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
 
     public void doLogoutFromCentrifiIfAlreadyLoggedIn() throws AutomationException {
