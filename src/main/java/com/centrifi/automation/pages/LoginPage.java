@@ -1,5 +1,6 @@
 package com.centrifi.automation.pages;
 
+import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
 import com.centrifi.automation.util.PropertyReader;
@@ -7,6 +8,7 @@ import com.centrifi.automation.util.WebDriverUtil;
 import org.bouncycastle.cms.PasswordRecipientId;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 
 import java.util.logging.Logger;
@@ -90,8 +92,10 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
-        WebElement menu = driverUtil.getWebElementAndScroll(USER_MENU);
-        driverUtil.moveToElementAndClick(menu);
+        WebElement userMenu = driverUtil.getWebElementAndScroll(USER_MENU);
+        Actions action = new Actions(DriverFactory.drivers.get());
+        action.moveToElement(userMenu).perform();
+        userMenu.click();
         driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }

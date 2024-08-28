@@ -131,24 +131,15 @@ public class AddClientPage extends BasePage {
 
     public void selectBusinessSector(String businessSector) throws AutomationException {
         if (businessSector != null && !businessSector.isEmpty()) {
-           WebElement business = driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT);
-            driverUtil.moveToElementAndClick(business);
-            WebElement businessSelect = driverUtil.getWebElementAndScroll(String.format(SELECT_BUSINESS_SECTOR, businessSector));
-            try {
-                driverUtil.moveToElementAndClick(businessSelect);
-            }catch(Exception ex) {
-                driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
-            }
+            driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT).click();
+            driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
         }
     }
 
     public void selectOrganization(String organization) throws AutomationException {
         if (organization != null && !organization.isEmpty()) {
-            WebElement organizationInput = driverUtil.getWebElement(ORGANIZATION_INPUT);
-            driverUtil.moveToElementAndClick(organizationInput);
-            WebElement organizationSelect = driverUtil.getWebElement(String.format(SELECT_ORGANIZATION, organization));
-           // driverUtil.clickUsingJavaScript(String.format(SELECT_ORGANIZATION, organization));
-            driverUtil.moveToElementAndClick(organizationSelect);
+            driverUtil.getWebElementAndScroll(ORGANIZATION_INPUT).click();
+            driverUtil.getWebElementAndScroll(String.format(SELECT_ORGANIZATION, organization)).click();
         }
     }
 
@@ -171,8 +162,10 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButton() throws AutomationException {
-        WebElement save = driverUtil.getWebElement(SAVE);
-        driverUtil.moveToElementAndClick(save);
+       WebElement save = driverUtil.getWebElementAndScroll(SAVE);
+        Actions action = new Actions(DriverFactory.drivers.get());
+        action.moveToElement(save).perform();
+        save.click();
         WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
         WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
         boolean successMSG1 = w.isDisplayed();
