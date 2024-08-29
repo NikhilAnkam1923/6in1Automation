@@ -44,6 +44,8 @@ public class AddClientPage extends BasePage {
     private static final String DELETE_BUTTON = "//tbody//td//div[text()='%s']//following::td//div//button";
     private static final String DEACTIVATE_BUTTON = "//button[text()='Deactivate']";
     private static final String ALERT = "//section[@role='alertdialog']";
+    private static final String USER_MENU = "//header/button[contains(@class,'chakra-menu__menu-button')]";
+
 
     public void clickOnNewClientButton() throws AutomationException {
         clickOnSideBarMenuItem("Clients");
@@ -158,7 +160,15 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButton() throws AutomationException {
-       driverUtil.getWebElementAndScroll(SAVE,2).click();
+        driverUtil.getWebElementAndScroll(USER_MENU,2);
+        try {
+           driverUtil.getWebElementAndScroll(SAVE, 2).click();
+       }catch (Exception ae){
+        WebElement saveBTN = driverUtil.getWebElementAndScroll(SAVE, 2);
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.scrollToElement(saveBTN).perform();
+        saveBTN.click();
+       }
         WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
         WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
         boolean successMSG1 = w.isDisplayed();
