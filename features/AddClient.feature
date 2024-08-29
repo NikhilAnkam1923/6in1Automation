@@ -50,8 +50,8 @@ Feature: Centrifi CRUD operation functionality
     And user logout from the application
 
     Examples:
-      | user email                        | password  | Client Name | Primary Contact Name | Business Sector | Organization              | Website               | Tags    |
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | Emily smith | John Doe             | Technology | child of B (added from B) | http://www.google.com | Digital |
+      | user email                        | password  | Client Name | Primary Contact Name | Business Sector | Organization   | Website               | Tags    |
+      | adityaghosh@benchmarkit.solutions | Aditya@27 | Emily smith | John Doe             | Technology      | Test 5225 12/8 | http://www.google.com | Digital |
 
   @Smoke
   Scenario Outline: validate the functionality for deleting a client

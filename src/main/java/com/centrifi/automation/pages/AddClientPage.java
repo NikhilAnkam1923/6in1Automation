@@ -10,6 +10,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,21 +124,21 @@ public class AddClientPage extends BasePage {
     public void selectPrimaryContactTitle(String contactTitle) throws AutomationException {
         if (contactTitle != null && !contactTitle.isEmpty()) {
             driverUtil.getWebElementAndScroll(SELECT_TITLE).click();
-            driverUtil.getWebElementAndScroll(String.format(CONTACT_TITLE, contactTitle)).click();
+            driverUtil.clickUsingJavaScript(String.format(CONTACT_TITLE, contactTitle));
         }
     }
 
     public void selectBusinessSector(String businessSector) throws AutomationException {
         if (businessSector != null && !businessSector.isEmpty()) {
-            driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT,3).click();
+            driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT, 3).click();
             driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
         }
     }
 
     public void selectOrganization(String organization) throws AutomationException {
         if (organization != null && !organization.isEmpty()) {
-            driverUtil.getWebElementAndScroll(ORGANIZATION_INPUT,4).click();
-            driverUtil.getWebElementAndScroll(String.format(SELECT_ORGANIZATION, organization)).click();
+            driverUtil.getWebElementAndScroll(ORGANIZATION_INPUT, 4).click();
+            driverUtil.clickUsingJavaScript(String.format(SELECT_ORGANIZATION, organization));
         }
     }
 
@@ -160,15 +161,15 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButton() throws AutomationException {
-        driverUtil.getWebElementAndScroll(USER_MENU,2);
+        driverUtil.getWebElementAndScroll(USER_MENU, 2);
         try {
-           driverUtil.getWebElementAndScroll(SAVE, 2).click();
-       }catch (Exception ae){
-        WebElement saveBTN = driverUtil.getWebElementAndScroll(SAVE, 2);
-        Actions actions = new Actions(DriverFactory.drivers.get());
-        actions.scrollToElement(saveBTN).perform();
-        saveBTN.click();
-       }
+            driverUtil.getWebElementAndScroll(SAVE, 2).click();
+        } catch (Exception ae) {
+            WebElement saveBTN = driverUtil.getWebElementAndScroll(SAVE, 2);
+            Actions actions = new Actions(DriverFactory.drivers.get());
+            actions.scrollToElement(saveBTN).perform();
+            saveBTN.click();
+        }
         WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
         WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
         boolean successMSG1 = w.isDisplayed();
@@ -204,6 +205,7 @@ public class AddClientPage extends BasePage {
     String getName() {
         return "AddClient";
     }
+
     public static Map<String, String> readData(DataTable parameters) {
         Map<String, String> parametersMap = new LinkedHashMap<>();
         List<Map<String, String>> rows = parameters.asMaps();
