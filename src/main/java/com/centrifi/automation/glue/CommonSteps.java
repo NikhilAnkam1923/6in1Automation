@@ -92,7 +92,7 @@ public class CommonSteps {
         }
     }
 
-    @Then("^User go to application \"([^\"]*)\"$")
+    @Then("^user go to application \"([^\"]*)\"$")
     public void launch(String url) throws InterruptedException {
         if (url.startsWith("$")) {
             String env = PropertyReader.getEnv();

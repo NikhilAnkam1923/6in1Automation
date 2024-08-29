@@ -6,8 +6,8 @@ Feature: Centrifi CRUD operation functionality
     Given User launched "chrome"
 
   @Smoke
-  Scenario Outline: validate the functionality for creating a new client
-    Given User go to application "$centrifi_url"
+  Scenario Outline: Validate the functionality for creating a new client
+    Given user go to application "$centrifi_url"
     And user login using "<user email>" and "<password>"
     Then user verify home page
     Then user click on new client button
@@ -24,7 +24,7 @@ Feature: Centrifi CRUD operation functionality
       | Website               | <Website>               |
       | Tags                  | <Tags>                  |
     And user clicks the Save button to add a new client and verify success message
-    And user logout from the application
+    And user logged out from the application
 
 
 
@@ -34,8 +34,8 @@ Feature: Centrifi CRUD operation functionality
 #      | adityaghosh@benchmarkit.solutions | Aditya@27 | Emily Davis1 | John Doe 1           | test.user@example.com | (876) 545-3535        | Consultant            | Entertainment/Events | Organisation C | http://www.google.com  | Digital marketing |
 
   @Smoke
-  Scenario Outline: validate the functionality for updating a client
-    Given User go to application "$centrifi_url"
+  Scenario Outline: Validate the functionality for updating a client
+    Given user go to application "$centrifi_url"
     And user login using "<user email>" and "<password>"
     Then user verify home page
     Then user search and update the client record with below details for Primary Contact Name
@@ -47,19 +47,19 @@ Feature: Centrifi CRUD operation functionality
       | Website              | <Website>              |
       | Tags                 | <Tags>                 |
     And user clicks the Save button and verify updated successfully message
-    And user logout from the application
+    And user logged out from the application
 
     Examples:
       | user email                        | password  | Client Name | Primary Contact Name | Business Sector | Organization   | Website               | Tags    |
       | adityaghosh@benchmarkit.solutions | Aditya@27 | Emily smith | John Doe             | Technology      | Test 5225 12/8 | http://www.google.com | Digital |
 
   @Smoke
-  Scenario Outline: validate the functionality for deleting a client
-    Given User go to application "$centrifi_url"
+  Scenario Outline: Validate the functionality for deleting a client
+    Given user go to application "$centrifi_url"
     And user login using "<user email>" and "<password>"
     Then user verify home page
     Then user deactivating record with client name "<Primary Contact Name>"
-    And user logout from the application
+    And user logged out from the application
     Examples:
       | user email                        | password  | Primary Contact Name |
       | adityaghosh@benchmarkit.solutions | Aditya@27 | John Doe             |

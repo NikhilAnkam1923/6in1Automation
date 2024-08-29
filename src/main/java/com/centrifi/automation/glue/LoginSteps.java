@@ -46,15 +46,15 @@ public class LoginSteps {
         PageFactory.loginPage().verifyHomePage();
         CommonSteps.takeScreenshot();
     }
-    @Given("user logout from the application")
+    @Given("user logged out from the application")
     public void userLogoutFromCentrifi()throws AutomationException{
-        CommonSteps.logInfo("User logout from the application" );
+        CommonSteps.logInfo("User logged out from the application" );
         PageFactory.loginPage().doLogoutFromCentrifi();
     }
 
     @When("^user verify \"([^\"]*)\" for invalid credentials$")
     public void userVerifyInvalidCredErrorMessage(String errorMessage)throws AutomationException{
-        CommonSteps.logInfo("user verify error message for invalid credentials" );
+        CommonSteps.logInfo("User verify error message for invalid credentials" );
         PageFactory.loginPage().verifyInvalidCredErrorMessage(errorMessage);
         CommonSteps.takeScreenshot();
     }

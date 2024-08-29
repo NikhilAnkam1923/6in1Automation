@@ -64,15 +64,15 @@ public class LoginPage extends BasePage {
     }
 
     public void enterUserEmail(String userEmail) throws AutomationException {
-        driverUtil.getWebElement(USER_EMAIL_INPUT).sendKeys(userEmail);
+        driverUtil.getWebElementAndScroll(USER_EMAIL_INPUT).sendKeys(userEmail);
     }
 
     public void enterPassword(String password) throws AutomationException {
-        driverUtil.getWebElement(USER_PASSWORD).sendKeys(password);
+        driverUtil.getWebElementAndScroll(USER_PASSWORD).sendKeys(password);
     }
 
     public void clickLoginButton() throws AutomationException {
-        driverUtil.getWebElement(LOGIN_BTN).click();
+        driverUtil.getWebElementAndScroll(LOGIN_BTN).click();
     }
 
     public void verifyLoginPageUIAttributes() throws AutomationException {
@@ -81,7 +81,7 @@ public class LoginPage extends BasePage {
     }
 
     public String getLogInText() throws AutomationException {
-        return driverUtil.getWebElementAndScroll(LOGIN_TEXT).getText();
+        return driverUtil.getWebElement(LOGIN_TEXT).getText();
     }
 
     public String verifyForgotPasswordLink() throws AutomationException {
