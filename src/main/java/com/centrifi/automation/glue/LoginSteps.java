@@ -31,30 +31,33 @@ public class LoginSteps {
     }
 
     @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
-    public static void userLoginToCentriFi(String userEmail, String password) throws AutomationException{
+    public static void userLoginToCentriFi(String userEmail, String password) throws AutomationException {
         CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
-         PageFactory.loginPage().loginToCentriFi(userEmail,password);
+        PageFactory.loginPage().loginToCentriFi(userEmail, password);
     }
+
     @Given("user verify login page ui attributes")
-    public void userVerifyLoginPageUIAttributes()throws AutomationException{
-        CommonSteps.logInfo("User verify login page ui attributes " );
+    public void userVerifyLoginPageUIAttributes() throws AutomationException {
+        CommonSteps.logInfo("User verify login page ui attributes ");
         PageFactory.loginPage().verifyLoginPageUIAttributes();
     }
+
     @Given("user verify home page")
-    public void userVerifyHomePage()throws AutomationException{
-        CommonSteps.logInfo("User verify home page " );
+    public void userVerifyHomePage() throws AutomationException {
+        CommonSteps.logInfo("User verify home page ");
         PageFactory.loginPage().verifyHomePage();
         CommonSteps.takeScreenshot();
     }
+
     @Given("user logged out from the application")
-    public void userLogoutFromCentrifi()throws AutomationException{
-        CommonSteps.logInfo("User logged out from the application" );
+    public void userLogoutFromCentrifi() throws AutomationException {
+        CommonSteps.logInfo("User logged out from the application");
         PageFactory.loginPage().doLogoutFromCentrifi();
     }
 
     @When("^user verify \"([^\"]*)\" for invalid credentials$")
-    public void userVerifyInvalidCredErrorMessage(String errorMessage)throws AutomationException{
-        CommonSteps.logInfo("User verify error message for invalid credentials" );
+    public void userVerifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
+        CommonSteps.logInfo("User verify error message for invalid credentials");
         PageFactory.loginPage().verifyInvalidCredErrorMessage(errorMessage);
         CommonSteps.takeScreenshot();
     }

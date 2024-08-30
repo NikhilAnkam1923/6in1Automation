@@ -5,7 +5,6 @@ import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -31,13 +30,15 @@ public class AddClientPage extends BasePage {
     private static final String SELECT_BUSINESS_SECTOR = "//div[@role='listbox']//div[text()='%s']";
     private static final String WEBSITE = "//input[@name='website']";
     private static final String SAVE = "//button[contains(text(),'Save')]";
+    private static final String UPDATE_SAVE = "//div[@class='css-spstuo']//button[contains(text(),'Save')]";
     private static final String NEW_CLIENT_BTN = "//*[text()='New Client']//parent::button[@type='button']";
     private static final String ADD_CLIENT_LABEL = "//section[contains(@class,'PageContainer')]/h2[contains(@class,'chakra-heading')]";
     private static final String ORGANIZATION_INPUT = "//input[@id='organizationId']";
     private static final String SELECT_ORGANIZATION = "//div[@role='listbox']//div[text()='%s']";
     private static final String TAG_INPUT = "//input[@id='tags']";
-    private static final String SUCCESS_MSG_1 = "//div[@id='toast-1']";
-    private static final String SUCCESS_MSG_2 = "//div[@id='toast-2']";
+    private static final String SUCCESS_MSG_1 = "//div[contains(text(),'You successfully added the %s Client.')]";
+    private static final String SUCCESS_MSG_2 = "//div[contains(text(),'You successfully added the %s contact')]";
+    private static final String UPDATE_SUCCESS_MSG = "//div[contains(text(),'You successfully updated the %s Client.')]";
     private static final String SEARCH_INPUT = "//input[@type='text' and contains(@placeholder, 'Search')]";
     private static final String SPINNER = "//div[contains(@class,'chakra-spinner')]";
     private static final String CLIENT_NAME = "//tbody//td//div[text()='%s']//preceding::td//div//a";
@@ -46,7 +47,8 @@ public class AddClientPage extends BasePage {
     private static final String DEACTIVATE_BUTTON = "//button[text()='Deactivate']";
     private static final String ALERT = "//section[@role='alertdialog']";
     private static final String USER_MENU = "//header/button[contains(@class,'chakra-menu__menu-button')]";
-
+    public static String cName;
+    public static String contact;
 
     public void clickOnNewClientButton() throws AutomationException {
         clickOnSideBarMenuItem("Clients");
@@ -59,8 +61,10 @@ public class AddClientPage extends BasePage {
 
     public void enterDetails(DataTable clientData) throws AutomationException {
         clientDetails = readData(clientData);
-        enterClientName(clientDetails.get("Client Name").trim());
-        enterPrimaryContactNumber(clientDetails.get("Primary Contact Name").trim());
+        cName = clientDetails.get("Client Name").trim();
+        enterClientName(cName);
+        contact = clientDetails.get("Primary Contact Name").trim();
+        enterPrimaryContactNumber(contact);
         enterPrimaryContactEmail(clientDetails.get("Primary Contact Email").trim());
         enterPrimaryContactPhone(clientDetails.get("Primary Contact Phone").trim());
         selectPrimaryContactTitle(clientDetails.get("Primary Contact Title").trim());
@@ -79,7 +83,8 @@ public class AddClientPage extends BasePage {
         driverUtil.getWebElementAndScroll(String.format(CLIENT_NAME, primaryContactName)).click();
         waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElementAndScroll(EDIT_CLIENT_BTN).click();
-        enterClientName(clientDetails.get("Client Name").trim());
+        cName = clientDetails.get("Client Name").trim();
+        enterClientName(cName);
         selectBusinessSector(clientDetails.get("Business Sector").trim());
         selectOrganization(clientDetails.get("Organization").trim());
         enterWebsite(clientDetails.get("Website").trim());
@@ -87,15 +92,17 @@ public class AddClientPage extends BasePage {
     }
 
     public void clickOnSaveButtonToUpdateRecord() throws AutomationException {
-        driverUtil.getWebElementAndScroll(SAVE).click();
-        WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
+        WebElement saveUpdate = driverUtil.getWebElementAndScroll(UPDATE_SAVE, 2);
+        driverUtil.moveToElementAndClick(saveUpdate);
+        String updateMSG = String.format(UPDATE_SUCCESS_MSG, cName);
+        WebElement w = driverUtil.getWebElementAndScroll(updateMSG);
         boolean successMSG1 = w.isDisplayed();
 
         if (!successMSG1) {
             throw new AutomationException("Client updated message is not displayed");
         }
         CommonSteps.takeScreenshot();
-        waitForInvisibleElement(By.xpath(SUCCESS_MSG_1));
+        waitForInvisibleElement(By.xpath(updateMSG));
     }
 
     public void enterClientName(String clientName) throws AutomationException {
@@ -130,7 +137,8 @@ public class AddClientPage extends BasePage {
 
     public void selectBusinessSector(String businessSector) throws AutomationException {
         if (businessSector != null && !businessSector.isEmpty()) {
-            driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT, 3).click();
+            WebElement business = driverUtil.getWebElementAndScroll(SELECT_BUSINESS_INPUT, 4);
+            driverUtil.moveToElementAndClick(business);
             driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
         }
     }
@@ -170,18 +178,16 @@ public class AddClientPage extends BasePage {
             actions.scrollToElement(saveBTN).perform();
             saveBTN.click();
         }
-        WebElement w = driverUtil.getWebElement(SUCCESS_MSG_1);
-        WebElement w1 = driverUtil.getWebElement(SUCCESS_MSG_2);
-        boolean successMSG1 = w.isDisplayed();
-        boolean successMSG2 = w1.isDisplayed();
-        String s1 = w.getText();
-        String s2 = w1.getText();
-        if (!successMSG1 && !successMSG2) {
+        String successMSG1 = String.format(SUCCESS_MSG_1, cName);
+        String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+        boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 && !isSuccessMSG2) {
             throw new AutomationException("Client save message is not displayed");
         }
         CommonSteps.takeScreenshot();
-        waitForInvisibleElement(By.xpath(SUCCESS_MSG_1));
-        waitForInvisibleElement(By.xpath(SUCCESS_MSG_2));
+        waitForInvisibleElement(By.xpath(successMSG1));
+        waitForInvisibleElement(By.xpath(successMSG2));
     }
 
     public void deactivatingRecord(String name) throws AutomationException {
