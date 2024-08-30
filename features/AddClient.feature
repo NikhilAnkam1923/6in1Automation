@@ -56,7 +56,7 @@ Feature: Centrifi CRUD operation functionality
       | Elizabeth Smith      |
 
 
-#  @Setup
-#  Scenario: SETUP: Close Browser
-#    When user logged out from the application
-#    Then User close browser
+  @Setup
+  Scenario: SETUP: Close Browser
+    When user logged out from the application
+    Then User close browser
