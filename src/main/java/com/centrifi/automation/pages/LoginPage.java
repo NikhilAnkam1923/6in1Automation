@@ -57,7 +57,6 @@ public class LoginPage extends BasePage {
     }
 
     public void loginToCentriFi(String userEmail, String password) throws AutomationException {
-        doLogoutFromCentrifiIfAlreadyLoggedIn();
         enterUserEmail(userEmail);
         enterPassword(password);
         clickLoginButton();
@@ -89,11 +88,12 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
+
         driverUtil.getWebElement(USER_MENU);
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
-        driverUtil.getWebElementAndScroll(USER_MENU,2).click();
+        driverUtil.getWebElementAndScroll(USER_MENU,1).click();
         driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }

@@ -69,6 +69,7 @@ public class DriverFactory {
         chromePrefs.put( "profile.default_content_setting_values.automatic_downloads", 1 );
         chromePrefs.put("download.default_directory", downloadPath);
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
         options.setExperimentalOption("prefs", chromePrefs);
         if(System.getProperty("debug")==null || System.getProperty("debug").equalsIgnoreCase("false")) {
             if(LINUX.equalsIgnoreCase(System.getProperty(OS)))

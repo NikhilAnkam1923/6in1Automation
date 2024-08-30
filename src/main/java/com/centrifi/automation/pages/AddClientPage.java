@@ -76,10 +76,9 @@ public class AddClientPage extends BasePage {
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
         clientDetails = readData(clientData);
-        clickOnSideBarMenuItem("Clients");
+        waitForInvisibleElement(By.xpath(SPINNER),3);
         String primaryContactName = clientDetails.get("Primary Contact Name").trim();
-        driverUtil.getWebElementAndScroll(SEARCH_INPUT).sendKeys(primaryContactName);
-        waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
         driverUtil.getWebElementAndScroll(String.format(CLIENT_NAME, primaryContactName)).click();
         waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElementAndScroll(EDIT_CLIENT_BTN).click();

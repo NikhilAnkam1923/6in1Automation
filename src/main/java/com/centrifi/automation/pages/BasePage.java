@@ -103,50 +103,6 @@ public abstract class BasePage {
         }
     }
 
-    public static boolean checkAnyPopupAndClose() {
-        boolean status = false;
-        try {
-            WebElement element = driverUtil.getWebElement(ERROR_POPUP, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                element = driverUtil.getWebElement(ERROR_POPUP_BUTTON_OK, WebDriverUtil.NO_WAIT);
-                if(element!=null)
-                    element.click();
-                status = true;
-            }
-            element = driverUtil.getWebElement(SEARCH_POPUP_CLOSE, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                element.click();
-                status = true;
-            }
-
-            element = driverUtil.getWebElement(CLOSE_POPUP_BUTTON, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                element.click();
-                status = true;
-            }
-
-            element = driverUtil.getWebElement(CLOSE_PDF_VIEWER_BUTTON, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                element.click();
-                status = true;
-            }
-
-            element = driverUtil.getWebElement(ERROR_POPUP_OK_BUTTON, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                element.click();
-                status = true;
-            }
-
-            element = driverUtil.getWebElement(ANY_POPUP_WITH_OK_BUTTON, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                element.click();
-                status = true;
-            }
-        } catch(Exception ex) {
-            //Do nothing..
-        }
-        return status;
-    }
 
     public boolean checkAndCloseErrorPopup() throws AutomationException {
         try {

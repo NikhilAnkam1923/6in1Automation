@@ -148,7 +148,7 @@ public class CommonSteps {
         } else if (tags.contains("@Setup") && SETUP_FAILED.get() != null && SETUP_FAILED.get() && scenarioName.toLowerCase().contains("close browser")) {
             throw new SkipException("Skipping this scenario as setup scenario got failed!");
         }
-        BasePage.checkAnyPopupAndClose();
+
     }
 
     @BeforeStep
@@ -164,6 +164,8 @@ public class CommonSteps {
         currentStepIndex.set(index + 1);
 
     }
+
+
 
     @AfterStep
     public void afterStep(Scenario scenario) {
