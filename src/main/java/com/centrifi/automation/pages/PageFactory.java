@@ -3,9 +3,12 @@ package com.centrifi.automation.pages;
 public class PageFactory {
     private static ThreadLocal<PageFactory> factory = new ThreadLocal<>();
     public LoginPage loginPage;
+    private AddClientPage addClientPage;
 
     private PageFactory() {
+
         loginPage = new LoginPage();
+        addClientPage = new AddClientPage();
     }
 
     public static void init() {
@@ -17,5 +20,9 @@ public class PageFactory {
 
     public static LoginPage loginPage() {
         return factory.get().loginPage;
+    }
+
+    public static AddClientPage addClientPage() {
+        return factory.get().addClientPage;
     }
 }

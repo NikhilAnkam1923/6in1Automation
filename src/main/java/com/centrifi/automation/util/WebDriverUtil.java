@@ -41,14 +41,14 @@ public class WebDriverUtil {
     public static final String ADMIN_PORTAL_LOADING_INVISIBLE = "//div[@class='MuiBackdrop-root' and contains(@style,'hidden')]";
 
     public WebElement getWebElement(String locator) throws AutomationException {
-        System.out.println("Locator : "+locator);
+        System.out.println("Locator : " + locator);
         return getWebElement(locator, DEFAULT_ELEMENT_WAIT);
     }
 
     public List<WebElement> getWebElements(String locator) throws AutomationException {
         try {
             return DriverFactory.drivers.get().findElements(By.xpath(locator));
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -75,21 +75,21 @@ public class WebDriverUtil {
 
     public WebElement getWebElement(String locator, int waitTime, String message) throws AutomationException {
         WebElement element = null;
-        if(DriverFactory.drivers.get()==null)
+        if (DriverFactory.drivers.get() == null)
             throw new AutomationException("Driver is not initialized!");
-        if(applyWait(locator, waitTime))
+        if (applyWait(locator, waitTime))
             element = findElement(locator);
-        if(element==null && message!=null)
+        if (element == null && message != null)
             throw new AutomationException(message);
         return element;
     }
 
     public WebElement getWebElementAndScroll(String locator, int waitTime, String message) throws AutomationException {
-        if(DriverFactory.drivers.get()==null)
+        if (DriverFactory.drivers.get() == null)
             throw new AutomationException("Driver is not initialized!");
-        if(applyWait(locator, waitTime))
+        if (applyWait(locator, waitTime))
             return findElementAndScroll(locator);
-        if(message!=null)
+        if (message != null)
             throw new AutomationException(message);
         return null;
     }
@@ -98,7 +98,7 @@ public class WebDriverUtil {
         try {
             WebElement element = DriverFactory.drivers.get().findElement(By.xpath(locator));
             return element;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class WebDriverUtil {
             JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
             js.executeScript("arguments[0].scrollIntoView();", element);
             return element;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -119,33 +119,34 @@ public class WebDriverUtil {
             JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
             js.executeScript("arguments[0].scrollIntoView();", element);
             return element;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
-    public void scrollTo(String  element) {
-        try {
-            System.out.println("inside scrool to method "+element);
-            JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
-            js.executeScript("window.scrollBy(0,"+element+")", "");
 
-        } catch(Exception e) {
+    public void scrollTo(String element) {
+        try {
+            System.out.println("inside scrool to method " + element);
+            JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+            js.executeScript("window.scrollBy(0," + element + ")", "");
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public boolean applyWait(String locator, int waitTime) {
         try {
-            if(waitTime==NO_WAIT)
+            if (waitTime == NO_WAIT)
                 return true;
             WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(waitTime));
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
             return true;
-        } catch(TimeoutException ex) {
+        } catch (TimeoutException ex) {
             return false;
         }
     }
-    
+
     public static void waitForAWhile() {
         waitForAWhile(1, TimeUnit.SECONDS);
     }
@@ -156,11 +157,11 @@ public class WebDriverUtil {
 
     public static void waitForAWhile(int waitTime, TimeUnit unit) {
         try {
-            if(unit.equals(TimeUnit.SECONDS))
-                Thread.sleep(waitTime*1000);
-            if(unit.equals(TimeUnit.MINUTES))
-                Thread.sleep(waitTime*1000*60);
-        } catch(Exception ex) {
+            if (unit.equals(TimeUnit.SECONDS))
+                Thread.sleep(waitTime * 1000);
+            if (unit.equals(TimeUnit.MINUTES))
+                Thread.sleep(waitTime * 1000 * 60);
+        } catch (Exception ex) {
             //DO nothing..
         }
     }
@@ -171,9 +172,9 @@ public class WebDriverUtil {
 
     public void waitForElement(By by, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(),Duration.ofSeconds(timeout));
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
     }
@@ -186,7 +187,7 @@ public class WebDriverUtil {
     public void moveToElementAndClick(WebElement element) {
         Actions action = new Actions(DriverFactory.drivers.get());
         action.moveToElement(element).perform();
-        waitForAWhile(DEFAULT_ELEMENT_WAIT);
+        waitForAWhile(WAIT_1_SEC);
         element.click();
     }
 
@@ -197,9 +198,9 @@ public class WebDriverUtil {
 
     public static void waitForVisibleElement(By by, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(),Duration.ofSeconds(timeout));
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
     }
@@ -207,25 +208,25 @@ public class WebDriverUtil {
     public static void waitForElementClickable(By by) {
         waitForElementClickable(by, MAX_ELEMENT_WAIT);
     }
+
     public static void waitForElementClickable(By by, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(),Duration.ofSeconds(timeout));
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.elementToBeClickable(by));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
     }
 
     public static void waitForInvisibleElement(By by) {
-        waitForInvisibleElement(by, MAX_ELEMENT_WAIT);
+        waitForInvisibleElement(by, DEFAULT_ELEMENT_WAIT);
     }
 
     public static void waitForInvisibleElement(By by, int timeout) {
-        waitForAWhile(1);
         try {
-            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(),Duration.ofSeconds(timeout));
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
     }
@@ -255,8 +256,8 @@ public class WebDriverUtil {
 
 
     public void waitForLoadingPage() {
-        WebDriverUtil.waitForInvisibleElement(By.xpath(BasePage.LOADING),MAX_PAGE_LOADING_WAIT);
-        WebDriverUtil.waitForInvisibleElement(By.xpath(BasePage.LOADING_DATA),MAX_PAGE_LOADING_WAIT);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(BasePage.LOADING), MAX_PAGE_LOADING_WAIT);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(BasePage.LOADING_DATA), MAX_PAGE_LOADING_WAIT);
     }
 
     public String ignoreCase(String value) {
@@ -270,52 +271,50 @@ public class WebDriverUtil {
     }
 
     public WebElement findElementByText(String text) throws AutomationException {
-        WebElement element=getWebElement("//*["+ignoreCase(text)+"]");
-        if(element==null)
-        {
-            element=getWebElement("//*[starts-with(text(),'"+text+"')]");
+        WebElement element = getWebElement("//*[" + ignoreCase(text) + "]");
+        if (element == null) {
+            element = getWebElement("//*[starts-with(text(),'" + text + "')]");
         }
         return element;
     }
 
     public void findElementByTextAndClick(String text) throws AutomationException {
-        WebElement element=getWebElement("//*["+ignoreCase(text)+"]");
-        if(element==null)
-        {
-            element=getWebElement("//*[starts-with(text(),'"+text+"')]");
+        WebElement element = getWebElement("//*[" + ignoreCase(text) + "]");
+        if (element == null) {
+            element = getWebElement("//*[starts-with(text(),'" + text + "')]");
         }
         element.click();
     }
 
-    public boolean clickUsingJavaScript(String elementXpath){
-        boolean status=false;
-        try{
-            String javascript = String.format("document.evaluate(\"%s\",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click();",elementXpath);
+    public boolean clickUsingJavaScript(String elementXpath) {
+        boolean status = false;
+        try {
+            String javascript = String.format("document.evaluate(\"%s\",document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click();", elementXpath);
             ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript(javascript);
-            status=true;
-        }catch (Exception e){
+            status = true;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return status;
     }
 
-    public WebElement getElementUsingJavascript(String elementXpath){
-        try{
-            return (WebElement) ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript(String.format("return document.evaluate( \"%s\" ,document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;",elementXpath));
-        }catch (Exception e){
+    public WebElement getElementUsingJavascript(String elementXpath) {
+        try {
+            return (WebElement) ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript(String.format("return document.evaluate( \"%s\" ,document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;", elementXpath));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     public void waitForElementToBeClickable(String xpath) {
-        if(System.getProperty(Constants.PAGE_LOAD_TIMEOUT)==null)
+        if (System.getProperty(Constants.PAGE_LOAD_TIMEOUT) == null)
             System.setProperty(Constants.PAGE_LOAD_TIMEOUT, DEFAULT_PAGE_LOAD_TIMEOUT);
         try {
-            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(),Duration.ofSeconds(Integer.parseInt(System.getProperty(Constants.PAGE_LOAD_TIMEOUT))));
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(Integer.parseInt(System.getProperty(Constants.PAGE_LOAD_TIMEOUT))));
             wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
             //waitForAWhile(DEFAULT_ELEMENT_WAIT);
-        } catch(TimeoutException ex) {
+        } catch (TimeoutException ex) {
         }
     }
 
@@ -338,12 +337,12 @@ public class WebDriverUtil {
         }
     }
 
-    public static void scrollPageDown(){
+    public static void scrollPageDown() {
         JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
         js.executeScript("window.scrollBy(0,250);");
     }
 
-    public static void scrollPageUp(){
+    public static void scrollPageUp() {
         JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
         js.executeScript("window.scrollBy(0,-250);");
     }
@@ -351,28 +350,28 @@ public class WebDriverUtil {
     public void switchToFrame(String xpath) throws AutomationException {
         try {
             DriverFactory.drivers.get().switchTo().frame(findElement(xpath));
-        } catch(Exception ex) {
-            throw new AutomationException("Unable to find iFrame with the given xpath: "+xpath);
+        } catch (Exception ex) {
+            throw new AutomationException("Unable to find iFrame with the given xpath: " + xpath);
         }
     }
 
     public void switchToDefault() {
-       DriverFactory.drivers.get().switchTo().defaultContent();
+        DriverFactory.drivers.get().switchTo().defaultContent();
     }
 
-    public WebElement getElementByJavascript(String xpath){
-        String javascript = String.format("document.evaluate('%s',document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;",xpath);
+    public WebElement getElementByJavascript(String xpath) {
+        String javascript = String.format("document.evaluate('%s',document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue;", xpath);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) DriverFactory.drivers.get();
         WebElement element = (WebElement) jsExecutor.executeScript(javascript);
         return element;
     }
 
-    public static void dragAndDrop(WebElement srcweelement,WebElement destelement){
-        Actions actions=new Actions(DriverFactory.drivers.get());
-        actions.dragAndDrop(srcweelement,destelement).perform();
+    public static void dragAndDrop(WebElement srcweelement, WebElement destelement) {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.dragAndDrop(srcweelement, destelement).perform();
     }
 
-    public static void dragAndDropUsingJavaScript(WebElement srcweelement,WebElement destelement){
+    public static void dragAndDropUsingJavaScript(WebElement srcweelement, WebElement destelement) {
         final String java_script =
                 "var src=arguments[0],tgt=arguments[1];var dataTransfer={dropEffe" +
                         "ct:'',effectAllowed:'all',files:[],items:{},types:[],setData:fun" +
