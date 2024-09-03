@@ -37,7 +37,6 @@ public abstract class BasePage {
     public static final String CONFIRMATION_DIALOG_DELETE_BUTTON = "//*[@role='dialog']//button[text()='Delete']";
     public static final String ANY_OTHER_POPUP = "//*[contains(@class,'popup')]";
     public static final String CLOSE_POPUP_BUTTON = "//*[contains(@class,'close') and not(contains(@class,'closeButton'))]";
-//    public static final String CLOSE_POPUP_BUTTON = "//*[contains(@class,'close')]";
     public static final String LOADING = "//*[contains(@class,'src-components-Loading-__txt') and text()='LOADING']";
     public static final String LOADING_DATA = "//*[contains(@class,'src-components-Loading-__txt')]";
     public static final String LOADING_REPORT = "//*[contains(@class,'src-components-Loading-__txt') and text()='Loading...']";

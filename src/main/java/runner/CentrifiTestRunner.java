@@ -1,6 +1,5 @@
 package runner;
 
-import com.centrifi.automation.util.TestDataExcelUtil;
 import cucumber.api.CucumberOptions;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;

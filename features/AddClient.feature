@@ -25,8 +25,6 @@ Feature: Centrifi CRUD operation functionality
       | Website               | <Website>               |
       | Tags                  | <Tags>                  |
     And user clicks the Save button to add a new client and verify success message
-
-
     Examples:
       | user email                        | password  | Client Name | Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              |
       | adityaghosh@benchmarkit.solutions | Aditya@27 | Noah Root   | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
@@ -42,7 +40,6 @@ Feature: Centrifi CRUD operation functionality
       | Website              | <Website>              |
       | Tags                 | <Tags>                 |
     And user clicks the Save button and verify updated successfully message
-
     Examples:
       | Client Name | Primary Contact Name | Business Sector | Organization   | Website | Tags    |
       | Emily smith | Elizabeth Smith      | Technology      | Test 5225 12/8 |         | Digital |
@@ -50,11 +47,9 @@ Feature: Centrifi CRUD operation functionality
   @Smoke
   Scenario Outline: Validate the functionality for deleting a client
     Then user deactivating record with client name "<Primary Contact Name>"
-
     Examples:
       | Primary Contact Name |
       | Elizabeth Smith      |
-
 
   @Setup
   Scenario: SETUP: Close Browser

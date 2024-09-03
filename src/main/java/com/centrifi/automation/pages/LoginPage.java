@@ -1,15 +1,7 @@
 package com.centrifi.automation.pages;
 
-import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
-import com.centrifi.automation.glue.CommonSteps;
-import com.centrifi.automation.util.PropertyReader;
-import com.centrifi.automation.util.WebDriverUtil;
-import org.bouncycastle.cms.PasswordRecipientId;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 
 import java.util.logging.Logger;

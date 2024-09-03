@@ -2,7 +2,6 @@ package com.centrifi.automation.pages;
 
 import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
-import com.centrifi.automation.glue.CommonSteps;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -100,7 +99,6 @@ public class AddClientPage extends BasePage {
         if (!successMSG1) {
             throw new AutomationException("Client updated message is not displayed");
         }
-        CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(updateMSG));
     }
 
@@ -184,7 +182,6 @@ public class AddClientPage extends BasePage {
         if (!isSuccessMSG1 && !isSuccessMSG2) {
             throw new AutomationException("Client save message is not displayed");
         }
-        CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(successMSG1));
         waitForInvisibleElement(By.xpath(successMSG2));
     }
@@ -202,7 +199,6 @@ public class AddClientPage extends BasePage {
         if (!successMSG1) {
             throw new AutomationException("Client deactivated message is not displayed");
         }
-        CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath("//div[contains(text(),'Client successfully deactivated')]"));
     }
 

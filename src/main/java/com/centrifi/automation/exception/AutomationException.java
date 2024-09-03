@@ -1,10 +1,9 @@
 package com.centrifi.automation.exception;
 
-import com.centrifi.automation.glue.CommonSteps;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import com.centrifi.automation.glue.CommonSteps;
 
 public class AutomationException extends Exception {
     private static final Logger LOGGER = Logger.getLogger(AutomationException.class.getName());

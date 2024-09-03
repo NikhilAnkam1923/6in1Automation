@@ -2,7 +2,6 @@ package runner;
 
 import com.centrifi.automation.constants.Constants;
 import com.centrifi.automation.drivers.DriverFactory;
-import com.centrifi.automation.glue.CommonSteps;
 import com.centrifi.automation.models.TestScenario;
 import com.centrifi.automation.reports.ExecutionResult;
 import com.centrifi.automation.reports.ExtentManager;
@@ -16,7 +15,7 @@ import org.testng.ITest;
 import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.*;
-
+import com.centrifi.automation.glue.CommonSteps;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -105,6 +104,7 @@ public class BaseRunner implements ITest {
 	public void tearDownClass() {
 		testNGCucumberRunner.finish();
 		ExtentManager.getExtentReports().flush();
+		CommonSteps.updateResultsToTheTestRail();
 		reportLogger.log("Test Execution Completed!");
 		DriverFactory.clearDriverSession();
 	}
