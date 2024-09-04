@@ -4,11 +4,15 @@ public class PageFactory {
     private static ThreadLocal<PageFactory> factory = new ThreadLocal<>();
     public LoginPage loginPage;
     private AddClientPage addClientPage;
+    private AuthorizationsPage authorizationsPage;
+    private AddClientIntegrationPage addClientIntegrationPage;
 
     private PageFactory() {
 
         loginPage = new LoginPage();
         addClientPage = new AddClientPage();
+        authorizationsPage=new AuthorizationsPage();
+        addClientIntegrationPage=new AddClientIntegrationPage();
     }
 
     public static void init() {
@@ -24,5 +28,11 @@ public class PageFactory {
 
     public static AddClientPage addClientPage() {
         return factory.get().addClientPage;
+    }
+    public static AuthorizationsPage authorizationsPage() {
+        return factory.get().authorizationsPage;
+    }
+    public static AddClientIntegrationPage addClientIntegrationPage() {
+        return factory.get().addClientIntegrationPage;
     }
 }
