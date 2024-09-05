@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.stringtemplate.v4.ST;
 import org.testng.Assert;
 
 import java.util.LinkedHashMap;
@@ -47,6 +48,27 @@ public class AddClientPage extends BasePage {
     private static final String DEACTIVATE_BUTTON = "//button[text()='Deactivate']";
     private static final String ALERT = "//section[@role='alertdialog']";
     private static final String USER_MENU = "//header/button[contains(@class,'chakra-menu__menu-button')]";
+    private static final String CLINT_CONTACT_BUTTON="//button[text()='Contacts']";
+    private static final String ADD_CONTACT_BUTTON="//*[text()='Client Contact']//parent::button[@type='button']";
+    private static final String CONTACT_FIRST_NAME="//input[@name='firstName']";
+    private static final String CONTACT_LAST_NAME="//input[@name='lastName']";
+    private static final String CONTACT_EMAIL="//input[@name='email']";
+    private static final String CONTACT_PHONE="//input[@name='phone']";
+    private static final String CONTACT_ADDRESS="//textarea[@name='businessAddress']";
+    private static final String CONTACT_SELECT_TITLE="//*[contains(text(),'Select Title')]";
+    private static final String CONTACT_PRIMARY="//*[@id='isPrimary-label']";
+    private static final String CONTACT_CREATE_BUTTON="//button[text()='Create Contact']";
+    private static final String CONTACT_CONFIRM_BUTTON="//button[text()='Confirm']";
+    private static final String CONTACT_CANCEL_BUTTON="//button[text()='Cancel']";
+    private static final String CONTACT_CAMPAIGN_BUTTON="//button[text()='Campaigns']";
+    private static final String CONTACT_REPORT_BUTTON="//button[text()='Reporting']";
+    private static final String CONTACT_CAMPAIGN_NAME="//*[text()='%s']";
+    private static final String CONTACT_CAMPAIGN_NEXT_PAGE="//button[@aria-label='Next page']";
+    private static final String CONTACT_CAMPAIGN_PREV_PAGE="//button[@aria-label='Previous page']";
+    private static final String CLINT="//*[text()='%s']";
+
+
+
     public static String cName;
     public static String contact;
 
@@ -104,6 +126,33 @@ public class AddClientPage extends BasePage {
         waitForInvisibleElement(By.xpath(updateMSG));
     }
 
+    public void createClientContactDetails(DataTable clientData) throws AutomationException {
+        clientDetails = readData(clientData);
+        clickOnSideBarMenuItem("Clients");
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        String primaryContactName = clientDetails.get("Client Name").trim();
+        System.out.println("primaryContactName"+primaryContactName);
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
+       // String clientName="//*[text()='$s']";
+        System.out.println("clientName:"+String.format(CLINT, primaryContactName));
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(String.format(CLINT, primaryContactName)).click();
+
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElement(CLINT_CONTACT_BUTTON).click();
+
+       // driverUtil.getWebElementAndScroll(CLINT_CONTACT_BUTTON).click();
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElement(ADD_CONTACT_BUTTON).click();
+        cName = clientDetails.get("Contact First Name").trim();
+        enterContactFirstName(clientDetails.get("Contact First Name").trim());
+        enterContactLasttName(clientDetails.get("Contact Last Name").trim());
+        enterContactEmail(clientDetails.get("Contact Email").trim());
+        selectClientContactTitle(clientDetails.get("Contact Title").trim());
+        enterContactAddress(clientDetails.get("Contact Address"));
+
+    }
     public void enterClientName(String clientName) throws AutomationException {
         if (clientName != null && !clientName.isEmpty()) {
             WebElement name = driverUtil.getWebElementAndScroll(CLIENT_NAME_INPUT);
@@ -206,6 +255,66 @@ public class AddClientPage extends BasePage {
         waitForInvisibleElement(By.xpath("//div[contains(text(),'Client successfully deactivated')]"));
     }
 
+    public void enterContactFirstName(String firstName) throws AutomationException {
+        if (firstName != null && !firstName.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(CONTACT_FIRST_NAME);
+            name.clear();
+            name.sendKeys(firstName);
+        }
+    }
+    public void enterContactLasttName(String lastName) throws AutomationException {
+        if (lastName != null && !lastName.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(CONTACT_LAST_NAME);
+            name.clear();
+            name.sendKeys(lastName);
+        }
+    }
+
+    public void enterContactEmail(String email) throws AutomationException {
+        if (email != null && !email.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(CONTACT_EMAIL);
+            name.clear();
+            name.sendKeys(email);
+        }
+    }
+    public void enterContactAddress(String address) throws AutomationException {
+        if (address != null && !address.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(CONTACT_ADDRESS);
+            name.clear();
+            name.sendKeys(address);
+        }
+    }
+    public void selectClientContactTitle(String businessSector) throws AutomationException {
+        if (businessSector != null && !businessSector.isEmpty()) {
+            WebElement business = driverUtil.getWebElementAndScroll(CONTACT_SELECT_TITLE, 4);
+            driverUtil.moveToElementAndClick(business);
+            driverUtil.clickUsingJavaScript(String.format(SELECT_BUSINESS_SECTOR, businessSector));
+        }
+    }
+
+    public void clickOnCreateContactButtonToSaveRecord() throws AutomationException {
+        //driverUtil.getWebElementAndScroll(USER_MENU, 2);
+        driverUtil.getWebElementAndScroll(CONTACT_CREATE_BUTTON, 2).click();
+        try {
+            driverUtil.getWebElementAndScroll(CONTACT_CONFIRM_BUTTON, 2).click();
+        } catch (Exception ae) {
+            WebElement saveBTN = driverUtil.getWebElementAndScroll(CONTACT_CONFIRM_BUTTON, 2);
+            Actions actions = new Actions(DriverFactory.drivers.get());
+            actions.scrollToElement(saveBTN).perform();
+            saveBTN.click();
+        }
+        String successMSG1 = String.format(SUCCESS_MSG_1, cName);
+        String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+        boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 && !isSuccessMSG2) {
+            throw new AutomationException("Client save message is not displayed");
+        }
+        CommonSteps.takeScreenshot();
+        waitForInvisibleElement(By.xpath(successMSG1));
+        waitForInvisibleElement(By.xpath(successMSG2));
+    }
+
     @Override
     String getName() {
         return "AddClient";
@@ -218,5 +327,60 @@ public class AddClientPage extends BasePage {
             parametersMap.put(row.get("FieldName"), row.get("Value"));
         }
         return parametersMap;
+    }
+
+    public void clickOnClientButton() throws AutomationException {
+        clickOnSideBarMenuItem("Clients");
+    }
+
+    public void clickOnCampaignButton(String clientName) throws AutomationException {
+
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(clientName);
+        // String clientName="//*[text()='$s']";
+        System.out.println("clientName:"+String.format(CLINT, clientName));
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(String.format(CLINT, clientName)).click();
+
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElement(CONTACT_CAMPAIGN_BUTTON).click();
+
+    }
+
+
+    public void clickOnCampaignNameAndVerifyCampaignPage(String campaignName) throws AutomationException {
+
+        try {
+            waitForInvisibleElement(By.xpath(SPINNER),3);
+            System.out.println("clientName:"+String.format(CLINT, campaignName));
+            waitForInvisibleElement(By.xpath(SPINNER),3);
+            driverUtil.getWebElementAndScroll(String.format(CLINT, campaignName)).click();
+
+        } catch (Exception ae) {
+            waitForInvisibleElement(By.xpath(SPINNER),3);
+            System.out.println("clientName:"+String.format(CLINT, campaignName));
+            driverUtil.getWebElement(CONTACT_CAMPAIGN_NEXT_PAGE).click();
+            driverUtil.getWebElementAndScroll(String.format(CLINT, campaignName)).click();
+        }
+
+    }
+
+    public void clickOnReportButton(String clientName) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(clientName);
+        // String clientName="//*[text()='$s']";
+        System.out.println("clientName:"+String.format(CLINT, clientName));
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(String.format(CLINT, clientName)).click();
+
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElement(CONTACT_REPORT_BUTTON).click();
+    }
+
+    public void clickOnReportAndVerifyReportPage(String reportName) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        System.out.println("clientName:"+String.format(CLINT, reportName));
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElementAndScroll(String.format(CLINT, reportName)).click();
     }
 }

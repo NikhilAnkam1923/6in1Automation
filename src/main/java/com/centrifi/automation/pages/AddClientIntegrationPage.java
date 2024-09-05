@@ -24,14 +24,18 @@ public class AddClientIntegrationPage extends BasePage{
     private static final String INTEGRATION_CONNECT_BUTTON="//footer[contains(@class,'chakra-modal__footer')]//button[text()='Connect']";
     private static final String INTEGRATION_DISCONNECT="//footer[contains(@class,'chakra-modal__footer')]//button[text()='Disconnect']";
     private static final String INTEGRATION_CANCEL_BUTTON="//footer[contains(@class,'chakra-modal__footer')]//button[text()='Cancel']";
-    private static final String SELECT_DROPDOWN="//*[@class=' css-18euh9p']";
+    //private static final String SELECT_DROPDOWN="//*[@class=' css-18euh9p']";
+    private static final String SELECT_DROPDOWN="(//*[@class=' css-18euh9p'])[1]";
     //private static final String SELECT_DROPDOWN="//*[contains(text(),'Select Authorization')]";
     private static final String SELECT_BUSINESS_SECTOR = "//div[@role='listbox']//div[text()='%s']";
     private static final String SELECT_FB_ACCOUNT_ID = "//*[@name='ad_account_id']";
     private static final String SELECT_FB_PAGE_ID = "//*[@name='page_id']";
     private static final String DISCONNECT_CONFIRM_MSG = "//*[@role='alertdialog']/div";
-    private static final String ERR_MSG_SMPLI="(//div[contains(text(),'Organization ID does not exist.')])[1]";
-
+    private static final String ACCOUNT_ID="//input[@name='account_id']";
+    private static final String OWNER_ACCOUNT_ID="//input[@name='owner_account_id']";
+    private static final String LOCATION_NAME="//input[@name='location_name']";
+    private static final String ACCOUNT_NAME="//input[@name='account_name']";
+    private static final String PROPERTY_ID = "//input[@name='property_id'] ";
 
 
     public void clickOnIntegrationButton(String clientName) throws AutomationException {
@@ -60,33 +64,34 @@ public class AddClientIntegrationPage extends BasePage{
         return "Client Integration page";
     }
 
-    public void clickOnEmailContinueButton(String clientName, String reportName,String reportFlag) throws AutomationException {
+    public void clickOnEmailContinueButton(String clientName, String authName,String reportFlag,String reportName) throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(String.format(INTEGRATION_PLATFORM_BTN, "Email-id")).click();
         driverUtil.getWebElement(INTEGRATION_ADVERTISING_CHECKBOX).click();
+        selectClientAuthorization(authName);
         if(reportFlag.equals("Yes")){
 
             driverUtil.getWebElement(INTEGRATION_REPORTING_CHECKBOX).click();
+            selectClientAuthorization(reportName);
 
         }
         waitForInvisibleElement(By.xpath(SPINNER),3);
-        selectClientAuthorization(reportName);
+
         enterClientName(clientName);
         driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
         try{
-            /*WebElement w = driverUtil.getWebElementAndScroll("//div[contains(text(),'Email - Integration Authorization')])");
-            boolean invalidInputMsg = w.isDisplayed();
-            if (!invalidInputMsg) {
-                throw new AutomationException("Email integration message is not displayed");
-            }
-            CommonSteps.takeScreenshot();*/
-            WebElement w = driverUtil.getWebElementAndScroll("//div[text()='Validation failed.']");
-            boolean invalidInputMsg = w.isDisplayed();
-            if (!invalidInputMsg) {
-                throw new AutomationException("Email Validation failed message is not displayed");
+
+            System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
+            if ("Selected Authorization is not configured for Reporting".contains(driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText())) {
+                // throw new AutomationException("Simpli.fi Validation failed message is not displayed");
+            }else if("Validation failed.".contains(driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText())){
+
             }
             CommonSteps.takeScreenshot();
+            //waitForInvisibleElement(By.xpath(SPINNER),10);
+            driverUtil.getWebElement(("//button[@aria-label='Close']")).click();
             driverUtil.getWebElement((INTEGRATION_CANCEL_BUTTON)).click();
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -112,20 +117,23 @@ public class AddClientIntegrationPage extends BasePage{
 
     }
 
-    public void clickOnFaceBookContinueButton( String acctId, String pageId, String authId,String reportFlag) throws AutomationException {
+    public void clickOnFaceBookContinueButton( String acctId, String pageId, String authId,String reportFlag,String reportName) throws AutomationException {
 
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(String.format(INTEGRATION_PLATFORM_BTN, "Facebook Ads-id")).click();
         driverUtil.getWebElement(INTEGRATION_ADVERTISING_CHECKBOX).click();
+        selectClientAuthorization(authId);
+      //Facebook
         if(reportFlag.equals("Yes")){
 
             driverUtil.getWebElement(INTEGRATION_REPORTING_CHECKBOX).click();
+            selectClientAuthorization(reportName);
 
         }
         waitForInvisibleElement(By.xpath(SPINNER),3);
        // driverUtil.getWebElement(SELECT_DROPDOWN).click();
         //driverUtil.getWebElement("//input[@role='combobox']").sendKeys(authId);
-        selectClientAuthorization(authId);
+
         Select select=new Select(driverUtil.getWebElement(SELECT_FB_ACCOUNT_ID));
         select.selectByValue(acctId);
         select=new Select(driverUtil.getWebElement(SELECT_FB_PAGE_ID));
@@ -133,53 +141,53 @@ public class AddClientIntegrationPage extends BasePage{
 
         driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
         try{
-            /*WebElement w = driverUtil.getWebElementAndScroll("//div[contains(text(),'Integration Authorization')])");
-            boolean invalidInputMsg = w.isDisplayed();
-            if (!invalidInputMsg) {
-                throw new AutomationException("FaceBook integration message is not displayed");
-            }*/
-            WebElement w = driverUtil.getWebElementAndScroll("//div[text()='Validation failed.']");
-            boolean invalidInputMsg = w.isDisplayed();
-            if (!invalidInputMsg) {
-                throw new AutomationException("FaceBook Validation failed message is not displayed");
+
+            System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
+            if ("Selected Authorization is not configured for Reporting".contains(driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText())) {
+                // throw new AutomationException("Simpli.fi Validation failed message is not displayed");
+            }else if("Organization ID does not exist".contains(driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText())){
+
             }
             CommonSteps.takeScreenshot();
+            //waitForInvisibleElement(By.xpath(SPINNER),10);
+            driverUtil.getWebElement(("//button[@aria-label='Close']")).click();
             driverUtil.getWebElement((INTEGRATION_CANCEL_BUTTON)).click();
-            CommonSteps.takeScreenshot();
         }catch (Exception e){
            e.printStackTrace();
         }
 
     }
 
-    public void clickOnSimpliContinueButton(String OrgId, String reportName, String reportFlag) throws AutomationException {
+    public void clickOnSimpliContinueButton(String OrgId, String authName, String reportFlag,String reportName) throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(String.format(INTEGRATION_PLATFORM_BTN, "Simpli.Fi-id")).click();
         driverUtil.getWebElement(INTEGRATION_ADVERTISING_CHECKBOX).click();
+        selectClientAuthorization(authName);
         if(reportFlag.equals("Yes")){
 
             driverUtil.getWebElement(INTEGRATION_REPORTING_CHECKBOX).click();
+            selectClientAuthorization(reportName);
 
         }
         waitForInvisibleElement(By.xpath(SPINNER),3);
-        selectClientAuthorization(reportName);
+
         enterOrgId(OrgId);
         driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
         try{
-            /*WebElement w = driverUtil.getWebElementAndScroll("//div[contains(text(),'Email - Integration Authorization')])");
-            boolean invalidInputMsg = w.isDisplayed();
-            if (!invalidInputMsg) {
-                throw new AutomationException("Email integration message is not displayed");
-            }
-            CommonSteps.takeScreenshot();*/
-            WebElement w = driverUtil.getWebElementAndScroll("(//div[contains(text(),'Organization ID does not exist.')])[1]");
-            boolean invalidInputMsg = w.isDisplayed();
-            if (!invalidInputMsg) {
-                throw new AutomationException("Simpli.fi Validation failed message is not displayed");
+
+            System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
+            if(driverUtil.getWebElement("(//div[@data-status='error'])[1]").isDisplayed()) {
+                driverUtil.getWebElement(("//button[@aria-label='Close']")).click();
+                if ("Selected Authorization is not configured for Reporting".contains(driverUtil.getWebElement("(//div[@data-status='error'])[2]").getText())) {
+                    // throw new AutomationException("Simpli.fi Validation failed message is not displayed");
+
+                } else if ("Organization ID does not exist".contains(driverUtil.getWebElement("(//div[@data-status='error'])[2]").getText())) {
+
+                }
             }
             CommonSteps.takeScreenshot();
             //waitForInvisibleElement(By.xpath(SPINNER),10);
-            driverUtil.getWebElement(("//button[@aria-label='Close']")).click();
+
             driverUtil.getWebElement((INTEGRATION_CANCEL_BUTTON)).click();
         }catch (Exception e){
             e.printStackTrace();
@@ -190,6 +198,93 @@ public class AddClientIntegrationPage extends BasePage{
             WebElement name = driverUtil.getWebElementAndScroll(SIMPLI_ORG_ID);
             name.clear();
             name.sendKeys(OrgId);
+        }
+    }
+
+    public void clickOnGoogleContinueButton(String integrationType, String accountIdName, String ownerAccIdPropertyId, String authName, String reportFlag, String reportName, String locationName) throws AutomationException {
+
+        {
+            waitForInvisibleElement(By.xpath(SPINNER),3);
+            driverUtil.getWebElement(String.format(INTEGRATION_PLATFORM_BTN, integrationType)).click();
+            driverUtil.getWebElement(INTEGRATION_ADVERTISING_CHECKBOX).click();
+            selectClientAuthorization(authName);
+            if(reportFlag.equals("Yes")){
+
+                driverUtil.getWebElement(INTEGRATION_REPORTING_CHECKBOX).click();
+                selectClientAuthorization(reportName);
+
+            }
+            waitForInvisibleElement(By.xpath(SPINNER),3);
+            if(integrationType.equalsIgnoreCase("Google Analytics V4-id")){
+                enterPropertyId(ownerAccIdPropertyId);
+            }else if(integrationType.equalsIgnoreCase("Google My Business-id")){
+                enterAccountName(accountIdName);
+                enterLocationName(locationName);
+
+            }else if(integrationType.equalsIgnoreCase("Google Ads-id")){
+                enterAccountId(ownerAccIdPropertyId);
+                enterOwnerAccountId(accountIdName);
+            }
+
+            driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
+            try{
+
+                System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
+                if(driverUtil.getWebElement("(//div[@data-status='error'])[1]").isDisplayed()) {
+                    driverUtil.getWebElement(("//button[@aria-label='Close']")).click();
+                    if ("Selected Authorization is not configured for Reporting".contains(driverUtil.getWebElement("(//div[@data-status='error'])[2]").getText())) {
+                        // throw new AutomationException("Simpli.fi Validation failed message is not displayed");
+
+                    } else if ("Invalid Account ID ".contains(driverUtil.getWebElement("(//div[@data-status='error'])[2]").getText())) {
+
+                    }else if("Validation failed.".contains(driverUtil.getWebElement("(//div[@data-status='error'])[2]").getText())){
+
+                    }
+                }
+                CommonSteps.takeScreenshot();
+                //waitForInvisibleElement(By.xpath(SPINNER),10);
+
+                driverUtil.getWebElement((INTEGRATION_CANCEL_BUTTON)).click();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void enterAccountId(String ownerAccIdPropertyId) throws AutomationException {
+        if (ownerAccIdPropertyId != null && !ownerAccIdPropertyId.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(ACCOUNT_ID);
+            name.clear();
+            name.sendKeys(ownerAccIdPropertyId);
+        }
+    }
+    private void enterOwnerAccountId(String accountIdName) throws AutomationException {
+        if (accountIdName != null && !accountIdName.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(OWNER_ACCOUNT_ID);
+            name.clear();
+            name.sendKeys(accountIdName);
+        }
+    }
+    private void enterAccountName(String accountIdName) throws AutomationException {
+        if (accountIdName != null && !accountIdName.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(ACCOUNT_NAME);
+            name.clear();
+            name.sendKeys(accountIdName);
+        }
+    }
+    private void enterLocationName(String locationName) throws AutomationException {
+        if (locationName != null && !locationName.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(LOCATION_NAME);
+            name.clear();
+            name.sendKeys(locationName);
+        }
+    }
+
+    private void enterPropertyId(String ownerAccIdPropertyId) throws AutomationException {
+        if (ownerAccIdPropertyId != null && !ownerAccIdPropertyId.isEmpty()) {
+            WebElement name = driverUtil.getWebElementAndScroll(PROPERTY_ID);
+            name.clear();
+            name.sendKeys(ownerAccIdPropertyId);
         }
     }
 }

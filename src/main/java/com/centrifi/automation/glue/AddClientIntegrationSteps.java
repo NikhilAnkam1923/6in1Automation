@@ -16,10 +16,10 @@ public class AddClientIntegrationSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("Enter the valid input from email platform {string} {string} {string} and click on connect button")
-    public void enterTheValidInputFromEmailPlatformAndClickOnConnectButton(String clientName, String reportName,String reportFlag) throws AutomationException {
-        CommonSteps.logInfo("Enter the valid input from email platform "+clientName, reportName+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnEmailContinueButton(clientName,reportName,reportFlag);
+    @Then("Enter the valid input from email platform {string} {string} {string} {string} and click on connect button")
+    public void enterTheValidInputFromEmailPlatformAndClickOnConnectButton(String clientName, String authName,String reportFlag, String reportName) throws AutomationException {
+        CommonSteps.logInfo("Enter the valid input from email platform "+clientName, authName+" and click on connect button");
+        PageFactory.addClientIntegrationPage().clickOnEmailContinueButton(clientName,authName,reportFlag,reportName);
         CommonSteps.takeScreenshot();
     }
 
@@ -30,18 +30,26 @@ public class AddClientIntegrationSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("Enter the valid input from facebook platform {string} {string} {string} {string} and click on connect button")
-    public void ClickOnConnectButtonFacebookPlatform(String acctId, String pageId, String authId,String reportFlag) throws AutomationException {
-        CommonSteps.logInfo("Enter the valid input from facebook platform "+acctId,pageId,authId,reportFlag+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnFaceBookContinueButton(acctId,pageId,authId,reportFlag);
+    @Then("Enter the valid input from facebook platform {string} {string} {string} {string} {string} and click on connect button")
+    public void ClickOnConnectButtonFacebookPlatform(String acctId, String pageId, String authId,String reportFlag, String reportName) throws AutomationException {
+        CommonSteps.logInfo("Enter the valid input from facebook platform "+acctId,pageId,authId,reportFlag,reportName+" and click on connect button");
+        PageFactory.addClientIntegrationPage().clickOnFaceBookContinueButton(acctId,pageId,authId,reportFlag,reportName);
         CommonSteps.takeScreenshot();
 
     }
 
-    @Then("Enter the valid input from Simpli platform {string} {string} {string} and click on connect button")
-    public void enterTheValidInputFromSimpliPlatformAndClickOnConnectButton(String OrgId, String reportName, String reportFlag) throws AutomationException {
+    @Then("Enter the valid input from Simpli platform {string} {string} {string} {string} and click on connect button")
+    public void enterTheValidInputFromSimpliPlatformAndClickOnConnectButton(String OrgId, String authName, String reportFlag , String reportName) throws AutomationException {
         CommonSteps.logInfo("Enter the valid input from Simpli platform "+OrgId, reportName+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnSimpliContinueButton(OrgId,reportName,reportFlag);
+        PageFactory.addClientIntegrationPage().clickOnSimpliContinueButton(OrgId,authName,reportFlag,reportName);
         CommonSteps.takeScreenshot();
+    }
+
+    @Then("Enter the valid input from google platform {string} {string} {string} {string} {string} {string} {string} and click on connect button")
+    public void enterTheValidInputFromGooglePlatform(String integrationType, String accountId_Name, String ownerAccId_PropertyId, String authName, String ReportFlag, String ReportName, String LocationName) throws AutomationException {
+        CommonSteps.logInfo("Enter the valid input from google platform "+integrationType, accountId_Name,ownerAccId_PropertyId,LocationName+" and click on connect button");
+        PageFactory.addClientIntegrationPage().clickOnGoogleContinueButton(integrationType,accountId_Name,ownerAccId_PropertyId,authName,ReportFlag,ReportName,LocationName);
+        CommonSteps.takeScreenshot();
+
     }
 }
