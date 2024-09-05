@@ -134,16 +134,21 @@ public class TestRailUtility {
             headersMap.put(AUTHORIZATION, authToken);
             LinkedHashMap<String, Object> queryParam = new LinkedHashMap<>();
             queryParam.put("/api/v2/add_case/" + sectionID, "");
-            StringBuilder steps = new StringBuilder("{\"content\":\"");
+            /*StringBuilder steps = new StringBuilder("{\"content\":\"");
             for (int i = 0; i < testSteps.size(); i++) {
                 String step = testSteps.get(i).replaceAll("\"","'");
                 if (i == testSteps.size() - 1) steps.append(step).append("\"}");
                 else steps.append(step).append("\"},{\"content\":\"");
+            }*/
+            StringBuilder steps = new StringBuilder(0);
+            for (int i = 0; i < testSteps.size(); i++) {
+                String step = testSteps.get(i).replaceAll("\"","'");
+                steps.append((i+1)+". "+step+"\\n");
             }
             reportLogger.log(Level.INFO,"Creating new test case -  " + testcaseTitle);
             reportLogger.log(Level.INFO,"####################################################################");
             //String requestBody = "{\"title\":\"" + testcaseTitle + "\",\"type_id\":1,\"priority_id\":3,\"custom_test_status\":3,\"custom_automation_status\":3,\"custom_steps_separated\":[" + steps + "]}";
-            String requestBody = "{\"title\":\"" + testcaseTitle + "\",\"type_id\":1,\"priority_id\":3,\"custom_steps_separated\":[" + steps + "]}";
+            String requestBody = "{\"title\":\"" + testcaseTitle + "\",\"type_id\":1,\"priority_id\":3,\"custom_test_status\":3,\"custom_automation_status\":3,\"custom_steps\":\"" + steps + "\"}";
             reportLogger.log(Level.INFO,"Request Body -  " + requestBody);
             String response = postRequest("", headersMap, queryParam, requestBody, 200);
             reportLogger.log(Level.INFO,"Response -  " + response);
