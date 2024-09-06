@@ -1,47 +1,93 @@
 package com.centrifi.automation.util;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 
 public class CommonUtil {
+    public CommonUtil() {
+    }
 
     public static int getIntFromObject(Object obj) {
-        if(obj==null)
+        if (obj == null) {
             return 0;
-        int val = 0;
-        try {
-            val = Integer.parseInt(obj.toString());
-        } catch(Exception ex) {
-            //DO Nothing..
+        } else {
+            int val = 0;
+
+            try {
+                val = Integer.parseInt(obj.toString());
+            } catch (Exception var3) {
+            }
+
+            return val;
         }
-        return val;
     }
 
     public static String getUTF8String(String value) {
-        /*try {
+        try {
             byte[] byteArray = value.getBytes();
-            byte[] utf8ByteArray = new String(byteArray, "ISO-8859-1").getBytes("UTF-8");
+            byte[] utf8ByteArray = (new String(byteArray, "ISO-8859-1")).getBytes("UTF-8");
             value = new String(utf8ByteArray);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }*/
+        } catch (Exception var3) {
+            var3.printStackTrace();
+        }
+
         return value;
     }
 
     public static String getIOSString(String value) {
         try {
             byte[] byteArray = value.getBytes();
-            byte[] utf8ByteArray = new String(byteArray, "UTF-8").getBytes("ISO-8859-1");
+            byte[] utf8ByteArray = (new String(byteArray, "UTF-8")).getBytes("ISO-8859-1");
             value = new String(utf8ByteArray);
-        } catch(Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception var3) {
+            var3.printStackTrace();
         }
+
         return value;
     }
 
-    public static void main(String[] arg) {
-        //System.out.println(getUTF8String("Use 2 atomizaciones (1 mg) en cada fosa nasal a la hora de dormir"));
-        //System.out.println(getIOSString("Aplique vÃ\u00ADa tÃ³pica to the affected area segÃºn sea necesario"));
+    public static String processString(String key) {
+        if (key != null && !key.isEmpty()) {
+            String value = null;
+            if (!key.contains("Today's Date") && !key.contains("Current Date")) {
+                if (key.contains("$timestamp")) {
+                    value = key.replace("$timestamp", Long.toString(System.currentTimeMillis()));
+                } else if (key.contains("$uuid")) {
+                    value = key.replace("$uuid", UUID.randomUUID().toString());
+                } else if (key.startsWith("@")) {
+                    value = DataCache.readVariable(key) != null ? DataCache.readVariable(key) : key;
+                } else if (key.startsWith("$")) {
+                    value = System.getProperty(key.substring(1));
+                } else {
+                    value = System.getProperty(key) != null ? System.getProperty(key) : key;
+                }
+            } else {
+                value = currentDate("MM/dd/yyyy");
+            }
 
+            return value == null ? key : value;
+        } else {
+            return key;
+        }
     }
 
+    public static String currentDate(String formatStr) {
+        Date date = new Date();
+        DateFormat formatter = new SimpleDateFormat(formatStr);
+        formatter.setTimeZone(TimeZone.getTimeZone("EST"));
+        return formatter.format(date);
+    }
+
+    public static String[] getStringToStringArray(String values) {
+        if (values.startsWith("[") && values.endsWith("]")) {
+            values = values.replaceAll(", ", ",");
+            values = values.substring(1, values.length() - 1);
+        }
+
+        return values.split(",");
+    }
 }

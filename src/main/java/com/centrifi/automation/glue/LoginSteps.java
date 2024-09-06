@@ -4,6 +4,7 @@ import com.aspose.pdf.Page;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.LoginPage;
 import com.centrifi.automation.pages.PageFactory;
+import com.centrifi.automation.util.CommonUtil;
 import com.centrifi.automation.util.PropertyReader;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -33,9 +34,8 @@ public class LoginSteps {
     @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
     public static void userLoginToCentrifi(String userEmail, String password) throws AutomationException {
         PageFactory.loginPage().doLogoutFromCentrifiIfAlreadyLoggedIn();
-        String env = PropertyReader.getEnv();
-        userEmail = System.getProperty(env + "." + userEmail.substring(1, userEmail.length()));
-        password = System.getProperty(env + "." + password.substring(1, password.length()));
+        userEmail = CommonUtil.processString(userEmail);
+        password = CommonUtil.processString(password);
         CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
         PageFactory.loginPage().loginToCentriFi(userEmail, password);
     }
