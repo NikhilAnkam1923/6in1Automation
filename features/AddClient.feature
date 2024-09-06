@@ -5,14 +5,13 @@ Feature: Centrifi CRUD operation functionality
   Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     When user go to application "$centrifi_url"
-
+    Then user login using "adityaghosh@benchmarkit.solutions" and "Aditya@27"
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
-    Then user click on new client button
-    Then user verify add client page
+    Given user verify home page
+    When user click on new client button
+    And user verify add client page
     Then user enter below detail to add new client
       | FieldName             | Value                   |
       | Client Name           | <Client Name>           |
@@ -26,10 +25,9 @@ Feature: Centrifi CRUD operation functionality
       | Tags                  | <Tags>                  |
     And user clicks the Save button to add a new client and verify success message
 
-
     Examples:
-      | user email                        | password  | Client Name | Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              |
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | Noah Root   | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
+      | Client Name | Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              |
+      | Noah Root   | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
 
   @Smoke
   Scenario Outline: Validate the functionality for updating a client
@@ -54,7 +52,6 @@ Feature: Centrifi CRUD operation functionality
     Examples:
       | Primary Contact Name |
       | Elizabeth Smith      |
-
 
   @Setup
   Scenario: SETUP: Close Browser

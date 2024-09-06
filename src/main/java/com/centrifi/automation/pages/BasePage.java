@@ -169,7 +169,7 @@ public abstract class BasePage {
     }
 
     public void clickOnSideBarMenuItem(String item)throws AutomationException{
-        driverUtil.getWebElement(String.format(MENU_ITEM,item)).click();
+        driverUtil.getWebElementAndScroll(String.format(MENU_ITEM,item), WAIT_30_SECOND, "Unable to locate Menu!").click();
         waitForInvisibleElement(By.xpath(SPINNER));
 
     }
