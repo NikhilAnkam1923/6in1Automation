@@ -9,7 +9,7 @@ Feature: Centrifi Login Feature
   Scenario Outline: User verify login with valid credentials
     Given user go to application "$centrifi_url"
     Then user verify login page ui attributes
-    And user login using "<useremail>" and "<password>"
+    And user login using "adityaghosh@benchmarkit.solutions" and "Aditya@27"
     Then user verify home page
     And user logged out from the application
     Examples:
@@ -18,7 +18,7 @@ Feature: Centrifi Login Feature
 
   @Smoke
   Scenario Outline: User tries to log in with invalid credentials
-    And user login using "<useremail>" and "<password>"
+    And user login using "adityaghosh@benchmarkit.solutions" and "Aditya@27"
     Then user verify "<error-message>" for invalid credentials
     And user logged out from the application
     Examples:

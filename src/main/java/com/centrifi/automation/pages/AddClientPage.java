@@ -303,15 +303,15 @@ public class AddClientPage extends BasePage {
         }
         String successMSG1 = String.format(SUCCESS_MSG, cName);
         System.out.println("successMSG1:"+successMSG1);
-        //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+
         boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
-        //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+
         if (!isSuccessMSG1 ) {
             throw new AutomationException("Client Update save message is not displayed");
         }
         CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(successMSG1));
-       // waitForInvisibleElement(By.xpath(successMSG2));
+
     }
 
     @Override
