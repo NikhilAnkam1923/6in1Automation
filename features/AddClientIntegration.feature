@@ -7,39 +7,36 @@ Feature: Centrifi CRUD operation functionality
   Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     When user go to application "$centrifi_url"
-
+    Then user login using "$username" and "$password"
 
 
   @Smoke
   Scenario Outline: Validate the functionality for Email platform should be integrated with integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on client button
     Then user Select one of the clients from the list "<Client Name>" and click on integration button
     Then Enter the valid input from email platform "<ClientName>" "<authName>" "<ReportFlag>" "<ReportName>" and click on connect button
 
     Examples:
-      | user email                        | password  | Client Name               | ClientName        | authName  | ReportFlag | ReportName|
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 22_aug_new_client_update  | Tests           | e-mail OMS  | No        | ReportName   |
+      | Client Name               | ClientName        | authName  | ReportFlag | ReportName|
+      | 22_aug_new_client_update  | Tests           | e-mail OMS  | No        | ReportName   |
 
 
 
   @Smoke
   Scenario Outline: Validate the functionality for Facebook platform should be integrated with integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on client button
     Then user Select one of the clients from the list "<Client Name>" and click on integration button
     Then Enter the valid input from facebook platform "<AccountId>" "<PageId>" "<AuthorizationId>" "<ReportFlag>" "<ReportName>" and click on connect button
 
     Examples:
-      | user email                        | password  | Client Name               | AccountId                  | PageId           | AuthorizationId | ReportFlag   | ReportName|
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 22_aug_new_client_update  | act_1122918478935848       | 328785513661717  |  Facebook_5474  | Yes           | Facebook  |
+      | Client Name               | AccountId                  | PageId           | AuthorizationId | ReportFlag   | ReportName|
+      | 22_aug_new_client_update  | act_1122918478935848       | 328785513661717  |  Facebook_5474  | Yes           | Facebook  |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client and integrate new with Email platform in integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on new client button
     Then user verify add client page
     Then user enter below detail to add new client
@@ -58,13 +55,12 @@ Feature: Centrifi CRUD operation functionality
     Then Enter the valid input from email platform "<ClientName>" "<authName>" "<ReportFlag>" "<ReportName>" and click on connect button
 
     Examples:
-      | user email                        | password  | Client Name               | ClientName        | authName    | ReportName | ReportFlag  |  Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              |
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 04_sep_new_client_integrate  | Tests          | e-mail OMS  | ReportName |No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
+      | Client Name               | ClientName        | authName    | ReportName | ReportFlag  |  Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              |
+      | 04_sep_new_client_integrate  | Tests          | e-mail OMS  | ReportName |No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client and integrate new with facebook platform in integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on new client button
     Then user verify add client page
     Then user enter below detail to add new client
@@ -83,53 +79,44 @@ Feature: Centrifi CRUD operation functionality
     Then Enter the valid input from facebook platform "<AccountId>" "<PageId>" "<AuthorizationId>" "<ReportFlag>" "<ReportName>" and click on connect button
 
     Examples:
-      | user email                        | password  | Client Name                  | AccountId               | PageId  |AuthorizationId| ReportFlag  |  Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              | ReportName|
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 04_sep_new_client_integrate  | act_1122918478935848   | 328785513661717  |Facebook_5474| No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535   | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing | Facebook  |
-
-
-
+      | Client Name                  | AccountId               | PageId  |AuthorizationId| ReportFlag  |  Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              | ReportName|
+      | 04_sep_new_client_integrate  | act_1122918478935848   | 328785513661717  |Facebook_5474| No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535   | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing | Facebook  |
 
   @Smoke
   Scenario Outline: Validate the functionality for Simpli platform should be integrated with integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on client button
     Then user Select one of the clients from the list "<Client Name>" and click on integration button
     Then Enter the valid input from Simpli platform "<OrgId>" "<authName>" "<ReportFlag>" "<ReportName>" and click on connect button
 
     Examples:
-      | user email                        | password  | Client Name               | OrgId             | authName      | ReportFlag | ReportName|
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 04_sep_new_client_integrate  | 12345          | Simpli.fi 22  | Yes         | Simpli.fi_stage |
+      | Client Name               | OrgId             | authName      | ReportFlag | ReportName|
+      | 04_sep_new_client_integrate  | 12345          | Simpli.fi 22  | Yes         | Simpli.fi_stage |
 
   @Smoke
   Scenario Outline: Validate the functionality for Google platform should be integrated with integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on client button
     Then user Select one of the clients from the list "<Client Name>" and click on integration button
     Then Enter the valid input from google platform "<Integration_Type>" "<AccountId_Name>" "<OwnerAccId_PropertyId>" "<authName>" "<ReportFlag>" "<ReportName>" "<LocationName>" and click on connect button
 
     Examples:
-      | user email                        | password  | Client Name                  | OwnerAccId_PropertyId  | AccountId_Name  | authName      | ReportFlag  | ReportName      | Integration_Type        | LocationName |
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 04_sep_new_client_integrate  | 12345                  | 123456          | Google 5445  | No          | Simpli.fi_stage | Google Analytics V4-id  | Bangalore    |
-      #| adityaghosh@benchmarkit.solutions | Aditya@27 | 04_sep_new_client_integrate  | 12345                 | 123456          | Google 5445  | Yes         | Simpli.fi_stage | Google My Business-id  | Bangalore    |
-      #| adityaghosh@benchmarkit.solutions | Aditya@27 | 04_sep_new_client_integrate  | 12345                 | 123456          | Google 5445  | Yes         | Simpli.fi_stage | Google Ads-id           | Bangalore    |
-
+      | Client Name                  | OwnerAccId_PropertyId  | AccountId_Name  | authName      | ReportFlag  | ReportName      | Integration_Type        | LocationName |
+      | 04_sep_new_client_integrate  | 12345                  | 123456          | Google 5445  | No          | Simpli.fi_stage | Google Analytics V4-id  | Bangalore    |
 
   @Smoke
   Scenario Outline: Validate the functionality for Email platform should be unlink with integration tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on client button
     Then user Select one of the clients from the list "<Client Name>" and click on integration button
     Then user click on "<PlatformName>" disconnect button and verify connected platform removed successfully or not
 
 
     Examples:
-      | user email                        | password  | Client Name               | PlatformName       |
-      | adityaghosh@benchmarkit.solutions | Aditya@27 | 22_aug_new_client_update  | Email              |
-    #  | adityaghosh@benchmarkit.solutions | Aditya@27 | 22_aug_new_client_update  | Facebook Ads        |
-    #  | adityaghosh@benchmarkit.solutions | Aditya@27 | 22_aug_new_client_update  | Simpli.Fi        |
+      | Client Name               | PlatformName       |
+      | 22_aug_new_client_update  | Email              |
+    #  | 22_aug_new_client_update  | Facebook Ads        |
+    #  | 22_aug_new_client_update  | Simpli.Fi        |
 
 
   @Setup

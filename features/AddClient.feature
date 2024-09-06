@@ -5,7 +5,7 @@ Feature: Centrifi CRUD operation functionality
   Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     When user go to application "$centrifi_url"
-    Then user login using "adityaghosh@benchmarkit.solutions" and "Aditya@27"
+    Then user login using "$username" and "$password"
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client
