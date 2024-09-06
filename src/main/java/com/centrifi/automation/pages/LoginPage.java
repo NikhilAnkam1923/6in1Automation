@@ -56,11 +56,11 @@ public class LoginPage extends BasePage {
         driverUtil.getWebElement("//li[@class='menBut']//a[contains(text(),'Log In')]").click();
     }
 
-    public void loginToCentriFi(String userEmail, String password) throws AutomationException {
+    public void loginToCentrifi(String userEmail, String password) throws AutomationException {
         enterUserEmail(userEmail);
         enterPassword(password);
         clickLoginButton();
-        WebDriverUtil.waitForAWhile(3);
+        WebDriverUtil.waitForAWhile(5);
     }
 
     public void enterUserEmail(String userEmail) throws AutomationException {
@@ -99,7 +99,7 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFromCentrifiIfAlreadyLoggedIn() throws AutomationException {
-        if ((driverUtil.getWebElement(USER_MENU, 3) != null)) {
+        if ((driverUtil.getWebElement(USER_MENU, 5) != null)) {
             driverUtil.getWebElement(USER_MENU).click();
             driverUtil.getWebElement(LOGOUT_BUTTON).click();
         }

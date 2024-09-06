@@ -32,7 +32,7 @@ public class WebDriverUtil {
     public static final int WAIT_2_SEC = 2;
     public static final int WAIT_3_SEC = 3;
     public static final int WAIT_5_SEC = 5;
-    public static final int DEFAULT_ELEMENT_WAIT = 10;
+    public static final int DEFAULT_ELEMENT_WAIT = 30;
     public static final int MAX_ELEMENT_WAIT = 60;
     public static final int MAX_WAIT_120 = 120;
 

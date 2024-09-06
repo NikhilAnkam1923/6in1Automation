@@ -22,8 +22,8 @@ Feature: Centrifi Login Feature
     Then user verify "<error-message>" for invalid credentials
     And user logged out from the application
     Examples:
-      | useremail                           | password  | error-message       |
-      | adityaghosh@bencashmarkit.solutions | Aditya@27 | invalid credentials |
+      | useremail                           | password  | error-message                 |
+      | adityaghosh@bencashmarkit.solutions | Aditya@27 | Invalid username or password. |
 
   @Setup
   Scenario: SETUP: Close Browser

@@ -37,7 +37,7 @@ public class LoginSteps {
         userEmail = CommonUtil.processString(userEmail);
         password = CommonUtil.processString(password);
         CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
-        PageFactory.loginPage().loginToCentriFi(userEmail, password);
+        PageFactory.loginPage().loginToCentrifi(userEmail, password);
     }
 
     @Given("user verify login page ui attributes")
