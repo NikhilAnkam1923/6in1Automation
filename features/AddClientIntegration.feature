@@ -19,7 +19,7 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name               | ClientName        | authName  | ReportFlag | ReportName|
-      | 22_aug_new_client_update  | Tests           | e-mail OMS  | No        | ReportName   |
+      | 9_Aug_2024_Client_update  | Tests           | e-mail OMS  | No        | ReportName   |
 
 
 
@@ -32,7 +32,7 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name               | AccountId                  | PageId           | AuthorizationId | ReportFlag   | ReportName|
-      | 22_aug_new_client_update  | act_1122918478935848       | 328785513661717  |  Facebook_5474  | No           | Facebook  |
+      | 9_Aug_2024_Client_update  | act_1122918478935848       | 328785513661717  |  Facebook_5474  | No           | Facebook  |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client and integrate new with Email platform in integration tab
@@ -56,7 +56,7 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name               | ClientName        | authName    | ReportName | ReportFlag  |  Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              |
-      | 04_sep_new_client_integrate  | Tests          | e-mail OMS  | ReportName |No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
+      | 06_sep_new_Email_client_integrate  | Tests          | e-mail OMS  | ReportName |No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535        | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client and integrate new with facebook platform in integration tab
@@ -80,7 +80,7 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name                  | AccountId               | PageId  |AuthorizationId| ReportFlag  |  Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website                | Tags              | ReportName|
-      | 04_sep_new_client_integrate  | act_1122918478935848   | 328785513661717  |Facebook_5474| No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535   | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing | Facebook  |
+      | 06_sep_new_client_integrate  | act_1122918478935848   | 328785513661717  |Facebook_5474| No          | Elizabeth Smith      | Elizabeth.Smith@example.com | (876) 545-3535   | Agent                 | Sports          | Organisation B | http://www.example.com | Digital marketing | Facebook  |
 
   @Smoke
   Scenario Outline: Validate the functionality for Simpli platform should be integrated with integration tab
@@ -114,8 +114,8 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name               | PlatformName       |
-     # | 22_aug_new_client_update  | Email              |
-      | 22_aug_new_client_update  | Facebook Ads              |
+      | 9_Aug_2024_Client_update  | Email              |
+      | 9_Aug_2024_Client_update  | Facebook Ads       |
     #  | 22_aug_new_client_update  | Facebook Ads        |
     #  | 22_aug_new_client_update  | Simpli.Fi        |
 

@@ -45,7 +45,7 @@ Feature: Centrifi CRUD operation functionality
     Then user click on "<Report Name>" report button and verify user should be redirected to the report page
     Examples:
       | Client Name               | Report Name            |
-      | 22_aug_new_client_update  | Google Ads             |
+      | 22_aug_new_client_update  | Facebook Ads             |
 
 
   @Setup

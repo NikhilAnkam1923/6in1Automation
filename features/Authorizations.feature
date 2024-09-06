@@ -31,6 +31,7 @@ Feature: Centrifi CRUD operation functionality
     Examples:
       | platFormName  | name            |
       | Facebook      | Facebook_Stage_12 |
+      | Google      | GoogleHK_123 |
 
 
   @Smoke

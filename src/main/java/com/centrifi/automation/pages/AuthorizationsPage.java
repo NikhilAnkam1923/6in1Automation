@@ -107,10 +107,7 @@ public class AuthorizationsPage extends BasePage{
 
 
     public void clickOnDeleteAuthorizationRecord(String platformName,String name) throws AutomationException {
-       // driverUtil.getWebElementAndScroll(ROW_NO);
-       // Select select=new Select(driverUtil.getWebElement(DROP_DOWN));
-        //select.selectByValue("50");
-        //driverUtil.getWebElementAndScrollUp();
+
         waitForInvisibleElement(By.xpath(SPINNER),3);
         List<WebElement> noOfRows =driverUtil.getWebElements("//tbody/tr");
 
@@ -129,11 +126,7 @@ public class AuthorizationsPage extends BasePage{
                         driverUtil.getWebElement(DELETE_NO_BUTTON).click();
                         break;
                     }catch (Exception e){
-                        //driverUtil.getWebElementAndScroll("//tbody/tr["+rowCount+"]/td[2]/div/p");
-                        // driverUtil.getWebElementAndScroll("//tbody//tr["+rowCount+"]//td[6]//button[2]");
-                        //driverUtil.scrollTo("//tbody//tr["+rowCount+"]//td[6]//button[2]");
-                        // driverUtil.getWebElementAndScroll("//tbody//tr["+rowCount+"]//td[6]//button[2]").click();
-                       // driverUtil.getWebElement("//tbody//tr["+rowCount+"]//td[6]//button[2]").click();
+                        
                         driverUtil.getWebElementAndScroll(ROW_NO);
                         driverUtil.getWebElement(AUTH_NEXT_PAGE).click();
                         clickOnDeleteAuthorizationRecord(platformName, name);
