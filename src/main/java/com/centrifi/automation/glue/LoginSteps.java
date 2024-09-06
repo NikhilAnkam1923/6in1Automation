@@ -31,8 +31,8 @@ public class LoginSteps {
     }
 
     @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
-    public static void userLoginToCentriFi(String userEmail, String password) throws AutomationException {
-
+    public static void userLoginToCentrifi(String userEmail, String password) throws AutomationException {
+        PageFactory.loginPage().doLogoutFromCentrifiIfAlreadyLoggedIn();
         String env = PropertyReader.getEnv();
         userEmail = System.getProperty(env + "." + userEmail.substring(1, userEmail.length()));
         password = System.getProperty(env + "." + password.substring(1, password.length()));

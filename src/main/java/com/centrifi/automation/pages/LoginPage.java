@@ -60,6 +60,7 @@ public class LoginPage extends BasePage {
         enterUserEmail(userEmail);
         enterPassword(password);
         clickLoginButton();
+        WebDriverUtil.waitForAWhile(3);
     }
 
     public void enterUserEmail(String userEmail) throws AutomationException {
@@ -88,18 +89,17 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
-
         driverUtil.getWebElement(USER_MENU);
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
-        driverUtil.getWebElementAndScroll(USER_MENU,1).click();
+        driverUtil.getWebElementAndScroll(USER_MENU).click();
         driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
 
     public void doLogoutFromCentrifiIfAlreadyLoggedIn() throws AutomationException {
-        if ((driverUtil.getWebElement(USER_MENU, 2) != null)) {
+        if ((driverUtil.getWebElement(USER_MENU, 3) != null)) {
             driverUtil.getWebElement(USER_MENU).click();
             driverUtil.getWebElement(LOGOUT_BUTTON).click();
         }

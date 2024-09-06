@@ -9,23 +9,21 @@ Feature: Centrifi Login Feature
   Scenario Outline: User verify login with valid credentials
     Given user go to application "$centrifi_url"
     Then user verify login page ui attributes
-    And user login using "<user email>" and "<password>"
+    And user login using "<useremail>" and "<password>"
     Then user verify home page
     And user logged out from the application
     Examples:
-      | user email                        | password  |
+      | useremail                        | password  |
       | adityaghosh@benchmarkit.solutions | Aditya@27 |
-
 
   @Smoke
   Scenario Outline: User tries to log in with invalid credentials
-    And user login using "<user email>" and "<password>"
-    Then user verify "<error message>" for invalid credentials
+    And user login using "<useremail>" and "<password>"
+    Then user verify "<error-message>" for invalid credentials
     And user logged out from the application
     Examples:
-      | user email                          | password  | error message       |
+      | useremail                           | password  | error-message       |
       | adityaghosh@bencashmarkit.solutions | Aditya@27 | invalid credentials |
-
 
   @Setup
   Scenario: SETUP: Close Browser

@@ -3,6 +3,7 @@ package com.centrifi.automation.pages;
 import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
+import com.centrifi.automation.util.WebDriverUtil;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -135,21 +136,15 @@ public class AddClientPage extends BasePage {
         System.out.println("primaryContactName"+primaryContactName);
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
-       // String clientName="//*[text()='$s']";
-
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElementAndScroll(String.format(CLINT, primaryContactName)).click();
-
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(CLINT_CONTACT_BUTTON).click();
-
-       // driverUtil.getWebElementAndScroll(CLINT_CONTACT_BUTTON).click();
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(ADD_CONTACT_BUTTON).click();
         cName = clientDetails.get("Contact First Name").trim()+" "+clientDetails.get("Contact Last Name").trim();
-        System.out.println("clientName:"+cName);
         enterContactFirstName(clientDetails.get("Contact First Name").trim());
-        enterContactLasttName(clientDetails.get("Contact Last Name").trim());
+        enterContactLastName(clientDetails.get("Contact Last Name").trim());
         enterContactEmail(clientDetails.get("Contact Email").trim());
         selectClientContactTitle(clientDetails.get("Contact Title").trim());
         enterContactAddress(clientDetails.get("Contact Address"));
@@ -228,6 +223,8 @@ public class AddClientPage extends BasePage {
             actions.scrollToElement(saveBTN).perform();
             saveBTN.click();
         }
+        WebDriverUtil.waitForAWhile();
+        CommonSteps.takeScreenshot();
         String successMSG1 = String.format(SUCCESS_MSG_1, cName);
         String successMSG2 = String.format(SUCCESS_MSG_2, contact);
         boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
@@ -235,7 +232,6 @@ public class AddClientPage extends BasePage {
         if (!isSuccessMSG1 && !isSuccessMSG2) {
             throw new AutomationException("Client save message is not displayed");
         }
-        CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(successMSG1));
         waitForInvisibleElement(By.xpath(successMSG2));
     }
@@ -248,12 +244,12 @@ public class AddClientPage extends BasePage {
         driverUtil.moveToElementAndClick(deleteIcon);
         waitForVisibleElement(By.xpath(ALERT));
         driverUtil.getWebElementAndScroll(DEACTIVATE_BUTTON).click();
-        WebElement w = driverUtil.getWebElementAndScroll("//div[contains(text(),'Client successfully deactivated')]");
-        boolean successMSG1 = w.isDisplayed();
-        if (!successMSG1) {
-            throw new AutomationException("Client deactivated message is not displayed");
-        }
+        WebDriverUtil.waitForAWhile();
         CommonSteps.takeScreenshot();
+        WebElement successMessage = driverUtil.getWebElementAndScroll("//div[contains(text(),'Client successfully deactivated')]");
+        if (successMessage==null) {
+            throw new AutomationException("Client deactivated Failed!");
+        }
         waitForInvisibleElement(By.xpath("//div[contains(text(),'Client successfully deactivated')]"));
     }
 
@@ -264,7 +260,7 @@ public class AddClientPage extends BasePage {
             name.sendKeys(firstName);
         }
     }
-    public void enterContactLasttName(String lastName) throws AutomationException {
+    public void enterContactLastName(String lastName) throws AutomationException {
         if (lastName != null && !lastName.isEmpty()) {
             WebElement name = driverUtil.getWebElementAndScroll(CONTACT_LAST_NAME);
             name.clear();

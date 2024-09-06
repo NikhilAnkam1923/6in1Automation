@@ -40,7 +40,6 @@ Feature: Centrifi CRUD operation functionality
       | Website              | <Website>              |
       | Tags                 | <Tags>                 |
     And user clicks the Save button and verify updated successfully message
-
     Examples:
       | Client Name | Primary Contact Name | Business Sector | Organization   | Website | Tags    |
       | Emily smith | Elizabeth Smith      | Technology      | Test 5225 12/8 |         | Digital |
@@ -48,7 +47,6 @@ Feature: Centrifi CRUD operation functionality
   @Smoke
   Scenario Outline: Validate the functionality for deleting a client
     Then user deactivating record with client name "<Primary Contact Name>"
-
     Examples:
       | Primary Contact Name |
       | Elizabeth Smith      |

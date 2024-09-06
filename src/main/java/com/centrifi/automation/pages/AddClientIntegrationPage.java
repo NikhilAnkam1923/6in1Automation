@@ -138,9 +138,6 @@ public class AddClientIntegrationPage extends BasePage{
         }
         CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(successMSG1));
-
-
-
     }
 
     public void clickOnFaceBookContinueButton( String acctId, String pageId, String authId,String reportFlag,String reportName) throws AutomationException {
