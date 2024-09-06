@@ -57,6 +57,17 @@ public class WebDriverUtil {
         return getWebElementAndScroll(locator, DEFAULT_ELEMENT_WAIT);
     }
 
+    public void getWebElementAndScrollUp() throws AutomationException {
+        if (DriverFactory.drivers.get() == null){
+            throw new AutomationException("Driver is not initialized!");
+        }else{
+            JavascriptExecutor jse = (JavascriptExecutor)DriverFactory.drivers.get();
+             jse.executeScript("scroll(0, -250);");;
+        }
+
+
+    }
+
     public WebElement getWebElementWithoutWait(String locator) throws AutomationException {
         return getWebElement(locator, NO_WAIT);
     }

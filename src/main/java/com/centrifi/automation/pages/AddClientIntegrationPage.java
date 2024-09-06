@@ -36,6 +36,8 @@ public class AddClientIntegrationPage extends BasePage{
     private static final String LOCATION_NAME="//input[@name='location_name']";
     private static final String ACCOUNT_NAME="//input[@name='account_name']";
     private static final String PROPERTY_ID = "//input[@name='property_id'] ";
+    private static final String DISSCONNECT_MSG="//div[contains(text(),'%s platform de-authorized successfully')]";
+    private static final String CONNECT_MSG="//div[contains(text(),'%s integration authorized successfully')]";
 
 
     public void clickOnIntegrationButton(String clientName) throws AutomationException {
@@ -79,6 +81,17 @@ public class AddClientIntegrationPage extends BasePage{
 
         enterClientName(clientName);
         driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
+        String successMSG1 = String.format(CONNECT_MSG, "Email");
+        System.out.println("successMSG1:"+successMSG1);
+        //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+        //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 ) {
+            throw new AutomationException("Client Update save message is not displayed");
+        }
+        CommonSteps.takeScreenshot();
+        waitForInvisibleElement(By.xpath(successMSG1));
+
         try{
 
             System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
@@ -115,6 +128,19 @@ public class AddClientIntegrationPage extends BasePage{
         CommonSteps.takeScreenshot();
         driverUtil.getWebElement(INTEGRATION_DISCONNECT,3).click();
 
+        String successMSG1 = String.format(DISSCONNECT_MSG, platFromName);
+        System.out.println("successMSG1:"+successMSG1);
+        //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+        //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 ) {
+            throw new AutomationException("Client Update save message is not displayed");
+        }
+        CommonSteps.takeScreenshot();
+        waitForInvisibleElement(By.xpath(successMSG1));
+
+
+
     }
 
     public void clickOnFaceBookContinueButton( String acctId, String pageId, String authId,String reportFlag,String reportName) throws AutomationException {
@@ -140,6 +166,16 @@ public class AddClientIntegrationPage extends BasePage{
         select.selectByValue(pageId);
 
         driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
+        String successMSG1 = String.format(CONNECT_MSG, "Facebook Ads");
+        System.out.println("successMSG1:"+successMSG1);
+        //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+        //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 ) {
+            throw new AutomationException("Client Update save message is not displayed");
+        }
+        CommonSteps.takeScreenshot();
+        waitForInvisibleElement(By.xpath(successMSG1));
         try{
 
             System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
@@ -173,6 +209,17 @@ public class AddClientIntegrationPage extends BasePage{
 
         enterOrgId(OrgId);
         driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
+
+        String successMSG1 = String.format(CONNECT_MSG, "Simpli.Fi");
+        System.out.println("successMSG1:"+successMSG1);
+        //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+        //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 ) {
+            throw new AutomationException("Client Update save message is not displayed");
+        }
+        CommonSteps.takeScreenshot();
+        waitForInvisibleElement(By.xpath(successMSG1));
         try{
 
             System.out.println("error message:"+driverUtil.getWebElement("(//div[@data-status='error'])[1]").getText());
@@ -215,16 +262,31 @@ public class AddClientIntegrationPage extends BasePage{
 
             }
             waitForInvisibleElement(By.xpath(SPINNER),3);
+            String platformName="";
             if(integrationType.equalsIgnoreCase("Google Analytics V4-id")){
                 enterPropertyId(ownerAccIdPropertyId);
+                platformName="Google Analytics V4";
             }else if(integrationType.equalsIgnoreCase("Google My Business-id")){
                 enterAccountName(accountIdName);
                 enterLocationName(locationName);
+                platformName="Google My Business";
 
             }else if(integrationType.equalsIgnoreCase("Google Ads-id")){
                 enterAccountId(ownerAccIdPropertyId);
                 enterOwnerAccountId(accountIdName);
+                platformName="Google Ads";
             }
+
+            String successMSG1 = String.format(CONNECT_MSG, platformName);
+            System.out.println("successMSG1:"+successMSG1);
+            //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+            boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
+            //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+            if (!isSuccessMSG1 ) {
+                throw new AutomationException("Client Update save message is not displayed");
+            }
+            CommonSteps.takeScreenshot();
+            waitForInvisibleElement(By.xpath(successMSG1));
 
             driverUtil.getWebElement((INTEGRATION_CONNECT_BUTTON)).click();
             try{

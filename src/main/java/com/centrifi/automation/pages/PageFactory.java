@@ -6,6 +6,7 @@ public class PageFactory {
     private AddClientPage addClientPage;
     private AuthorizationsPage authorizationsPage;
     private AddClientIntegrationPage addClientIntegrationPage;
+    private CampaignPage campaignPage;
 
     private PageFactory() {
 
@@ -13,6 +14,7 @@ public class PageFactory {
         addClientPage = new AddClientPage();
         authorizationsPage=new AuthorizationsPage();
         addClientIntegrationPage=new AddClientIntegrationPage();
+        campaignPage=new CampaignPage();
     }
 
     public static void init() {
@@ -34,5 +36,8 @@ public class PageFactory {
     }
     public static AddClientIntegrationPage addClientIntegrationPage() {
         return factory.get().addClientIntegrationPage;
+    }
+    public static CampaignPage campaignPage() {
+        return factory.get().campaignPage;
     }
 }

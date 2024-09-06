@@ -38,6 +38,7 @@ public class AddClientPage extends BasePage {
     private static final String SELECT_ORGANIZATION = "//div[@role='listbox']//div[text()='%s']";
     private static final String TAG_INPUT = "//input[@id='tags']";
     private static final String SUCCESS_MSG_1 = "//div[contains(text(),'You successfully added the %s Client.')]";
+    private static final String SUCCESS_MSG = "//div[contains(text(),'You successfully updated the %s contact')]";
     private static final String SUCCESS_MSG_2 = "//div[contains(text(),'You successfully added the %s contact')]";
     private static final String UPDATE_SUCCESS_MSG = "//div[contains(text(),'You successfully updated the %s Client.')]";
     private static final String SEARCH_INPUT = "//input[@type='text' and contains(@placeholder, 'Search')]";
@@ -135,7 +136,7 @@ public class AddClientPage extends BasePage {
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
        // String clientName="//*[text()='$s']";
-        System.out.println("clientName:"+String.format(CLINT, primaryContactName));
+
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElementAndScroll(String.format(CLINT, primaryContactName)).click();
 
@@ -145,7 +146,8 @@ public class AddClientPage extends BasePage {
        // driverUtil.getWebElementAndScroll(CLINT_CONTACT_BUTTON).click();
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(ADD_CONTACT_BUTTON).click();
-        cName = clientDetails.get("Contact First Name").trim();
+        cName = clientDetails.get("Contact First Name").trim()+" "+clientDetails.get("Contact Last Name").trim();
+        System.out.println("clientName:"+cName);
         enterContactFirstName(clientDetails.get("Contact First Name").trim());
         enterContactLasttName(clientDetails.get("Contact Last Name").trim());
         enterContactEmail(clientDetails.get("Contact Email").trim());
@@ -303,16 +305,17 @@ public class AddClientPage extends BasePage {
             actions.scrollToElement(saveBTN).perform();
             saveBTN.click();
         }
-        String successMSG1 = String.format(SUCCESS_MSG_1, cName);
-        String successMSG2 = String.format(SUCCESS_MSG_2, contact);
+        String successMSG1 = String.format(SUCCESS_MSG, cName);
+        System.out.println("successMSG1:"+successMSG1);
+        //String successMSG2 = String.format(SUCCESS_MSG_2, contact);
         boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
-        boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
-        if (!isSuccessMSG1 && !isSuccessMSG2) {
-            throw new AutomationException("Client save message is not displayed");
+        //boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
+        if (!isSuccessMSG1 ) {
+            throw new AutomationException("Client Update save message is not displayed");
         }
         CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(successMSG1));
-        waitForInvisibleElement(By.xpath(successMSG2));
+       // waitForInvisibleElement(By.xpath(successMSG2));
     }
 
     @Override

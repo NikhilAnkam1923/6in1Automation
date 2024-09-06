@@ -1,6 +1,7 @@
 package com.centrifi.automation.pages;
 
 import com.centrifi.automation.exception.AutomationException;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -25,13 +26,17 @@ public class AuthorizationsPage extends BasePage{
     private static final String FACEBOOK_RECONNECT_BUTTON="//div[text()='Reconnect']";
     private static final String FACEBOOK_USERNAME="//input[@name='email']";
     private static final String FACEBOOK_PASSWORD="//input[@name='pass']";
+    private static final String EMAIL_USERNAME="//input[@name='email']";
+    private static final String EMAIL_PASSWORD="//input[@name='pass']";
+    private static final String OMS_KEY="//input[@name='oms']";
+    private static final String ECS_KEY="//input[@name='ecs']";
     private static final String GOOGLE_USERNAME="//input[@name='identifier']";
     private static final String GOOGLE_USERNAME_NEXT="//span[text()='Next']";
     private static final String GOOGLE_PASSWORD="//input[@name='Passwd']";
     private static final String GOOGLE_CHECKBOX="//input[@id='i1']";
     private static final String GOOGLE_CONTINUE="//span[text()='Continue']";
     private static final String PLATFORM_NAME="//input[@name='name']";
-
+    private static final String SIMPLI_USER_KEY="//input[@name='user_key']";
     private static final String FACEBOOK_LOGIN="//button[@name='login']";
     private static final String SPINNER = "//div[contains(@class,'chakra-spinner')]";
     private static final String ROW_NO="//p[text()='Rows per page:']";
@@ -53,9 +58,13 @@ public class AuthorizationsPage extends BasePage{
         driverUtil.getWebElement(AUTH_FACEBOOK_BUTTON).click();
     }
 
-    public void clickOnContinueWithFacebook() throws AutomationException {
+    public void clickOnContinueWithFacebook(String name,String reportFlag) throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
-        driverUtil.getWebElement(AUTH_REPORTING_CHECKBOX).click();
+        enterPlatformName(name);
+        if(reportFlag.equalsIgnoreCase("Yes")){
+            driverUtil.getWebElement(AUTH_REPORTING_CHECKBOX).click();
+        }
+
         driverUtil.getWebElement(AUTH_ADVERTISING_CHECKBOX).click();
         driverUtil.getWebElement(CONTINUE_WITH_BUTTON).click();
     }
@@ -65,6 +74,21 @@ public class AuthorizationsPage extends BasePage{
         WebElement userNameInput = driverUtil.getWebElement(FACEBOOK_USERNAME);
         if (userNameInput != null) {
             WebElement passwordInput = driverUtil.getWebElement(FACEBOOK_PASSWORD);
+            WebElement login = driverUtil.getWebElement(FACEBOOK_LOGIN);
+            userNameInput.clear();
+            userNameInput.sendKeys(userName);
+            passwordInput.clear();
+            passwordInput.sendKeys(passWord);
+            login.click();
+            driverUtil.waitForLoadingPage();
+        }
+    }
+
+    public void clickOnLoginWithEmail(String userName, String passWord) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        WebElement userNameInput = driverUtil.getWebElement(EMAIL_USERNAME);
+        if (userNameInput != null) {
+            WebElement passwordInput = driverUtil.getWebElement(EMAIL_PASSWORD);
             WebElement login = driverUtil.getWebElement(FACEBOOK_LOGIN);
             userNameInput.clear();
             userNameInput.sendKeys(userName);
@@ -89,7 +113,7 @@ public class AuthorizationsPage extends BasePage{
         //driverUtil.getWebElementAndScrollUp();
         waitForInvisibleElement(By.xpath(SPINNER),3);
         List<WebElement> noOfRows =driverUtil.getWebElements("//tbody/tr");
-        System.out.println("size:"+noOfRows.size());
+
         int rowCount=1;
         for(int i=0;i<noOfRows.size();i++){
             List < WebElement > Columns_row = noOfRows.get(i).findElements(By.tagName("td"));
@@ -113,9 +137,10 @@ public class AuthorizationsPage extends BasePage{
                         driverUtil.getWebElementAndScroll(ROW_NO);
                         driverUtil.getWebElement(AUTH_NEXT_PAGE).click();
                         clickOnDeleteAuthorizationRecord(platformName, name);
+                        break;
 
                     }
-                    break;
+
                }
             }
             rowCount++;
@@ -142,7 +167,7 @@ public class AuthorizationsPage extends BasePage{
         }
     }
 
-    public void clickOnllOptionOnConnect() throws AutomationException {
+    public void clickOnAllOptionOnConnect() throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
         try{
             driverUtil.getWebElement(GOOGLE_CHECKBOX).click();
@@ -151,13 +176,97 @@ public class AuthorizationsPage extends BasePage{
             driverUtil.getWebElement(GOOGLE_CONTINUE).click();
         }
 
+        //waitForInvisibleElement(By.xpath(SPINNER),3);
+    }
+    public void enterPlatformName(String name) throws AutomationException {
+        WebElement nameInput = driverUtil.getWebElement(PLATFORM_NAME);
+        if (nameInput != null) {
+            nameInput.clear();
+            nameInput.sendKeys(name);
+        }
+
+    }
+    public void clickOnContinueWithGoogle() throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
+
+        driverUtil.getWebElement(AUTH_GOOGLE_BUTTON).click();
     }
 
-    public void clickOnContinueWithGoogle(String name) throws AutomationException {
+    public void clickOnContinueWithEmail(String name,String ecsKey, String omsKey, String reportFlag) throws AutomationException {
+
         waitForInvisibleElement(By.xpath(SPINNER),3);
-        driverUtil.getWebElement(PLATFORM_NAME).clear();
-        driverUtil.getWebElement(PLATFORM_NAME).sendKeys(name);
-        driverUtil.getWebElement(AUTH_GOOGLE_BUTTON).click();
+        enterPlatformName(name);
+        driverUtil.getWebElement(AUTH_ADVERTISING_CHECKBOX).click();
+        enterOmsKey(ecsKey);
+        if(reportFlag.equalsIgnoreCase("Yes")){
+            driverUtil.getWebElement(AUTH_REPORTING_CHECKBOX).click();
+            enterEcsKey(omsKey);
+
+        }
+        driverUtil.getWebElement(CONTINUE_WITH_BUTTON).click();
+    }
+
+    private void enterEcsKey(String ecsKey) throws AutomationException {
+
+        WebElement ecsKeyInput = driverUtil.getWebElement(ECS_KEY);
+        if (ecsKeyInput != null) {
+            ecsKeyInput.clear();
+            ecsKeyInput.sendKeys(ecsKey);
+        }
+    }
+
+    private void enterOmsKey(String omsKey) throws AutomationException {
+
+        WebElement omsKeyInput = driverUtil.getWebElement(OMS_KEY);
+        if (omsKeyInput != null) {
+            omsKeyInput.clear();
+            omsKeyInput.sendKeys(omsKey);
+        }
+    }
+
+    public void clickOnEmailButton() throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+
+        driverUtil.getWebElement(AUTH_EMAIL_BUTTON).click();
+    }
+    public void clickOnSimpliButton() throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+
+        driverUtil.getWebElement(AUTH_SIMPLI_BUTTON).click();
+    }
+
+    public void clickOnContinueWithSimpliButton(String name, String userKey, String reportFlag) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        enterPlatformName(name);
+        driverUtil.getWebElement(AUTH_ADVERTISING_CHECKBOX).click();
+
+        if(reportFlag.equalsIgnoreCase("Yes")){
+            driverUtil.getWebElement(AUTH_REPORTING_CHECKBOX).click();
+        }
+        enterUserKey(userKey);
+        driverUtil.getWebElement(CONTINUE_WITH_BUTTON).click();
+    }
+
+    private void enterUserKey(String userKey) throws AutomationException {
+        WebElement userKeyInput = driverUtil.getWebElement(SIMPLI_USER_KEY);
+        if (userKeyInput != null) {
+            userKeyInput.clear();
+            userKeyInput.sendKeys(userKey);
+        }
+    }
+
+    public void clickOnLoginSimpliButton(String userName, String passWord) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        WebElement userNameInput = driverUtil.getWebElement(EMAIL_USERNAME);
+        if (userNameInput != null) {
+            WebElement passwordInput = driverUtil.getWebElement(EMAIL_PASSWORD);
+            WebElement login = driverUtil.getWebElement(FACEBOOK_LOGIN);
+            userNameInput.clear();
+            userNameInput.sendKeys(userName);
+            passwordInput.clear();
+            passwordInput.sendKeys(passWord);
+            login.click();
+            driverUtil.waitForLoadingPage();
+        }
     }
 }

@@ -32,7 +32,7 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name               | AccountId                  | PageId           | AuthorizationId | ReportFlag   | ReportName|
-      | 22_aug_new_client_update  | act_1122918478935848       | 328785513661717  |  Facebook_5474  | Yes           | Facebook  |
+      | 22_aug_new_client_update  | act_1122918478935848       | 328785513661717  |  Facebook_5474  | No           | Facebook  |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client and integrate new with Email platform in integration tab
@@ -114,7 +114,8 @@ Feature: Centrifi CRUD operation functionality
 
     Examples:
       | Client Name               | PlatformName       |
-      | 22_aug_new_client_update  | Email              |
+     # | 22_aug_new_client_update  | Email              |
+      | 22_aug_new_client_update  | Facebook Ads              |
     #  | 22_aug_new_client_update  | Facebook Ads        |
     #  | 22_aug_new_client_update  | Simpli.Fi        |
 

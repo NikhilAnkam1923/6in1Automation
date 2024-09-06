@@ -23,7 +23,7 @@ Feature: Centrifi CRUD operation functionality
     And user clicks the create contact button to add a new client contact and verify success message
     Examples:
       | Client Name               | Contact First Name | Contact Last Name       | Contact Phone  | Contact Title | Contact Email          | Contact Address   |
-      | 22_aug_new_client_update  | macro              | milo1                   | (876) 545-3535 | Agent          | Sports@msti.com       |    #45 ABC        |
+      | 22_aug_new_client_update  | Test              | Hk1                   | (876) 545-3535 | Agent          | Sports@msti.com       |    #45 ABC        |
 
 
 

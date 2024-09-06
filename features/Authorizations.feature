@@ -12,12 +12,12 @@ Feature: Centrifi CRUD operation functionality
     Given user verify home page
     Then user click on authorization button
     Then user click on facebook button
-    Then user select the permissions and click continue with facebook
+    Then user select the permissions and click continue with facebook "<name>" "<REPORT_FLAG>"
     Then user login using "<user email>" and "<password>" with facebook
     Then user click on Connect or Reconnect button verify the page
     Examples:
-      | user email                        | password  |
-      | adityaghosh@benchmarkit.solutions | Aditya@27 |
+      | user email                        | password  | REPORT_FLAG | name  |
+      | adityaghosh@benchmarkit.solutions | Aditya@27 | No          | FB_ HK |
 
 
 
@@ -37,15 +37,48 @@ Feature: Centrifi CRUD operation functionality
   Scenario Outline: Validate the functionality for Google platform connected with Authorization tab
     Given user verify home page
     Then user click on authorization button
-    Then user click on google button "<name>"
-    Then user select the permissions and click continue with facebook
+    Then user click on google button
+    Then user select the permissions and click continue with facebook "<name>" "<REPORT_FLAG>"
     Then user login using "<google email>" and "<google password>" with google
     Then user click all option on Connect or Reconnect button verify the page
 
 
     Examples:
-      | google email                    | google password | name   |
-      | hemannac@benchmarkit.solutions  | hem2023$$       | HK_123 |
+
+      | google email                    | google password | name   | REPORT_FLAG|
+      | hemannac@benchmarkit.solutions  | hem2023$$       | HK_123 | No         |
+
+  @Smoke
+  Scenario Outline: Validate the functionality for Email platform connected with Authorization tab
+    Then user login using "<user email>" and "<password>"
+    When user verify home page
+    Then user click on authorization button
+    Then user click on email button
+    Then user select the permissions and click continue with Email "<name>" "<ecsKey>" "<omsKey>" "<ReportFlag>"
+    Then user login using "<user email>" and "<password>" with Email
+    Then user click on Connect or Reconnect button verify the page
+
+
+    Examples:
+      | user email                        | password  | ecsKey | omsKey | ReportFlag | name     |
+      | adityaghosh@benchmarkit.solutions | Aditya@27 | Test123 | Test234 | No          | HK_SIMP  |
+
+  @Smoke
+  Scenario Outline: Validate the functionality for Simpli platform connected with Authorization tab
+    Then user login using "<user email>" and "<password>"
+    When user verify home page
+    Then user click on authorization button
+    Then user click on Simpli button
+    Then user select the permissions and click continue with Simpli "<name>" "<UserKey>" "<ReportFlag>"
+    Then user login using "<user email>" and "<password>" with Simpli
+    Then user click on Connect or Reconnect button verify the page
+
+
+    Examples:
+      | user email                        | password  | UserKey |  ReportFlag | name     |
+      | adityaghosh@benchmarkit.solutions | Aditya@27 | Test123 |  No          | HK_SIMP  |
+
+
 
   @Setup
   Scenario: SETUP: Close Browser

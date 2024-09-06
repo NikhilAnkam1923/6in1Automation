@@ -23,10 +23,10 @@ public class AuthorizationsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user select the permissions and click continue with facebook")
-    public void userSelectThePermissionsAndClickContinueWithFacebook() throws AutomationException {
+    @Then("user select the permissions and click continue with facebook {string} {string}")
+    public void userSelectThePermissionsAndClickContinueWithFacebook(String name,String reportFlag) throws AutomationException {
         CommonSteps.logInfo("user select the permissions and click continue with facebook");
-        PageFactory.authorizationsPage().clickOnContinueWithFacebook();
+        PageFactory.authorizationsPage().clickOnContinueWithFacebook(name,reportFlag);
         CommonSteps.takeScreenshot();
     }
 
@@ -61,16 +61,57 @@ public class AuthorizationsSteps {
     @Then("user click all option on Connect or Reconnect button verify the page")
     public void userClickAllOptionOnConnectOrReconnectButtonVerifyThePage() throws AutomationException {
         CommonSteps.logInfo("user click all option on Connect or Reconnect button verify the page");
-        PageFactory.authorizationsPage().clickOnllOptionOnConnect();
+        PageFactory.authorizationsPage().clickOnAllOptionOnConnect();
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user click on google button {string}")
-    public void userSelectThePermissionsAndClickContinueWithGoogle(String name) throws AutomationException {
-        CommonSteps.logInfo("user click on google button:"+name);
-        PageFactory.authorizationsPage().clickOnContinueWithGoogle(name);
+    @Then("user click on google button")
+    public void userSelectThePermissionsAndClickContinueWithGoogle() throws AutomationException {
+        CommonSteps.logInfo("user click on google button:");
+        PageFactory.authorizationsPage().clickOnContinueWithGoogle();
         CommonSteps.takeScreenshot();
     }
 
 
+    @Then("user login using {string} and {string} with Email")
+    public void userLoginUsingAndWithEmail(String userName, String password) throws AutomationException {
+        CommonSteps.logInfo("user login using {string} and {string} with facebook");
+        PageFactory.authorizationsPage().clickOnLoginWithEmail(userName,password);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user select the permissions and click continue with Email {string} {string} {string} {string}")
+    public void userSelectThePermissionsAndClickContinueWithEmail(String name, String ecs_Key, String oms_Key, String reportFlag) throws AutomationException {
+        CommonSteps.logInfo("user select the permissions and click continue with Email");
+        PageFactory.authorizationsPage().clickOnContinueWithEmail(name,ecs_Key,oms_Key,reportFlag);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user click on email button")
+    public void userClickOnEmailButton() throws AutomationException {
+        CommonSteps.logInfo("user click on email button:");
+        PageFactory.authorizationsPage().clickOnEmailButton();
+        CommonSteps.takeScreenshot();
+    }
+    @Then("user click on Simpli button")
+    public void userClickOnSimpliButton() throws AutomationException {
+        CommonSteps.logInfo("user click on Simpli button:");
+        PageFactory.authorizationsPage().clickOnSimpliButton();
+        CommonSteps.takeScreenshot();
+    }
+
+
+    @Then("user select the permissions and click continue with Simpli {string} {string} {string}")
+    public void userSelectThePermissionsAndClickContinueWithSimpli(String name, String userKey, String reportFlag) throws AutomationException {
+        CommonSteps.logInfo("user select the permissions and click continue with Simpli :");
+        PageFactory.authorizationsPage().clickOnContinueWithSimpliButton(name,userKey,reportFlag);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user login using {string} and {string} with Simpli")
+    public void userLoginUsingAndWithSimpli(String userName, String passWord) throws AutomationException {
+        CommonSteps.logInfo("user login using {string} and {string} with Simpli:");
+        PageFactory.authorizationsPage().clickOnLoginSimpliButton(userName,passWord);
+        CommonSteps.takeScreenshot();
+    }
 }
