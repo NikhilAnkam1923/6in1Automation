@@ -13,7 +13,7 @@ Feature: Centrifi Login Feature
     Then user verify home page
     And user logged out from the application
     Examples:
-      | useremail                        | password  |
+      | useremail                         | password  |
       | adityaghosh@benchmarkit.solutions | Aditya@27 |
 
   @Smoke
