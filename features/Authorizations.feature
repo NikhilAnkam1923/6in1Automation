@@ -70,5 +70,5 @@ Feature: Centrifi CRUD operation functionality
 
   @Setup
   Scenario: SETUP: Close Browser
-    When user logged out from the application
+    #When user logged out from the application
     Then User close browser

@@ -1,9 +1,13 @@
 package com.centrifi.automation.pages;
 
+import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.util.WebDriverUtil;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+
+import java.sql.Driver;
 import java.util.logging.Logger;
 
 public class LoginPage extends BasePage {
@@ -85,6 +89,7 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
+        DriverFactory.drivers.get().navigate().refresh();
         driverUtil.getWebElementAndScroll(USER_MENU).click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();

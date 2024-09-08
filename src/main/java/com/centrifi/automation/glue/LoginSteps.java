@@ -43,7 +43,6 @@ public class LoginSteps {
     public void userVerifyHomePage() throws AutomationException {
         CommonSteps.logInfo("User verify home page ");
         PageFactory.loginPage().verifyHomePage();
-        CommonSteps.takeScreenshot();
     }
 
     @Given("user logged out from the application")
