@@ -83,6 +83,7 @@ public class AddClientPage extends BasePage {
 
     public void enterDetails(DataTable clientData) throws AutomationException {
         clientDetails = readData(clientData);
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         cName = clientDetails.get("Client Name").trim();
         enterClientName(cName);
         contact = clientDetails.get("Primary Contact Name").trim();

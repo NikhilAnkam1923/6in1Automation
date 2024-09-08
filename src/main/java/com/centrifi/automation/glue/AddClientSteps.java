@@ -24,7 +24,7 @@ public class AddClientSteps {
 
     @When("user enter below detail to add new client")
     public void userEnterBelowDetails(DataTable clientData) throws AutomationException {
-        CommonSteps.logInfo("User enter detail to add new client " + clientData.toString());
+        CommonSteps.logInfo("User enter detail to add new client");
         PageFactory.addClientPage().enterDetails(clientData);
         CommonSteps.takeScreenshot();
     }
