@@ -26,8 +26,6 @@ Feature: Centrifi CRUD operation functionality
     Given user verify home page
     Then user click on authorization button
     Then user click on "<platFormName>" platform ande delete the record "<name>"
-
-
     Examples:
       | platFormName  | name            |
       | Facebook      | Facebook_Stage_12 |
@@ -42,44 +40,33 @@ Feature: Centrifi CRUD operation functionality
     Then user select the permissions and click continue with facebook "<name>" "<REPORT_FLAG>"
     Then user login using "<google email>" and "<google password>" with google
     Then user click all option on Connect or Reconnect button verify the page
-
-
     Examples:
-
       | google email                    | google password | name   | REPORT_FLAG|
       | hemannac@benchmarkit.solutions  | hem2023$$       | HK_123 | No         |
 
   @Smoke
   Scenario Outline: Validate the functionality for Email platform connected with Authorization tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
+    Given user verify home page
     Then user click on authorization button
     Then user click on email button
     Then user select the permissions and click continue with Email "<name>" "<ecsKey>" "<omsKey>" "<ReportFlag>"
     Then user login using "<user email>" and "<password>" with Email
     Then user click on Connect or Reconnect button verify the page
-
-
     Examples:
       | user email                        | password  | ecsKey | omsKey | ReportFlag | name     |
       | adityaghosh@benchmarkit.solutions | Aditya@27 | Test123 | Test234 | No          | HK_SIMP  |
 
   @Smoke
   Scenario Outline: Validate the functionality for Simpli platform connected with Authorization tab
-    Then user login using "<user email>" and "<password>"
-    When user verify home page
-    Then user click on authorization button
-    Then user click on Simpli button
-    Then user select the permissions and click continue with Simpli "<name>" "<UserKey>" "<ReportFlag>"
+    Given user verify home page
+    When user click on authorization button
+    And user click on Simpli button
+    And user select the permissions and click continue with Simpli "<name>" "<UserKey>" "<ReportFlag>"
     Then user login using "<user email>" and "<password>" with Simpli
     Then user click on Connect or Reconnect button verify the page
-
-
     Examples:
       | user email                        | password  | UserKey |  ReportFlag | name     |
       | adityaghosh@benchmarkit.solutions | Aditya@27 | Test123 |  No          | HK_SIMP  |
-
-
 
   @Setup
   Scenario: SETUP: Close Browser
