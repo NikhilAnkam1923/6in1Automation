@@ -1,8 +1,8 @@
 package com.centrifi.automation.glue;
 
-
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.PageFactory;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 
@@ -55,4 +55,51 @@ public class AddClientSteps {
 
     }
 
+    @When("user search and add the client contact record with below details")
+    public void userSearchAndCreateContactRecord(DataTable clientDetails) throws AutomationException {
+        CommonSteps.logInfo("user search and add the client contact record with below details " + clientDetails.toString());
+        PageFactory.addClientPage().createClientContactDetails(clientDetails);
+        CommonSteps.takeScreenshot();
+    }
+    @When("user clicks the create contact button to add a new client contact and verify success message")
+    public void userClickOnCreateContactToSaveRecord() throws AutomationException {
+        CommonSteps.logInfo("user clicks the create contact button to add a new client contact and verify success message");
+        PageFactory.addClientPage().clickOnCreateContactButtonToSaveRecord();
+    }
+
+    @Then("user click on client button")
+    public void userClickOnClientButton() throws AutomationException {
+        CommonSteps.logInfo("user click on client button from navigation list");
+        PageFactory.addClientPage().clickOnClientButton();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user Select one of the clients from the list \"([^\"]*)\" and click on campaign button")
+    public void ClickOnCampaignButton(String clientName) throws AutomationException {
+        CommonSteps.logInfo("user Select one of the clients from the list "+clientName+" and click on campaign button");
+        PageFactory.addClientPage().clickOnCampaignButton(clientName);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user Select one of the Campaign  Name from the list {string} and verify user should be redirected to the campaign page")
+    public void SelectOneOfTheCampaignNameFromCampaignPage(String campaignName) throws AutomationException {
+        CommonSteps.logInfo("user Select one of the Campaign  Name from the list "+campaignName+" and verify user should be redirected to the campaign page");
+        PageFactory.addClientPage().clickOnCampaignNameAndVerifyCampaignPage(campaignName);
+        CommonSteps.takeScreenshot();
+
+    }
+
+    @Then("user Select one of the clients from the list {string} and click on report button")
+    public void userSelectOneOfTheClientsFromTheListAndClickOnReportButton(String clientName) throws AutomationException {
+        CommonSteps.logInfo("user Select one of the clients from the list"+clientName+" and click on campaign button");
+        PageFactory.addClientPage().clickOnReportButton(clientName);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user click on {string} report button and verify user should be redirected to the report page")
+    public void userClickOnReportButtonAndVerifyUserShouldBeRedirectedToTheReportPage(String reportName) throws AutomationException {
+        CommonSteps.logInfo("user click on "+reportName+" report button and verify user should be redirected to the report page");
+        PageFactory.addClientPage().clickOnReportAndVerifyReportPage(reportName);
+        CommonSteps.takeScreenshot();
+    }
 }

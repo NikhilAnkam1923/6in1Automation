@@ -6,14 +6,11 @@ import com.centrifi.automation.util.WebDriverUtil;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
-
 
 public abstract class BasePage {
     private static final Logger LOGGER = Logger.getLogger(BasePage.class.getName());
@@ -168,7 +165,7 @@ public abstract class BasePage {
     }
 
     public void clickOnSideBarMenuItem(String item)throws AutomationException{
-        driverUtil.getWebElement(String.format(MENU_ITEM,item)).click();
+        driverUtil.getWebElementAndScroll(String.format(MENU_ITEM,item), WAIT_30_SECOND, "Unable to locate Menu!").click();
         waitForInvisibleElement(By.xpath(SPINNER));
 
     }

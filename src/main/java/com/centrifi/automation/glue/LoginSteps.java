@@ -2,6 +2,7 @@ package com.centrifi.automation.glue;
 
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.PageFactory;
+import com.centrifi.automation.util.CommonUtil;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -24,9 +25,12 @@ public class LoginSteps {
     }
 
     @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
-    public static void userLoginToCentriFi(String userEmail, String password) throws AutomationException {
+    public static void userLoginToCentrifi(String userEmail, String password) throws AutomationException {
+        PageFactory.loginPage().doLogoutFromCentrifiIfAlreadyLoggedIn();
+        userEmail = CommonUtil.processString(userEmail);
+        password = CommonUtil.processString(password);
         CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
-        PageFactory.loginPage().loginToCentriFi(userEmail, password);
+        PageFactory.loginPage().loginToCentrifi(userEmail, password);
     }
 
     @Given("user verify login page ui attributes")
@@ -39,7 +43,6 @@ public class LoginSteps {
     public void userVerifyHomePage() throws AutomationException {
         CommonSteps.logInfo("User verify home page ");
         PageFactory.loginPage().verifyHomePage();
-        CommonSteps.takeScreenshot();
     }
 
     @Given("user logged out from the application")

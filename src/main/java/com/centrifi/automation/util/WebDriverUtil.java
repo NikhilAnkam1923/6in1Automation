@@ -32,10 +32,9 @@ public class WebDriverUtil {
     public static final int WAIT_2_SEC = 2;
     public static final int WAIT_3_SEC = 3;
     public static final int WAIT_5_SEC = 5;
-    public static final int DEFAULT_ELEMENT_WAIT = 10;
+    public static final int DEFAULT_ELEMENT_WAIT = 30;
     public static final int MAX_ELEMENT_WAIT = 60;
     public static final int MAX_WAIT_120 = 120;
-
     public static final int MAX_PAGE_LOADING_WAIT = 180;
     public static final String DEFAULT_PAGE_LOAD_TIMEOUT = "180";
     public static final String ADMIN_PORTAL_LOADING_INVISIBLE = "//div[@class='MuiBackdrop-root' and contains(@style,'hidden')]";
@@ -55,6 +54,17 @@ public class WebDriverUtil {
 
     public WebElement getWebElementAndScroll(String locator) throws AutomationException {
         return getWebElementAndScroll(locator, DEFAULT_ELEMENT_WAIT);
+    }
+
+    public void getWebElementAndScrollUp() throws AutomationException {
+        if (DriverFactory.drivers.get() == null){
+            throw new AutomationException("Driver is not initialized!");
+        }else{
+            JavascriptExecutor jse = (JavascriptExecutor)DriverFactory.drivers.get();
+             jse.executeScript("scroll(0, -250);");;
+        }
+
+
     }
 
     public WebElement getWebElementWithoutWait(String locator) throws AutomationException {

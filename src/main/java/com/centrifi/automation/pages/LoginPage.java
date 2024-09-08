@@ -1,9 +1,15 @@
 package com.centrifi.automation.pages;
 
 import com.centrifi.automation.exception.AutomationException;
+<<<<<<< HEAD
+=======
+import com.centrifi.automation.util.WebDriverUtil;
+import org.openqa.selenium.ElementClickInterceptedException;
+>>>>>>> test_Centrifi
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
+import java.sql.Driver;
 import java.util.logging.Logger;
 
 public class LoginPage extends BasePage {
@@ -48,10 +54,11 @@ public class LoginPage extends BasePage {
         driverUtil.getWebElement("//li[@class='menBut']//a[contains(text(),'Log In')]").click();
     }
 
-    public void loginToCentriFi(String userEmail, String password) throws AutomationException {
+    public void loginToCentrifi(String userEmail, String password) throws AutomationException {
         enterUserEmail(userEmail);
         enterPassword(password);
         clickLoginButton();
+        WebDriverUtil.waitForAWhile(5);
     }
 
     public void enterUserEmail(String userEmail) throws AutomationException {
@@ -80,19 +87,22 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
-
         driverUtil.getWebElement(USER_MENU);
     }
 
     public void doLogoutFromCentrifi() throws AutomationException {
-        driverUtil.getWebElementAndScroll(USER_MENU,1).click();
+        DriverFactory.drivers.get().navigate().refresh();
+        driverUtil.getWebElementAndScroll(USER_MENU).click();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
 
     public void doLogoutFromCentrifiIfAlreadyLoggedIn() throws AutomationException {
-        if ((driverUtil.getWebElement(USER_MENU, 2) != null)) {
+        if ((driverUtil.getWebElement(USER_MENU, 5) != null)) {
             driverUtil.getWebElement(USER_MENU).click();
+            WebDriverUtil.waitForAWhile();
             driverUtil.getWebElement(LOGOUT_BUTTON).click();
         }
     }
