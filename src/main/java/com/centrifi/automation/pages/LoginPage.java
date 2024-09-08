@@ -1,15 +1,10 @@
 package com.centrifi.automation.pages;
 
+import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
-<<<<<<< HEAD
-=======
 import com.centrifi.automation.util.WebDriverUtil;
-import org.openqa.selenium.ElementClickInterceptedException;
->>>>>>> test_Centrifi
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
-
-import java.sql.Driver;
 import java.util.logging.Logger;
 
 public class LoginPage extends BasePage {
