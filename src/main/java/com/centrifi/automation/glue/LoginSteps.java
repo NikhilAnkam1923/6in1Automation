@@ -1,18 +1,11 @@
 package com.centrifi.automation.glue;
 
-import com.aspose.pdf.Page;
 import com.centrifi.automation.exception.AutomationException;
-import com.centrifi.automation.pages.LoginPage;
 import com.centrifi.automation.pages.PageFactory;
 import com.centrifi.automation.util.CommonUtil;
-import com.centrifi.automation.util.PropertyReader;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.openqa.selenium.WebElement;
-
-import static com.centrifi.automation.glue.CommonSteps.driverUtil;
-import static com.centrifi.automation.glue.CommonSteps.takeScreenshot;
 
 public class LoginSteps {
     @Then("^User login with \"([^\"]*)\" and \"([^\"]*)\"$")

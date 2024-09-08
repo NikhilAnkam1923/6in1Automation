@@ -27,7 +27,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebDriver;
 import org.testng.SkipException;
 import runner.BaseRunner;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.Duration;

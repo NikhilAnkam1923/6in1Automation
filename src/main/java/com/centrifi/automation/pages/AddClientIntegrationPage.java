@@ -6,7 +6,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
-
 import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
 
 public class AddClientIntegrationPage extends BasePage{

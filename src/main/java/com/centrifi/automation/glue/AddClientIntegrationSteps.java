@@ -1,11 +1,8 @@
 package com.centrifi.automation.glue;
 
-
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.PageFactory;
 import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import io.cucumber.datatable.DataTable;
 
 public class AddClientIntegrationSteps {
 

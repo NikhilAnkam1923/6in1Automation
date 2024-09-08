@@ -4,7 +4,6 @@ import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
 
 public class CampaignPage extends BasePage{

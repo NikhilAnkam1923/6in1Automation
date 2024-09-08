@@ -6,14 +6,11 @@ import com.centrifi.automation.util.WebDriverUtil;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
-
 
 public abstract class BasePage {
     private static final Logger LOGGER = Logger.getLogger(BasePage.class.getName());

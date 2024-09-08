@@ -1,17 +1,10 @@
 package com.centrifi.automation.glue;
 
-
-import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.PageFactory;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
-import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
 
 public class AddClientSteps {
 
