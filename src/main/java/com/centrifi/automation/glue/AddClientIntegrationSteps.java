@@ -2,51 +2,79 @@ package com.centrifi.automation.glue;
 
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.PageFactory;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
+import io.cucumber.datatable.DataTable;
 
 public class AddClientIntegrationSteps {
 
-    @Then("user Select one of the clients from the list \"([^\"]*)\" and click on integration button")
-    public void ClickOnCampaignButton(String clientName) throws AutomationException {
-        CommonSteps.logInfo("user Select one of the clients from the list "+clientName+" and click on integration button");
-        PageFactory.addClientIntegrationPage().clickOnIntegrationButton(clientName);
+    @Then("user click on integration button")
+    public void ClickOnIntegrationButton() throws AutomationException {
+        CommonSteps.logInfo("user click on integration button");
+        PageFactory.addClientIntegrationPage().clickOnIntegrationButton();
+
+    }
+
+    @Then("user enter below details to connect email platform details")
+    public void enterTheValidInputFromEmailPlatformAndClickOnConnectButton(DataTable dataTable) throws AutomationException {
+        CommonSteps.logInfo("user enter below details to connect email platform details");
+        PageFactory.addClientIntegrationPage().enterTheEmailDetails(dataTable);
+        CommonSteps.takeScreenshot();
+    }
+    @And("click on Email connect button")
+    public void clickOnEmailConnectButton() throws AutomationException {
+        CommonSteps.logInfo("click on Email connect button");
+        PageFactory.addClientIntegrationPage().clickOnEmailContinueButton();
         CommonSteps.takeScreenshot();
     }
 
-    @Then("Enter the valid input from email platform {string} {string} {string} {string} and click on connect button")
-    public void enterTheValidInputFromEmailPlatformAndClickOnConnectButton(String clientName, String authName,String reportFlag, String reportName) throws AutomationException {
-        CommonSteps.logInfo("Enter the valid input from email platform "+clientName, authName+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnEmailContinueButton(clientName,authName,reportFlag,reportName);
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user click on {string} disconnect button and verify connected platform removed successfully or not")
+    @Then("^user click on \"([^\"]*)\" disconnect button and verify disconnected successfully Message$")
     public void userClickOnDisconnectButton(String platFromName) throws AutomationException {
-        CommonSteps.logInfo("user click on "+platFromName+" disconnect button and verify connected platform removed successfully or not");
+        CommonSteps.logInfo("user click on "+platFromName+" disconnect button and verify disconnected successfully Message");
         PageFactory.addClientIntegrationPage().userClickOnDisconnectButton(platFromName);
         CommonSteps.takeScreenshot();
     }
 
-    @Then("Enter the valid input from facebook platform {string} {string} {string} {string} {string} and click on connect button")
-    public void ClickOnConnectButtonFacebookPlatform(String acctId, String pageId, String authId,String reportFlag, String reportName) throws AutomationException {
-        CommonSteps.logInfo("Enter the valid input from facebook platform "+acctId,pageId,authId,reportFlag,reportName+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnFaceBookContinueButton(acctId,pageId,authId,reportFlag,reportName);
+    @Then("user enter below detail to connect to facebook")
+    public void ClickOnConnectButtonFacebookPlatform(DataTable faceBookDetails) throws AutomationException {
+        CommonSteps.logInfo("user enter below detail to connect to facebook");
+        PageFactory.addClientIntegrationPage().enterFaceBookDetails(faceBookDetails);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user enter below details to connect Simpli platform")
+    public void enterTheInputInputDetailstoConnectSimpliPlatform(DataTable simpliDetails) throws AutomationException {
+        CommonSteps.logInfo("user enter below details to connect Simpli platform");
+        PageFactory.addClientIntegrationPage().enterTheSimpliplatformDetails(simpliDetails);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user enter below details to connect google platform")
+    public void enterTheValidInputFromGooglePlatform(DataTable googleDetails) throws AutomationException {
+        CommonSteps.logInfo("user enter below details to connect google platform");
+        PageFactory.addClientIntegrationPage().clickOnGoogleContinueButton(googleDetails);
         CommonSteps.takeScreenshot();
 
     }
 
-    @Then("Enter the valid input from Simpli platform {string} {string} {string} {string} and click on connect button")
-    public void enterTheValidInputFromSimpliPlatformAndClickOnConnectButton(String OrgId, String authName, String reportFlag , String reportName) throws AutomationException {
-        CommonSteps.logInfo("Enter the valid input from Simpli platform "+OrgId, reportName+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnSimpliContinueButton(OrgId,authName,reportFlag,reportName);
+    @And("click on facebook connect button")
+    public void clickOnFacebookConnectButton() throws AutomationException {
+        CommonSteps.logInfo("click on Email connect button");
+        PageFactory.addClientIntegrationPage().clickOnFaceBookContinueButton();
         CommonSteps.takeScreenshot();
     }
 
-    @Then("Enter the valid input from google platform {string} {string} {string} {string} {string} {string} {string} and click on connect button")
-    public void enterTheValidInputFromGooglePlatform(String integrationType, String accountId_Name, String ownerAccId_PropertyId, String authName, String ReportFlag, String ReportName, String LocationName) throws AutomationException {
-        CommonSteps.logInfo("Enter the valid input from google platform "+integrationType, accountId_Name,ownerAccId_PropertyId,LocationName+" and click on connect button");
-        PageFactory.addClientIntegrationPage().clickOnGoogleContinueButton(integrationType,accountId_Name,ownerAccId_PropertyId,authName,ReportFlag,ReportName,LocationName);
+    @And("click on Simpli connect button")
+    public void clickOnSimpliConnectButton() throws AutomationException {
+        CommonSteps.logInfo("click on Simpli connect button");
+        PageFactory.addClientIntegrationPage().clickOnSimpliPlatform();
         CommonSteps.takeScreenshot();
+    }
 
+    @And("^click on google connect button$")
+    public void clickOnGoogleConnectButton() throws AutomationException {
+        CommonSteps.logInfo("click on google connect button");
+        PageFactory.addClientIntegrationPage().clickOnGooglePlatform();
+        CommonSteps.takeScreenshot();
     }
 }

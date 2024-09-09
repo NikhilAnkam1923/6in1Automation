@@ -45,6 +45,7 @@ public class AddClientPage extends BasePage {
     private static final String CLIENT_NAME = "//tbody//td//div[text()='%s']//preceding::td//div//a";
     private static final String EDIT_CLIENT_BTN = "//*[text()='Edit Client']//parent::button[@type='button']";
     private static final String DELETE_BUTTON = "//tbody//td//div[text()='%s']//following::td//div//button";
+    private static final String DELETE_CONTACT_BUTTON = "//tbody//td//div/p[text()='%s']//following::td//div//button";
     private static final String DEACTIVATE_BUTTON = "//button[text()='Deactivate']";
     private static final String ALERT = "//section[@role='alertdialog']";
     private static final String USER_MENU = "//header/button[contains(@class,'chakra-menu__menu-button')]";
@@ -99,6 +100,7 @@ public class AddClientPage extends BasePage {
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
         clientDetails = readData(clientData);
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         String primaryContactName = clientDetails.get("Primary Contact Name").trim();
         driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
@@ -128,6 +130,7 @@ public class AddClientPage extends BasePage {
 
     public void createClientContactDetails(DataTable clientData) throws AutomationException {
         clientDetails = readData(clientData);
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         clickOnSideBarMenuItem("Clients");
         waitForInvisibleElement(By.xpath(SPINNER),3);
         String primaryContactName = clientDetails.get("Client Name").trim();
@@ -291,14 +294,6 @@ public class AddClientPage extends BasePage {
     public void clickOnCreateContactButtonToSaveRecord() throws AutomationException {
         //driverUtil.getWebElementAndScroll(USER_MENU, 2);
         driverUtil.getWebElementAndScroll(CONTACT_CREATE_BUTTON, 2).click();
-        try {
-            driverUtil.getWebElementAndScroll(CONTACT_CONFIRM_BUTTON, 2).click();
-        } catch (Exception ae) {
-            WebElement saveBTN = driverUtil.getWebElementAndScroll(CONTACT_CONFIRM_BUTTON, 2);
-            Actions actions = new Actions(DriverFactory.drivers.get());
-            actions.scrollToElement(saveBTN).perform();
-            saveBTN.click();
-        }
         String successMSG1 = String.format(SUCCESS_MSG, cName);
         System.out.println("successMSG1:"+successMSG1);
 
@@ -329,14 +324,16 @@ public class AddClientPage extends BasePage {
         clickOnSideBarMenuItem("Clients");
     }
 
-    public void clickOnCampaignButton(String clientName) throws AutomationException {
+    public void selectTheClient(String clientName) throws AutomationException {
 
-        waitForInvisibleElement(By.xpath(SPINNER),3);
+        waitForInvisibleElement(By.xpath(SPINNER),10);
         driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(clientName);
-        // String clientName="//*[text()='$s']";
-        System.out.println("clientName:"+String.format(CLINT, clientName));
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElementAndScroll(String.format(CLINT, clientName)).click();
+
+    }
+
+    public void clickOnCampaignButton() throws AutomationException {
 
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(CONTACT_CAMPAIGN_BUTTON).click();
@@ -344,7 +341,7 @@ public class AddClientPage extends BasePage {
     }
 
 
-    public void clickOnCampaignNameAndVerifyCampaignPage(String campaignName) throws AutomationException {
+    public void selectCampaign(String campaignName) throws AutomationException {
 
         try {
             waitForInvisibleElement(By.xpath(SPINNER),3);
@@ -361,22 +358,34 @@ public class AddClientPage extends BasePage {
 
     }
 
-    public void clickOnReportButton(String clientName) throws AutomationException {
-        waitForInvisibleElement(By.xpath(SPINNER),3);
-        driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(clientName);
-        // String clientName="//*[text()='$s']";
-        System.out.println("clientName:"+String.format(CLINT, clientName));
-        waitForInvisibleElement(By.xpath(SPINNER),3);
-        driverUtil.getWebElementAndScroll(String.format(CLINT, clientName)).click();
-
+    public void clickOnReportButton() throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(CONTACT_REPORT_BUTTON).click();
     }
 
     public void clickOnReportAndVerifyReportPage(String reportName) throws AutomationException {
-        waitForInvisibleElement(By.xpath(SPINNER),3);
-        System.out.println("clientName:"+String.format(CLINT, reportName));
-        waitForInvisibleElement(By.xpath(SPINNER),3);
+        waitForInvisibleElement(By.xpath(SPINNER),5);
         driverUtil.getWebElementAndScroll(String.format(CLINT, reportName)).click();
+    }
+
+    public void userDeactivatingClientRecord(String firstName, String lastName) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER),3);
+        driverUtil.getWebElement(String.format(DELETE_CONTACT_BUTTON, firstName+" "+lastName)).click();
+        driverUtil.getWebElementAndScroll("(//button[text()='Delete Contact'])[2]").click();
+        CommonSteps.takeScreenshot();
+        WebElement successMessage = driverUtil.getWebElementAndScroll("//div[contains(text(),'You successfully deleted the contact.')]");
+        if (successMessage==null) {
+            throw new AutomationException("Contact deactivated Failed!");
+        }
+        waitForInvisibleElement(By.xpath("//div[contains(text(),'You successfully deleted the contact.')]"));
+
+    }
+
+    public void verifyCampaignPage() throws AutomationException {
+        Assert.assertEquals("Campaigns", driverUtil.getWebElement("//li[contains(@class,'chakra-breadcrumb__list-item')]/a").getText());
+    }
+
+    public void verifyReportPage() throws AutomationException {
+        Assert.assertEquals("Reporting Clients", driverUtil.getWebElement("(//li[contains(@class,'chakra-breadcrumb__list-item')]/a)[2]").getText());
     }
 }
