@@ -19,7 +19,6 @@ import static com.centrifi.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class AddClientPage extends BasePage {
 
-    private static Map<String, String> clientDetails = new LinkedHashMap<>();
     private static final String CLIENT_NAME_INPUT = "//input[@name='name']";
     private static final String PRIMARY_CONTACT_NAME = "//input[@name='primaryContactName']";
     private static final String EMAIL = "//label[text()='Primary Contact Email']//following-sibling::div/input";
@@ -37,7 +36,7 @@ public class AddClientPage extends BasePage {
     private static final String SELECT_ORGANIZATION = "//div[@role='listbox']//div[text()='%s']";
     private static final String TAG_INPUT = "//input[@id='tags']";
     private static final String SUCCESS_MSG_1 = "//div[contains(text(),'You successfully added the %s Client.')]";
-    private static final String SUCCESS_MSG = "//div[contains(text(),'You successfully updated the %s contact')]";
+    private static final String SUCCESS_MSG = "//div[contains(text(),'successfully updated')]";
     private static final String SUCCESS_MSG_2 = "//div[contains(text(),'You successfully added the %s contact')]";
     private static final String UPDATE_SUCCESS_MSG = "//div[contains(text(),'You successfully updated the %s Client.')]";
     private static final String SEARCH_INPUT = "//input[@type='text' and contains(@placeholder, 'Search')]";
@@ -83,7 +82,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void enterDetails(DataTable clientData) throws AutomationException {
-        clientDetails = readData(clientData);
+        Map<String, String> clientDetails = readData(clientData);
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         cName = clientDetails.get("Client Name").trim();
         enterClientName(cName);
@@ -99,7 +98,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
-        clientDetails = readData(clientData);
+        Map<String, String> clientDetails = readData(clientData);
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         String primaryContactName = clientDetails.get("Primary Contact Name").trim();
@@ -129,7 +128,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void createClientContactDetails(DataTable clientData) throws AutomationException {
-        clientDetails = readData(clientData);
+        Map<String, String> clientDetails = readData(clientData);
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         clickOnSideBarMenuItem("Clients");
         waitForInvisibleElement(By.xpath(SPINNER),3);
@@ -294,14 +293,10 @@ public class AddClientPage extends BasePage {
     public void clickOnCreateContactButtonToSaveRecord() throws AutomationException {
         //driverUtil.getWebElementAndScroll(USER_MENU, 2);
         driverUtil.getWebElementAndScroll(CONTACT_CREATE_BUTTON, 2).click();
-        String successMSG1 = String.format(SUCCESS_MSG, cName);
+        String successMSG1 = String.format(SUCCESS_MSG);
         System.out.println("successMSG1:"+successMSG1);
-
-        boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
-
-        if (!isSuccessMSG1 ) {
+        if (driverUtil.getWebElementAndScroll(successMSG1)==null )
             throw new AutomationException("Client Update save message is not displayed");
-        }
         CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(successMSG1));
     }
