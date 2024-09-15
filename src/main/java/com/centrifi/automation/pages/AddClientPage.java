@@ -75,7 +75,7 @@ public class AddClientPage extends BasePage {
     private static final String CLINT="//*[text()='%s']";
     private static final String CLOSE_BTN="//button[contains(@class,'chakra-modal__close-btn')]";
 
-    public static String cName;
+    public static ThreadLocal<String> cName = new ThreadLocal<>();
     public static String contact;
 
     public void clickOnNewClientButton() throws AutomationException {
@@ -89,9 +89,9 @@ public class AddClientPage extends BasePage {
 
     public void enterDetails(DataTable clientData) throws AutomationException, AWTException {
         clientDetails.set(CommonUtil.readData(clientData));
-        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
-        cName = clientDetails.get().get("Client Name").trim();
-        enterClientName(cName);
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.get().toString());
+        cName.set(clientDetails.get().get("Client Name").trim());
+        enterClientName(cName.get());
         contact = clientDetails.get().get("Primary Contact Name").trim();
         enterPrimaryContactNumber(contact);
         enterPrimaryContactEmail(clientDetails.get().get("Primary Contact Email").trim());
@@ -123,15 +123,15 @@ public class AddClientPage extends BasePage {
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
         clientDetails.set(CommonUtil.readData(clientData));
-        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.get().toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         String primaryContactName = clientDetails.get().get("Primary Contact Name").trim();
         driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
         driverUtil.getWebElementAndScroll(String.format(CLIENT_NAME, primaryContactName)).click();
         waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElementAndScroll(EDIT_CLIENT_BTN).click();
-        cName = clientDetails.get().get("Client Name").trim();
-        enterClientName(cName);
+        cName.set(clientDetails.get().get("Client Name").trim());
+        enterClientName(cName.get());
         selectBusinessSector(clientDetails.get().get("Business Sector").trim());
         selectOrganization(clientDetails.get().get("Organization").trim());
         enterWebsite(clientDetails.get().get("Website").trim());
@@ -142,7 +142,7 @@ public class AddClientPage extends BasePage {
     public void clickOnSaveButtonToUpdateRecord() throws AutomationException {
         WebElement saveUpdate = driverUtil.getWebElementAndScroll(UPDATE_SAVE, 2);
         driverUtil.moveToElementAndClick(saveUpdate);
-        String updateMSG = String.format(UPDATE_SUCCESS_MSG, cName);
+        String updateMSG = String.format(UPDATE_SUCCESS_MSG, cName.get());
         WebElement w = driverUtil.getWebElementAndScroll(updateMSG);
         boolean successMSG1 = w.isDisplayed();
 
@@ -154,10 +154,10 @@ public class AddClientPage extends BasePage {
 
     public void createClientContactDetails(DataTable clientData) throws AutomationException {
         clientDetails.set(CommonUtil.readData(clientData));
-        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.get().toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(ADD_CONTACT_BUTTON).click();
-        cName = clientDetails.get().get("Contact First Name").trim()+" "+clientDetails.get().get("Contact Last Name").trim();
+        cName.set(clientDetails.get().get("Contact First Name").trim()+" "+clientDetails.get().get("Contact Last Name").trim());
         enterContactFirstName(clientDetails.get().get("Contact First Name").trim());
         enterContactLastName(clientDetails.get().get("Contact Last Name").trim());
         enterContactEmail(clientDetails.get().get("Contact Email").trim());
@@ -250,7 +250,7 @@ public class AddClientPage extends BasePage {
         }
         WebDriverUtil.waitForAWhile();
         CommonSteps.takeScreenshot();
-        String successMSG1 = String.format(SUCCESS_MSG_1, cName);
+        String successMSG1 = String.format(SUCCESS_MSG_1, cName.get());
         String successMSG2 = String.format(SUCCESS_MSG_2, contact);
         boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
         boolean isSuccessMSG2 = driverUtil.getWebElementAndScroll(successMSG2).isDisplayed();
@@ -325,7 +325,7 @@ public class AddClientPage extends BasePage {
 
     public void clickOnCreateContactButtonToSaveRecord() throws AutomationException {
         driverUtil.getWebElementAndScroll(CONTACT_CREATE_BUTTON, 2).click();
-        String successMSG1 = String.format(SUCCESS_MSG, cName);
+        String successMSG1 = String.format(SUCCESS_MSG, cName.get());
         boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
 
         if (!isSuccessMSG1 ) {
@@ -338,7 +338,7 @@ public class AddClientPage extends BasePage {
 
     public void clickOnSaveUpdateRecord() throws AutomationException {
         driverUtil.getWebElementAndScroll(SAVE, 2).click();
-        String successMSG1 = String.format(CONTACT_UPDATE_MSG, cName);
+        String successMSG1 = String.format(CONTACT_UPDATE_MSG, cName.get());
         boolean isSuccessMSG1 = driverUtil.getWebElementAndScroll(successMSG1).isDisplayed();
 
         if (!isSuccessMSG1 ) {
@@ -474,10 +474,10 @@ public class AddClientPage extends BasePage {
 
     public void createContactUpdateDetails(DataTable contactDetails) throws AutomationException {
         clientDetails.set(CommonUtil.readData(contactDetails));
-        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.get().toString());
         driverUtil.getWebElement(String.format(DOT_CONTACT_BUTTON, clientDetails.get().get("Contact Name"))).click();
         driverUtil.getWebElementAndScroll("(//button[text()='Edit Contact'])[2]").click();
-        cName = clientDetails.get().get("Contact First Name").trim()+" "+clientDetails.get().get("Contact Last Name").trim();
+        cName.set(clientDetails.get().get("Contact First Name").trim()+" "+clientDetails.get().get("Contact Last Name").trim());
         enterContactFirstName(clientDetails.get().get("Contact First Name").trim());
         enterContactLastName(clientDetails.get().get("Contact Last Name").trim());
         enterContactEmail(clientDetails.get().get("Contact Email").trim());
@@ -500,7 +500,7 @@ public class AddClientPage extends BasePage {
 
     public void userVerifyClientDetails(DataTable clientDetail) throws AutomationException {
         clientDetails.set(CommonUtil.readData(clientDetail));
-        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
+        CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.get().toString());
         Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div[text()='" + clientDetails.get().get("Primary Contact Name") + "']").isDisplayed());
         Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div//a//p[text()='" + clientDetails.get().get("Client Name") + "']").isDisplayed());
         Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div[text()='" + clientDetails.get().get("Business Sector") + "']").isDisplayed());
