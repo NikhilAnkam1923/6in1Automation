@@ -25,8 +25,8 @@ Feature: Centrifi CRUD operation functionality
     And user clicks the create contact button to add a new client contact and verify success message
 
     Examples:
-      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email   | Contact Address                          |
-      | TestAutomationClient  | Mando              | Mando Paul        | (323) 232-3232 | Agent         | mando@test.com  | 132, My Street, Kingston, New York 12401 |
+      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email              | Contact Address                          |
+      | TestAutomationClient  | Mando              | Mando Paul        | (323) 232-3232 | Agent         | mando_$timestamp@test.com  | 132, My Street, Kingston, New York 12401 |
 
   @Smoke
   Scenario Outline: Validate the functionality for updating a client Contact
@@ -46,8 +46,8 @@ Feature: Centrifi CRUD operation functionality
     And user click on edit contact button to verify update successfully message
 
     Examples:
-      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email   | Contact Address                                              | Contact Name     |
-      | TestAutomationClient  | Paulo              | Paul0 mando       | (323) 232-3243 | Manager       | paulo@test.com  | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 | Mando Mando Paul |
+      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email              | Contact Address                                              | Contact Name     |
+      | TestAutomationClient  | Paulo              | Paul0 mando       | (323) 232-3243 | Manager       | paulo_$timestamp@test.com  | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 | Mando Mando Paul |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client Contact with invalid data

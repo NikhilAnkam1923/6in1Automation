@@ -3,6 +3,7 @@ package com.centrifi.automation.pages;
 import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
+import com.centrifi.automation.util.CommonUtil;
 import com.centrifi.automation.util.WebDriverUtil;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
@@ -87,7 +88,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void enterDetails(DataTable clientData) throws AutomationException, AWTException {
-        clientDetails.set(readData(clientData));
+        clientDetails.set(CommonUtil.readData(clientData));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         cName = clientDetails.get().get("Client Name").trim();
         enterClientName(cName);
@@ -121,7 +122,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
-        clientDetails.set(readData(clientData));
+        clientDetails.set(CommonUtil.readData(clientData));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         String primaryContactName = clientDetails.get().get("Primary Contact Name").trim();
@@ -152,7 +153,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void createClientContactDetails(DataTable clientData) throws AutomationException {
-        clientDetails.set(readData(clientData));
+        clientDetails.set(CommonUtil.readData(clientData));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(ADD_CONTACT_BUTTON).click();
@@ -352,15 +353,6 @@ public class AddClientPage extends BasePage {
         return "AddClient";
     }
 
-    public static Map<String, String> readData(DataTable parameters) {
-        Map<String, String> parametersMap = new LinkedHashMap<>();
-        List<Map<String, String>> rows = parameters.asMaps();
-        for (Map<String, String> row : rows) {
-            parametersMap.put(row.get("FieldName"), row.get("Value"));
-        }
-        return parametersMap;
-    }
-
     public void clickOnClientButton() throws AutomationException {
         clickOnSideBarMenuItem("Clients");
     }
@@ -480,8 +472,8 @@ public class AddClientPage extends BasePage {
         driverUtil.getWebElement(CLINT_CONTACT_BUTTON).click();
     }
 
-    public void createContactUpdateDetails(DataTable contacrDetails) throws AutomationException {
-        clientDetails.set(readData(contacrDetails));
+    public void createContactUpdateDetails(DataTable contactDetails) throws AutomationException {
+        clientDetails.set(CommonUtil.readData(contactDetails));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         driverUtil.getWebElement(String.format(DOT_CONTACT_BUTTON, clientDetails.get().get("Contact Name"))).click();
         driverUtil.getWebElementAndScroll("(//button[text()='Edit Contact'])[2]").click();
@@ -507,7 +499,7 @@ public class AddClientPage extends BasePage {
     }
 
     public void userVerifyClientDetails(DataTable clientDetail) throws AutomationException {
-        clientDetails.set(readData(clientDetail));
+        clientDetails.set(CommonUtil.readData(clientDetail));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div[text()='" + clientDetails.get().get("Primary Contact Name") + "']").isDisplayed());
         Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div//a//p[text()='" + clientDetails.get().get("Client Name") + "']").isDisplayed());
