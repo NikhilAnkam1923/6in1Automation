@@ -22,7 +22,7 @@ import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement
 import static com.centrifi.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class AddClientPage extends BasePage {
-    private static Map<String, String> clientDetails = new LinkedHashMap<>();
+    private static final ThreadLocal<Map<String, String>> clientDetails = new ThreadLocal<>();
     private static final String CLIENT_NAME_INPUT = "//input[@name='name']";
     private static final String PRIMARY_CONTACT_NAME = "//input[@name='primaryContactName']";
     private static final String EMAIL = "//label[text()='Primary Contact Email']//following-sibling::div/input";
@@ -87,20 +87,20 @@ public class AddClientPage extends BasePage {
     }
 
     public void enterDetails(DataTable clientData) throws AutomationException, AWTException {
-        clientDetails = readData(clientData);
+        clientDetails.set(readData(clientData));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
-        cName = clientDetails.get("Client Name").trim();
+        cName = clientDetails.get().get("Client Name").trim();
         enterClientName(cName);
-        contact = clientDetails.get("Primary Contact Name").trim();
+        contact = clientDetails.get().get("Primary Contact Name").trim();
         enterPrimaryContactNumber(contact);
-        enterPrimaryContactEmail(clientDetails.get("Primary Contact Email").trim());
-        enterPrimaryContactPhone(clientDetails.get("Primary Contact Phone").trim());
-        selectPrimaryContactTitle(clientDetails.get("Primary Contact Title").trim());
-        selectBusinessSector(clientDetails.get("Business Sector").trim());
-        selectOrganization(clientDetails.get("Organization").trim());
-        enterWebsite(clientDetails.get("Website").trim());
-        enterTag(clientDetails.get("Tags").trim());
-        uploadImage(clientDetails.get("profileName"));
+        enterPrimaryContactEmail(clientDetails.get().get("Primary Contact Email").trim());
+        enterPrimaryContactPhone(clientDetails.get().get("Primary Contact Phone").trim());
+        selectPrimaryContactTitle(clientDetails.get().get("Primary Contact Title").trim());
+        selectBusinessSector(clientDetails.get().get("Business Sector").trim());
+        selectOrganization(clientDetails.get().get("Organization").trim());
+        enterWebsite(clientDetails.get().get("Website").trim());
+        enterTag(clientDetails.get().get("Tags").trim());
+        uploadImage(clientDetails.get().get("profileName"));
 
     }
 
@@ -121,20 +121,20 @@ public class AddClientPage extends BasePage {
     }
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
-        clientDetails = readData(clientData);
+        clientDetails.set(readData(clientData));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
-        String primaryContactName = clientDetails.get("Primary Contact Name").trim();
+        String primaryContactName = clientDetails.get().get("Primary Contact Name").trim();
         driverUtil.getWebElementAndScroll(SEARCH_INPUT,2).sendKeys(primaryContactName);
         driverUtil.getWebElementAndScroll(String.format(CLIENT_NAME, primaryContactName)).click();
         waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElementAndScroll(EDIT_CLIENT_BTN).click();
-        cName = clientDetails.get("Client Name").trim();
+        cName = clientDetails.get().get("Client Name").trim();
         enterClientName(cName);
-        selectBusinessSector(clientDetails.get("Business Sector").trim());
-        selectOrganization(clientDetails.get("Organization").trim());
-        enterWebsite(clientDetails.get("Website").trim());
-        enterTag(clientDetails.get("Tags").trim());
+        selectBusinessSector(clientDetails.get().get("Business Sector").trim());
+        selectOrganization(clientDetails.get().get("Organization").trim());
+        enterWebsite(clientDetails.get().get("Website").trim());
+        enterTag(clientDetails.get().get("Tags").trim());
 
     }
 
@@ -152,17 +152,17 @@ public class AddClientPage extends BasePage {
     }
 
     public void createClientContactDetails(DataTable clientData) throws AutomationException {
-        clientDetails = readData(clientData);
+        clientDetails.set(readData(clientData));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(ADD_CONTACT_BUTTON).click();
-        cName = clientDetails.get("Contact First Name").trim()+" "+clientDetails.get("Contact Last Name").trim();
-        enterContactFirstName(clientDetails.get("Contact First Name").trim());
-        enterContactLastName(clientDetails.get("Contact Last Name").trim());
-        enterContactEmail(clientDetails.get("Contact Email").trim());
-        selectClientContactTitle(clientDetails.get("Contact Title").trim());
-        enterContactAddress(clientDetails.get("Contact Address"));
-        enterPhone(clientDetails.get("Contact Phone"));
+        cName = clientDetails.get().get("Contact First Name").trim()+" "+clientDetails.get().get("Contact Last Name").trim();
+        enterContactFirstName(clientDetails.get().get("Contact First Name").trim());
+        enterContactLastName(clientDetails.get().get("Contact Last Name").trim());
+        enterContactEmail(clientDetails.get().get("Contact Email").trim());
+        selectClientContactTitle(clientDetails.get().get("Contact Title").trim());
+        enterContactAddress(clientDetails.get().get("Contact Address"));
+        enterPhone(clientDetails.get().get("Contact Phone"));
 
     }
     public void enterPhone(String clientPhone) throws AutomationException {
@@ -432,21 +432,19 @@ public class AddClientPage extends BasePage {
 
     public void clickOnCreateContactButtonToInvalidRecord() throws AutomationException {
         driverUtil.getWebElementAndScroll(CONTACT_CREATE_BUTTON, 2).click();
-        if(clientDetails.get("Contact First Name").isEmpty())
+        if(clientDetails.get().get("Contact First Name").isEmpty())
             Assert.assertEquals("First Name is Required.",driverUtil.getWebElement("//input[@name='firstName']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if(clientDetails.get("Contact Last Name").isEmpty())
+        if(clientDetails.get().get("Contact Last Name").isEmpty())
             Assert.assertEquals("Last Name is Required.",driverUtil.getWebElement("//input[@name='lastName']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if(clientDetails.get("Contact Email").isEmpty())
+        if(clientDetails.get().get("Contact Email").isEmpty())
             Assert.assertEquals("Email address is required",driverUtil.getWebElement("//input[@name='email']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
         else
             Assert.assertEquals("Invalid email address",driverUtil.getWebElement("//input[@name='email']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if (!clientDetails.get("Contact Phone").isEmpty())
+        if (!clientDetails.get().get("Contact Phone").isEmpty())
             Assert.assertEquals("Please enter a valid 10 digit phone number.",driverUtil.getWebElement("//input[@name='phone']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if(clientDetails.get("Contact Title").isEmpty())
+        if(clientDetails.get().get("Contact Title").isEmpty())
             Assert.assertEquals("Title is required",driverUtil.getWebElement("//input[@name='businessType']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
         CommonSteps.takeScreenshot();
-        //driverUtil.findElementAndScroll("//*[text()='New Contact']");
-        //driverUtil.findElementAndScroll(CLOSE_BTN).click();
         WebElement element = driverUtil.getWebElementAndScroll(CLOSE_BTN, 2);
         driverUtil.moveToElementAndClick(element);
         Assert.assertEquals("Are you sure you want to discard your changes? Any unsaved changes will be lost.",driverUtil.getWebElement("(//div[contains(@class,'chakra-modal__body')])[2]").getText().trim());
@@ -455,21 +453,20 @@ public class AddClientPage extends BasePage {
     }
     public void clickOnSaveButtonToInvalidRecord() throws AutomationException {
         driverUtil.getWebElement(SAVE, 2).click();
-        if(clientDetails.get("Contact First Name").isEmpty())
+        if(clientDetails.get().get("Contact First Name").isEmpty())
             Assert.assertEquals("First Name is Required.",driverUtil.getWebElement("//input[@name='firstName']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if(clientDetails.get("Contact Last Name").isEmpty())
+        if(clientDetails.get().get("Contact Last Name").isEmpty())
             Assert.assertEquals("Last Name is Required.",driverUtil.getWebElement("//input[@name='lastName']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if(clientDetails.get("Contact Email").isEmpty())
+        if(clientDetails.get().get("Contact Email").isEmpty())
             Assert.assertEquals("Email address is required",driverUtil.getWebElement("//input[@name='email']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
         else
             Assert.assertEquals("Invalid email address",driverUtil.getWebElement("//input[@name='email']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if (!clientDetails.get("Contact Phone").isEmpty())
+        if (!clientDetails.get().get("Contact Phone").isEmpty())
             Assert.assertEquals("Please enter a valid 10 digit phone number.",driverUtil.getWebElement("//input[@name='phone']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
-        if(clientDetails.get("Contact Title").isEmpty())
+        if(clientDetails.get().get("Contact Title").isEmpty())
             Assert.assertEquals("Title is required",driverUtil.getWebElement("//input[@name='businessType']//following::div[contains(@class,'chakra-form__error-message')][1]").getText());
         CommonSteps.takeScreenshot();
         waitForInvisibleElement(By.xpath(SPINNER),3);
-       // driverUtil.findElementAndScroll("//*[text()='Edit Contact']");
         WebElement element = driverUtil.getWebElementAndScroll(CLOSE_BTN, 2);
         driverUtil.moveToElementAndClick(element);
         //driverUtil.findElementAndScroll(CLOSE_BTN).click();
@@ -484,17 +481,17 @@ public class AddClientPage extends BasePage {
     }
 
     public void createContactUpdateDetails(DataTable contacrDetails) throws AutomationException {
-        clientDetails = readData(contacrDetails);
+        clientDetails.set(readData(contacrDetails));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
-        driverUtil.getWebElement(String.format(DOT_CONTACT_BUTTON, clientDetails.get("Contact Name"))).click();
+        driverUtil.getWebElement(String.format(DOT_CONTACT_BUTTON, clientDetails.get().get("Contact Name"))).click();
         driverUtil.getWebElementAndScroll("(//button[text()='Edit Contact'])[2]").click();
-        cName = clientDetails.get("Contact First Name").trim()+" "+clientDetails.get("Contact Last Name").trim();
-        enterContactFirstName(clientDetails.get("Contact First Name").trim());
-        enterContactLastName(clientDetails.get("Contact Last Name").trim());
-        enterContactEmail(clientDetails.get("Contact Email").trim());
-        selectClientContactTitle(clientDetails.get("Contact Title").trim());
-        enterContactAddress(clientDetails.get("Contact Address"));
-        enterPhone(clientDetails.get("Contact Phone"));
+        cName = clientDetails.get().get("Contact First Name").trim()+" "+clientDetails.get().get("Contact Last Name").trim();
+        enterContactFirstName(clientDetails.get().get("Contact First Name").trim());
+        enterContactLastName(clientDetails.get().get("Contact Last Name").trim());
+        enterContactEmail(clientDetails.get().get("Contact Email").trim());
+        selectClientContactTitle(clientDetails.get().get("Contact Title").trim());
+        enterContactAddress(clientDetails.get().get("Contact Address"));
+        enterPhone(clientDetails.get().get("Contact Phone"));
 
     }
 
@@ -510,13 +507,13 @@ public class AddClientPage extends BasePage {
     }
 
     public void userVerifyClientDetails(DataTable clientDetail) throws AutomationException {
-        clientDetails = readData(clientDetail);
+        clientDetails.set(readData(clientDetail));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get("Primary Contact Name")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div//a//p[text()='"+clientDetails.get("Client Name")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get("Business Sector")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get("Organization")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div//span[text()='"+clientDetails.get("Status")+"']").isDisplayed());
+        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get().get("Primary Contact Name")+"']").isDisplayed());
+        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div//a//p[text()='"+clientDetails.get().get("Client Name")+"']").isDisplayed());
+        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get().get("Business Sector")+"']").isDisplayed());
+        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get().get("Organization")+"']").isDisplayed());
+        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div//span[text()='"+clientDetails.get().get("Status")+"']").isDisplayed());
 
     }
 
