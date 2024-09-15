@@ -509,11 +509,11 @@ public class AddClientPage extends BasePage {
     public void userVerifyClientDetails(DataTable clientDetail) throws AutomationException {
         clientDetails.set(readData(clientDetail));
         CommonSteps.CURRENT_STEP_MESSAGE.set(clientDetails.toString());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get().get("Primary Contact Name")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div//a//p[text()='"+clientDetails.get().get("Client Name")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get().get("Business Sector")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div[text()='"+clientDetails.get().get("Organization")+"']").isDisplayed());
-        Assert.assertEquals(true, driverUtil.getWebElement("//tbody//tr//td//div//span[text()='"+clientDetails.get().get("Status")+"']").isDisplayed());
+        Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div[text()='" + clientDetails.get().get("Primary Contact Name") + "']").isDisplayed());
+        Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div//a//p[text()='" + clientDetails.get().get("Client Name") + "']").isDisplayed());
+        Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div[text()='" + clientDetails.get().get("Business Sector") + "']").isDisplayed());
+        Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div[text()='" + clientDetails.get().get("Organization") + "']").isDisplayed());
+        Assert.assertTrue(driverUtil.getWebElement("//tbody//tr//td//div//span[text()='" + clientDetails.get().get("Status") + "']").isDisplayed());
 
     }
 
