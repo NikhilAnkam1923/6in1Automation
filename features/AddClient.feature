@@ -45,7 +45,7 @@ Feature: Centrifi CRUD operation functionality
       | Organization          | <Organization>          |
       | Website               | <Website>               |
       | Tags                  | <Tags>                  |
-      | profileName          | <profileName>          |
+      | profileName           | <profileName>           |
     And user click on the Save button and verify error message
     Examples:
       | Client Name | Primary Contact Name | Primary Contact Email       | Primary Contact Phone | Primary Contact Title | Business Sector | Organization   | Website   | Tags   | profileName   |

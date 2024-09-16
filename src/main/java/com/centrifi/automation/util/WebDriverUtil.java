@@ -136,7 +136,7 @@ public class WebDriverUtil {
 
     public void scrollTo(String element) {
         try {
-            System.out.println("inside scrool to method " + element);
+            System.out.println("inside scroll to method " + element);
             JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
             js.executeScript("window.scrollBy(0," + element + ")", "");
 

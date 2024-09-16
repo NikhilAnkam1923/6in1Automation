@@ -5,6 +5,7 @@ import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.glue.CommonSteps;
 import com.centrifi.automation.util.CommonUtil;
 import com.centrifi.automation.util.WebDriverUtil;
+import gherkin.lexer.Fi;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -14,6 +15,7 @@ import org.testng.Assert;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Map;
 import static com.centrifi.automation.util.WebDriverUtil.waitForInvisibleElement;
 import static com.centrifi.automation.util.WebDriverUtil.waitForVisibleElement;
@@ -106,19 +108,9 @@ public class AddClientPage extends BasePage {
     }
 
     public void uploadImage(String fileName) throws AutomationException, AWTException {
-        WebElement uploadElement= driverUtil.getWebElementAndScroll(PROFILE_UPLOAD);
-        Actions act = new Actions(DriverFactory.drivers.get());
-        act.moveToElement(uploadElement).click().perform();
-        Robot rb = new Robot();
-        rb.delay(2000);
-        StringSelection path = new StringSelection(System.getProperty("user.dir")+IMAGE_FILE_PATH+fileName);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(path, null);
-        rb.keyPress(KeyEvent.VK_CONTROL);
-        rb.keyPress(KeyEvent.VK_V);
-        rb.keyRelease(KeyEvent.VK_CONTROL);
-        rb.keyRelease(KeyEvent.VK_V);
-        rb.keyPress(KeyEvent.VK_ENTER);
-        rb.keyRelease(KeyEvent.VK_ENTER);
+        String path = System.getProperty("user.dir")+IMAGE_FILE_PATH+fileName;
+        driverUtil.getWebElement("//input[@type='file' and @id='fileUpload']", 0)
+                .sendKeys((new File(path)).getAbsolutePath());
     }
 
     public void updateClientsDetails(DataTable clientData) throws AutomationException {
