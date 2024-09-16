@@ -68,8 +68,7 @@ public class AddClientPage extends BasePage {
     private static final String CONTACT_PROPOSAL_BUTTON="//button[text()='Proposals']";
     private static final String CONTACT_CAMPAIGN_NEXT_PAGE="//button[@aria-label='Next page']";
     private static final String CLIENT_ACTIVE_BUTTON = "(//tbody//td//div[text()='%s']//following::button)[1]";
-    private static final String PROFILE_UPLOAD = "//div[contains(@class,'css-k8i3wh')]";
-    public static final String IMAGE_FILE_PATH = "\\src\\test\\resources\\test-data\\";
+    public static final String IMAGE_FILE_PATH = File.separator+"src"+File.separator+"test"+File.separator+"resources"+File.separator+"test-data"+File.separator;
     private static final String CLINT="//*[text()='%s']";
     private static final String CLOSE_BTN="//button[contains(@class,'chakra-modal__close-btn')]";
 
