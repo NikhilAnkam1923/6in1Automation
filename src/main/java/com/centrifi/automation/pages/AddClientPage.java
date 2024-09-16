@@ -283,6 +283,7 @@ public class AddClientPage extends BasePage {
 
         if (firstName != null && !firstName.isEmpty()) {
             WebElement name = driverUtil.getWebElementAndScroll(CONTACT_FIRST_NAME);
+            name.click();
             name.clear();
             name.sendKeys(firstName);
         }else {
@@ -292,6 +293,7 @@ public class AddClientPage extends BasePage {
     public void enterContactLastName(String lastName) throws AutomationException {
         if (lastName != null && !lastName.isEmpty()) {
             WebElement name = driverUtil.getWebElementAndScroll(CONTACT_LAST_NAME);
+            name.click();
             name.clear();
             name.sendKeys(lastName);
         }else {
@@ -302,6 +304,7 @@ public class AddClientPage extends BasePage {
     public void enterContactEmail(String email) throws AutomationException {
         if (email != null && !email.isEmpty()) {
             WebElement name = driverUtil.getWebElementAndScroll(CONTACT_EMAIL);
+            name.click();
             name.clear();
             name.sendKeys(email);
         }
@@ -309,6 +312,7 @@ public class AddClientPage extends BasePage {
     public void enterContactAddress(String address) throws AutomationException {
         if (address != null && !address.isEmpty()) {
             WebElement name = driverUtil.getWebElementAndScroll(CONTACT_ADDRESS);
+            name.click();
             name.clear();
             name.sendKeys(Keys.CONTROL+"A");
             name.sendKeys(Keys.CLEAR);
@@ -402,8 +406,8 @@ public class AddClientPage extends BasePage {
     public void userDeactivatingClientRecord(String firstName, String lastName) throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER),3);
         driverUtil.getWebElement(String.format(DOT_CONTACT_BUTTON, firstName+" "+lastName)).click();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElementAndScroll("(//button[text()='Delete Contact'])[2]").click();
-
         WebElement successMessage = driverUtil.getWebElementAndScroll("//div[contains(text(),'You successfully deleted the contact.')]");
         if (successMessage==null) {
             throw new AutomationException("Contact deactivated Failed!");
