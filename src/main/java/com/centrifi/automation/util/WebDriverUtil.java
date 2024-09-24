@@ -32,8 +32,8 @@ public class WebDriverUtil {
     public static final int WAIT_2_SEC = 2;
     public static final int WAIT_3_SEC = 3;
     public static final int WAIT_5_SEC = 5;
-    public static final int DEFAULT_ELEMENT_WAIT = 30;
-    public static final int MAX_ELEMENT_WAIT = 60;
+    public static final int DEFAULT_ELEMENT_WAIT = 60;
+    public static final int MAX_ELEMENT_WAIT = 90;
     public static final int MAX_WAIT_120 = 120;
     public static final int MAX_PAGE_LOADING_WAIT = 180;
     public static final String DEFAULT_PAGE_LOAD_TIMEOUT = "180";
@@ -136,7 +136,7 @@ public class WebDriverUtil {
 
     public void scrollTo(String element) {
         try {
-            System.out.println("inside scrool to method " + element);
+            System.out.println("inside scroll to method " + element);
             JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
             js.executeScript("window.scrollBy(0," + element + ")", "");
 

@@ -1,14 +1,23 @@
 package com.centrifi.automation.util;
 
+import io.cucumber.datatable.DataTable;
+
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 public class CommonUtil {
     public CommonUtil() {
+    }
+
+    public static Map<String, String> readData(DataTable parameters) {
+        Map<String, String> parametersMap = new LinkedHashMap<>();
+        List<Map<String, String>> rows = parameters.asMaps();
+        for (Map<String, String> row : rows) {
+            parametersMap.put(row.get("FieldName"), CommonUtil.processString(row.get("Value")));
+        }
+        return parametersMap;
     }
 
     public static int getIntFromObject(Object obj) {
