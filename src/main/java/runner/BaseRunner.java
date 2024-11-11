@@ -1,13 +1,15 @@
 package runner;
 
-import com.centrifi.automation.constants.Constants;
-import com.centrifi.automation.drivers.DriverFactory;
-import com.centrifi.automation.models.TestScenario;
-import com.centrifi.automation.reports.ExecutionResult;
-import com.centrifi.automation.reports.ExtentManager;
-import com.centrifi.automation.reports.ExtentTestManager;
-import com.centrifi.automation.util.*;
+import com.sixinone.automation.constants.Constants;
+import com.sixinone.automation.drivers.DriverFactory;
+import com.sixinone.automation.models.TestScenario;
+import com.sixinone.automation.reports.ExecutionResult;
+import com.sixinone.automation.reports.ExtentManager;
+import com.sixinone.automation.reports.ExtentTestManager;
 import com.aventstack.extentreports.Status;
+import com.sixinone.automation.util.PropertyReader;
+import com.sixinone.automation.util.ReportLogger;
+import com.sixinone.automation.util.TestDataExcelUtil;
 import cucumber.api.testng.TestNGCucumberRunnerCustom;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
@@ -15,7 +17,7 @@ import org.testng.ITest;
 import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.*;
-import com.centrifi.automation.glue.CommonSteps;
+import com.sixinone.automation.glue.CommonSteps;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -31,7 +33,7 @@ public class BaseRunner implements ITest {
 
 	@BeforeClass(alwaysRun = true)
 	public void init(ITestContext iTestContext) throws IOException {
-		reportLogger.log("----------------------- Centrifi Test Automation -----------------------");
+		reportLogger.log("----------------------- 6in1 Test Automation -----------------------");
 		testNGCucumberRunner = new TestNGCucumberRunnerCustom(this.getClass());
 		CommonSteps.cleanUP();
 		CommonSteps.setup();

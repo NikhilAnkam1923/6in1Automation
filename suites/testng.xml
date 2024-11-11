@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Centrifi UI Test Automation" data-provider-thread-count="1">
-	<test name="Centrifi Test Suite">
+<suite name="6 in 1 UI Test Automation" data-provider-thread-count="1">
+	<test name="6 in 1 Test Suite">
 		<classes>
-			<class name="runner.CentrifiTestRunner" />
+			<class name="runner.SixInOneTestRunner" />
 		</classes>
 	</test>
 </suite>
