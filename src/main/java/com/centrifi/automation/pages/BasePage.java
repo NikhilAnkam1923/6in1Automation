@@ -1,11 +1,15 @@
 package com.centrifi.automation.pages;
 
+import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
+import com.centrifi.automation.glue.CommonSteps;
 import com.centrifi.automation.util.ReportLogger;
 import com.centrifi.automation.util.WebDriverUtil;
 import io.cucumber.datatable.DataTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +145,8 @@ public abstract class BasePage {
         }
     }
 
+
+
     public static void waitForLoadingPage() {
         waitForInvisibleElement(By.xpath(LOADING), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
         waitForInvisibleElement(By.xpath(LOADING_DATA), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
@@ -167,7 +173,6 @@ public abstract class BasePage {
     public void clickOnSideBarMenuItem(String item)throws AutomationException{
         driverUtil.getWebElementAndScroll(String.format(MENU_ITEM,item), WAIT_30_SECOND, "Unable to locate Menu!").click();
         waitForInvisibleElement(By.xpath(SPINNER));
-
     }
 
     abstract String getName();

@@ -5,12 +5,14 @@ public class PageFactory {
     public LoginPage loginPage;
     private AddClientPage addClientPage;
     private CampaignPage campaignPage;
+    private CampaignNewPage campaignNewPage;
 
     private PageFactory() {
 
         loginPage = new LoginPage();
         addClientPage = new AddClientPage();
-        campaignPage=new CampaignPage();
+        campaignPage= new CampaignPage();
+        campaignNewPage = new CampaignNewPage();
     }
 
     public static void init() {
@@ -30,5 +32,9 @@ public class PageFactory {
 
     public static CampaignPage campaignPage() {
         return factory.get().campaignPage;
+    }
+
+    public static CampaignNewPage campaignNewPage(){
+        return factory.get().campaignNewPage;
     }
 }

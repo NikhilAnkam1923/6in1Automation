@@ -14,19 +14,19 @@ Feature: Centrifi CRUD operation functionality
     Then user select the client "<Client Name>"
     And user click on Contact button
     And user search and add the client contact record with below details
-      | FieldName             | Value                   |
-      | Client Name           | <Client Name>           |
-      | Contact First Name    | <Contact First Name>    |
-      | Contact Last Name     | <Contact Last Name>     |
-      | Contact Phone         | <Contact Phone>         |
-      | Contact Title         | <Contact Title>         |
-      | Contact Email         | <Contact Email>         |
-      | Contact Address       | <Contact Address>       |
+      | FieldName          | Value                |
+      | Client Name        | <Client Name>        |
+      | Contact First Name | <Contact First Name> |
+      | Contact Last Name  | <Contact Last Name>  |
+      | Contact Phone      | <Contact Phone>      |
+      | Contact Title      | <Contact Title>      |
+      | Contact Email      | <Contact Email>      |
+      | Contact Address    | <Contact Address>    |
     And user clicks the create contact button to add a new client contact and verify success message
 
     Examples:
-      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email              | Contact Address                          |
-      | TestAutomationClient  | Mando              | Mando Paul        | (323) 232-3232 | Agent         | mando_$timestamp@test.com  | 132, My Street, Kingston, New York 12401 |
+      | Client Name          | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email             | Contact Address                          |
+      | TestAutomationClient | Mando              | Mando Paul        | (323) 232-3232 | Agent         | mando_$timestamp@test.com | 132, My Street, Kingston, New York 12401 |
 
   @Smoke
   Scenario Outline: Validate the functionality for updating a client Contact
@@ -34,20 +34,20 @@ Feature: Centrifi CRUD operation functionality
     When user select the client "<Client Name>"
     Then user click on Contact button
     And user search and update the client contact record with below details
-      | FieldName             | Value                   |
-      | Client Name           | <Client Name>           |
-      | Contact First Name    | <Contact First Name>    |
-      | Contact Last Name     | <Contact Last Name>     |
-      | Contact Phone         | <Contact Phone>         |
-      | Contact Title         | <Contact Title>         |
-      | Contact Email         | <Contact Email>         |
-      | Contact Address       | <Contact Address>       |
-      | Contact Name          | <Contact Name>          |
+      | FieldName          | Value                |
+      | Client Name        | <Client Name>        |
+      | Contact First Name | <Contact First Name> |
+      | Contact Last Name  | <Contact Last Name>  |
+      | Contact Phone      | <Contact Phone>      |
+      | Contact Title      | <Contact Title>      |
+      | Contact Email      | <Contact Email>      |
+      | Contact Address    | <Contact Address>    |
+      | Contact Name       | <Contact Name>       |
     And user click on edit contact button to verify update successfully message
 
     Examples:
-      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email              | Contact Address                                              | Contact Name     |
-      | TestAutomationClient  | Paulo              | Paul0 mando       | (323) 232-3243 | Manager       | paulo_$timestamp@test.com  | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 | Mando Mando Paul |
+      | Client Name          | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email             | Contact Address                                              | Contact Name     |
+      | TestAutomationClient | Paulo              | Paul0 mando       | (323) 232-3243 | Manager       | paulo_$timestamp@test.com | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 | Mando Mando Paul |
 
   @Smoke
   Scenario Outline: Validate the functionality for creating a new client Contact with invalid data
@@ -55,19 +55,19 @@ Feature: Centrifi CRUD operation functionality
     When user select the client "<Client Name>"
     Then user click on Contact button
     And user search and add the client contact record with below details
-      | FieldName             | Value                   |
-      | Client Name           | <Client Name>           |
-      | Contact First Name    | <Contact First Name>    |
-      | Contact Last Name     | <Contact Last Name>     |
-      | Contact Phone         | <Contact Phone>         |
-      | Contact Title         | <Contact Title>         |
-      | Contact Email         | <Contact Email>         |
-      | Contact Address       | <Contact Address>       |
+      | FieldName          | Value                |
+      | Client Name        | <Client Name>        |
+      | Contact First Name | <Contact First Name> |
+      | Contact Last Name  | <Contact Last Name>  |
+      | Contact Phone      | <Contact Phone>      |
+      | Contact Title      | <Contact Title>      |
+      | Contact Email      | <Contact Email>      |
+      | Contact Address    | <Contact Address>    |
     And user clicks the create contact button to add a new client contact and verify error message
 
     Examples:
-      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email   | Contact Address                                              |
-      | TestAutomationClient  |                    |                   |                |               | paulotest       | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 |
+      | Client Name          | Contact First Name | Contact Last Name | Contact Phone | Contact Title | Contact Email | Contact Address                                              |
+      | TestAutomationClient |                    |                   |               |               | paulotest     | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 |
 
   @Smoke
   Scenario Outline: Validate the functionality for updating a client Contact with Invalid Data
@@ -75,20 +75,20 @@ Feature: Centrifi CRUD operation functionality
     When user select the client "<Client Name>"
     Then user click on Contact button
     And user search and update the client contact record with below details
-      | FieldName             | Value                   |
-      | Client Name           | <Client Name>           |
-      | Contact First Name    | <Contact First Name>    |
-      | Contact Last Name     | <Contact Last Name>     |
-      | Contact Phone         | <Contact Phone>         |
-      | Contact Title         | <Contact Title>         |
-      | Contact Email         | <Contact Email>         |
-      | Contact Address       | <Contact Address>       |
-      | Contact Name          | <Contact Name>       |
+      | FieldName          | Value                |
+      | Client Name        | <Client Name>        |
+      | Contact First Name | <Contact First Name> |
+      | Contact Last Name  | <Contact Last Name>  |
+      | Contact Phone      | <Contact Phone>      |
+      | Contact Title      | <Contact Title>      |
+      | Contact Email      | <Contact Email>      |
+      | Contact Address    | <Contact Address>    |
+      | Contact Name       | <Contact Name>       |
     And user click on edit contact button to verify update contact with invalid dat and verify error message
 
     Examples:
-      | Client Name           | Contact First Name | Contact Last Name | Contact Phone  | Contact Title | Contact Email   | Contact Address                                              | Contact Name      |
-      | TestAutomationClient  |                    |                   | 12345          | Manager       | paulotest       | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 | Paulo Paul0 mando |
+      | Client Name          | Contact First Name | Contact Last Name | Contact Phone | Contact Title | Contact Email | Contact Address                                              | Contact Name      |
+      | TestAutomationClient |                    |                   | 12345         | Manager       | paulotest     | 401 East Benton Place: Chicago, Cook County, Illinois, 60601 | Paulo Paul0 mando |
 
   @Smoke
   Scenario Outline: Validate the functionality for deleting a client contact
@@ -109,8 +109,8 @@ Feature: Centrifi CRUD operation functionality
     And user Select the Campaign Name "<Campaign  Name>"
     And user verify the redirected to the campaign page "<Campaign  Name>"
     Examples:
-      | Client Name          | Campaign  Name          |
-      | TestAutomationClient | AutomationTestCampaign  |
+      | Client Name          | Campaign  Name         |
+      | TestAutomationClient | AutomationTestCampaign |
 
   @Smoke
   Scenario Outline: Validate the functionality for report associated with the client are displayed on the Report tab
@@ -121,8 +121,8 @@ Feature: Centrifi CRUD operation functionality
     And user click on the "<Report Name>" report button
     And user verify the redirected to the report page
     Examples:
-      | Client Name           | Report Name  |
-      | TestAutomationClient  | Facebook Ads |
+      | Client Name          | Report Name  |
+      | TestAutomationClient | Facebook Ads |
 
   @Smoke
   Scenario Outline: Validate the functionality for proposal associated with the client are displayed on the proposal tab
@@ -133,8 +133,8 @@ Feature: Centrifi CRUD operation functionality
     And user Select the Campaign Name "<Campaign  Name>"
     And user verify the redirected to the proposal page "<Campaign  Name>"
     Examples:
-      | Client Name           | Campaign  Name |
-      | TestAutomationClient  | TestAutomation |
+      | Client Name          | Campaign  Name |
+      | TestAutomationClient | TestAutomation |
 
   @Setup
   Scenario: SETUP: Close Browser

@@ -4,11 +4,8 @@ import com.centrifi.automation.constants.Constants;
 import com.centrifi.automation.drivers.DriverFactory;
 import com.centrifi.automation.exception.AutomationException;
 import com.centrifi.automation.pages.BasePage;
-import com.centrifi.automation.pages.LoginPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -39,6 +36,8 @@ public class WebDriverUtil {
     public static final String DEFAULT_PAGE_LOAD_TIMEOUT = "180";
     public static final String ADMIN_PORTAL_LOADING_INVISIBLE = "//div[@class='MuiBackdrop-root' and contains(@style,'hidden')]";
 
+
+
     public WebElement getWebElement(String locator) throws AutomationException {
         System.out.println("Locator : " + locator);
         return getWebElement(locator, DEFAULT_ELEMENT_WAIT);
@@ -57,11 +56,12 @@ public class WebDriverUtil {
     }
 
     public void getWebElementAndScrollUp() throws AutomationException {
-        if (DriverFactory.drivers.get() == null){
+        if (DriverFactory.drivers.get() == null) {
             throw new AutomationException("Driver is not initialized!");
-        }else{
-            JavascriptExecutor jse = (JavascriptExecutor)DriverFactory.drivers.get();
-             jse.executeScript("scroll(0, -250);");;
+        } else {
+            JavascriptExecutor jse = (JavascriptExecutor) DriverFactory.drivers.get();
+            jse.executeScript("scroll(0, -250);");
+            ;
         }
 
 
