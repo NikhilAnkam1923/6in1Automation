@@ -81,28 +81,28 @@ public class ExcelUtil {
         return headerMap;
     }
 
-    private static List<ExcelMapper> getMappings(String filePath, String alternateFilePath, String testMasterSheet, ExcelMapper excelMapper) {
-        List<ExcelMapper> dataList = new ArrayList<>();
-        Sheet sheet = getDataSheet(filePath, alternateFilePath,testMasterSheet);
-        if(sheet==null)
-            return dataList;
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        int header = 0;
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            if (header == 0) {
-                header++;
-            } else {
-                List<String> recordData = new ArrayList<>();
-                for (int i = 0; i < row.getLastCellNum(); i++) {
-                    String cellData = dataFormatter.formatCellValue(row.getCell(i));
-                    recordData.add(cellData);
-                }
-                dataList.add(excelMapper.setData(recordData));
-            }
-        }
-        return dataList;
-    }
+//    private static List<ExcelMapper> getMappings(String filePath, String alternateFilePath, String testMasterSheet, ExcelMapper excelMapper) {
+//        List<ExcelMapper> dataList = new ArrayList<>();
+//        Sheet sheet = getDataSheet(filePath, alternateFilePath,testMasterSheet);
+//        if(sheet==null)
+//            return dataList;
+//        Iterator<Row> rowIterator = sheet.rowIterator();
+//        int header = 0;
+//        while (rowIterator.hasNext()) {
+//            Row row = rowIterator.next();
+//            if (header == 0) {
+//                header++;
+//            } else {
+//                List<String> recordData = new ArrayList<>();
+//                for (int i = 0; i < row.getLastCellNum(); i++) {
+//                    String cellData = dataFormatter.formatCellValue(row.getCell(i));
+//                    recordData.add(cellData);
+//                }
+//                dataList.add(excelMapper.setData(recordData));
+//            }
+//        }
+//        return dataList;
+//    }
 
     /**
      * Method is created to copy of a file.

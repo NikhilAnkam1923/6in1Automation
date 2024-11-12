@@ -114,8 +114,11 @@ public class CommonSteps {
     @Then("^user go to application \"([^\"]*)\"$")
     public void launch(String url) throws InterruptedException {
         if (url.startsWith("$")) {
+            System.out.println("URL: "+url);
             String env = PropertyReader.getEnv();
+            System.out.println("Env:"+env);
             url = System.getProperty(env + "." + url.substring(1, url.length()));
+            System.out.println("URL: "+url);
         }
         logInfo("User go to application " + url);
         launchApplication(url);
