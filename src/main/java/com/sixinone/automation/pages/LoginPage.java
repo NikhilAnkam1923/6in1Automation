@@ -83,6 +83,7 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
+        WebDriverUtil.waitForAWhile(2);
         driverUtil.getWebElement(USER_DASHBOARD);
     }
 
