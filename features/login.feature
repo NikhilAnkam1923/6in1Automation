@@ -15,14 +15,6 @@ Feature: 6in1 Login Feature
       | user-email          | password  |
       | admin@malinator.com | Bits@123  |
 
-#  @Smoke
-#  Scenario Outline: User tries to log in with invalid credentials
-#    And user login using "<user-email>" and "<password>"
-#    Then user verify "<error-message>" for invalid credentials
-#    Examples:
-#      | user-email                           | password  | error-message                |
-#      | adityaghosh@bencashmarkit.solutions | Aditya@27 | Invalid username or password. |
-
   @Setup
   Scenario: SETUP: Close Browser
     Then User close browser
