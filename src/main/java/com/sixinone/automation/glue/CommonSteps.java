@@ -115,6 +115,7 @@ public class CommonSteps {
     public void launch(String url) throws InterruptedException {
         if (url.startsWith("$")) {
             String env = PropertyReader.getEnv();
+            System.out.println(env);
             url = System.getProperty(env + "." + url.substring(1, url.length()));
         }
         logInfo("User go to application " + url);

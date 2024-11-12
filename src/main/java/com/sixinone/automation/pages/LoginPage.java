@@ -15,9 +15,10 @@ public class LoginPage extends BasePage {
     private static final String USER_EMAIL_INPUT = "//input[@id='username']";
     private static final String USER_PASSWORD = "//input[@id='password']";
     private static final String LOGIN_BTN = "//input[@id='kc-login']";
-    private static final String LOGIN_TEXT = "//h1[@id='kc-page-title']";
+    private static final String LOGIN_TEXT = "//h2[contains(text(),'Login')]";
     private static final String HOME_PAGE = "//a[@class='chakra-link active css-spn4bz']";
-    private static final String USER_MENU = "//header/button[contains(@class,'chakra-menu__menu-button')]";
+    private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
+    private static final String USER_DASHBOARD = "//span[contains(text(),'Dashboard')]";
     private static final String LOGOUT_BUTTON = "//div[@class='UserDropdown css-1kfu8nn']//button[text()='Logout']";
     private static final String FORGET_PASSWORD_LINK = "//a[contains(@class,'forget-password-link')]";
     private static final String FORGOT_PASS_TXT = "//*[contains(text(),'Forget Password? ')]";
@@ -49,7 +50,7 @@ public class LoginPage extends BasePage {
         driverUtil.getWebElement("//li[@class='menBut']//a[contains(text(),'Log In')]").click();
     }
 
-    public void loginToCentrifi(String userEmail, String password) throws AutomationException {
+    public void loginTo6in1(String userEmail, String password) throws AutomationException {
         enterUserEmail(userEmail);
         enterPassword(password);
         clickLoginButton();
@@ -82,23 +83,23 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
-        driverUtil.getWebElement(USER_MENU);
+        driverUtil.getWebElement(USER_DASHBOARD);
     }
 
-    public void doLogoutFromCentrifi() throws AutomationException {
-        DriverFactory.drivers.get().navigate().refresh();
-        driverUtil.getWebElementAndScroll(USER_MENU).click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
+    public void doLogoutFrom6in1() throws AutomationException {
+//        DriverFactory.drivers.get().navigate().refresh();
+        driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
 
-    public void doLogoutFromCentrifiIfAlreadyLoggedIn() throws AutomationException {
-        if ((driverUtil.getWebElement(USER_MENU, 5) != null)) {
-            driverUtil.getWebElement(USER_MENU).click();
+    public void doLogoutFrom6in1IfAlreadyLoggedIn() throws AutomationException {
+        if ((driverUtil.getWebElement(LOGOUT_BTN, 5) != null)) {
+            driverUtil.getWebElement(LOGIN_BTN).click();
             WebDriverUtil.waitForAWhile();
-            driverUtil.getWebElement(LOGOUT_BUTTON).click();
+//            driverUtil.getWebElement(LOGOUT_BUTTON).click();
         }
     }
 

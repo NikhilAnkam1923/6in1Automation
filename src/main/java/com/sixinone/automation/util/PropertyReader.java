@@ -57,8 +57,8 @@ public class PropertyReader {
     public static String getEnv(){
         String env=System.getProperty("env");
         if(env==null)
-            System.setProperty("env","dev");
-        return System.getProperty("env");
+            System.setProperty("env","qa");
+        return System.getProperty("qa");
     }
 
 }

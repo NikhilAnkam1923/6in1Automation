@@ -25,12 +25,12 @@ public class LoginSteps {
     }
 
     @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
-    public static void userLoginToCentrifi(String userEmail, String password) throws AutomationException {
-        PageFactory.loginPage().doLogoutFromCentrifiIfAlreadyLoggedIn();
+    public static void userLoginTo6in1(String userEmail, String password) throws AutomationException {
+        PageFactory.loginPage().doLogoutFrom6in1IfAlreadyLoggedIn();
         userEmail = CommonUtil.processString(userEmail);
         password = CommonUtil.processString(password);
         CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
-        PageFactory.loginPage().loginToCentrifi(userEmail, password);
+        PageFactory.loginPage().loginTo6in1(userEmail, password);
     }
 
     @Given("user verify login page ui attributes")
@@ -48,7 +48,7 @@ public class LoginSteps {
     @Given("user logged out from the application")
     public void userLogoutFromCentrifi() throws AutomationException {
         CommonSteps.logInfo("User logged out from the application");
-        PageFactory.loginPage().doLogoutFromCentrifi();
+        PageFactory.loginPage().doLogoutFrom6in1();
     }
 
     @When("^user verify \"([^\"]*)\" for invalid credentials$")
