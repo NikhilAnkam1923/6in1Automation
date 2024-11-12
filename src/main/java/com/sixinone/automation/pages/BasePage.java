@@ -59,26 +59,6 @@ public abstract class BasePage {
         return false;
     }
 
-    public boolean verifyAnyPopup() {
-        boolean status = false;
-        try {
-            WebElement element = driverUtil.getWebElement(ERROR_POPUP, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                status = true;
-            }
-            element = driverUtil.getWebElement(SEARCH_POPUP_CLOSE, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                status = true;
-            }
-            element = driverUtil.getWebElement(ANY_OTHER_POPUP, WebDriverUtil.NO_WAIT);
-            if(element!=null) {
-                status = true;
-            }
-        } catch(Exception ex) {
-            LOGGER.info(ex.getMessage());
-        }
-        return status;
-    }
 
     public void checkInfoPopupAndClose() {
         try {
@@ -117,12 +97,6 @@ public abstract class BasePage {
         return false;
     }
 
-    public void checkAndCloseSearchPopup() throws AutomationException {
-        WebElement popup = driverUtil.getWebElement(SEARCH_POPUP_CLOSE);
-        if(popup!=null) {
-            popup.click();
-        }
-    }
 
     public boolean verifyConfirmationDialog() {
         WebElement dialog = driverUtil.findElement(CONFIRMATION_DIALOG);
@@ -130,19 +104,6 @@ public abstract class BasePage {
             return false;
         return true;
     }
-
-    public void clickOnConfirmationDialogDeleteButton() throws AutomationException {
-        if(verifyConfirmationDialog()) {
-            WebElement dialogDelete = driverUtil.getWebElement(CONFIRMATION_DIALOG_DELETE_BUTTON);
-            if (dialogDelete == null)
-                throw new AutomationException("Unable to locate delete button on confirmation dialog popup!");
-            dialogDelete.click();
-        } else {
-            throw new AutomationException("Unable to locate delete confirmation dialog popup!");
-        }
-    }
-
-
 
     public static void waitForLoadingPage() {
         waitForInvisibleElement(By.xpath(LOADING), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
@@ -165,11 +126,6 @@ public abstract class BasePage {
             }
         }
         return dataMap;
-    }
-
-    public void clickOnSideBarMenuItem(String item)throws AutomationException{
-        driverUtil.getWebElementAndScroll(String.format(MENU_ITEM,item), WAIT_30_SECOND, "Unable to locate Menu!").click();
-        waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     abstract String getName();
