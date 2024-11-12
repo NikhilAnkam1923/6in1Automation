@@ -17,6 +17,7 @@ public class LoginPage extends BasePage {
     private static final String LOGIN_BTN = "//input[@id='kc-login']";
     private static final String LOGIN_TEXT = "//h2[contains(text(),'Login')]";
     private static final String HOME_PAGE = "//a[@class='chakra-link active css-spn4bz']";
+    private static final String SPINNER = "//div[contains(class,'spinner')]";
     private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
     private static final String USER_DASHBOARD = "//span[contains(text(),'Dashboard')]";
     private static final String LOGOUT_BUTTON = "//div[@class='UserDropdown css-1kfu8nn']//button[text()='Logout']";
@@ -83,7 +84,8 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
-        WebDriverUtil.waitForAWhile(2);
+//        WebDriverUtil.waitForAWhile(2);
+        WebDriverUtil.waitForElementNotVisible(30,SPINNER);
         driverUtil.getWebElement(USER_DASHBOARD);
     }
 
@@ -92,7 +94,8 @@ public class LoginPage extends BasePage {
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
 //        WebDriverUtil.waitForAWhile();
 //        driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
-        WebDriverUtil.waitForAWhile();
+//        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForElementNotVisible(10,SPINNER);
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
 
