@@ -3,7 +3,9 @@ package com.sixinone.automation.pages;
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.stringtemplate.v4.ST;
 import org.testng.Assert;
 import java.util.logging.Logger;
 
@@ -12,8 +14,8 @@ public class LoginPage extends BasePage {
     public static final String USER_NAME_INPUT = "//input[@name='email']";
     public static final String PASSWORD_INPUT = "//input[@name='password']";
     public static final String LOGIN_BUTTON = "//button[@type='submit']";
-    private static final String USER_EMAIL_INPUT = "//input[@id='username']";
-    private static final String USER_PASSWORD = "//input[@id='password']";
+    public static final String USER_EMAIL_INPUT = "//input[@id='username']";
+    public static final String USER_PASSWORD = "//input[@id='password']";
     private static final String LOGIN_BTN = "//input[@id='kc-login']";
     private static final String LOGIN_TEXT = "//h2[contains(text(),'Login')]";
     private static final String HOME_PAGE = "//a[@class='chakra-link active css-spn4bz']";
@@ -22,7 +24,6 @@ public class LoginPage extends BasePage {
     private static final String USER_DASHBOARD = "//span[contains(text(),'Dashboard')]";
     private static final String LOGOUT_BUTTON = "//div[@class='UserDropdown css-1kfu8nn']//button[text()='Logout']";
     private static final String FORGET_PASSWORD_LINK = "//a[contains(@class,'forget-password-link')]";
-    private static final String FORGOT_PASS_TXT = "//*[contains(text(),'Forget Password? ')]";
     private static final String ERROR_MSG = "//span[@id='input-error']";
 
     /**
@@ -48,7 +49,7 @@ public class LoginPage extends BasePage {
 
 
     public void clickOnLoginButton() throws AutomationException {
-        driverUtil.getWebElement("//li[@class='menBut']//a[contains(text(),'Log In')]").click();
+        driverUtil.getWebElement(LOGIN_BTN).click();
     }
 
     public void loginTo6in1(String userEmail, String password) throws AutomationException {
@@ -56,6 +57,7 @@ public class LoginPage extends BasePage {
         enterPassword(password);
         clickLoginButton();
         WebDriverUtil.waitForAWhile(5);
+
     }
 
     public void enterUserEmail(String userEmail) throws AutomationException {
@@ -84,18 +86,13 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyHomePage() throws AutomationException {
-//        WebDriverUtil.waitForAWhile(2);
-        WebDriverUtil.waitForElementNotVisible(30,SPINNER);
-        driverUtil.getWebElement(USER_DASHBOARD);
+        WebDriverUtil.waitForElementNotVisible(60,SPINNER);
+        WebDriverUtil.waitForElementClickable(By.xpath("//span[contains(text(),'Dashboard')]"));
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
-//        DriverFactory.drivers.get().navigate().refresh();
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
-//        WebDriverUtil.waitForAWhile();
-//        driverUtil.getWebElementAndScroll(LOGOUT_BUTTON).click();
-//        WebDriverUtil.waitForAWhile();
-        WebDriverUtil.waitForElementNotVisible(10,SPINNER);
+        WebDriverUtil.waitForElementNotVisible(60,SPINNER);
         driverUtil.getWebElementAndScroll(LOGIN_TEXT);
     }
 
