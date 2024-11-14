@@ -105,7 +105,14 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
-        Assert.assertEquals(errorMessage, driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim());
+//        Assert.assertEquals(errorMessage, driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim());
+        String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
+        if (actualMessage.equals(errorMessage)) {
+            System.out.println("Error message matches expected value.");
+        } else {
+            throw new AssertionError("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
+        }
+
     }
 
     @Override
