@@ -110,9 +110,9 @@ public class LoginPage extends BasePage {
         if (actualMessage.equals(errorMessage)) {
             System.out.println("Error message matches expected value.");
         } else {
-            throw new AssertionError("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
+            throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
         }
-
+        driverUtil.getWebElementAndScroll(LoginPage.USER_EMAIL_INPUT).clear();
     }
 
     @Override
