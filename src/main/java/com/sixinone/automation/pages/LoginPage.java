@@ -93,7 +93,6 @@ public class LoginPage extends BasePage {
         if ((driverUtil.getWebElement(LOGOUT_BTN, 5) != null)) {
             driverUtil.getWebElement(LOGIN_BTN).click();
             WebDriverUtil.waitForAWhile();
-//            driverUtil.getWebElement(LOGOUT_BUTTON).click();
         }
     }
 
@@ -129,7 +128,6 @@ public class LoginPage extends BasePage {
 
 
     public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
-//        Assert.assertEquals(errorMessage, driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim());
         String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
         if (actualMessage.equals(errorMessage)) {
             System.out.println("Error message matches expected value.");

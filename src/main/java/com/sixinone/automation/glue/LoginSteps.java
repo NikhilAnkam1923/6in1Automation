@@ -1,6 +1,5 @@
 package com.sixinone.automation.glue;
 
-import com.aspose.pdf.Page;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.LoginPage;
 import com.sixinone.automation.pages.PageFactory;
@@ -10,7 +9,6 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import groovy.util.logging.Commons;
 
 import static com.sixinone.automation.pages.BasePage.driverUtil;
 
@@ -45,7 +43,6 @@ public class LoginSteps {
     public void userVerifyLoginPageUIAttributes() throws AutomationException {
         CommonSteps.logInfo("User verify login page ui attributes ");
         PageFactory.loginPage().verifyLoginPageUIAttributes();
-        CommonSteps.takeScreenshot();
     }
 
     @Given("user verify home page")
@@ -66,51 +63,22 @@ public class LoginSteps {
         CommonSteps.logInfo("User verify error message");
         PageFactory.loginPage().verifyInvalidCredErrorMessage(errorMessage);
         CommonSteps.takeScreenshot();
+<<<<<<< HEAD
         driverUtil.getWebElementAndScroll(LoginPage.USERNAME_INPUT).clear();
+=======
+//        driverUtil.getWebElementAndScroll(LoginPage.USER_EMAIL_INPUT).clear();
+>>>>>>> origin/login-test-automation
     }
 
-    @When("^user enter username as \"([^\"]*)\"$")
-    public void userEnterUsername(String email) throws AutomationException {
-        PageFactory.loginPage().enterUsername(email);
-        PageFactory.loginPage().clickOnLoginButton();
-    }
-
-    @When("^user enter password as \"([^\"]*)\"$")
+    @When("^user enter \"([^\"]*)\"$")
     public void userEnterPassword(String password) throws AutomationException {
         CommonSteps.logInfo("user enter password: *********");
         PageFactory.loginPage().enterPassword(password);
     }
 
-    @Then("user clicks the eye icon to toggle visibility")
-    public void userClicksTheEyeIconToToggleVisibility() throws AutomationException {
-        CommonSteps.logInfo("user click the eye icon");
-        PageFactory.loginPage().clickOnEyeIconVisibility();
-    }
-
-    @And("user verify password is visible after click on the eye icon")
-    public void userVerifyPasswordIsVisibleAfterClickOnTheEyeIcon() throws AutomationException {
-        CommonSteps.logInfo("user verifies password is visible");
-        PageFactory.loginPage().verifyEyeIconVisibility();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verify Remember me checkbox should be available")
-    public void rememberMeCheckboxShouldBeAvailable() throws AutomationException {
-        CommonSteps.logInfo("user verify Remember me checkbox should be available");
-        PageFactory.loginPage().verifyRememberMeCheckboxAvailability();
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("user click on forgot password link")
-    public void userClickOnForgotPasswordLink() throws AutomationException {
-        CommonSteps.logInfo("user click on forgot password link");
-        PageFactory.loginPage().verifyForgotPasswordButtonClickability();
-    }
-
-    @Then("verify forgot password page is open")
-    public void verifyForgotPasswordPageIsOpen() throws AutomationException {
-        CommonSteps.logInfo("verify forgot password page is open");
-        PageFactory.loginPage().verifyForgotPasswordPageOpen();
-        CommonSteps.takeScreenshot();
+    @When("^user login using \"([^\"]*)\"$")
+    public void userLoginUsing(String email) throws AutomationException {
+        PageFactory.loginPage().enterUserEmail(email);
+        PageFactory.loginPage().clickLoginButton();
     }
 }
