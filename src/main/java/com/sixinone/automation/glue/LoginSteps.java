@@ -1,6 +1,5 @@
 package com.sixinone.automation.glue;
 
-import com.aspose.pdf.Page;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.LoginPage;
 import com.sixinone.automation.pages.PageFactory;

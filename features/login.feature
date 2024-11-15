@@ -20,11 +20,9 @@ Feature: 6in1 Login Feature
     When user enter username as "<user-email>"
     Then user verify "<error-message>"
     Examples:
-      | user-email   | error-message                                 |
-      | adminmal.com | Invalid username or password.                 |
-      | admin@mal    | Invalid username or password.                 |
-#      | adminmal.com | Please include an '@' in the email address.   |
-#      | admin@mal    | Please enter a valid domain, such as '.com'.  |
+      | user-email   | error-message                 |
+      | adminmal.com | Invalid username or password. |
+      | admin@mal    | Invalid username or password. |
 
   Scenario Outline: User verify login using invalid credentials
     When user login using "<user-email>" and "<password>"

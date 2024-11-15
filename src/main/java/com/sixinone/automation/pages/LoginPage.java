@@ -93,7 +93,6 @@ public class LoginPage extends BasePage {
         if ((driverUtil.getWebElement(LOGOUT_BTN, 5) != null)) {
             driverUtil.getWebElement(LOGIN_BTN).click();
             WebDriverUtil.waitForAWhile();
-//            driverUtil.getWebElement(LOGOUT_BUTTON).click();
         }
     }
 
@@ -118,26 +117,18 @@ public class LoginPage extends BasePage {
         }
     }
 
-//    public void verifyRememberMeCheckboxAvailability() throws AutomationException {
-//        if (driverUtil.getWebElementAndScroll(REMEBER_ME).isDisplayed()) {
-//            System.out.println("Remember Me Checkbox is available, availability check passed.");
-//        } else {
-//            throw new AutomationException("Remember me checkbox is not displayed.");
-//        }
-//    }
-
     public void verifyForgotPasswordButtonClickability() throws AutomationException {
         driverUtil.getWebElement(FORGOT_PASSWORD).click();
     }
 
     public void verifyForgotPasswordPageOpen() throws AutomationException {
-        driverUtil.getWebElement(FORGOT_PASSWORD_LOGO, 10, "Forgot Password link open successfully");
-        //throw new AutomationException("Forgot Password page did not open.");
+        WebElement forgotPasswordLogo = driverUtil.getWebElement(FORGOT_PASSWORD_LOGO);
+        if(!forgotPasswordLogo.isDisplayed()) {
+            throw new AutomationException("Forgot Password page did not open.");
+        }
     }
 
-
     public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
-//        Assert.assertEquals(errorMessage, driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim());
         String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
         if (actualMessage.equals(errorMessage)) {
             System.out.println("Error message matches expected value.");
