@@ -144,7 +144,7 @@ public class LoginPage extends BasePage {
         } else {
             throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
         }
-        driverUtil.getWebElementAndScroll(LoginPage.USER_EMAIL_INPUT).clear();
+        driverUtil.getWebElementAndScroll(LoginPage.USERNAME_INPUT).clear();
     }
 
     @Override
