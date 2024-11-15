@@ -63,7 +63,6 @@ public class LoginSteps {
         CommonSteps.logInfo("User verify error message");
         PageFactory.loginPage().verifyInvalidCredErrorMessage(errorMessage);
         CommonSteps.takeScreenshot();
-//        driverUtil.getWebElementAndScroll(LoginPage.USER_EMAIL_INPUT).clear();
     }
 
     @When("^user enter \"([^\"]*)\"$")
