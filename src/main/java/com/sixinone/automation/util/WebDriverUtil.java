@@ -17,8 +17,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.sixinone.automation.glue.CommonSteps.driverUtil;
 
 public class WebDriverUtil {
     private static final Logger logger = LoggerFactory.getLogger(WebDriverUtil.class);
@@ -34,7 +38,6 @@ public class WebDriverUtil {
     public static final int MAX_PAGE_LOADING_WAIT = 180;
     public static final String DEFAULT_PAGE_LOAD_TIMEOUT = "180";
     public static final String ADMIN_PORTAL_LOADING_INVISIBLE = "//div[@class='MuiBackdrop-root' and contains(@style,'hidden')]";
-
 
 
     public WebElement getWebElement(String locator) throws AutomationException {
