@@ -122,10 +122,11 @@ public class LoginPage extends BasePage {
     }
 
     public void verifyForgotPasswordPageOpen() throws AutomationException {
-        driverUtil.getWebElement(FORGOT_PASSWORD_LOGO, 10, "Forgot Password link open successfully");
-        //throw new AutomationException("Forgot Password page did not open.");
+        WebElement forgotPasswordLogo = driverUtil.getWebElement(FORGOT_PASSWORD_LOGO);
+        if(!forgotPasswordLogo.isDisplayed()) {
+            throw new AutomationException("Forgot Password page did not open.");
+        }
     }
-
 
     public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
         String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
