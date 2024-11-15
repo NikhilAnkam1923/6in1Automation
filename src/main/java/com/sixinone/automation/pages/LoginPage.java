@@ -118,14 +118,6 @@ public class LoginPage extends BasePage {
         }
     }
 
-//    public void verifyRememberMeCheckboxAvailability() throws AutomationException {
-//        if (driverUtil.getWebElementAndScroll(REMEBER_ME).isDisplayed()) {
-//            System.out.println("Remember Me Checkbox is available, availability check passed.");
-//        } else {
-//            throw new AutomationException("Remember me checkbox is not displayed.");
-//        }
-//    }
-
     public void verifyForgotPasswordButtonClickability() throws AutomationException {
         driverUtil.getWebElement(FORGOT_PASSWORD).click();
     }
@@ -144,7 +136,7 @@ public class LoginPage extends BasePage {
         } else {
             throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
         }
-        driverUtil.getWebElementAndScroll(LoginPage.USER_EMAIL_INPUT).clear();
+        driverUtil.getWebElementAndScroll(LoginPage.USERNAME_INPUT).clear();
     }
 
     @Override
