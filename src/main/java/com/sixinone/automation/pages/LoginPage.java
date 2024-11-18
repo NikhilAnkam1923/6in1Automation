@@ -24,28 +24,6 @@ public class LoginPage extends BasePage {
     private static final String FORGOT_PASSWORD = "//a[text()='Forgot Password?']";
     private static final String FORGOT_PASSWORD_LOGO = "//h2[text()='Forgot Password']";
 
-    /**
-     * This function is used to login.
-     *
-     * @param userName
-     * @param password
-     * @throws AutomationException
-     */
-    public void doLogin(String userName, String password) throws AutomationException {
-        WebElement userNameInput = driverUtil.getWebElement(USERNAME_INPUT);
-        if (userNameInput != null) {
-            WebElement passwordInput = driverUtil.getWebElement(PASSWORD_INPUT);
-            WebElement login = driverUtil.getWebElement(LOGIN_BTN);
-            userNameInput.clear();
-            userNameInput.sendKeys(userName);
-            passwordInput.clear();
-            passwordInput.sendKeys(password);
-            login.click();
-            driverUtil.waitForLoadingPage();
-        }
-    }
-
-
     public void clickOnLoginButton() throws AutomationException {
         driverUtil.getWebElement(LOGIN_BTN).click();
     }
@@ -58,11 +36,15 @@ public class LoginPage extends BasePage {
     }
 
     public void enterUsername(String userEmail) throws AutomationException {
-        driverUtil.getWebElementAndScroll(USERNAME_INPUT).sendKeys(userEmail);
+        WebElement usernameInput = driverUtil.getWebElementAndScroll(USERNAME_INPUT);
+        usernameInput.clear();
+        usernameInput.sendKeys(userEmail);
     }
 
     public void enterPassword(String password) throws AutomationException {
-        driverUtil.getWebElementAndScroll(PASSWORD_INPUT).sendKeys(password);
+        WebElement passwordInput = driverUtil.getWebElementAndScroll(PASSWORD_INPUT);
+        passwordInput.clear();
+        passwordInput.sendKeys(password);
     }
 
     public void verifyLoginPageUIAttributes() throws AutomationException {
@@ -97,7 +79,11 @@ public class LoginPage extends BasePage {
     }
 
     public void clickOnEyeIconVisibility() throws AutomationException {
-        driverUtil.getWebElement(EYE_ICON).click();
+        WebElement eyeIcon = driverUtil.getWebElement(EYE_ICON);
+        if (eyeIcon == null) {
+            throw new AutomationException("Expected Eye Icon to be visible on the UI, but it is either not present or not locatable.");
+        }
+        eyeIcon.click();
     }
 
     public void verifyEyeIconVisibility() throws AutomationException {
@@ -111,8 +97,7 @@ public class LoginPage extends BasePage {
 
     public void verifyRememberMeCheckboxAvailability() throws AutomationException {
         WebElement rememberMe = driverUtil.getWebElementAndScroll(REMEBER_ME);
-            if(!rememberMe.isDisplayed())
-            {
+        if (!rememberMe.isDisplayed()) {
             throw new AutomationException("Remember me checkbox is not displayed.");
         }
     }
@@ -123,7 +108,7 @@ public class LoginPage extends BasePage {
 
     public void verifyForgotPasswordPageOpen() throws AutomationException {
         WebElement forgotPasswordLogo = driverUtil.getWebElement(FORGOT_PASSWORD_LOGO);
-        if(!forgotPasswordLogo.isDisplayed()) {
+        if (!forgotPasswordLogo.isDisplayed()) {
             throw new AutomationException("Forgot Password page did not open.");
         }
     }
@@ -135,7 +120,6 @@ public class LoginPage extends BasePage {
         } else {
             throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
         }
-        driverUtil.getWebElementAndScroll(LoginPage.USERNAME_INPUT).clear();
     }
 
     @Override
