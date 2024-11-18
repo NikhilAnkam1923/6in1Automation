@@ -14,15 +14,6 @@ import groovy.util.logging.Commons;
 import static com.sixinone.automation.pages.BasePage.driverUtil;
 
 public class LoginSteps {
-    @Then("^User login with \"([^\"]*)\" and \"([^\"]*)\"$")
-    public void login(String userName, String password) throws Exception {
-        if (userName.startsWith("$"))
-            userName = System.getProperty(userName.substring(1));
-        if (password.startsWith("$"))
-            password = System.getProperty(password.substring(1));
-        CommonSteps.logInfo("User login with user: " + userName + " and password: *********");
-        PageFactory.loginPage().doLogin(userName, password);
-    }
 
     @When("user click on Login button")
     public void userClickOnLoginButton() throws AutomationException {
@@ -55,7 +46,7 @@ public class LoginSteps {
     }
 
     @Given("user logged out from the application")
-    public void userLogoutFromCentrifi() throws AutomationException {
+    public void userLogoutFrom6in1() throws AutomationException {
         CommonSteps.logInfo("User logged out from the application");
         PageFactory.loginPage().doLogoutFrom6in1();
     }
