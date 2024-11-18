@@ -65,11 +65,6 @@ public class LoginPage extends BasePage {
         driverUtil.getWebElementAndScroll(PASSWORD_INPUT).sendKeys(password);
     }
 
-    public void verifyLoginPageUIAttributes() throws AutomationException {
-        Assert.assertEquals("MEMBER LOGIN", getLogInText().trim());
-        Assert.assertEquals("a", verifyForgotPasswordLink());
-    }
-
     public String getLogInText() throws AutomationException {
         return driverUtil.getWebElement(LOGIN_TEXT).getText();
     }
@@ -77,6 +72,18 @@ public class LoginPage extends BasePage {
     public String verifyForgotPasswordLink() throws AutomationException {
         return driverUtil.getWebElement(FORGOT_PASSWORD).getTagName();
     }
+
+    public void verifyLoginPageUIAttributes() throws AutomationException {
+        String loginText = getLogInText().trim();
+        if (!"Login".equals(loginText)) {
+            throw new AutomationException("Login text does not match. Expected: 'Login', but found: '" + loginText + "'.");
+        }
+        String forgotPasswordLink = verifyForgotPasswordLink();
+        if (!"a".equals(forgotPasswordLink)) {
+            throw new AutomationException("Forgot Password link attribute does not match. Expected: 'a', but found: '" + forgotPasswordLink + "'.");
+        }
+    }
+
 
     public void verifyHomePage() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
