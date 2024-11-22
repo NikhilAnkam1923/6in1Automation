@@ -24,6 +24,7 @@ Feature: 6in1 Login Feature
       | adminmal.com | Invalid username or password. |
       | admin@mal    | Invalid username or password. |
 
+  @Smoke
   Scenario Outline: User verify login using invalid credentials
     When user login using "<user-email>" and "<password>"
     Then user verify "<error-message>"
@@ -57,11 +58,18 @@ Feature: 6in1 Login Feature
       | Bits@123 |
 
   Scenario: User verify Remember me checkbox available on the login page
-    Then user verify Remember me checkbox should be available
+    Then user verify Remember me checkbox available
+
+  Scenario: User verify Remember me checkbox is clickable
+    Then user verify Remember me checkbox clickable
 
   Scenario: User verify Forgot password page open after click on forgot password link
     When user click on forgot password link
     Then verify forgot password page is open
+
+  Scenario: User verify user landed on login page after click on Back to Login link
+    When user click on Back to Login link
+    Then verify user landed on login page
 
   @Setup
   Scenario: SETUP: Close Browser

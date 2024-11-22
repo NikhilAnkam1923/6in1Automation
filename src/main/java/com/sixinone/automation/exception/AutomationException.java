@@ -3,6 +3,7 @@ package com.sixinone.automation.exception;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
 import com.sixinone.automation.glue.CommonSteps;
 
 public class AutomationException extends Exception {
@@ -14,14 +15,14 @@ public class AutomationException extends Exception {
 
     public AutomationException(String message) {
         this.message = message;
-        LOGGER.info("Exception Occurred: "+message);
+        LOGGER.info("Exception Occurred: " + message);
         CommonSteps.logError(message);
     }
 
-    public AutomationException(String message,List<String> screenshotList) {
+    public AutomationException(String message, List<String> screenshotList) {
         this.message = message;
         screenshots = screenshotList;
-        LOGGER.info("Exception Occurred: "+message);
+        LOGGER.info("Exception Occurred: " + message);
         CommonSteps.logError(message, screenshotList);
     }
 
@@ -39,7 +40,7 @@ public class AutomationException extends Exception {
     }
 
     public void setScreenshot(String screenshot) {
-        if(screenshots==null)
+        if (screenshots == null)
             screenshots = new ArrayList<>();
         this.screenshots.add(screenshot);
     }

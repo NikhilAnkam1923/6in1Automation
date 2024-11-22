@@ -5,9 +5,11 @@ import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.stringtemplate.v4.ST;
 import org.testng.Assert;
 
+import java.time.Duration;
 import java.util.logging.Logger;
 
 public class LoginPage extends BasePage {
@@ -15,7 +17,7 @@ public class LoginPage extends BasePage {
     public static final String USERNAME_INPUT = "//input[@id='username']";
     public static final String PASSWORD_INPUT = "//input[@name='password']";
     private static final String LOGIN_BTN = "//input[@name='login']";
-    private static final String LOGIN_TEXT = "//h2[contains(text(),'Login')]";
+    private static final String LOGIN_LOGO = "//h2[text()='Login']";
     private static final String SPINNER = "//div[contains(class,'spinner')]";
     private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
     private static final String ERROR_MSG = "//span[@id='input-error']";
@@ -23,16 +25,20 @@ public class LoginPage extends BasePage {
     private static final String REMEBER_ME = "//input[@id='rememberMe']";
     private static final String FORGOT_PASSWORD = "//a[text()='Forgot Password?']";
     private static final String FORGOT_PASSWORD_LOGO = "//h2[text()='Forgot Password']";
+    private static final String BACK_TO_LOGIN = "//a[text()='« Back to Login']";
+
+    public static WebDriverUtil driverUtil = new WebDriverUtil();
 
     public void clickOnLoginButton() throws AutomationException {
         driverUtil.getWebElement(LOGIN_BTN).click();
     }
 
+
     public void loginTo6in1(String userEmail, String password) throws AutomationException {
         enterUsername(userEmail);
         enterPassword(password);
         clickOnLoginButton();
-        WebDriverUtil.waitForAWhile(5);
+        driverUtil.waitForLoaderToDisappear();
     }
 
     public void enterUsername(String userEmail) throws AutomationException {
@@ -48,7 +54,16 @@ public class LoginPage extends BasePage {
     }
 
     public String getLogInText() throws AutomationException {
-        return driverUtil.getWebElement(LOGIN_TEXT).getText();
+        return driverUtil.getWebElement(LOGIN_LOGO).getText();
+    }
+
+    public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
+        String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
+        if (actualMessage.equals(errorMessage)) {
+            System.out.println("Error message matches expected value.");
+        } else {
+            throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
+        }
     }
 
     public String verifyForgotPasswordLink() throws AutomationException {
@@ -75,7 +90,7 @@ public class LoginPage extends BasePage {
     public void doLogoutFrom6in1() throws AutomationException {
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        driverUtil.getWebElementAndScroll(LOGIN_TEXT);
+        driverUtil.getWebElementAndScroll(LOGIN_LOGO);
     }
 
     public void doLogoutFrom6in1IfAlreadyLoggedIn() throws AutomationException {
@@ -109,23 +124,35 @@ public class LoginPage extends BasePage {
         }
     }
 
+    public void userVerifyRememberMeCheckboxClickability() throws AutomationException {
+        WebElement rememberMe = driverUtil.getWebElementAndScroll(REMEBER_ME);
+        rememberMe.click();
+        if (!rememberMe.isEnabled()) {
+            throw new AutomationException("Remember me checkbox is not clickable");
+        }
+    }
+
     public void verifyForgotPasswordButtonClickability() throws AutomationException {
         driverUtil.getWebElement(FORGOT_PASSWORD).click();
     }
 
     public void verifyForgotPasswordPageOpen() throws AutomationException {
-        WebElement forgotPasswordLogo = driverUtil.getWebElement(FORGOT_PASSWORD_LOGO);
+        WebElement forgotPasswordLogo = driverUtil.getWebElementAndScroll(FORGOT_PASSWORD_LOGO);
         if (!forgotPasswordLogo.isDisplayed()) {
             throw new AutomationException("Forgot Password page did not open.");
         }
     }
 
-    public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
-        String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
-        if (actualMessage.equals(errorMessage)) {
-            System.out.println("Error message matches expected value.");
-        } else {
-            throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
+    public void verifyBackToLoginButtonClickability() throws AutomationException {
+        {
+            driverUtil.getWebElement(BACK_TO_LOGIN).click();
+        }
+    }
+
+    public void verifyUserLandedOnLoginPage() throws AutomationException {
+        WebElement loginLogo = driverUtil.getWebElementAndScroll(LOGIN_LOGO, 10, "User Landed on the login page after click on the back to login");
+        if (!loginLogo.isDisplayed()) {
+            throw new AutomationException("After click on back to login button its not landed on login page");
         }
     }
 

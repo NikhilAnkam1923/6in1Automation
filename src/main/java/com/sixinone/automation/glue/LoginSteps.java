@@ -41,6 +41,7 @@ public class LoginSteps {
     @Given("user verify home page")
     public void userVerifyHomePage() throws AutomationException {
         CommonSteps.logInfo("User verify home page ");
+        driverUtil.waitForLoaderToDisappear();
         PageFactory.loginPage().verifyHomePage();
         CommonSteps.takeScreenshot();
     }
@@ -53,7 +54,7 @@ public class LoginSteps {
 
     @When("^user verify \"([^\"]*)\"$")
     public void userVerifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
-        CommonSteps.logInfo("User verify error message");
+        CommonSteps.logInfo("User verify error message: '"+ errorMessage + "'");
         PageFactory.loginPage().verifyInvalidCredErrorMessage(errorMessage);
         CommonSteps.takeScreenshot();
         driverUtil.getWebElementAndScroll(LoginPage.USERNAME_INPUT).clear();
@@ -82,12 +83,20 @@ public class LoginSteps {
         CommonSteps.logInfo("user verifies password is visible");
         PageFactory.loginPage().verifyEyeIconVisibility();
         CommonSteps.takeScreenshot();
+
     }
 
-    @Then("user verify Remember me checkbox should be available")
-    public void rememberMeCheckboxShouldBeAvailable() throws AutomationException {
-        CommonSteps.logInfo("user verify Remember me checkbox should be available");
+    @Then("user verify Remember me checkbox available")
+    public void rememberMeCheckboxAvailability() throws AutomationException {
+        CommonSteps.logInfo("user verify Remember me checkbox available");
         PageFactory.loginPage().verifyRememberMeCheckboxAvailability();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verify Remember me checkbox clickable")
+    public void rememberMeCheckboxClickability() throws AutomationException {
+        CommonSteps.logInfo("user verify Remember me checkbox clickable");
+        PageFactory.loginPage().userVerifyRememberMeCheckboxClickability();
         CommonSteps.takeScreenshot();
     }
 
@@ -101,6 +110,20 @@ public class LoginSteps {
     public void verifyForgotPasswordPageIsOpen() throws AutomationException {
         CommonSteps.logInfo("verify forgot password page is open");
         PageFactory.loginPage().verifyForgotPasswordPageOpen();
+        CommonSteps.takeScreenshot();
+    }
+
+
+    @When("user click on Back to Login link")
+    public void userClickOnBackToLoginLink() throws AutomationException {
+        CommonSteps.logInfo("user click on Back to Login link");
+        PageFactory.loginPage().verifyBackToLoginButtonClickability();
+    }
+
+    @Then("verify user landed on login page")
+    public void verifyUserLandedOnLoginPage() throws AutomationException {
+        CommonSteps.logInfo("verify user landed on login page after click on back to login");
+        PageFactory.loginPage().verifyUserLandedOnLoginPage();
         CommonSteps.takeScreenshot();
     }
 }
