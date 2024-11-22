@@ -71,6 +71,17 @@ Feature: 6in1 Login Feature
     When user click on Back to Login link
     Then verify user landed on login page
 
+  Scenario Outline: User verify that the logged-in user is admin or support staff
+    When user login using "<user-email>" and "<password>"
+    And user verify home page
+    Then verify visibility of the "Create Lackner Staff" button
+    And user identifies the user type as "<expected-user-type>"
+    And user logged out from the application
+    Examples:
+      | user-email                          | password  | expected-user-type |
+      | gauravgidye@benchmarkit.solutions   | Gaurav@26 | Admin              |
+      | gauravgidye+1@benchmarkit.solutions | Pritav@21 | Support Staff      |
+
   @Setup
   Scenario: SETUP: Close Browser
     Then User close browser

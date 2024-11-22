@@ -54,7 +54,7 @@ public class LoginSteps {
 
     @When("^user verify \"([^\"]*)\"$")
     public void userVerifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
-        CommonSteps.logInfo("User verify error message: '"+ errorMessage + "'");
+        CommonSteps.logInfo("User verify error message: '" + errorMessage + "'");
         PageFactory.loginPage().verifyInvalidCredErrorMessage(errorMessage);
         CommonSteps.takeScreenshot();
         driverUtil.getWebElementAndScroll(LoginPage.USERNAME_INPUT).clear();
@@ -111,6 +111,29 @@ public class LoginSteps {
         CommonSteps.logInfo("verify forgot password page is open");
         PageFactory.loginPage().verifyForgotPasswordPageOpen();
         CommonSteps.takeScreenshot();
+        PageFactory.loginPage().backToLoginPage();
+    }
+
+    @Then("^verify visibility of the \"([^\"]*)\" button$")
+    public void verifyVisibilityOfTheCreateLacknerStaffButton(String createLacknerStaffButtonLabel) throws AutomationException {
+        CommonSteps.logInfo("User checks the '" + createLacknerStaffButtonLabel + "' button is visible or not.");
+        boolean isButtonVisible = PageFactory.loginPage().isButtonVisible(createLacknerStaffButtonLabel);
+        CommonSteps.takeScreenshot();
+        CommonUtil.setTestData("isAdmin", isButtonVisible);
+    }
+
+    @And("^user identifies the user type as \"([^\"]*)\"$")
+    public void userIdentifiesUserType(String expectedUserType) throws AutomationException {
+
+        boolean isAdmin = (boolean) CommonUtil.getTestData("isAdmin");
+        String actualUserType = isAdmin ? "Admin" : "Support Staff";
+
+        if (!actualUserType.equals(expectedUserType)) {
+            throw new AutomationException("Expected user type: " + expectedUserType + ", but found: " + actualUserType);
+        }
+
+        CommonSteps.logInfo("Verified user type is: " + actualUserType);
+        CommonSteps.takeScreenshot();
     }
 
 
@@ -126,4 +149,5 @@ public class LoginSteps {
         PageFactory.loginPage().verifyUserLandedOnLoginPage();
         CommonSteps.takeScreenshot();
     }
+
 }

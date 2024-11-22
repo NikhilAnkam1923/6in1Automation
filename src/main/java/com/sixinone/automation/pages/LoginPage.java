@@ -26,8 +26,8 @@ public class LoginPage extends BasePage {
     private static final String FORGOT_PASSWORD = "//a[text()='Forgot Password?']";
     private static final String FORGOT_PASSWORD_LOGO = "//h2[text()='Forgot Password']";
     private static final String BACK_TO_LOGIN = "//a[text()='« Back to Login']";
-
     public static WebDriverUtil driverUtil = new WebDriverUtil();
+    private static final String CREATE_LACKNER_STAFF_BTN = "//button[@aria-label='%s']";
 
     public void clickOnLoginButton() throws AutomationException {
         driverUtil.getWebElement(LOGIN_BTN).click();
@@ -145,15 +145,25 @@ public class LoginPage extends BasePage {
 
     public void verifyBackToLoginButtonClickability() throws AutomationException {
         {
-            driverUtil.getWebElement(BACK_TO_LOGIN).click();
+            driverUtil.getWebElementAndScroll(LOGIN_LOGO).click();
         }
     }
 
     public void verifyUserLandedOnLoginPage() throws AutomationException {
-        WebElement loginLogo = driverUtil.getWebElementAndScroll(LOGIN_LOGO, 10, "User Landed on the login page after click on the back to login");
+        WebElement loginLogo = driverUtil.getWebElementAndScroll(LOGIN_LOGO, 5, "User Landed on the login page after click on the back to login");
         if (!loginLogo.isDisplayed()) {
             throw new AutomationException("After click on back to login button its not landed on login page");
         }
+    }
+
+    public boolean isButtonVisible(String createLacknerStaffButtonLabel) throws AutomationException {
+        String locator = String.format(CREATE_LACKNER_STAFF_BTN, createLacknerStaffButtonLabel);
+        WebElement buttonElement = driverUtil.getWebElement(locator, 5);
+        return buttonElement != null && buttonElement.isDisplayed();
+    }
+
+    public void backToLoginPage() throws AutomationException {
+        driverUtil.getWebElement(BACK_TO_LOGIN).click();
     }
 
     @Override
