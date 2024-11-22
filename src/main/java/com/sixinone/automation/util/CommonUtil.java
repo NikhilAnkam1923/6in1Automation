@@ -10,6 +10,16 @@ public class CommonUtil {
     public CommonUtil() {
     }
 
+    private static Map<String, Object> testData = new HashMap<>();
+
+    public static void setTestData(String key, Object value) {
+        testData.put(key, value);
+    }
+
+    public static Object getTestData(String key) {
+        return testData.get(key);
+    }
+
     public static Map<String, String> readData(DataTable parameters) {
         Map<String, String> parametersMap = new LinkedHashMap<>();
         List<Map<String, String>> rows = parameters.asMaps();

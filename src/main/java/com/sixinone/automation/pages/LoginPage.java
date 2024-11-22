@@ -23,6 +23,8 @@ public class LoginPage extends BasePage {
     private static final String REMEBER_ME = "//input[@id='rememberMe']";
     private static final String FORGOT_PASSWORD = "//a[text()='Forgot Password?']";
     private static final String FORGOT_PASSWORD_LOGO = "//h2[text()='Forgot Password']";
+    private static final String CREATE_LACKNER_STAFF_BTN = "//button[@aria-label='%s']";
+    private static final String BACK_TO_LOGIN = "//a[contains(text(),'Back to Login')]";
 
     public void clickOnLoginButton() throws AutomationException {
         driverUtil.getWebElement(LOGIN_BTN).click();
@@ -127,6 +129,17 @@ public class LoginPage extends BasePage {
         } else {
             throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
         }
+    }
+
+    public boolean isButtonVisible(String buttonAriaLabel) throws AutomationException {
+        String locator = String.format(CREATE_LACKNER_STAFF_BTN, buttonAriaLabel);
+        WebElement buttonElement = driverUtil.getWebElement(locator, 5); // Wait up to 5 seconds for the element
+        return buttonElement != null && buttonElement.isDisplayed();
+    }
+
+
+    public void backToLoginPage() throws AutomationException {
+        driverUtil.getWebElement(BACK_TO_LOGIN).click();
     }
 
     @Override

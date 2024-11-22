@@ -102,5 +102,27 @@ public class LoginSteps {
         CommonSteps.logInfo("verify forgot password page is open");
         PageFactory.loginPage().verifyForgotPasswordPageOpen();
         CommonSteps.takeScreenshot();
+        PageFactory.loginPage().backToLoginPage();
+    }
+
+    @Then("^user checks if the \"([^\"]*)\" button is visible or not$")
+    public void userChecksIfButtonIsVisible(String buttonAriaLabel) throws AutomationException {
+        CommonSteps.logInfo("User checks if the '" + buttonAriaLabel + "' button is visible or not.");
+        boolean isButtonVisible = PageFactory.loginPage().isButtonVisible(buttonAriaLabel);
+        CommonSteps.takeScreenshot();
+        CommonUtil.setTestData("isAdmin", isButtonVisible);
+    }
+
+    @And("^user identifies the user type as \"([^\"]*)\"$")
+    public void userIdentifiesUserType(String expectedUserType) throws AutomationException {
+        boolean isAdmin = (boolean) CommonUtil.getTestData("isAdmin");
+        String actualUserType = isAdmin ? "Admin" : "Support Staff";
+
+        if (!actualUserType.equals(expectedUserType)) {
+            throw new AutomationException("Expected user type: " + expectedUserType + ", but found: " + actualUserType);
+        }
+
+        CommonSteps.logInfo("Verified user type is: " + actualUserType);
+        CommonSteps.takeScreenshot();
     }
 }
