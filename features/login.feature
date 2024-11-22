@@ -31,6 +31,7 @@ Feature: 6in1 Login Feature
     Examples:
       | user-email           | password   | error-message                 |
       | admin@malinator.comm | Bits@12345 | Invalid username or password. |
+      | abc@gmail.com        | abc@123    | Invalid username or password.                        |
 
   @Smoke
   Scenario Outline: User verify if user is able to login without entering username
@@ -74,8 +75,8 @@ Feature: 6in1 Login Feature
   Scenario Outline: User verify that the logged-in user is admin or support staff
     When user login using "<user-email>" and "<password>"
     And user verify home page
-    Then verify visibility of the "Create Lackner Staff" button
-    And user identifies the user type as "<expected-user-type>"
+    Then user verify visibility of the "Create Lackner Staff" button
+    And verify the user type as "<expected-user-type>"
     And user logged out from the application
     Examples:
       | user-email                          | password  | expected-user-type |

@@ -114,16 +114,16 @@ public class LoginSteps {
         PageFactory.loginPage().backToLoginPage();
     }
 
-    @Then("^verify visibility of the \"([^\"]*)\" button$")
-    public void verifyVisibilityOfTheCreateLacknerStaffButton(String createLacknerStaffButtonLabel) throws AutomationException {
-        CommonSteps.logInfo("User checks the '" + createLacknerStaffButtonLabel + "' button is visible or not.");
+    @Then("^user verify visibility of the \"([^\"]*)\" button$")
+    public void userVerifyVisibilityOfTheCreateLacknerStaffButton(String createLacknerStaffButtonLabel) throws AutomationException {
+        CommonSteps.logInfo("user verify visibility of '" + createLacknerStaffButtonLabel + "' button ");
         boolean isButtonVisible = PageFactory.loginPage().isButtonVisible(createLacknerStaffButtonLabel);
         CommonSteps.takeScreenshot();
         CommonUtil.setTestData("isAdmin", isButtonVisible);
     }
 
-    @And("^user identifies the user type as \"([^\"]*)\"$")
-    public void userIdentifiesUserType(String expectedUserType) throws AutomationException {
+    @And("^verify the user type as \"([^\"]*)\"$")
+    public void verifyUserType(String expectedUserType) throws AutomationException {
 
         boolean isAdmin = (boolean) CommonUtil.getTestData("isAdmin");
         String actualUserType = isAdmin ? "Admin" : "Support Staff";
