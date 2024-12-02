@@ -15,5 +15,17 @@ Feature: Verify 6in1 New Firm Creation
       | user-email                        | password      |
       | nikhilankam@benchmarkit.solutions | Password@1223 |
 
+  @Smoke
+  Scenario : User verify validation messages for input fields on the "Create Firm Page"
+    When user enters <inputs> in the <field>
+    And clicks "Save"
+    Then the system displays <expectedMessage>
+    Examples:
+      | field              | input     | expectedMessage                    |
+      | Firm Name          | ""        | Firm Name is required              |
+      | Firm Email Address | abc@gmail | Please enter a valid Email Address |
+      | Phone #            | 898       | Please enter a valid Phone #       |
+      | First Name         | ""        | First name is required             |
+
 
 
