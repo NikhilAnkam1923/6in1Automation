@@ -18,7 +18,7 @@ public class LoginPage extends BasePage {
     public static final String PASSWORD_INPUT = "//input[@name='password']";
     private static final String LOGIN_BTN = "//input[@name='login']";
     private static final String LOGIN_LOGO = "//h2[text()='Login']";
-    private static final String SPINNER = "//div[contains(class,'spinner')]";
+    public static final String SPINNER = "//div[contains(class,'spinner')]";
     private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
     private static final String ERROR_MSG = "//span[@id='input-error']";
     private static final String EYE_ICON = "//button[@aria-label=\"Show password\"]";
