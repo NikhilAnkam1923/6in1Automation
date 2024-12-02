@@ -18,6 +18,7 @@ import cucumber.api.java.BeforeStep;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.When;
 import cucumber.runtime.ScenarioImpl;
 import gherkin.events.PickleEvent;
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -46,6 +47,8 @@ public class CommonSteps {
     public static final int WAIT_60_SECOND = 60;
     public static final int WAIT_120_SECOND = 120;
     public static final String METHOD_NAME = "NAME";
+    public static final String TAB_XPATH = "//div[@class='nav-item']//a//span[contains(text(),'%s')]";
+    public static final String BTN_XPATH = "//button[contains(text(),'%s')]";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -369,5 +372,33 @@ public class CommonSteps {
     public static void updateResultsToTheTestRail() {
         if ("true".equalsIgnoreCase(System.getProperty("TestRail")))
             testRailUtility.updateTestResultsToTestRun(projectID, testRunID, suiteID, "Automated Test Run", testResultMapping);
+    }
+
+    @When("^user click on tab: \"([^\"]*)\"$")
+    public void userClickOnTab(String tabText) throws AutomationException {
+        WebElement tab = driverUtil.getWebElementAndScroll(String.format(TAB_XPATH, tabText));
+        if (tab == null)
+            throw new AutomationException(String.format("Unable to find %s text on page or it might taking too long time to load!", tabText));
+        driverUtil.waitForElementClickable(By.xpath(String.format(TAB_XPATH, tabText)));
+        try {
+            driverUtil.clickUsingJavaScript(String.format(TAB_XPATH, tabText));
+        }catch(Exception e) {
+            driverUtil.waitForAWhile(5);
+            tab.click();
+        }
+    }
+
+    @Then("^user click on \"([^\"]*)\" Button$")
+    public void userClickOnButton(String btnext) throws AutomationException {
+        WebElement btn = driverUtil.getWebElementAndScroll(String.format(BTN_XPATH, btnext));
+        if (btn == null)
+            throw new AutomationException(String.format("Unable to find %s text on page or it might taking too long time to load!", btnext));
+        driverUtil.waitForElementClickable(By.xpath(String.format(BTN_XPATH, btnext)));
+        try {
+            driverUtil.clickUsingJavaScript(String.format(BTN_XPATH, btnext));
+        }catch(Exception e) {
+            driverUtil.waitForAWhile(5);
+            btn.click();
+        }
     }
 }
