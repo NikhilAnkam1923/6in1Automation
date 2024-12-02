@@ -12,8 +12,9 @@ Feature: 6in1 Login Feature
     Then user verify home page
     And user logged out from the application
     Examples:
-      | user-email          | password |
-      | admin@malinator.com | Bits@123 |
+      | user-email                        | password      |
+      | admin@malinator.com               | Bits@123      |
+      | nikhilankam@benchmarkit.solutions | Password@1223 |
 
   @Smoke
   Scenario Outline: User verify validation message is thrown for incorrect email-id
@@ -31,7 +32,7 @@ Feature: 6in1 Login Feature
     Examples:
       | user-email           | password   | error-message                 |
       | admin@malinator.comm | Bits@12345 | Invalid username or password. |
-      | abc@gmail.com        | abc@123    | Invalid username or password.                        |
+      | abc@gmail.com        | abc@123    | Invalid username or password. |
 
   @Smoke
   Scenario Outline: User verify if user is able to login without entering username
@@ -79,9 +80,10 @@ Feature: 6in1 Login Feature
     And verify the user type as "<expected-user-type>"
     And user logged out from the application
     Examples:
-      | user-email                          | password  | expected-user-type |
-      | gauravgidye@benchmarkit.solutions   | Gaurav@26 | Admin              |
-      | gauravgidye+1@benchmarkit.solutions | Pritav@21 | Support Staff      |
+      | user-email                          | password      | expected-user-type |
+      | nikhilankam@benchmarkit.solutions   | Password@1223 | Admin              |
+      | gauravgidye@benchmarkit.solutions   | Gaurav#21     | Admin              |
+      | gauravgidye+1@benchmarkit.solutions | Pritav@26     | Admin              |
 
   @Setup
   Scenario: SETUP: Close Browser

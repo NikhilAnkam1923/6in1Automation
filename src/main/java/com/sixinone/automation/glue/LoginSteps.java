@@ -117,7 +117,7 @@ public class LoginSteps {
     @Then("^user verify visibility of the \"([^\"]*)\" button$")
     public void userVerifyVisibilityOfTheCreateLacknerStaffButton(String createLacknerStaffButtonLabel) throws AutomationException {
         CommonSteps.logInfo("user verify visibility of '" + createLacknerStaffButtonLabel + "' button ");
-        boolean isButtonVisible = PageFactory.loginPage().isButtonVisible(createLacknerStaffButtonLabel);
+        boolean isButtonVisible = PageFactory.loginPage().isLacknerStaffButtonVisible(createLacknerStaffButtonLabel);
         CommonSteps.takeScreenshot();
         CommonUtil.setTestData("isAdmin", isButtonVisible);
     }
@@ -132,7 +132,7 @@ public class LoginSteps {
             throw new AutomationException("Expected user type: " + expectedUserType + ", but found: " + actualUserType);
         }
 
-        CommonSteps.logInfo("Verified user type is: " + actualUserType);
+        CommonSteps.logInfo("Verified user type is: '" + actualUserType + "'");
         CommonSteps.takeScreenshot();
     }
 

@@ -81,10 +81,10 @@ public class LoginPage extends BasePage {
         }
     }
 
-
     public void verifyHomePage() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        WebDriverUtil.waitForElementClickable(By.xpath("//span[contains(text(),'Dashboard')]"));
+        WebDriverUtil.waitForVisibleElement(By.xpath("//span[contains(text(),'Dashboard')]"), 60);
+
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
@@ -156,7 +156,7 @@ public class LoginPage extends BasePage {
         }
     }
 
-    public boolean isButtonVisible(String createLacknerStaffButtonLabel) throws AutomationException {
+    public boolean isLacknerStaffButtonVisible(String createLacknerStaffButtonLabel) throws AutomationException {
         String locator = String.format(CREATE_LACKNER_STAFF_BTN, createLacknerStaffButtonLabel);
         WebElement buttonElement = driverUtil.getWebElement(locator, 5);
         return buttonElement != null && buttonElement.isDisplayed();
