@@ -3,14 +3,12 @@ package com.sixinone.automation.pages;
 public class PageFactory {
     private static ThreadLocal<PageFactory> factory = new ThreadLocal<>();
     public LoginPage loginPage;
-    public FirmCreationPage firmCreationPage;
-
+    public GlobalContactPage globalContactPage;
 
     private PageFactory() {
 
         loginPage = new LoginPage();
-        firmCreationPage = new FirmCreationPage();
-
+        globalContactPage = new GlobalContactPage();
     }
 
     public static void init() {
@@ -24,10 +22,9 @@ public class PageFactory {
         return factory.get().loginPage;
     }
 
-    public static FirmCreationPage firmCreationPage() {
-        return factory.get().firmCreationPage;
+    public static GlobalContactPage globalContactPage() {
+        return factory.get().globalContactPage;
     }
-
 }
 
 

@@ -60,6 +60,10 @@ public class WebDriverUtil {
     public WebElement getWebElementAndScroll(By locator, int waitTime) throws AutomationException {
         WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(waitTime));
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        if (!element.isDisplayed()) {
+            JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+            js.executeScript("arguments[0].scrollIntoView();", element);
+        }
         return element;
     }
 
