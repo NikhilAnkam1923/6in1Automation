@@ -57,6 +57,12 @@ public class WebDriverUtil {
         return getWebElementAndScroll(locator, DEFAULT_ELEMENT_WAIT);
     }
 
+    public WebElement getWebElementAndScroll(By locator, int waitTime) throws AutomationException {
+        WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(waitTime));
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return element;
+    }
+
     public void getWebElementAndScrollUp() throws AutomationException {
         if (DriverFactory.drivers.get() == null) {
             throw new AutomationException("Driver is not initialized!");
@@ -331,7 +337,7 @@ public class WebDriverUtil {
     }
 
     public void waitForLoaderToDisappear() throws AutomationException {
-        waitForAWhile(1);
+        waitForAWhile(60);
         String elementVisible = waitForElementNotVisible(MAX_WAIT_120, "//div[@role='progressbar']");
         if (elementVisible != null)
             throw new AutomationException("Loader is displayed, even after waiting for 120 seconds");

@@ -23,6 +23,11 @@ public class PageFactory {
     public static LoginPage loginPage() {
         return factory.get().loginPage;
     }
-    public static FirmCreationPage firmCreationPage() { return factory.get().firmCreationPage; }
+
+    public static FirmCreationPage firmCreationPage() {
+        return factory.get().firmCreationPage;
+    }
 
 }
+
+

@@ -12,8 +12,8 @@ Feature: Verify 6in1 New Firm Creation
     Then user verify home page
 #    And user logged out from the application
     Examples:
-      | user-email                        | password      |
-      | gauravgidye@benchmarkit.solutions | Gaurav#21     |
+      | user-email                        | password  |
+      | gauravgidye@benchmarkit.solutions | Gaurav#21 |
 
   @Smoke
   Scenario: Verify that the confirmation message is displayed upon successful user addition
@@ -22,24 +22,23 @@ Feature: Verify 6in1 New Firm Creation
     Then user click on "Create" Button
     And user verify create page
 
-
+  @Smoke
+  Scenario Outline: User verify validation messages for invalid input fields on the "Create Firm Page"
+    When user enters "<input>" in the "<textBox>"
+    And click on "Save" button
+    Then user verify the system displays "<expectedMessage>" for "<field>"
+    Examples:
+      | textBox            | input     | expectedMessage                    | field                  |
+      | Firm Name          |           | Firm Name is required              | lawFirm.name           |
+      | Firm Email Address | abc@gmail | Please enter a valid Email Address | lawFirm.email          |
+      | Phone #            | 898       | Please enter a valid Phone #       | lawFirm.phone          |
+      | First Name         |           | First name is required             | accountOwner.firstName |
+      | Mobile #           | abdc      | Please enter a valid Mobile #      | accountOwner.phone     |
+      | Email Address      | abc@gmail | Please enter a valid Email Address | accountOwner.email     |
 
   @Setup
   Scenario: SETUP: Close Browser
     Then user logged out from the application
     And User close browser
-
-  @Smoke
-  Scenario : User verify validation messages for input fields on the "Create Firm Page"
-    When user enters <inputs> in the <field>
-    And clicks "Save"
-    Then the system displays <expectedMessage>
-    Examples:
-      | field              | input     | expectedMessage                    |
-      | Firm Name          | ""        | Firm Name is required              |
-      | Firm Email Address | abc@gmail | Please enter a valid Email Address |
-      | Phone #            | 898       | Please enter a valid Phone #       |
-      | First Name         | ""        | First name is required             |
-
 
 
