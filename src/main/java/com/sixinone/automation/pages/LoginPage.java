@@ -84,7 +84,6 @@ public class LoginPage extends BasePage {
     public void verifyHomePage() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         WebDriverUtil.waitForVisibleElement(By.xpath("//span[contains(text(),'Dashboard')]"), 60);
-
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
