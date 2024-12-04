@@ -1,30 +1,73 @@
 package com.sixinone.automation.glue;
 
 import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.pages.GlobalContactPage;
 import com.sixinone.automation.pages.PageFactory;
+
 import com.sixinone.automation.util.CommonUtil;
 import cucumber.api.java.en.*;
+import io.cucumber.datatable.DataTable;
 
-import static com.sixinone.automation.pages.BasePage.driverUtil;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class GlobalContactsSteps {
+
+    @When("^user clicks on the \"([^\"]*)\" button$")
+    public void userClicksOnButton(String buttonName) throws AutomationException {
+        Map<String, String> buttonDetails = new HashMap<>();
+
+        switch (buttonName) {
+            case "Global Contact":
+                buttonDetails.put(buttonName, GlobalContactPage.GLOBALCONTACT_BUTTON);
+                break;
+            case "Create":
+                buttonDetails.put(buttonName, GlobalContactPage.CREATE_BUTTON);
+                break;
+            case "Create Individual Contact":
+                buttonDetails.put(buttonName, GlobalContactPage.CREATE_INDIVIDUAL_CONTACT_BTN);
+                break;
+            case "Save":
+                buttonDetails.put(buttonName, GlobalContactPage.SAVE_BUTTON);
+                break;
+            default:
+                throw new AutomationException("Unknown button: " + buttonName);
+        }
+        new GlobalContactPage().clickButton(buttonDetails);
+
+    }
+
+
+    @Then("^user verifies the \"([^\"]*)\" page$")
+    public void userVerifiesPage(String pageName) throws AutomationException {
+        Map<String, String> pageDetails = new HashMap<>();
+
+        switch (pageName) {
+            case "Global Contacts":
+                pageDetails.put(pageName, GlobalContactPage.GLOBAL_CONTACTS_PAGE);
+                break;
+            case "Home":
+                pageDetails.put(pageName, GlobalContactPage.HOME_PAGE);
+                break;
+            case "Global Contact Creation":
+                pageDetails.put(pageName, GlobalContactPage.GLOBAL_CONTACT_CREATION_PAGE);
+                break;
+            case "Individual Global Contact Creation":
+                pageDetails.put(pageName, GlobalContactPage.INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE);
+                break;
+            default:
+                throw new AutomationException("Unknown page: " + pageName);
+        }
+        new GlobalContactPage().verifyPageElements(pageDetails);
+        CommonSteps.takeScreenshot();
+    }
 
     @When("^user enters \"([^\"]*)\" as the first name and \"([^\"]*)\" as the last name$")
     public void userEntersFirstAndLastName(String firstName, String lastName) throws AutomationException {
         CommonSteps.logInfo("Entering first and last name");
         PageFactory.globalContactPage().enterFirstnameAndLastNameFields(firstName, lastName);
-    }
-
-    @And("user clicks on the Create Individual Contact button")
-    public void userClicksOnCreateIndividualContactButton() throws AutomationException {
-        CommonSteps.logInfo("Clicking on the Create Individual Contact button");
-        PageFactory.globalContactPage().clicksOnCreateIndividualContactButton();
-    }
-
-    @Then("user lands on the Individual Global Contact Creation page")
-    public void userLandsOnTheIndividualGlobalContactCreationPage() {
-        CommonSteps.logInfo("user landed on the Individual Global Contact Creation page successfully");
-        PageFactory.globalContactPage().verifyIndividualGlobalContactCreationgPage();
         CommonSteps.takeScreenshot();
     }
 
@@ -36,63 +79,57 @@ public class GlobalContactsSteps {
     }
 
     @When("^user enters all required and optional fields$")
-    public void userEntersAllFields(String firstName, String lastName, String phoneNumber, String emailAddress, String middleName, String maidenName, String entityName) throws AutomationException {
-        CommonSteps.logInfo("user enters all required and optional fields");
-        PageFactory.globalContactPage().enterRequiredFields(firstName, lastName, phoneNumber, emailAddress);
-        PageFactory.globalContactPage().enterOptionalFields(middleName, maidenName, entityName);
+    public void userEntersAllFields(DataTable dataTable) throws AutomationException {
+        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
+
+
+        Map<Object, Object> row = data.get(0);
+
+
+        String middleName = row.get("middleName").toString();
+        String maidenName = row.get("maidenName").toString();
+        String entityName = row.get("entityName").toString();
+        String emailAddress = row.get("emailAddress").toString();
+        String PTIN = row.get("PTIN").toString();
+        String PINeFile = row.get("PINeFile").toString();
+        String BarID = row.get("BarID").toString();
+        String CAF = row.get("CAF").toString();
+
+
+
+        String addressLine1 = row.get("AddressLine1").toString();
+        String addressLine2 = row.get("AddressLine2").toString();
+        String zip = row.get("Zip").toString();
+
+
+        PageFactory.globalContactPage().enterRequiredFields(addressLine1, zip);
+        PageFactory.globalContactPage().enterOptionalFields(middleName, maidenName, entityName,emailAddress,PTIN,PINeFile,BarID,CAF,addressLine2);
         CommonSteps.takeScreenshot();
     }
 
-    @And("^user enters SSN and EIN details$")
-    public void userEntersSSNAndEIN(String ssn, String ein) throws AutomationException {
-        PageFactory.globalContactPage().enterSSNAndEIN(ssn, ein);
-    }
+    @And("user enters SSN,EIN,Phone Number,workPhone and fax details")
+    public void userEntersSSNEINPhoneNumberWorkPhoneAndFaxDetails(DataTable dataTable) throws AutomationException {
+        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
 
-    @And("user clicks on the save button")
-    public void userClicksOnButton() throws AutomationException {
-        PageFactory.globalContactPage().clickOnSaveButton();
-    }
+        Map<Object, Object> row = data.get(0);
 
-    @Then("^user verifies that a confirmation message is displayed$")
-    public void userVerifiesConfirmationMessage() throws AutomationException {
-        PageFactory.globalContactPage().verifyConfirmationMessage();
-        CommonSteps.takeScreenshot();
-    }
+        String ssn = row.get("ssn").toString();
+        String ein = row.get("ein").toString();
+        String phoneNumber = row.get("phoneNumber").toString();
+        String workNumber = row.get("workPhone").toString();
+        String fax = row.get("fax").toString();
 
-    @Then("user verify Landing page")
-    public void userVerifyLandingPage() throws AutomationException {
-        CommonSteps.logInfo("User verify home page ");
-        driverUtil.waitForLoaderToDisappear();
-        PageFactory.globalContactPage().verifyLandingPage();
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("user click on Global Contact tab")
-    public void userClickOnGlobalContactTab() throws AutomationException {
-        PageFactory.globalContactPage().clickOnGlobalContactButton();
-    }
-
-    @When("user click on Create button")
-    public void userClickOnCreateButton() throws AutomationException {
-        PageFactory.globalContactPage().clickOnCreateButton();
-    }
-
-    @Then("verify user is on the Global Contact page")
-    public void verifyUserIsOnTheGlobalContactPage() throws AutomationException {
-        CommonSteps.logInfo("User verify user is on the Global Contact page ");
-        driverUtil.waitForLoaderToDisappear();
-        PageFactory.globalContactPage().verifyLandingOnGlobalContactPage();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("verify user is on the Global Contact Creation page")
-    public void verifyUserIsOnTheGlobalContactCreationPage() throws AutomationException {
-        CommonSteps.logInfo("user is on the Global Contact Creation page ");
-        driverUtil.waitForLoaderToDisappear();
-        PageFactory.globalContactPage().verifyLandingOnGlobalContactCreationPage();
+        PageFactory.globalContactPage().enterSSNEINPhoneNumberWorkNumberAndFax(ssn, ein, phoneNumber, workNumber, fax);
         CommonSteps.takeScreenshot();
     }
 
 
+    @And("^user verifies that a confirmation message \"([^\"]*)\" is displayed$")
+    public void userVerifiesConfirmationMessage(String confirmationMsg) throws AutomationException {
+        PageFactory.globalContactPage().verifyConfirmationMessage(confirmationMsg);
+        CommonSteps.takeScreenshot();
+    }
 }
+
+
 
