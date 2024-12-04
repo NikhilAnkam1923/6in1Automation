@@ -38,6 +38,13 @@ Feature: 6in1 Global Contacts Feature
     When user clicks on the "Save" button
     And user verifies that a confirmation message "Contact details have been successfully saved." is displayed
 
+  Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
+    When user enter "<zip>" in "Zip" Field
+    Then Verify the city "<city>", state "<state>", and county "<country>" are automatically fetched
+    Examples:
+      | zip   | city      | state    | country |
+      | 40007 | Bethlehem | Kentucky | Henry   |
+
   @Setup
   Scenario: SETUP: Close Browser
     Then User close browser
