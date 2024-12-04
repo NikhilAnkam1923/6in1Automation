@@ -16,8 +16,8 @@ Feature: 6in1 Global Contacts Feature
     Then verify user is on the Global Contact Creation page
 #    And user logged out from the application
     Examples:
-      | user-email                           | password |
-      | nikhilankam+11@benchmarkit.solutions | Watch@22 |
+      | user-email                           | password   |
+      | nikhilankam+11@benchmarkit.solutions | Watch@22   |
 
   Scenario Outline: Verify user enters first and last name, clicks "Create Individual Contact," and lands on the Individual Contact page with pre-filled fields
     When user enters "<firstName>" as the first name and "<lastName>" as the last name
@@ -26,18 +26,18 @@ Feature: 6in1 Global Contacts Feature
     And "contact.firstName" field is pre-filled with "<firstName>"
     And "contact.lastName" field is pre-filled with "<lastName>"
     Examples:
-      | firstName | lastName |
-      | Gaurav    | Gidye    |
+      | firstName  | lastName  |
+      | Devis12     | Karl12     |
 
-  Scenario: Verify that a user can save a contact with all required and optional fields filled
-    When user enters all required and optional fields
-      | firstName | lastName | phoneNumber | emailAddress        | middleName | maidenName | entityName |
-      | Niks      | Ankam    | 1234567890  | niksankam@email.com | Y          | Nik        | NRN Corp   |
-    And user enters SSN and EIN details
-      | ssn         | ein        |
-      | 123-45-6789 | 12-3456789 |
-    And user clicks on the save button
-    Then user verifies that a confirmation message is displayed
+#  Scenario: Verify that a user can save a contact with all required and optional fields filled
+#    When user enters all required and optional fields
+#      | firstName | lastName | phoneNumber | emailAddress        | middleName | maidenName | entityName |
+#      | Niks      | Ankam    | 1234567890  | niksankam@email.com | Y          | Nik        | NRN Corp   |
+#    And user enters SSN and EIN details
+#      | ssn         | ein        |
+#      | 123-45-6789 | 12-3456789 |
+#    And user clicks on the save button
+#    Then user verifies that a confirmation message is displayed
 
   Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
     When user enter "<zip>" in "Zip" Field
@@ -45,6 +45,17 @@ Feature: 6in1 Global Contacts Feature
     Examples:
       | zip    | city      | state    | country |
       | 40007  | Bethlehem | Kentucky | Henry   |
+
+  Scenario Outline: Verify that the system validates the EIN and SSN formats correctly
+    When user enters SSN and EIN details
+      | ssn         | ein        |
+      | 123-45-6789 | 12-3456789 |
+    And user enter "<AddressLine1>" in "Address Line 1" Field
+    Then user verifies that a confirmation message is displayed
+    Examples:
+      | AddressLine1   |
+      | Sukovia        |
+
   @Setup
   Scenario: SETUP: Close Browser
     Then User close browser

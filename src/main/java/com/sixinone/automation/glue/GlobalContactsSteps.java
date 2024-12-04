@@ -4,6 +4,10 @@ import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 import com.sixinone.automation.util.CommonUtil;
 import cucumber.api.java.en.*;
+import io.cucumber.datatable.DataTable;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.sixinone.automation.pages.BasePage.driverUtil;
 
@@ -43,9 +47,15 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+
     @And("^user enters SSN and EIN details$")
-    public void userEntersSSNAndEIN(String ssn, String ein) throws AutomationException {
-        PageFactory.globalContactPage().enterSSNAndEIN(ssn, ein);
+    public void userEntersSSNAndEIN(DataTable dataTable) throws AutomationException {
+        List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> row : data) {
+            String ssn = row.get("ssn");
+            String ein = row.get("ein");
+            PageFactory.globalContactPage().enterSSNAndEIN(ssn, ein);
+        }
     }
 
     @And("user clicks on the save button")
@@ -101,7 +111,7 @@ public class GlobalContactsSteps {
             throw new AutomationException("Failed to enter data in field with label: '" + fieldName + "'.");
         }
         CommonSteps.logInfo("Entered value "+fieldData+" in the field: " + fieldName);
-        CommonSteps.takeScreenshot();
+//        CommonSteps.takeScreenshot();
     }
 
     @Then("^Verify the city \"([^\"]*)\", state \"([^\"]*)\", and county \"([^\"]*)\" are automatically fetched$")

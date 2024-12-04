@@ -78,14 +78,22 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void enterSSNAndEIN(String ssn, String ein) throws AutomationException {
+        String ssnPattern = "^\\d{3}-\\d{2}-\\d{4}$";
+        String einPattern = "^\\d{2}-\\d{7}$";
+        if (!ssn.matches(ssnPattern)) {
+            throw new AutomationException("Invalid SSN format. Expected format: 000-00-0000. Provided: " + ssn);
+        }
+        if (!ein.matches(einPattern)) {
+            throw new AutomationException("Invalid EIN format. Expected format: 00-0000000. Provided: " + ein);
+        }
         WebElement SSNField = driverUtil.getWebElementAndScroll(SSN_FIELD);
         SSNField.clear();
         SSNField.sendKeys(ssn);
-
         WebElement EINField = driverUtil.getWebElementAndScroll(EIN_FIELD);
         EINField.clear();
         EINField.sendKeys(ein);
     }
+
 
     public void clickOnSaveButton() throws AutomationException {
         driverUtil.getWebElementAndScroll(SAVE_BUTTON).click();
@@ -151,6 +159,7 @@ public class GlobalContactPage extends BasePage {
             }
             inputField.clear();
             inputField.sendKeys(fieldData + Keys.ENTER);
+            WebDriverUtil.waitForAWhile(2);
             return true;
         } catch (Exception e) {
             CommonSteps.logError("Error entering data in field with label '" + fieldName + "': " + e.getMessage());
