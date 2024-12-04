@@ -93,6 +93,29 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @Then("^user enter \"([^\"]*)\" in \"([^\"]*)\" Field$")
+    public void userEnterInField(String fieldData, String fieldName) throws AutomationException {
+        CommonSteps.logInfo("User enters '" + fieldData + "' in the field '" + fieldName + "'.");
+        boolean isInputSuccessful = PageFactory.globalContactPage().enterDataInFieldByLabel(fieldData, fieldName);
+        if (!isInputSuccessful) {
+            throw new AutomationException("Failed to enter data in field with label: '" + fieldName + "'.");
+        }
+        CommonSteps.logInfo("Entered value "+fieldData+" in the field: " + fieldName);
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^Verify the city \"([^\"]*)\", state \"([^\"]*)\", and county \"([^\"]*)\" are automatically fetched$")
+    public void verifyCityStateCountyAreFetched(String expectedCity, String expectedState, String expectedCounty) throws AutomationException {
+        CommonSteps.logInfo("Verifying that city, state, and county are auto-fetched.");
+        boolean isDataCorrect = PageFactory.globalContactPage().verifyFetchedFields(expectedCity, expectedState, expectedCounty);
+        if (!isDataCorrect) {
+            throw new AutomationException("City, State, or County values are incorrect or not fetched automatically.");
+        }
+        CommonSteps.logInfo("Verified auto-fetched values: City - " + expectedCity + ", State - " + expectedState + ", County - " + expectedCounty);
+        CommonSteps.takeScreenshot();
+    }
+
+
 
 }
 

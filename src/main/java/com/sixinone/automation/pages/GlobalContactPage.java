@@ -4,6 +4,7 @@ import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 
@@ -25,6 +26,7 @@ public class GlobalContactPage extends BasePage {
     public static final String SPINNER = "//div[contains(class,'spinner')]";
     public static final String CREATE_INDIVIDUAL_CONTACT_BTN = "//button[text()='Create Individual Contact']";
     private static final String FIELD_DYNAMIC_XPATH = "//input[@name='%s']";
+    public static final String FIELD_XPATH = "//label[text()='%s']/following-sibling::input";
 
 
     public void verifyLandingPage() {
@@ -139,4 +141,37 @@ public class GlobalContactPage extends BasePage {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         WebDriverUtil.waitForVisibleElement(By.xpath("//div[text()='Individual Details']"));
     }
+
+    public boolean enterDataInFieldByLabel(String fieldData, String fieldName){
+        String inputFieldXPath = String.format(FIELD_XPATH, fieldName);
+        try {
+            WebElement inputField = driverUtil.getWebElement(inputFieldXPath, 5);
+            if (inputField == null) {
+                throw new AutomationException("Input field with label '" + fieldName + "' not found.");
+            }
+            inputField.clear();
+            inputField.sendKeys(fieldData + Keys.ENTER);
+            return true;
+        } catch (Exception e) {
+            CommonSteps.logError("Error entering data in field with label '" + fieldName + "': " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean verifyFetchedFields(String expectedCity, String expectedState, String expectedCounty) {
+        try {
+            WebDriverUtil.waitForAWhile(2);
+            WebElement cityField = driverUtil.getWebElement("//input[@id='address.city']", 10);
+            String actualCity = cityField.getAttribute("value");
+            WebElement stateField = driverUtil.getWebElement("//label[contains(text(),'State')]//following-sibling::div//div[contains(@class, 'select__single-value')]", 5);
+            String actualState = stateField.getText();
+            WebElement countyField = driverUtil.getWebElement("//input[@id='address.county']", 5);
+            String actualCounty = countyField.getAttribute("value");
+            return expectedCity.equals(actualCity) && expectedState.equals(actualState) && expectedCounty.equals(actualCounty);
+        } catch (Exception e) {
+            CommonSteps.logError("Failed to verify fetched city, state, or county values: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
