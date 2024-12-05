@@ -1,6 +1,7 @@
 package com.sixinone.automation.glue;
 
 import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.pages.BasePage;
 import com.sixinone.automation.pages.GlobalContactPage;
 import com.sixinone.automation.pages.PageFactory;
 
@@ -168,6 +169,24 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
         PageFactory.globalContactPage().waitForToasterToInvisible(confirmationMsg);
     }
+
+    @Then("^Verify user is on Edit Contact Page$")
+    public void verifyUserIsOnEditContactPage() throws AutomationException {
+        boolean isOnEditPage = PageFactory.globalContactPage().isUserOnEditContactPage();
+        if (!isOnEditPage) {
+            throw new AutomationException("User is not on the Edit Contact Page.");
+        }
+        CommonSteps.logInfo("User successfully navigated to the Edit Contact Page.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("^user clicks on Name: \"([^\"]*)\" from Global Contact List with Type as \"([^\"]*)\"$")
+    public void userClicksOnNameFromGlobalContactListWithType(String name, String type) throws AutomationException {
+        PageFactory.globalContactPage().clickNameWithType(name, type);
+    }
+
+
+
 }
 
 

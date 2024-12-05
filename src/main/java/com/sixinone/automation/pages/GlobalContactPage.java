@@ -49,8 +49,8 @@ public class GlobalContactPage extends BasePage {
     private static final String CAF_FIELD = "//input[@name='contact.caf']";
     public static final String FIELD_XPATH = "//label[text()='%s']/following-sibling::input";
     public static final String TOAST_MSG = "//div[@class='Toastify__toast-body']//div/following-sibling::div[contains(text(),'%s')]";
-
-
+    private static final String EDIT_CONTACT = "//a[contains(@class,'column-edit-link')]";
+    private static final String ROW_NAME_TYPE = "//tr[td//a[text()='%s'] and td[text()='%s']]";
 
     public void clickButton(Map<String, String> buttonDetails) throws AutomationException {
         for (Map.Entry<String, String> entry : buttonDetails.entrySet()) {
@@ -244,6 +244,28 @@ public class GlobalContactPage extends BasePage {
         String toastMessagePopup = String.format(TOAST_MSG, toastMessage);
         WebDriverUtil.waitForInvisibleElement(By.xpath(toastMessagePopup),30);
     }
+
+    public boolean isUserOnEditContactPage() {
+        String currentUrl = driverUtil.getCurrentUrl();
+        String expectedUrlPattern = "/law-firm/global-contacts/person/edit/";
+        return currentUrl != null && currentUrl.contains(expectedUrlPattern);
+    }
+
+    public void clickNameWithType(String name, String type) throws AutomationException {
+        String rowXPath = String.format(ROW_NAME_TYPE, name, type);
+        String linkXPath = rowXPath + EDIT_CONTACT;
+        WebElement linkElement = driverUtil.getWebElementAndScroll(linkXPath);
+        if (linkElement == null) {
+            throw new AutomationException("Unable to find a contact with Name: '" + name + "' and Type: '" + type + "'.");
+        }
+        linkElement.click();
+        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        CommonSteps.logInfo("User Clicked on the Name: '" + name + "' with Contact Type: '" + type + "'.");
+    }
+
+
+
+
 }
 
 
