@@ -5,13 +5,18 @@ import com.sixinone.automation.pages.GlobalContactPage;
 import com.sixinone.automation.pages.PageFactory;
 
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.WebDriverUtil;
 import cucumber.api.java.en.*;
 import io.cucumber.datatable.DataTable;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.sixinone.automation.glue.CommonSteps.driverUtil;
 
 
 public class GlobalContactsSteps {
@@ -163,6 +168,7 @@ public class GlobalContactsSteps {
     public void userVerifiesConfirmationMessage(String confirmationMsg) throws AutomationException {
         PageFactory.globalContactPage().verifyConfirmationMessage(confirmationMsg);
         CommonSteps.takeScreenshot();
+        PageFactory.globalContactPage().waitForToasterToInvisible(confirmationMsg);
     }
 }
 

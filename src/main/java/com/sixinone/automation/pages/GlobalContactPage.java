@@ -45,6 +45,7 @@ public class GlobalContactPage extends BasePage {
     private static final String BARID_FIELD = "//input[@name='contact.barID']";
     private static final String CAF_FIELD = "//input[@name='contact.caf']";
     public static final String FIELD_XPATH = "//label[text()='%s']/following-sibling::input";
+    public static final String TOAST_MSG = "//div[@class='Toastify__toast-body']//div/following-sibling::div[contains(text(),'%s')]";
 
 
 
@@ -53,7 +54,7 @@ public class GlobalContactPage extends BasePage {
             String buttonName = entry.getKey();
             String buttonXPath = entry.getValue();
 
-            WebElement button = driverUtil.getWebElement(buttonXPath);
+            WebElement button = driverUtil.getWebElement(buttonXPath,20);
             if (button == null) {
                 throw new AutomationException("Unable to find the " + buttonName + " button.");
             }
@@ -111,6 +112,7 @@ public class GlobalContactPage extends BasePage {
     public void verifyFieldPrefilled(String fieldName, String expectedValue) throws AutomationException {
         String fieldXpath = String.format(FIELD_DYNAMIC_XPATH, fieldName);
         WebElement fieldElement = driverUtil.getWebElementAndScroll(fieldXpath);
+
         String actualValue = fieldElement.getAttribute("value");
 
         if (!actualValue.equals(expectedValue)) {
@@ -232,6 +234,10 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
+    public void waitForToasterToInvisible(String toastMessage) {
+        String toastMessagePopup = String.format(TOAST_MSG, toastMessage);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(toastMessagePopup),30);
+    }
 }
 
 

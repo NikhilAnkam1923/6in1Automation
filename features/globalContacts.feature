@@ -26,7 +26,7 @@ Feature: 6in1 Global Contacts Feature
     And "lastName" field is pre-filled with "<lastName>"
     Examples:
       | firstName  | lastName  |
-      | Devis12     | Karl12     |
+      | Devis15     | Karl15     |
 
   Scenario: Verify that a user can save a contact with all required and optional fields filled
     When user enters all required and optional fields
@@ -39,11 +39,18 @@ Feature: 6in1 Global Contacts Feature
     And user verifies that a confirmation message "Contact details have been successfully saved." is displayed
 
   Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
-    When user enter "<zip>" in "Zip" Field
+    When user clicks on the "Create" button
+    And user verifies the "Global Contact Creation" page
+    And user enters "<firstName>" as the first name and "<lastName>" as the last name
+    And user clicks on the "Create Individual Contact" button
+    And user verifies the "Individual Global Contact Creation" page
+    And "firstName" field is pre-filled with "<firstName>"
+    And "lastName" field is pre-filled with "<lastName>"
+    And user enter "<zip>" in "Zip" Field
     Then Verify the city "<city>", state "<state>", and county "<country>" are automatically fetched
     Examples:
-      | zip    | city      | state    | country |
-      | 40007  | Bethlehem | Kentucky | Henry   |
+      | firstName  | lastName  | zip    | city      | state    | country |
+      | Devis14    | Karl12    | 40007  | Bethlehem | Kentucky | Henry   |
 
   Scenario Outline: Verify that the system validates the EIN and SSN formats correctly
     When user enters SSN and EIN details
