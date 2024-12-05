@@ -34,6 +34,9 @@ public class GlobalContactPage extends BasePage {
     private static final String ADDRESS_LINE1 = "//input[@name='address.addressLine1']";
     private static final String ADDRESS_LINE2 = "//input[@name='address.addressLine2']";
     private static final String ZIP = "//input[@name='address.zip']";
+    private static final String CITY = "//input[@id='address.city']";
+    private static final String STATE = "//label[contains(text(),'State')]//following-sibling::div//div[contains(@class, 'select__single-value')]";
+    private static final String COUNTRY = "//input[@id='address.county']";
     public static final String GLOBAL_CONTACTS_PAGE = "//a[text()='Global Contacts']";
     public static final String HOME_PAGE = "//a[text()='Estate']";
     public static final String GLOBAL_CONTACT_CREATION_PAGE = "//a[text()='New']";
@@ -114,6 +117,9 @@ public class GlobalContactPage extends BasePage {
         WebElement fieldElement = driverUtil.getWebElementAndScroll(fieldXpath);
 
         String actualValue = fieldElement.getAttribute("value");
+
+        actualValue = actualValue.trim();
+        expectedValue = expectedValue.trim();
 
         if (!actualValue.equals(expectedValue)) {
             throw new AutomationException("Field " + fieldName + " is not pre-filled correctly. " + "Expected: " + expectedValue + ", Found: " + actualValue);
@@ -221,11 +227,11 @@ public class GlobalContactPage extends BasePage {
     public boolean verifyFetchedFields(String expectedCity, String expectedState, String expectedCounty) {
         try {
             WebDriverUtil.waitForAWhile(2);
-            WebElement cityField = driverUtil.getWebElement("//input[@id='address.city']", 10);
+            WebElement cityField = driverUtil.getWebElement(CITY, 10);
             String actualCity = cityField.getAttribute("value");
-            WebElement stateField = driverUtil.getWebElement("//label[contains(text(),'State')]//following-sibling::div//div[contains(@class, 'select__single-value')]", 5);
+            WebElement stateField = driverUtil.getWebElement(STATE, 5);
             String actualState = stateField.getText();
-            WebElement countyField = driverUtil.getWebElement("//input[@id='address.county']", 5);
+            WebElement countyField = driverUtil.getWebElement(COUNTRY, 5);
             String actualCounty = countyField.getAttribute("value");
             return expectedCity.equals(actualCity) && expectedState.equals(actualState) && expectedCounty.equals(actualCounty);
         } catch (Exception e) {

@@ -26,7 +26,7 @@ Feature: 6in1 Global Contacts Feature
     And "lastName" field is pre-filled with "<lastName>"
     Examples:
       | firstName  | lastName  |
-      | Devis15     | Karl15     |
+      | Devis16     | Karl15     |
 
   Scenario: Verify that a user can save a contact with all required and optional fields filled
     When user enters all required and optional fields
@@ -50,7 +50,7 @@ Feature: 6in1 Global Contacts Feature
     Then Verify the city "<city>", state "<state>", and county "<country>" are automatically fetched
     Examples:
       | firstName  | lastName  | zip    | city      | state    | country |
-      | Devis14    | Karl12    | 40007  | Bethlehem | Kentucky | Henry   |
+      | Devis17    | Karl12    | 40007  | Bethlehem | Kentucky | Henry   |
 
   Scenario Outline: Verify that the system validates the EIN and SSN formats correctly
     When user enters SSN and EIN details
@@ -61,6 +61,22 @@ Feature: 6in1 Global Contacts Feature
     Examples:
       | AddressLine1   |
       | Sukovia        |
+
+  Scenario Outline: Verify that the system trims leading and trailing spaces from text input fields
+    When user clicks on the "Create" button
+    And user verifies the "Global Contact Creation" page
+    And user enters "  <firstName>" as the first name and "  <lastName>  " as the last name
+    And user clicks on the "Create Individual Contact" button
+    And user verifies the "Individual Global Contact Creation" page
+    And "firstName" field is pre-filled with "<firstName>"
+    And "lastName" field is pre-filled with "<lastName>"
+    And user enter "  <AddressLine1>  " in "Address Line 1" Field
+    And user enter "<zip>" in "Zip" Field
+    And user clicks on the "Save" button
+    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+    Examples:
+      | firstName  | lastName  | AddressLine1    | zip    |
+      | Smith      | John      | 123 Main Street | 40007  |
 
   @Setup
   Scenario: SETUP: Close Browser
