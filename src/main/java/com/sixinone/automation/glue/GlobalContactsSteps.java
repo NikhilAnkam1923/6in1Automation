@@ -1,23 +1,15 @@
 package com.sixinone.automation.glue;
 
 import com.sixinone.automation.exception.AutomationException;
-import com.sixinone.automation.pages.BasePage;
 import com.sixinone.automation.pages.GlobalContactPage;
 import com.sixinone.automation.pages.PageFactory;
 
-import com.sixinone.automation.util.CommonUtil;
-import com.sixinone.automation.util.WebDriverUtil;
 import cucumber.api.java.en.*;
 import io.cucumber.datatable.DataTable;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.sixinone.automation.glue.CommonSteps.driverUtil;
 
 
 public class GlobalContactsSteps {
@@ -148,7 +140,6 @@ public class GlobalContactsSteps {
             throw new AutomationException("Failed to enter data in field with label: '" + fieldName + "'.");
         }
         CommonSteps.logInfo("Entered value "+fieldData+" in the field: " + fieldName);
-//        CommonSteps.takeScreenshot();
     }
 
     @Then("^Verify the city \"([^\"]*)\", state \"([^\"]*)\", and county \"([^\"]*)\" are automatically fetched$")
@@ -160,7 +151,6 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("Verified auto-fetched values: City - " + expectedCity + ", State - " + expectedState + ", County - " + expectedCounty);
         CommonSteps.takeScreenshot();
     }
-
 
 
     @And("^user verifies that a confirmation message \"([^\"]*)\" is displayed$")
@@ -184,6 +174,17 @@ public class GlobalContactsSteps {
     public void userClicksOnNameFromGlobalContactListWithType(String name, String type) throws AutomationException {
         PageFactory.globalContactPage().clickNameWithType(name, type);
     }
+
+    @And("^user verifies updated values \"([^\"]*)\" is reflected in Global Contact List$")
+    public void userVerifiesUpdatedValuesAreReflectedInGlobalContactList(String expectedFullName) throws AutomationException {
+        boolean isUpdated = PageFactory.globalContactPage().isContactNameUpdated(expectedFullName);
+        if (!isUpdated) {
+            throw new AutomationException("Updated name '" + expectedFullName + "' is not reflected in the Global Contact List or not found.");
+        }
+        CommonSteps.logInfo("User Verified updated values are reflected in the Global Contact List: " + expectedFullName);
+        CommonSteps.takeScreenshot();
+    }
+
 
 
 

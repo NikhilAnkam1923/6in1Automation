@@ -51,6 +51,8 @@ public class GlobalContactPage extends BasePage {
     public static final String TOAST_MSG = "//div[@class='Toastify__toast-body']//div/following-sibling::div[contains(text(),'%s')]";
     private static final String EDIT_CONTACT = "//a[contains(@class,'column-edit-link')]";
     private static final String ROW_NAME_TYPE = "//tr[td//a[text()='%s'] and td[text()='%s']]";
+    private static final String CONTACT_NAME = "//a[contains(@class,'column-edit-link') and text()='%s']";
+    private static final String NEXT_PAGE = "//button[@title='Go to the next page' and not(contains(@class,'k-disabled'))]";
 
     public void clickButton(Map<String, String> buttonDetails) throws AutomationException {
         for (Map.Entry<String, String> entry : buttonDetails.entrySet()) {
@@ -254,15 +256,38 @@ public class GlobalContactPage extends BasePage {
     public void clickNameWithType(String name, String type) throws AutomationException {
         String rowXPath = String.format(ROW_NAME_TYPE, name, type);
         String linkXPath = rowXPath + EDIT_CONTACT;
-        WebElement linkElement = driverUtil.getWebElementAndScroll(linkXPath);
-        if (linkElement == null) {
-            throw new AutomationException("Unable to find a contact with Name: '" + name + "' and Type: '" + type + "'.");
+        while (true) {
+            WebElement linkElement = driverUtil.getWebElementAndScroll(linkXPath);
+            if (linkElement != null) {
+                linkElement.click();
+                WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+                CommonSteps.logInfo("User clicked on the Name: '" + name + "' with Contact Type: '" + type + "'.");
+                return;
+            }
+            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
+            if (nextPageButton == null) {
+                throw new AutomationException("Unable to find a contact with Name: '" + name + "' and Type: '" + type + "' after checking all pages.");
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         }
-        linkElement.click();
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        CommonSteps.logInfo("User Clicked on the Name: '" + name + "' with Contact Type: '" + type + "'.");
     }
 
+    public boolean isContactNameUpdated(String expectedFullName) throws AutomationException {
+        String contactNameXPath = String.format(CONTACT_NAME, expectedFullName);
+        while (true) {
+            WebElement contactElement = driverUtil.getWebElementAndScroll(contactNameXPath);
+            if (contactElement != null) {
+                return true;
+            }
+            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
+            if (nextPageButton == null) {
+                return false;
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        }
+    }
 
 
 
