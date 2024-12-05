@@ -2,42 +2,41 @@
 Feature: 6in1 Global Contacts Feature
 
   @Setup
-  Scenario: SETUP: Launch Browser and go to application
+  Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     And user go to application "$6in1_url"
-
-  @Smoke
-  Scenario Outline: User verify login with valid credentials
     When user login using "<user-email>" and "<password>"
-    Then user verify Landing page
-    And user click on Global Contact tab
-    Then verify user is on the Global Contact page
-    When user click on Create button
-    Then verify user is on the Global Contact Creation page
-#    And user logged out from the application
+    Then user verifies the "Home" page
     Examples:
       | user-email                           | password   |
       | nikhilankam+11@benchmarkit.solutions | Watch@22   |
 
-  Scenario Outline: Verify user enters first and last name, clicks "Create Individual Contact," and lands on the Individual Contact page with pre-filled fields
+  @Smoke
+  Scenario: User verify user is on the Global Contact Creation page
+    When user clicks on the "Global Contact" button
+    Then user verifies the "Global Contacts" page
+    When user clicks on the "Create" button
+    Then user verifies the "Global Contact Creation" page
+
+  Scenario Outline: Verify user enters first and last name then clicks Create Individual Contact and lands on the Individual Contact page with pre-filled fields
     When user enters "<firstName>" as the first name and "<lastName>" as the last name
-    And user clicks on the Create Individual Contact button
-    Then user lands on the Individual Global Contact Creation page
-    And "contact.firstName" field is pre-filled with "<firstName>"
-    And "contact.lastName" field is pre-filled with "<lastName>"
+    When user clicks on the "Create Individual Contact" button
+    Then user verifies the "Individual Global Contact Creation" page
+    And "firstName" field is pre-filled with "<firstName>"
+    And "lastName" field is pre-filled with "<lastName>"
     Examples:
       | firstName  | lastName  |
       | Devis12     | Karl12     |
 
-#  Scenario: Verify that a user can save a contact with all required and optional fields filled
-#    When user enters all required and optional fields
-#      | firstName | lastName | phoneNumber | emailAddress        | middleName | maidenName | entityName |
-#      | Niks      | Ankam    | 1234567890  | niksankam@email.com | Y          | Nik        | NRN Corp   |
-#    And user enters SSN and EIN details
-#      | ssn         | ein        |
-#      | 123-45-6789 | 12-3456789 |
-#    And user clicks on the save button
-#    Then user verifies that a confirmation message is displayed
+  Scenario: Verify that a user can save a contact with all required and optional fields filled
+    When user enters all required and optional fields
+      | middleName | maidenName | entityName | emailAddress      | PTIN      | PINeFile   | BarID      | CAF     | AddressLine1 | AddressLine2 | Zip   |
+      | York       | mj         | AMY Corp   | amyjack@email.com | P76543363 | 7687462487 | 7355653750 | 5764654 | DUCK colony  | IAB Market   | 50011 |
+    And user enters SSN,EIN,Phone Number,workPhone and fax details
+      | ssn         | ein        | phoneNumber    | workPhone      | fax            |
+      | 123-45-6789 | 12-3456789 | (123) 456-7880 | (123) 456-7870 | (123) 456-7897 |
+    When user clicks on the "Save" button
+    And user verifies that a confirmation message "Contact details have been successfully saved." is displayed
 
   Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
     When user enter "<zip>" in "Zip" Field
@@ -51,7 +50,7 @@ Feature: 6in1 Global Contacts Feature
       | ssn         | ein        |
       | 123-45-6789 | 12-3456789 |
     And user enter "<AddressLine1>" in "Address Line 1" Field
-    Then user verifies that a confirmation message is displayed
+    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
     Examples:
       | AddressLine1   |
       | Sukovia        |
