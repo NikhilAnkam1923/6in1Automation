@@ -103,6 +103,16 @@ public class GlobalContactPage extends BasePage {
         EINField.sendKeys(ein);
     }
 
+    public void enterSSN(String ssn) throws AutomationException {
+        String ssnPattern = "^\\d{3}-\\d{2}-\\d{4}$";
+        if (!ssn.matches(ssnPattern)) {
+            throw new AutomationException("Invalid SSN format. Expected format: 000-00-0000. Provided: " + ssn);
+        }
+        WebElement SSNField = driverUtil.getWebElementAndScroll(SSN_FIELD);
+        SSNField.clear();
+        SSNField.sendKeys(ssn);
+    }
+
 
     public void enterFirstnameAndLastNameFields(String firstName, String lastName) throws AutomationException {
         WebElement firstNameField = driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD);

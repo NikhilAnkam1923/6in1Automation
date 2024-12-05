@@ -117,6 +117,15 @@ public class GlobalContactsSteps {
         }
     }
 
+    @And("^user enters SSN details$")
+    public void userEntersSSNDetails(DataTable dataTable) throws AutomationException {
+        List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> row : data) {
+            String ssn = row.get("ssn");
+            PageFactory.globalContactPage().enterSSN(ssn);
+        }
+    }
+
     @And("user enters SSN,EIN,Phone Number,workPhone and fax details")
     public void userEntersSSNEINPhoneNumberWorkPhoneAndFaxDetails(DataTable dataTable) throws AutomationException {
         List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
@@ -184,7 +193,6 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("User Verified updated values are reflected in the Global Contact List: " + expectedFullName);
         CommonSteps.takeScreenshot();
     }
-
 
 
 

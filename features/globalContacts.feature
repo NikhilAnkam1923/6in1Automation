@@ -26,7 +26,7 @@ Feature: 6in1 Global Contacts Feature
     And "lastName" field is pre-filled with "<lastName>"
     Examples:
       | firstName  | lastName  |
-      | Devis26     | Karl15     |
+      | Devis26     | Karl16     |
 
   Scenario: Verify that a user can save a contact with all required and optional fields filled
     When user enters all required and optional fields
@@ -89,7 +89,7 @@ Feature: 6in1 Global Contacts Feature
     And user click on "Cancel" Button
 
   Scenario Outline: Verify name fields can be updated
-    When user clicks on Name: "Karl15, Devis26" from Global Contact List with Type as "Individual"
+    When user clicks on Name: "Karl12, Devis15" from Global Contact List with Type as "Individual"
     And Verify user is on Edit Contact Page
     And user enter "<firstName>" in "First Name" Field
     And user enter "<middleName>" in "Middle Name" Field
@@ -101,9 +101,19 @@ Feature: 6in1 Global Contacts Feature
     And "firstName" field is pre-filled with "<firstName>"
     And "middleName" field is pre-filled with "<middleName>"
     And "lastName" field is pre-filled with "<lastName>"
+    And user click on "Cancel" Button
     Examples:
-      | firstName | middleName | lastName |
-      | John1     | Smith1     | Karl21   |
+      | firstName | middleName   | lastName |
+      | John12     | Smith12     | Karl22   |
+
+  Scenario: Verify SSN added for the contact having empty SSN
+    When user clicks on Name: "Karl12, Devis15" from Global Contact List with Type as "Individual"
+    And user enters SSN details
+      | ssn         |
+      | 123-45-6782 |
+    And user click on "Save" Button
+    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+
 
   @Setup
   Scenario: SETUP: Close Browser
