@@ -17,8 +17,8 @@ public class GlobalContactPage extends BasePage {
 
     public static final String GLOBALCONTACT_BUTTON = "//span[text()='Global Contact']";
     public static final String CREATE_BUTTON = "//button[text()='Create']";
-    private static final String FIRST_NAME_FIELD = "//input[@name='firstName']";
-    private static final String LAST_NAME_FIELD = "//input[@name='lastName']";
+    private static final String FIRST_NAME_FIELD = "//input[contains(@name,'firstName')]";
+    private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
     private static final String PHONE_NUMBER_FIELD = "//input[@name='contact.phoneNumber']";
     private static final String EMAIL_ADDRESS_FIELD = "//input[@name='contact.emailAddress']";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
@@ -53,6 +53,10 @@ public class GlobalContactPage extends BasePage {
     private static final String ROW_NAME_TYPE = "//tr[td//a[text()='%s'] and td[text()='%s']]";
     private static final String CONTACT_NAME = "//a[contains(@class,'column-edit-link') and text()='%s']";
     private static final String NEXT_PAGE = "//button[@title='Go to the next page' and not(contains(@class,'k-disabled'))]";
+    private static final String DROPDOWN_LABEL = "//label[text()='%s']/following-sibling::div/span/following-sibling::div//div[contains(@class,'select__indicators')]";
+    private static final String SELECT_OPTION = "//div[contains(@class,'select__menu-list')]//div[text()='%s']";
+    private static final String SELECTED_OPTION = "//div[contains(@class,'select__single-value')]";
+    private static final String FIRST_PAGE_BUTTON = "//button[@title='Go to the first page']";
 
     public void clickButton(Map<String, String> buttonDetails) throws AutomationException {
         for (Map.Entry<String, String> entry : buttonDetails.entrySet()) {
@@ -186,6 +190,24 @@ public class GlobalContactPage extends BasePage {
         addressLine2Field.sendKeys(addressLine2);
     }
 
+    public void enterIndividualDetailsFields(String firstName, String middleName, String lastName, String maidenName) throws AutomationException {
+        WebElement firstNameField = driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD);
+        firstNameField.clear();
+        firstNameField.sendKeys(firstName);
+
+        WebElement middleNameField = driverUtil.getWebElementAndScroll(MIDDLE_NAME_FIELD);
+        middleNameField.clear();
+        middleNameField.sendKeys(middleName);
+
+        WebElement lastNameField = driverUtil.getWebElementAndScroll(LAST_NAME_FIELD);
+        lastNameField.clear();
+        lastNameField.sendKeys(lastName);
+
+        WebElement maidenNameField = driverUtil.getWebElementAndScroll(MAIDEN_NAME_FIELD);
+        maidenNameField.clear();
+        maidenNameField.sendKeys(maidenName);
+    }
+
     public void enterSSNEINPhoneNumberWorkNumberAndFax(String ssn, String ein, String phoneNumber, String workNumber, String fax) throws AutomationException {
         WebElement SSNField = driverUtil.getWebElementAndScroll(SSN_FIELD);
         WebElement EINField = driverUtil.getWebElementAndScroll(EIN_FIELD);
@@ -298,6 +320,45 @@ public class GlobalContactPage extends BasePage {
             WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         }
     }
+
+    public boolean selectOption(String labelName, String option){
+        try {
+            WebElement comboBox = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, labelName), 5);
+            comboBox.click();
+            WebElement selectOption = driverUtil.getWebElement(String.format(SELECT_OPTION, option), 5);
+            selectOption.click();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean verifySelectedOption(String expectedOption) {
+        try {
+            WebElement selectedOption = driverUtil.getWebElement(SELECTED_OPTION);
+            String actualOption = selectedOption.getText().trim();
+            return actualOption.equals(expectedOption);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean navigateToFirstPage() throws AutomationException {
+        try {
+            WebElement firstPageButton = driverUtil.getWebElement(FIRST_PAGE_BUTTON, 5);
+            String isDisabled = firstPageButton.getAttribute("aria-disabled");
+            if ("true".equalsIgnoreCase(isDisabled)) {
+                return true;
+            }
+            firstPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+            return false;
+        } catch (Exception e) {
+            throw new AutomationException("Failed to verify or navigate to the first page.");
+        }
+    }
+
+
 
 
 

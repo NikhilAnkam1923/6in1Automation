@@ -74,6 +74,7 @@ Feature: 6in1 Global Contacts Feature
     And user enter "<zip>" in "Zip" Field
     And user clicks on the "Save" button
     Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+    And user is on first page
     Examples:
       | firstName   | lastName  | AddressLine1    | zip    |
       | Smith1      | John      | 123 Main Street | 40007  |
@@ -82,11 +83,13 @@ Feature: 6in1 Global Contacts Feature
     When user clicks on Name: "John, Smith" from Global Contact List with Type as "Individual"
     Then Verify user is on Edit Contact Page
     And user click on "Cancel" Button
+    And user is on first page
 
   Scenario: Verify individual contact can be edited
     When user clicks on Name: "Gidye, Gaurav" from Global Contact List with Type as "Individual"
     Then Verify user is on Edit Contact Page
     And user click on "Cancel" Button
+    And user is on first page
 
   Scenario Outline: Verify name fields can be updated
     When user clicks on Name: "Karl12, Devis15" from Global Contact List with Type as "Individual"
@@ -102,6 +105,7 @@ Feature: 6in1 Global Contacts Feature
     And "middleName" field is pre-filled with "<middleName>"
     And "lastName" field is pre-filled with "<lastName>"
     And user click on "Cancel" Button
+    And user is on first page
     Examples:
       | firstName | middleName   | lastName |
       | John12     | Smith12     | Karl22   |
@@ -113,6 +117,36 @@ Feature: 6in1 Global Contacts Feature
       | 123-45-6782 |
     And user click on "Save" Button
     Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+    And user is on first page
+
+  Scenario Outline: Verify all the other fields of individual details can be updated
+    When user clicks on Name: "Karl12, Devis17" from Global Contact List with Type as "Individual"
+    And user enters data in all the individual details fields
+      | firstName | middleName | lastName | maidenName |
+      | Cammer    | York       | Will     | CV         |
+    And user select "Suffix" as "<Suffix>"
+    And user click on "Save" Button
+    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+    And user is on first page
+    Then user verifies updated values "<lastName>, <firstName>" is reflected in Global Contact List
+    Then user clicks on Name: "<lastName>, <firstName>" from Global Contact List with Type as "Individual"
+    And "firstName" field is pre-filled with "<firstName>"
+    And "middleName" field is pre-filled with "<middleName>"
+    And "lastName" field is pre-filled with "<lastName>"
+    And "maidenName" field is pre-filled with "<maidenName>"
+    And verify "<Suffix>" option is selected from Suffix Dropdown
+    Then user enters data in all the individual details fields
+      | firstName  | middleName | lastName   | maidenName |
+      | Devis17    | Harry      | Karl12     | DK         |
+    And user select "Suffix" as "Atty."
+    And user click on "Save" Button
+    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+    And user is on first page
+    Then user verifies updated values "Karl12, Devis17" is reflected in Global Contact List
+    And user is on first page
+    Examples:
+      | Suffix | firstName | middleName | lastName | maidenName |
+      |   Sr.  | Cammer    | York       | Will     | CV         |
 
 
   @Setup

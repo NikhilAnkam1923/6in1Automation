@@ -106,6 +106,19 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @When("user enters data in all the individual details fields")
+    public void userEntersDataInAllTheIndividualDetailsFields(DataTable dataTable) throws AutomationException {
+        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
+        Map<Object, Object> row = data.get(0);
+        String firstName = row.get("firstName").toString();
+        String middleName = row.get("middleName").toString();
+        String lastName = row.get("lastName").toString();
+        String maidenName = row.get("maidenName").toString();
+
+        PageFactory.globalContactPage().enterIndividualDetailsFields(firstName,middleName,lastName,maidenName);
+
+    }
+
 
     @And("^user enters SSN and EIN details$")
     public void userEntersSSNAndEIN(DataTable dataTable) throws AutomationException {
@@ -194,7 +207,35 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @And("^user select \"([^\"]*)\" as \"([^\"]*)\"$")
+    public void userSelectAsLicenseType(String labelName, String option) throws AutomationException {
+        boolean isSelectionSuccessful = PageFactory.globalContactPage().selectOption(labelName, option);
+        if (!isSelectionSuccessful) {
+            throw new AutomationException("Failed to select '" + option + "' from the '" + labelName + "' dropdown.");
+        }
+        CommonSteps.logInfo("User selected '" + option + "' from the '" + labelName + "' dropdown.");
+    }
 
+
+    @And("^verify \"([^\"]*)\" option is selected from Suffix Dropdown$")
+    public void verifyOptionIsSelectedFromDropdown(String expectedOption) throws AutomationException {
+        boolean isVerified = PageFactory.globalContactPage().verifySelectedOption(expectedOption);
+        if (!isVerified) {
+            throw new AutomationException("The option '" + expectedOption + "' is not selected from the Suffix dropdown.");
+        }
+        CommonSteps.logInfo("Verified that the option '" + expectedOption + "' is selected from the Suffix dropdown.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user is on first page$")
+    public void userIsOnFirstPage() throws AutomationException {
+        boolean isOnFirstPage = PageFactory.globalContactPage().navigateToFirstPage();
+        if (isOnFirstPage) {
+            CommonSteps.logInfo("User is already on the first page.");
+        } else {
+            CommonSteps.logInfo("Navigated to the first page.");
+        }
+    }
 
 }
 
