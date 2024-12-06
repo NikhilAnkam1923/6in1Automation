@@ -8,8 +8,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.stringtemplate.v4.ST;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -30,6 +33,7 @@ public class GlobalContactPage extends BasePage {
     private static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
     public static final String SPINNER = "//div[contains(class,'spinner')]";
     public static final String CREATE_INDIVIDUAL_CONTACT_BTN = "//button[text()='Create Individual Contact']";
+    public static final String CREATE_ENTITY_CONTACT_BTN = "//button[text()='Create Entity Contact']";
     private static final String FIELD_DYNAMIC_XPATH = "//input[contains(@name,'%s')]";
     private static final String ADDRESS_LINE1 = "//input[@name='address.addressLine1']";
     private static final String ADDRESS_LINE2 = "//input[@name='address.addressLine2']";
@@ -57,6 +61,12 @@ public class GlobalContactPage extends BasePage {
     private static final String SELECT_OPTION = "//div[contains(@class,'select__menu-list')]//div[text()='%s']";
     private static final String SELECTED_OPTION = "//div[contains(@class,'select__single-value')]";
     private static final String FIRST_PAGE_BUTTON = "//button[@title='Go to the first page']";
+    public static final String ENTITY_NAME_INPUT = "//input[@name='entityName']";
+    public static final String ENTITY_NAMES_COLUMN = "//td[@aria-colindex='4']";
+    public static final String ALL_DATA_ROWS_XPATH = "//tbody//tr";
+    public static final String RADIO_BUTTONS_XPATH = "//td//div//input[@type='radio']";
+    private static final String BUTTON_IN_FOOTER = "//div[@class='modal-footer']//button[contains(text(),'%s')]";
+
 
     public void clickButton(Map<String, String> buttonDetails) throws AutomationException {
         for (Map.Entry<String, String> entry : buttonDetails.entrySet()) {
@@ -358,7 +368,88 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
+    public boolean enterEntityName(String entityName) {
+        try {
+            WebElement entityNameField = driverUtil.getWebElement(ENTITY_NAME_INPUT, 5);
+            entityNameField.clear();
+            entityNameField.sendKeys(entityName);
+            String enteredValue = entityNameField.getAttribute("value");
+            return entityName.equals(enteredValue);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
+    public List<String> getAllDisplayedEntityNames() throws AutomationException {
+        List<String> entityNames = new ArrayList<>();
+        while (true) {
+            List<WebElement> nameElements = driverUtil.getWebElements(ENTITY_NAMES_COLUMN);
+            for (WebElement nameElement : nameElements) {
+                String nameText = nameElement.getText().trim();
+                if (!nameText.isEmpty()) {
+                    entityNames.add(nameText);
+                }
+            }
+            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE ,2);
+            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
+                break;
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        }
+        return entityNames;
+    }
+
+    public List<String> verifyClassForContactType(String contactType) throws AutomationException {
+        List<String> mismatchedRows = new ArrayList<>();
+        String expectedClass = contactType.equalsIgnoreCase("Entity") ? "entity-row-color" : "";
+        while (true) {
+            List<WebElement> rows = driverUtil.getWebElements(ALL_DATA_ROWS_XPATH);
+            for (WebElement row : rows) {
+                String actualClass = row.getAttribute("class");
+                if (!actualClass.contains(expectedClass)) {
+                    String rowDetails = row.getText();
+                    mismatchedRows.add(rowDetails);
+                }
+            }
+            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
+            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
+                break;
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        }
+
+        return mismatchedRows;
+    }
+
+
+    public boolean verifyRadioButtonsForContacts() throws AutomationException {
+        while (true) {
+            List<WebElement> radioButtons = driverUtil.getWebElements(RADIO_BUTTONS_XPATH);
+            List<WebElement> rows = driverUtil.getWebElements(ALL_DATA_ROWS_XPATH);
+            if (radioButtons.size() != rows.size()) {
+                return false;
+            }
+            WebElement nextPageButton = driverUtil.getWebElement("//button[@title='Go to the next page']", 2);
+            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
+                break;
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, "//div[@class='loading-spinner']"); // Adjust spinner locator
+        }
+        return true;
+    }
+
+    public boolean isButtonAvailable(String buttonName) throws AutomationException {
+        try {
+            String buttonXPath = String.format(BUTTON_IN_FOOTER, buttonName);
+            WebElement buttonElement = driverUtil.getWebElement(buttonXPath, 5);
+            return buttonElement != null && buttonElement.isDisplayed() && buttonElement.isEnabled();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 
 

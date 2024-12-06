@@ -26,7 +26,7 @@ Feature: 6in1 Global Contacts Feature
     And "lastName" field is pre-filled with "<lastName>"
     Examples:
       | firstName  | lastName  |
-      | Devis26     | Karl16     |
+      | Devis35     | Karl35     |
 
   Scenario: Verify that a user can save a contact with all required and optional fields filled
     When user enters all required and optional fields
@@ -50,7 +50,7 @@ Feature: 6in1 Global Contacts Feature
     Then Verify the city "<city>", state "<state>", and county "<country>" are automatically fetched
     Examples:
       | firstName  | lastName  | zip    | city      | state    | country |
-      | Devis27    | Karl12    | 40007  | Bethlehem | Kentucky | Henry   |
+      | Devis36   | Karl36    | 40007  | Bethlehem | Kentucky | Henry   |
 
   Scenario Outline: Verify that the system validates the EIN and SSN formats correctly
     When user enters SSN and EIN details
@@ -77,7 +77,7 @@ Feature: 6in1 Global Contacts Feature
     And user is on first page
     Examples:
       | firstName   | lastName  | AddressLine1    | zip    |
-      | Smith1      | John      | 123 Main Street | 40007  |
+      | Smith3      | John3      | 123 Main Street | 40007  |
 
   Scenario: Verify newly created contact can be edited
     When user clicks on Name: "John, Smith" from Global Contact List with Type as "Individual"
@@ -92,7 +92,7 @@ Feature: 6in1 Global Contacts Feature
     And user is on first page
 
   Scenario Outline: Verify name fields can be updated
-    When user clicks on Name: "Karl12, Devis15" from Global Contact List with Type as "Individual"
+    When user clicks on Name: "Karl15, Devis15" from Global Contact List with Type as "Individual"
     And Verify user is on Edit Contact Page
     And user enter "<firstName>" in "First Name" Field
     And user enter "<middleName>" in "Middle Name" Field
@@ -108,10 +108,10 @@ Feature: 6in1 Global Contacts Feature
     And user is on first page
     Examples:
       | firstName | middleName   | lastName |
-      | John12     | Smith12     | Karl22   |
+      | John13     | Smith13     | Karl23   |
 
   Scenario: Verify SSN added for the contact having empty SSN
-    When user clicks on Name: "Karl12, Devis15" from Global Contact List with Type as "Individual"
+    When user clicks on Name: "Karl15, Devis16" from Global Contact List with Type as "Individual"
     And user enters SSN details
       | ssn         |
       | 123-45-6782 |
@@ -148,6 +148,18 @@ Feature: 6in1 Global Contacts Feature
       | Suffix | firstName | middleName | lastName | maidenName |
       |   Sr.  | Cammer    | York       | Will     | CV         |
 
+  Scenario Outline: Verify display result on entity name
+    When user clicks on the "Create" button
+    Then user verifies the "Global Contact Creation" page
+    When user enters Entity Name: "<entityName>"
+    And user clicks on the "Create Entity Contact" button
+    Then user verifies all the matching records are displayed for Entity Name: "<entityName>"
+    Then Verify background color of the contact type: "<contactType>"
+    Then Verify radio buttons are available for all the contacts
+    Then Verify "Create Entity Contact" button is available
+    Examples:
+      | entityName | contactType |
+      |   mark     | Entity      |
 
   @Setup
   Scenario: SETUP: Close Browser

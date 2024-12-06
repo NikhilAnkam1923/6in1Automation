@@ -6,6 +6,7 @@ import com.sixinone.automation.pages.PageFactory;
 
 import cucumber.api.java.en.*;
 import io.cucumber.datatable.DataTable;
+import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,9 @@ public class GlobalContactsSteps {
                 break;
             case "Create Individual Contact":
                 buttonDetails.put(buttonName, GlobalContactPage.CREATE_INDIVIDUAL_CONTACT_BTN);
+                break;
+            case "Create Entity Contact":
+                buttonDetails.put(buttonName, GlobalContactPage.CREATE_ENTITY_CONTACT_BTN);
                 break;
             case "Save":
                 buttonDetails.put(buttonName, GlobalContactPage.SAVE_BUTTON);
@@ -236,6 +240,60 @@ public class GlobalContactsSteps {
             CommonSteps.logInfo("Navigated to the first page.");
         }
     }
+
+    @When("^user enters Entity Name: \"([^\"]*)\"$")
+    public void userEntersEntityName(String entityName) throws AutomationException {
+        boolean isEntityNameEntered = PageFactory.globalContactPage().enterEntityName(entityName);
+        if (!isEntityNameEntered) {
+            throw new AutomationException("Failed to enter Entity Name: '" + entityName + "'.");
+        }
+        CommonSteps.logInfo("User entered Entity Name: '" + entityName + "'.");
+    }
+
+    @Then("^user verifies all the matching records are displayed for Entity Name: \"([^\"]*)\"$")
+    public void userVerifiesMatchingRecordsDisplayed(String entityName) throws AutomationException {
+        List<String> matchingEntityNames = PageFactory.globalContactPage().getAllDisplayedEntityNames();
+        boolean allMatch = matchingEntityNames.stream()
+                .allMatch(name -> name.toLowerCase().contains(entityName.toLowerCase()));
+        if (!allMatch) {
+            throw new AutomationException("Not all displayed entity names match the provided name: '" + entityName + "'. Displayed names: " + matchingEntityNames);
+        }
+        CommonSteps.logInfo("All displayed entity names match the provided name: '" + entityName + "'.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^Verify background color of the contact type: \"([^\"]*)\"$")
+    public void verifyBackgroundColorBasedOnClass(String contactType) throws AutomationException {
+        List<String> mismatchedRows = PageFactory.globalContactPage().verifyClassForContactType(contactType);
+        if (!mismatchedRows.isEmpty()) {
+            throw new AutomationException("The background color for the following rows does not match the expected class for contact type '" + contactType + "': " + mismatchedRows);
+        }
+        CommonSteps.logInfo("Verified background color for all rows with contact type: '" + contactType + "'.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^Verify radio buttons are available for all the contacts$")
+    public void verifyRadioButtonsForAllContacts() throws AutomationException {
+        boolean areRadioButtonsAvailable = PageFactory.globalContactPage().verifyRadioButtonsForContacts();
+        if (!areRadioButtonsAvailable) {
+            throw new AutomationException("Radio buttons are not available for all the contacts.");
+        }
+        CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^Verify \"([^\"]*)\" button is available$")
+    public void verifyButtonIsAvailable(String buttonName) throws AutomationException {
+        boolean isButtonAvailable = PageFactory.globalContactPage().isButtonAvailable(buttonName);
+        if (!isButtonAvailable) {
+            throw new AutomationException("The button '" + buttonName + "' is not available.");
+        }
+        CommonSteps.logInfo("Verified that the '" + buttonName + "' button is available.");
+        CommonSteps.takeScreenshot();
+    }
+
+
+
 
 }
 
