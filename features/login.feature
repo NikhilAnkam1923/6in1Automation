@@ -1,8 +1,8 @@
 @6in1 @Smoke @Regression
 Feature: 6in1 Login Feature
 
-  @Setup
-  Scenario: SETUP: Launch Browser and go to application
+
+  Background: Launch Browser and go to application
     Given User launched "chrome"
     And user go to application "$6in1_url"
 

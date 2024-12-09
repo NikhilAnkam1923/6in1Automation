@@ -19,7 +19,7 @@ public class LoginPage extends BasePage {
     private static final String LOGIN_BTN = "//input[@name='login']";
     private static final String LOGIN_LOGO = "//h2[text()='Login']";
     public static final String SPINNER = "//div[contains(class,'spinner')]";
-    private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
+    private static final String LOGOUT_BTN = "//li[@class='nav-item logout']";
     private static final String ERROR_MSG = "//span[@id='input-error']";
     private static final String EYE_ICON = "//button[@aria-label=\"Show password\"]";
     private static final String REMEBER_ME = "//input[@id='rememberMe']";
@@ -97,77 +97,78 @@ public class LoginPage extends BasePage {
             driverUtil.getWebElement(LOGIN_BTN).click();
             WebDriverUtil.waitForAWhile();
         }
-    }
 
-    public void clickOnEyeIconVisibility() throws AutomationException {
-        WebElement eyeIcon = driverUtil.getWebElement(EYE_ICON);
-        if (eyeIcon == null) {
-            throw new AutomationException("Expected Eye Icon to be visible on the UI, but it is either not present or not locatable.");
-        }
-        eyeIcon.click();
-    }
+}
 
-    public void verifyEyeIconVisibility() throws AutomationException {
-        WebElement passwordField = driverUtil.getWebElement(PASSWORD_INPUT);
-        String passwordFieldType = passwordField.getAttribute("value");
-        System.out.println("the given string - " + passwordFieldType);
-        if (passwordFieldType == null || passwordFieldType.isEmpty()) {
-            throw new AutomationException("Password field is empty or null");
-        }
+public void clickOnEyeIconVisibility() throws AutomationException {
+    WebElement eyeIcon = driverUtil.getWebElement(EYE_ICON);
+    if (eyeIcon == null) {
+        throw new AutomationException("Expected Eye Icon to be visible on the UI, but it is either not present or not locatable.");
     }
+    eyeIcon.click();
+}
 
-    public void verifyRememberMeCheckboxAvailability() throws AutomationException {
-        WebElement rememberMe = driverUtil.getWebElementAndScroll(REMEBER_ME);
-        if (!rememberMe.isDisplayed()) {
-            throw new AutomationException("Remember me checkbox is not displayed.");
-        }
+public void verifyEyeIconVisibility() throws AutomationException {
+    WebElement passwordField = driverUtil.getWebElement(PASSWORD_INPUT);
+    String passwordFieldType = passwordField.getAttribute("value");
+    System.out.println("the given string - " + passwordFieldType);
+    if (passwordFieldType == null || passwordFieldType.isEmpty()) {
+        throw new AutomationException("Password field is empty or null");
     }
+}
 
-    public void userVerifyRememberMeCheckboxClickability() throws AutomationException {
-        WebElement rememberMe = driverUtil.getWebElementAndScroll(REMEBER_ME);
-        rememberMe.click();
-        if (!rememberMe.isEnabled()) {
-            throw new AutomationException("Remember me checkbox is not clickable");
-        }
+public void verifyRememberMeCheckboxAvailability() throws AutomationException {
+    WebElement rememberMe = driverUtil.getWebElementAndScroll(REMEBER_ME);
+    if (!rememberMe.isDisplayed()) {
+        throw new AutomationException("Remember me checkbox is not displayed.");
     }
+}
 
-    public void verifyForgotPasswordButtonClickability() throws AutomationException {
-        driverUtil.getWebElement(FORGOT_PASSWORD).click();
+public void userVerifyRememberMeCheckboxClickability() throws AutomationException {
+    WebElement rememberMe = driverUtil.getWebElementAndScroll(REMEBER_ME);
+    rememberMe.click();
+    if (!rememberMe.isEnabled()) {
+        throw new AutomationException("Remember me checkbox is not clickable");
     }
+}
 
-    public void verifyForgotPasswordPageOpen() throws AutomationException {
-        WebElement forgotPasswordLogo = driverUtil.getWebElementAndScroll(FORGOT_PASSWORD_LOGO);
-        if (!forgotPasswordLogo.isDisplayed()) {
-            throw new AutomationException("Forgot Password page did not open.");
-        }
-    }
+public void verifyForgotPasswordButtonClickability() throws AutomationException {
+    driverUtil.getWebElement(FORGOT_PASSWORD).click();
+}
 
-    public void verifyBackToLoginButtonClickability() throws AutomationException {
-        {
-            driverUtil.getWebElementAndScroll(LOGIN_LOGO).click();
-        }
+public void verifyForgotPasswordPageOpen() throws AutomationException {
+    WebElement forgotPasswordLogo = driverUtil.getWebElementAndScroll(FORGOT_PASSWORD_LOGO);
+    if (!forgotPasswordLogo.isDisplayed()) {
+        throw new AutomationException("Forgot Password page did not open.");
     }
+}
 
-    public void verifyUserLandedOnLoginPage() throws AutomationException {
-        WebElement loginLogo = driverUtil.getWebElementAndScroll(LOGIN_LOGO, 5, "User Landed on the login page after click on the back to login");
-        if (!loginLogo.isDisplayed()) {
-            throw new AutomationException("After click on back to login button its not landed on login page");
-        }
+public void verifyBackToLoginButtonClickability() throws AutomationException {
+    {
+        driverUtil.getWebElementAndScroll(LOGIN_LOGO).click();
     }
+}
 
-    public boolean isLacknerStaffButtonVisible(String createLacknerStaffButtonLabel) throws AutomationException {
-        String locator = String.format(CREATE_LACKNER_STAFF_BTN, createLacknerStaffButtonLabel);
-        WebElement buttonElement = driverUtil.getWebElement(locator, 5);
-        return buttonElement != null && buttonElement.isDisplayed();
+public void verifyUserLandedOnLoginPage() throws AutomationException {
+    WebElement loginLogo = driverUtil.getWebElementAndScroll(LOGIN_LOGO, 5, "User Landed on the login page after click on the back to login");
+    if (!loginLogo.isDisplayed()) {
+        throw new AutomationException("After click on back to login button its not landed on login page");
     }
+}
 
-    public void backToLoginPage() throws AutomationException {
-        driverUtil.getWebElement(BACK_TO_LOGIN).click();
-    }
+public boolean isLacknerStaffButtonVisible(String createLacknerStaffButtonLabel) throws AutomationException {
+    String locator = String.format(CREATE_LACKNER_STAFF_BTN, createLacknerStaffButtonLabel);
+    WebElement buttonElement = driverUtil.getWebElement(locator, 5);
+    return buttonElement != null && buttonElement.isDisplayed();
+}
 
-    @Override
-    public String getName() {
-        return "Login";
-    }
+public void backToLoginPage() throws AutomationException {
+    driverUtil.getWebElement(BACK_TO_LOGIN).click();
+}
+
+@Override
+public String getName() {
+    return "Login";
+}
 
 }

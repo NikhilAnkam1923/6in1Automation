@@ -7,7 +7,9 @@ import com.sixinone.automation.pages.PageFactory;
 import com.sixinone.automation.util.CommonUtil;
 import cucumber.api.java.en.*;
 import io.cucumber.datatable.DataTable;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,19 +17,28 @@ import java.util.Map;
 
 public class GlobalContactsSteps {
 
+    @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
+    public static void userLoginTo6in1(String userEmail, String password) throws AutomationException {
+        PageFactory.loginPage().doLogoutFrom6in1IfAlreadyLoggedIn();
+        userEmail = CommonUtil.processString(userEmail);
+        password = CommonUtil.processString(password);
+        CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
+        PageFactory.loginPage().loginTo6in1(userEmail, password);
+    }
+
     @When("^user clicks on the \"([^\"]*)\" button$")
-    public void userClicksOnButton(String buttonName) throws AutomationException {
+    public void userClicksOnButton(String buttonName) throws AutomationException, IOException {
         Map<String, String> buttonDetails = new HashMap<>();
 
         switch (buttonName) {
-            case "Global Contact":
-                buttonDetails.put(buttonName, GlobalContactPage.GLOBALCONTACT_BUTTON);
-                break;
             case "Create":
                 buttonDetails.put(buttonName, GlobalContactPage.CREATE_BUTTON);
                 break;
             case "Create Individual Contact":
                 buttonDetails.put(buttonName, GlobalContactPage.CREATE_INDIVIDUAL_CONTACT_BTN);
+                break;
+            case "Create Entity Contact":
+                buttonDetails.put(buttonName, GlobalContactPage.CREATE_ENTITY_CONTACT_BTN);
                 break;
             case "Save":
                 buttonDetails.put(buttonName, GlobalContactPage.SAVE_BUTTON);
@@ -41,7 +52,7 @@ public class GlobalContactsSteps {
 
 
     @Then("^user verifies the \"([^\"]*)\" page$")
-    public void userVerifiesPage(String pageName) throws AutomationException {
+    public void userVerifiesPage(String pageName) throws AutomationException, IOException {
         Map<String, String> pageDetails = new HashMap<>();
 
         switch (pageName) {
@@ -57,6 +68,12 @@ public class GlobalContactsSteps {
             case "Individual Global Contact Creation":
                 pageDetails.put(pageName, GlobalContactPage.INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE);
                 break;
+            case "Entity Global Contact Creation":
+                pageDetails.put(pageName, GlobalContactPage.ENTITY_GLOBAL_CONTACT_CREATION_PAGE);
+                break;
+            case "Contact (Select or Create New)":
+                pageDetails.put(pageName, GlobalContactPage.SELECT_OR_CREATENEW_PAGE);
+                break;
             default:
                 throw new AutomationException("Unknown page: " + pageName);
         }
@@ -64,7 +81,7 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user enters \"([^\"]*)\" as the first name and \"([^\"]*)\" as the last name$")
+    @Then("^user enters \"([^\"]*)\" as the first name and \"([^\"]*)\" as the last name$")
     public void userEntersFirstAndLastName(String firstName, String lastName) throws AutomationException {
         CommonSteps.logInfo("Entering first and last name");
         PageFactory.globalContactPage().enterFirstnameAndLastNameFields(firstName, lastName);
@@ -78,51 +95,6 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user enters all required and optional fields$")
-    public void userEntersAllFields(DataTable dataTable) throws AutomationException {
-        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
-
-
-        Map<Object, Object> row = data.get(0);
-
-
-        String middleName = row.get("middleName").toString();
-        String maidenName = row.get("maidenName").toString();
-        String entityName = row.get("entityName").toString();
-        String emailAddress = row.get("emailAddress").toString();
-        String PTIN = row.get("PTIN").toString();
-        String PINeFile = row.get("PINeFile").toString();
-        String BarID = row.get("BarID").toString();
-        String CAF = row.get("CAF").toString();
-
-
-
-        String addressLine1 = row.get("AddressLine1").toString();
-        String addressLine2 = row.get("AddressLine2").toString();
-        String zip = row.get("Zip").toString();
-
-
-        PageFactory.globalContactPage().enterRequiredFields(addressLine1, zip);
-        PageFactory.globalContactPage().enterOptionalFields(middleName, maidenName, entityName,emailAddress,PTIN,PINeFile,BarID,CAF,addressLine2);
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("user enters SSN,EIN,Phone Number,workPhone and fax details")
-    public void userEntersSSNEINPhoneNumberWorkPhoneAndFaxDetails(DataTable dataTable) throws AutomationException {
-        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
-
-        Map<Object, Object> row = data.get(0);
-
-        String ssn = row.get("ssn").toString();
-        String ein = row.get("ein").toString();
-        String phoneNumber = row.get("phoneNumber").toString();
-        String workNumber = row.get("workPhone").toString();
-        String fax = row.get("fax").toString();
-
-        PageFactory.globalContactPage().enterSSNEINPhoneNumberWorkNumberAndFax(ssn, ein, phoneNumber, workNumber, fax);
-        CommonSteps.takeScreenshot();
-    }
-
     @Then("^user enter \"([^\"]*)\" in \"([^\"]*)\" Field$")
     public void userEnterInField(String fieldData, String fieldName) throws AutomationException {
         CommonSteps.logInfo("User enters '" + fieldData + "' in the field '" + fieldName + "'.");
@@ -130,7 +102,7 @@ public class GlobalContactsSteps {
         if (!isInputSuccessful) {
             throw new AutomationException("Failed to enter data in field with label: '" + fieldName + "'.");
         }
-        CommonSteps.logInfo("Entered value "+fieldData+" in the field: " + fieldName);
+        CommonSteps.logInfo("Entered value " + fieldData + " in the field: " + fieldName);
         CommonSteps.takeScreenshot();
     }
 
@@ -146,13 +118,112 @@ public class GlobalContactsSteps {
     }
 
 
-
-    @And("^user verifies that a confirmation message \"([^\"]*)\" is displayed$")
+    @Then("^user verifies that a confirmation message \"([^\"]*)\" is displayed$")
     public void userVerifiesConfirmationMessage(String confirmationMsg) throws AutomationException {
         PageFactory.globalContactPage().verifyConfirmationMessage(confirmationMsg);
         CommonSteps.takeScreenshot();
     }
+
+    @Then("^user enters \"([^\"]*)\" as the entity name$")
+    public void userEntersAsTheEntityName(String entityName) throws AutomationException {
+        CommonSteps.logInfo("Entering entity name");
+        PageFactory.globalContactPage().enterEntityNameFields(entityName);
+        CommonSteps.takeScreenshot();
+
+    }
+
+    @When("^user navigate to \"([^\"]*)\"$")
+    public void userNavigateToTab(String tab) throws AutomationException, IOException {
+        PageFactory.globalContactPage().tabNavigation(tab);
+    }
+
+
+    @And("^user \"([^\"]*)\" global contact of \"([^\"]*)\"$")
+    public void userCreatesGlobalContact(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
+        if (action.equals("Create")) {
+            PageFactory.globalContactPage().globalContactCreation(action, contactType);
+        } else if (action.equals("Edit"))
+            PageFactory.globalContactPage().globalContactEdit(action, contactType);
+    }
+
+    @And("^user fills all the details for \"([^\"]*)\"$")
+    public void userFillsAllTheDetailsForGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        PageFactory.globalContactPage().fillGlobalContactDetails(contactType);
+    }
+
+    @Then("user save the global contact")
+    public void userSaveTheGlobalContact() throws AutomationException, IOException {
+        PageFactory.globalContactPage().saveGlobalContact();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user verifies global contact of \"([^\"]*)\" is saved successfully$")
+    public void userVerifiesGlobalContactOfIsSavedSuccessfully(String contactType) throws AutomationException {
+        PageFactory.globalContactPage().verifyGlobalContactSaved(contactType);
+    }
+
+    @And("^user verifies authorization for \"([^\"]*)\"$")
+    public void userVerifiesAuthorizationFor(String userType) {
+        CommonSteps.logInfo("user verifies authorization for user type: " + userType);
+        PageFactory.globalContactPage().verifyUserType(userType);
+
+    }
+
+    @Then("user should see an error message for duplicate EIN")
+    public void userShouldSeeAnErrorMessageForDuplicateEIN() throws Throwable {    // Write code here that turns the phrase above into concrete actions    throw new cucumber.api.PendingException();}
+        CommonSteps.logInfo("Verifying the error message for invalid or duplicate EIN.");
+        PageFactory.globalContactPage().verifyDuplicateEINError();
+    }
+
+    @And("user attempts to save the global contact without filling the required fields")
+    public void userAttemptsToSaveTheGlobalContactWithoutFillingTheRequiredFields() throws AutomationException, IOException {
+        CommonSteps.logInfo("Attempting to save the global contact without filling the required fields.");
+        PageFactory.globalContactPage().clearFields();
+        PageFactory.globalContactPage().buttonClick("Save");
+    }
+
+    @Then("user should see validation error messages for the required fields")
+    public void userShouldSeeValidationErrorMessagesForTheRequiredFields() throws AutomationException {
+        CommonSteps.logInfo("Verifying validation error messages for the required fields.");
+        PageFactory.globalContactPage().verifyRequiredFieldValidationErrors();
+    }
+
+    @When("^user fills in the previously empty required fields for \"([^\"]*)\"$")
+    public void userFillsInThePreviouslyEmptyRequiredFieldsFor(String contactType) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Filling in the previously empty required fields for contact type: " + contactType);
+        PageFactory.globalContactPage().fillRequiredFields(contactType);
+    }
+
+    @Then("user should see that validation error messages are removed")
+    public void userShouldSeeValidationMessagesRemoved() throws AutomationException {
+        CommonSteps.logInfo("Verifying that validation error messages are removed after correcting the fields.");
+        PageFactory.globalContactPage().verifyNoValidationErrors();
+    }
+
+    @Then("user navigates to the page with the records")
+    public void userNavigatesToThePageWithTheRecords() throws AutomationException, IOException {
+        CommonSteps.logInfo("user navigates to the page with the records");
+        PageFactory.globalContactPage().buttonClick("Create Individual Contact");
+    }
+
+    @And("user selects a radio button for a record")
+    public void userSelectsARadioButtonForARecord() throws AutomationException, IOException {
+        CommonSteps.logInfo("user select the radio button");
+        PageFactory.globalContactPage().buttonClick("Radio Button");
+    }
+
+    @Then("^user verifies the \"([^\"]*)\" button is enabled$")
+    public void userVerifiesTheButtonIsEnabled(String buttonName) throws AutomationException {
+        CommonSteps.logInfo("Verifying that the \"" + buttonName + "\" button is enabled.");
+        boolean isButtonEnabled = PageFactory.globalContactPage().isButtonEnabled(buttonName);
+        if (!isButtonEnabled) {
+            throw new AutomationException("\"" + buttonName + "\" button is not enabled as expected.");
+        }
+        CommonSteps.logInfo("\"" + buttonName + "\" button is enabled as expected.");
+    }
+
+    @Then("user should see validation error messages for the required fields for {string}")
+    public void userShouldSeeValidationErrorMessagesForTheRequiredFieldsFor(String contactType) {
+    }
 }
-
-
 

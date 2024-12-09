@@ -125,6 +125,17 @@ public class WebDriverUtil {
         }
     }
 
+
+
+    public static WebElement findElementByLinkedText(String locator) {
+        try {
+            WebElement element = DriverFactory.drivers.get().findElement(By.linkText(locator));
+            return element;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public WebElement findElementAndScroll(String locator) {
         try {
             WebElement element = DriverFactory.drivers.get().findElement(By.xpath(locator));
@@ -218,10 +229,24 @@ public class WebDriverUtil {
         waitForVisibleElement(by, MAX_ELEMENT_WAIT);
     }
 
+    public static void waitForVisibleElement(WebElement webElement) {
+        waitForAWhile(1, TimeUnit.SECONDS);
+        waitForVisibleElement(webElement, MAX_ELEMENT_WAIT);
+    }
+
     public static void waitForVisibleElement(By by, int timeout) {
         try {
             WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+        }
+    }
+
+    public static void waitForVisibleElement(WebElement webElement, int timeout) {
+        try {
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
+            wait.until(ExpectedConditions.visibilityOf(webElement));
         } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
@@ -244,6 +269,7 @@ public class WebDriverUtil {
         waitForInvisibleElement(by, DEFAULT_ELEMENT_WAIT);
     }
 
+
     public static void waitForInvisibleElement(By by, int timeout) {
         try {
             WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
@@ -252,6 +278,8 @@ public class WebDriverUtil {
             logger.error(ex.getMessage());
         }
     }
+
+
 
     public static byte[] pngBytesToJpgBytes(byte[] pngBytes) {
         try {
@@ -407,5 +435,4 @@ public class WebDriverUtil {
 
         ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript(java_script, srcweelement, destelement);
     }
-
 }
