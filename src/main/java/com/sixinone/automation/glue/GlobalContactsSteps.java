@@ -248,6 +248,7 @@ public class GlobalContactsSteps {
             throw new AutomationException("Failed to enter Entity Name: '" + entityName + "'.");
         }
         CommonSteps.logInfo("User entered Entity Name: '" + entityName + "'.");
+        CommonSteps.takeScreenshot();
     }
 
     @Then("^user verifies all the matching records are displayed for Entity Name: \"([^\"]*)\"$")
@@ -292,6 +293,17 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @Then("^user verifies all the matching records are displayed for Contact Name: \"([^\"]*)\"$")
+    public void userVerifiesAllMatchingRecordsForContactName(String expectedContactName) throws AutomationException {
+        List<String> matchingContactNames = PageFactory.globalContactPage().getAllDisplayedContactNames();
+        boolean allMatch = matchingContactNames.stream()
+                .allMatch(name -> name.equalsIgnoreCase(expectedContactName));
+        if (!allMatch) {
+            throw new AutomationException("Not all displayed contact names match the provided name: '" + expectedContactName + "'. Displayed names: " + matchingContactNames);
+        }
+        CommonSteps.logInfo("Verified All displayed contact names match the provided name: '" + expectedContactName + "'.");
+        CommonSteps.takeScreenshot();
+    }
 
 
 

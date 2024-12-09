@@ -157,9 +157,24 @@ Feature: 6in1 Global Contacts Feature
     Then Verify background color of the contact type: "<contactType>"
     Then Verify radio buttons are available for all the contacts
     Then Verify "Create Entity Contact" button is available
+    And user click on "Close" Button
     Examples:
       | entityName | contactType |
       |   mark     | Entity      |
+
+
+  Scenario Outline: Verify all the inputs are by default trimmed while searching both the type of contacts
+    When user enters "  <firstName>" as the first name and "  <lastName>  " as the last name
+    And user clicks on the "Create Individual Contact" button
+    Then user verifies all the matching records are displayed for Contact Name: "<lastName>, <firstName>"
+    And user click on "Close" Button
+    And user verifies the "Global Contact Creation" page
+    Then user enters Entity Name: "    <entityName>    "
+    And user clicks on the "Create Entity Contact" button
+    Then user verifies all the matching records are displayed for Entity Name: "<entityName>"
+    Examples:
+      | firstName   | lastName  | entityName |
+      | Smith3      | John3     | mark       |
 
   @Setup
   Scenario: SETUP: Close Browser
