@@ -44,7 +44,36 @@ Feature: 6in1 Global Contacts Feature
     And user verifies global contact of "Individual Global Contact" is saved successfully
     And user "Edit" global contact of "Individual Global Contact"
     And user verifies global contact of "Individual Global Contact" is saved successfully
-    And user logged out from the application
+
+  Scenario: Attempt to create a duplicate entity contact with the same EIN
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    Then user enters already existed EIN
+    Then user save the global contact
+    And user should see an error message for duplicate EIN
+
+  Scenario: Verify that validation error messages are removed when required fields are corrected
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    And user attempts to save the global contact without filling the required fields
+    Then user should see validation error messages for the required fields
+    When user fills in the previously empty required fields for "Individual Global Contact"
+    Then user save the global contact
+    And user verifies global contact of "Individual Global Contact" is saved successfully
+
+  Scenario: Verify user enters entity name then clicks Create Entity Contact and lands on the Entity Contact page with pre-filled fields
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    And Entity Name fields is pre-filled
+
+  Scenario: Verify Select & Proceed button is enabled only after selecting a radio button
+    When user navigate to "Global Contact"
+    When user clicks on the "Create" button
+    When user enters "Joe" as the first name and "Root" as the last name
+    Then user navigates to the page with the records
+    Then user verifies the "Contact (Select or Create New)" page
+    And user selects a radio button for a record
+    Then user verifies the "Select & Proceed" button is enabled
 
   Scenario: verify user authorization for Licensed
     When user navigate to "Global Contact"
@@ -58,6 +87,8 @@ Feature: 6in1 Global Contacts Feature
     When user navigate to "Global Contact"
     And user verifies authorization for "View Only"
 
+
+# Gaurav Scenarios -
   Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
     When user clicks on the "Create" button
     And user verifies the "Global Contact Creation" page
@@ -119,12 +150,6 @@ Feature: 6in1 Global Contacts Feature
       | firstName | middleName | lastName |
       | John13    | Smith13    | Karl23   |
 
-  Scenario: Attempt to create a duplicate entity contact with the same EIN
-    When user navigate to "Global Contact"
-    And user "Create" global contact of "Individual Global Contact"
-    And user fills all the details for "Individual Global Contact"
-    Then user save the global contact
-    Then user should see an error message for duplicate EIN
 
   Scenario: Verify SSN added for the contact having empty SSN
     When user clicks on Name: "Karl15, Devis16" from Global Contact List with Type as "Individual"
@@ -147,24 +172,8 @@ Feature: 6in1 Global Contacts Feature
     And user click on "Close" Button
     Examples:
       | entityName | contactType |
-      |   mark     | Entity      |
+      | mark       | Entity      |
 
-  Scenario: Verify that validation error messages are removed when required fields are corrected
-    When user navigate to "Global Contact"
-    And user "Create" global contact of "Individual Global Contact"
-    And user attempts to save the global contact without filling the required fields
-    Then user should see validation error messages for the required fields
-    When user fills in the previously empty required fields for "Individual Global Contact"
-    Then user save the global contact
-    And user verifies global contact of "Individual Global Contact" is saved successfully
-
-  Scenario: Verify user enters entity name then clicks Create Entity Contact and lands on the Entity Contact page with pre-filled fields
-    When user navigate to "Global Contact"
-    And user "Create" global contact of "Entity Global Contact"
-    And Entity Name fields is pre-filled
-    And user logged out from the application
-
-  @Smoke
   Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
     When user enters "<firstName>" as the first name and "<lastName>" as the last name
     When user clicks on the "Create Individual Contact" button
@@ -175,14 +184,6 @@ Feature: 6in1 Global Contacts Feature
       | firstName | lastName | zip   | city      | state    | country |
       | Amy       | Jack     | 40007 | Bethlehem | Kentucky | Henry   |
 
-  Scenario: Verify Select & Proceed button is enabled only after selecting a radio button
-    When user navigate to "Global Contact"
-    When user clicks on the "Create" button
-    When user enters "Nikhil" as the first name and "Ankam" as the last name
-    Then user navigates to the page with the records
-    Then user verifies the "Contact (Select or Create New)" page
-    And user selects a radio button for a record
-    Then user verifies the "Select & Proceed" button is enabled
 
   Scenario: Verify, a contact can be selected from the list.
     When user navigate to "Global Contact"
@@ -203,8 +204,8 @@ Feature: 6in1 Global Contacts Feature
     And user clicks on the "Create Entity Contact" button
     Then user verifies all the matching records are displayed for Entity Name: "<entityName>"
     Examples:
-      | firstName   | lastName  | entityName |
-      | Smith3      | John3     | mark       |
+      | firstName | lastName | entityName |
+      | Smith3    | John3    | mark       |
 
   @Setup
   Scenario:SETUP: Close Browser

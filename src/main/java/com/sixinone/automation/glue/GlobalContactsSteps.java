@@ -27,7 +27,7 @@ public class GlobalContactsSteps {
     }
 
     @When("^user clicks on the \"([^\"]*)\" button$")
-    public void userClicksOnButton(String buttonName) throws AutomationException, IOException {
+    public void userClicksOnButton(String buttonName) throws AutomationException, IOException, ParseException {
         Map<String, String> buttonDetails = new HashMap<>();
 
         switch (buttonName) {
@@ -42,6 +42,9 @@ public class GlobalContactsSteps {
                 break;
             case "Save":
                 buttonDetails.put(buttonName, GlobalContactPage.SAVE_BUTTON);
+                break;
+            case "Close":
+                buttonDetails.put(buttonName, GlobalContactPage.CLOSE_BUTTON);
                 break;
             default:
                 throw new AutomationException("Unknown button: " + buttonName);
@@ -190,12 +193,13 @@ public class GlobalContactsSteps {
     public void userVerifiesAuthorizationFor(String userType) {
         CommonSteps.logInfo("user verifies authorization for user type: " + userType);
         PageFactory.globalContactPage().verifyUserType(userType);
+        CommonSteps.takeScreenshot();
 
     }
 
-    @Then("user should see an error message for duplicate EIN")
-    public void userShouldSeeAnErrorMessageForDuplicateEIN() throws Throwable {    // Write code here that turns the phrase above into concrete actions    throw new cucumber.api.PendingException();}
-        CommonSteps.logInfo("Verifying the error message for invalid or duplicate EIN.");
+    @And("user should see an error message for duplicate EIN")
+    public void userShouldSeeAnErrorMessageForDuplicateEIN() throws Throwable {
+        CommonSteps.logInfo("Verifying the error message for duplicate EIN.");
         PageFactory.globalContactPage().verifyDuplicateEINError();
     }
 
@@ -204,18 +208,21 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("Attempting to save the global contact without filling the required fields.");
         PageFactory.globalContactPage().clearFields();
         PageFactory.globalContactPage().buttonClick("Save");
+        CommonSteps.takeScreenshot();
     }
 
     @Then("user should see validation error messages for the required fields")
     public void userShouldSeeValidationErrorMessagesForTheRequiredFields() throws AutomationException {
         CommonSteps.logInfo("Verifying validation error messages for the required fields.");
         PageFactory.globalContactPage().verifyRequiredFieldValidationErrors();
+        CommonSteps.takeScreenshot();
     }
 
     @When("^user fills in the previously empty required fields for \"([^\"]*)\"$")
     public void userFillsInThePreviouslyEmptyRequiredFieldsFor(String contactType) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Filling in the previously empty required fields for contact type: " + contactType);
         PageFactory.globalContactPage().fillRequiredFields(contactType);
+        CommonSteps.takeScreenshot();
     }
 
     @Then("user should see that validation error messages are removed")
@@ -237,13 +244,14 @@ public class GlobalContactsSteps {
     }
 
     @Then("^user verifies the \"([^\"]*)\" button is enabled$")
-    public void userVerifiesTheButtonIsEnabled(String buttonName) throws AutomationException {
+    public void userVerifiesTheButtonIsEnabled(String buttonName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verifying that the " + buttonName + " button is enabled.");
         boolean isButtonEnabled = PageFactory.globalContactPage().isButtonEnabled(buttonName);
         if (!isButtonEnabled) {
             throw new AutomationException(buttonName + " button is not enabled as expected.");
         }
         CommonSteps.logInfo(buttonName + " button is enabled as expected.");
+        userClicksOnButton("Close");
     }
 
     @And("^user is on first page$")
@@ -343,7 +351,7 @@ public class GlobalContactsSteps {
 
     @And("Entity Name fields is pre-filled")
     public void entityNameFieldsIsPreFilled() throws AutomationException {
-        CommonSteps.logInfo("Verifying field for First Name and Last name is pre-filled with expected value");
+        CommonSteps.logInfo("Verifying field Entity Name is pre-filled with expected value");
         PageFactory.globalContactPage().verifyentityNameFieldPrefilled();
         CommonSteps.takeScreenshot();
     }
@@ -352,6 +360,13 @@ public class GlobalContactsSteps {
     public void userClicksOnTheSelectProceedButton() throws AutomationException, IOException {
         CommonSteps.logInfo("user navigates to the Select & Proceed button");
         PageFactory.globalContactPage().buttonClick("Select & Proceed");
+    }
+
+    @Then("user enters already existed EIN")
+    public void userEntersAlreadyExistedEIN() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user enters already existed EIN");
+        PageFactory.globalContactPage().enterExistedEIN();
+
     }
 }
 
