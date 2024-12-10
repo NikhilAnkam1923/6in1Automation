@@ -26,7 +26,7 @@ Feature: 6in1 Global Contacts Feature
     And "lastName" field is pre-filled with "<lastName>"
     Examples:
       | firstName  | lastName  |
-      | Devis35     | Karl35     |
+      | Devis65     | Karl65     |
 
   Scenario: Verify that a user can save a contact with all required and optional fields filled
     When user enters all required and optional fields
@@ -34,7 +34,7 @@ Feature: 6in1 Global Contacts Feature
       | York       | mj         | AMY Corp   | amyjack@email.com | P76543363 | 7687462487 | 7355653750 | 5764654 | DUCK colony  | IAB Market   | 50011 |
     And user enters SSN,EIN,Phone Number,workPhone and fax details
       | ssn         | ein        | phoneNumber    | workPhone      | fax            |
-      | 123-45-6789 | 12-3456789 | (123) 456-7880 | (123) 456-7870 | (123) 456-7897 |
+      | 123-45-6779 | 12-3456779 | (123) 456-7880 | (123) 456-7870 | (123) 456-7897 |
     When user clicks on the "Save" button
     And user verifies that a confirmation message "Contact details have been successfully saved." is displayed
 
@@ -50,12 +50,12 @@ Feature: 6in1 Global Contacts Feature
     Then Verify the city "<city>", state "<state>", and county "<country>" are automatically fetched
     Examples:
       | firstName  | lastName  | zip    | city      | state    | country |
-      | Devis36   | Karl36    | 40007  | Bethlehem | Kentucky | Henry   |
+      | Devis66   | Karl66    | 40007  | Bethlehem | Kentucky | Henry   |
 
   Scenario Outline: Verify that the system validates the EIN and SSN formats correctly
     When user enters SSN and EIN details
       | ssn         | ein        |
-      | 123-45-6789 | 12-3456789 |
+      | 123-45-6749 | 12-3456749 |
     And user enter "<AddressLine1>" in "Address Line 1" Field
     Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
     Examples:
@@ -77,7 +77,7 @@ Feature: 6in1 Global Contacts Feature
     And user is on first page
     Examples:
       | firstName   | lastName  | AddressLine1    | zip    |
-      | Smith3      | John3      | 123 Main Street | 40007  |
+      | Smith7      | John7      | 123 Main Street | 40007  |
 
   Scenario: Verify newly created contact can be edited
     When user clicks on Name: "John, Smith" from Global Contact List with Type as "Individual"
@@ -92,7 +92,7 @@ Feature: 6in1 Global Contacts Feature
     And user is on first page
 
   Scenario Outline: Verify name fields can be updated
-    When user clicks on Name: "Karl15, Devis15" from Global Contact List with Type as "Individual"
+    When user clicks on Name: "Karl36, Devis36" from Global Contact List with Type as "Individual"
     And Verify user is on Edit Contact Page
     And user enter "<firstName>" in "First Name" Field
     And user enter "<middleName>" in "Middle Name" Field
@@ -108,13 +108,13 @@ Feature: 6in1 Global Contacts Feature
     And user is on first page
     Examples:
       | firstName | middleName   | lastName |
-      | John13     | Smith13     | Karl23   |
+      | John15     | Smith15     | Karl25   |
 
   Scenario: Verify SSN added for the contact having empty SSN
     When user clicks on Name: "Karl15, Devis16" from Global Contact List with Type as "Individual"
     And user enters SSN details
       | ssn         |
-      | 123-45-6782 |
+      | 123-42-6732 |
     And user click on "Save" Button
     Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
     And user is on first page
