@@ -126,7 +126,6 @@ public class WebDriverUtil {
     }
 
 
-
     public static WebElement findElementByLinkedText(String locator) {
         try {
             WebElement element = DriverFactory.drivers.get().findElement(By.linkText(locator));
@@ -280,7 +279,6 @@ public class WebDriverUtil {
     }
 
 
-
     public static byte[] pngBytesToJpgBytes(byte[] pngBytes) {
         try {
             //create InputStream for ImageIO using png byte[]
@@ -369,7 +367,7 @@ public class WebDriverUtil {
     }
 
     public void waitForLoaderToDisappear() throws AutomationException {
-        waitForAWhile(60);
+        waitForAWhile(30);
         String elementVisible = waitForElementNotVisible(MAX_WAIT_120, "//div[@role='progressbar']");
         if (elementVisible != null)
             throw new AutomationException("Loader is displayed, even after waiting for 120 seconds");
@@ -419,6 +417,15 @@ public class WebDriverUtil {
     public static void dragAndDrop(WebElement srcweelement, WebElement destelement) {
         Actions actions = new Actions(DriverFactory.drivers.get());
         actions.dragAndDrop(srcweelement, destelement).perform();
+    }
+
+    public String getCurrentUrl() {
+        try {
+            return DriverFactory.getInstance().initDriver("chrome").getCurrentUrl();
+        } catch (Exception e) {
+            System.err.println("Failed to fetch the current URL: " + e.getMessage());
+            return null;
+        }
     }
 
     public static void dragAndDropUsingJavaScript(WebElement srcweelement, WebElement destelement) {
