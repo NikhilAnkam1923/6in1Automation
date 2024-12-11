@@ -4,10 +4,13 @@ import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.GlobalContactPage;
 import com.sixinone.automation.pages.PageFactory;
 
+import com.sixinone.automation.util.CommonUtil;
 import cucumber.api.java.en.*;
 import io.cucumber.datatable.DataTable;
 import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,15 +127,11 @@ public class GlobalContactsSteps {
     }
 
 
-    @And("^user enters SSN and EIN details$")
-    public void userEntersSSNAndEIN(DataTable dataTable) throws AutomationException {
-        List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
-        for (Map<String, String> row : data) {
-            String ssn = row.get("ssn");
-            String ein = row.get("ein");
-            PageFactory.globalContactPage().enterSSNAndEIN(ssn, ein);
-        }
+    @When("^user enters SSN and EIN details$")
+    public void userEntersSSNAndEINDetails() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().enterSSNAndEIN();
     }
+
 
     @And("^user enters SSN details$")
     public void userEntersSSNDetails(DataTable dataTable) throws AutomationException {
@@ -159,14 +158,14 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("^user enter \"([^\"]*)\" in \"([^\"]*)\" Field$")
-    public void userEnterInField(String fieldData, String fieldName) throws AutomationException {
-        boolean isInputSuccessful = PageFactory.globalContactPage().enterDataInFieldByLabel(fieldData, fieldName);
-        if (!isInputSuccessful) {
-            throw new AutomationException("Failed to enter data in field with label: '" + fieldName + "'.");
-        }
-        CommonSteps.logInfo("Entered value "+fieldData+" in the field: " + fieldName);
+    @And("user enters data in Address Line 1 Field")
+    public void userEntersDataInAddressLine1Field() throws AutomationException {
+        CommonSteps.logInfo("Entering data in the Address Line 1 field");
+        PageFactory.globalContactPage().enterAddressLine1Data();
+        CommonSteps.takeScreenshot();
     }
+
+
 
     @Then("^Verify the city \"([^\"]*)\", state \"([^\"]*)\", and county \"([^\"]*)\" are automatically fetched$")
     public void verifyCityStateCountyAreFetched(String expectedCity, String expectedState, String expectedCounty) throws AutomationException {
@@ -229,16 +228,6 @@ public class GlobalContactsSteps {
         }
         CommonSteps.logInfo("Verified that the option '" + expectedOption + "' is selected from the Suffix dropdown.");
         CommonSteps.takeScreenshot();
-    }
-
-    @And("^user is on first page$")
-    public void userIsOnFirstPage() throws AutomationException {
-        boolean isOnFirstPage = PageFactory.globalContactPage().navigateToFirstPage();
-        if (isOnFirstPage) {
-            CommonSteps.logInfo("User is already on the first page.");
-        } else {
-            CommonSteps.logInfo("Navigated to the first page.");
-        }
     }
 
     @When("^user enters Entity Name: \"([^\"]*)\"$")
@@ -305,6 +294,74 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @When("^user navigate to \"([^\"]*)\"$")
+    public void userNavigateToTab(String tab) throws AutomationException, IOException {
+        PageFactory.globalContactPage().tabNavigation(tab);
+    }
+
+    @And("^user \"([^\"]*)\" global contact of \"([^\"]*)\"$")
+    public void userCreatesGlobalContact(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
+        if (action.equals("Create")) {
+            PageFactory.globalContactPage().globalContactCreation(action, contactType);
+        } else if (action.equals("Edit"))
+            PageFactory.globalContactPage().globalContactEdit(action, contactType);
+    }
+
+    @And("First Name and Last Name fields are pre-filled")
+    public void firstNameAndLastNameFieldsArePreFilled() throws AutomationException {
+        CommonSteps.logInfo("Verifying field for First Name and Last name is pre-filled with expected value");
+        PageFactory.globalContactPage().verifyfirstNamelastNameFieldPrefilled();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user fills all the details for \"([^\"]*)\"$")
+    public void userFillsAllTheDetailsForGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        PageFactory.globalContactPage().fillGlobalContactDetails(contactType);
+    }
+
+    @Then("user save the global contact")
+    public void userSaveTheGlobalContact() throws AutomationException, IOException {
+        PageFactory.globalContactPage().saveGlobalContact();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user verifies global contact of \"([^\"]*)\" is saved successfully$")
+    public void userVerifiesGlobalContactOfIsSavedSuccessfully(String contactType) throws AutomationException {
+        PageFactory.globalContactPage().verifyGlobalContactSaved(contactType);
+    }
+
+    @Then("^user enters data in Zip Field$")
+    public void userEntersDataInZipField() throws AutomationException {
+        CommonSteps.logInfo("Entering data in the Zip field");
+        PageFactory.globalContactPage().enterDataInZipField();
+        CommonSteps.takeScreenshot();
+    }
+
+
+    @Then("^verify that city, state, and county are automatically fetched$")
+    public void verifyCityStateCountyAreFetched() throws AutomationException, IOException, ParseException {
+        String expectedCity = CommonUtil.getJsonPath("Create").get("Create.city").toString();
+        String expectedState = CommonUtil.getJsonPath("Create").get("Create.state").toString();
+        String expectedCounty = CommonUtil.getJsonPath("Create").get("Create.country").toString();
+
+        boolean isDataCorrect = PageFactory.globalContactPage().verifyFetchedFields(expectedCity, expectedState, expectedCounty);
+        if (!isDataCorrect) {
+            throw new AutomationException("City, State, or County values are incorrect or not fetched automatically.");
+        }
+        CommonSteps.logInfo("Verified auto-fetched values: City - " + expectedCity + ", State - " + expectedState + ", County - " + expectedCounty);
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user \"([^\"]*)\" global contact of \"([^\"]*)\" with leading and trailing spaces$")
+    public void userCreatesGlobalContactWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
+        if (action.equals("Create")) {
+            PageFactory.globalContactPage().globalContactCreationWithSpaces(action, contactType);
+        } else if (action.equals("Edit")) {
+            PageFactory.globalContactPage().globalContactEdit(action, contactType);
+        } else {
+            throw new AutomationException("Unsupported action: " + action);
+        }
+    }
 
 
 }

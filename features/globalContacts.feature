@@ -13,85 +13,47 @@ Feature: 6in1 Global Contacts Feature
 
   @Smoke
   Scenario: User verify user is on the Global Contact Creation page
-    When user clicks on the "Global Contact" button
+    When user navigate to "Global Contact"
     Then user verifies the "Global Contacts" page
     When user clicks on the "Create" button
     Then user verifies the "Global Contact Creation" page
 
-  Scenario Outline: Verify user enters first and last name then clicks Create Individual Contact and lands on the Individual Contact page with pre-filled fields
-    When user enters "<firstName>" as the first name and "<lastName>" as the last name
-    When user clicks on the "Create Individual Contact" button
-    Then user verifies the "Individual Global Contact Creation" page
-    And "firstName" field is pre-filled with "<firstName>"
-    And "lastName" field is pre-filled with "<lastName>"
-    Examples:
-      | firstName  | lastName  |
-      | Devis65     | Karl65     |
+  Scenario: Verify user enters first and last name then clicks Create Individual Contact and lands on the Individual Contact page with pre-filled fields
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    And First Name and Last Name fields are pre-filled
 
-  Scenario: Verify that a user can save a contact with all required and optional fields filled
-    When user enters all required and optional fields
-      | middleName | maidenName | entityName | emailAddress      | PTIN      | PINeFile   | BarID      | CAF     | AddressLine1 | AddressLine2 | Zip   |
-      | York       | mj         | AMY Corp   | amyjack@email.com | P76543363 | 7687462487 | 7355653750 | 5764654 | DUCK colony  | IAB Market   | 50011 |
-    And user enters SSN,EIN,Phone Number,workPhone and fax details
-      | ssn         | ein        | phoneNumber    | workPhone      | fax            |
-      | 123-45-6779 | 12-3456779 | (123) 456-7880 | (123) 456-7870 | (123) 456-7897 |
-    When user clicks on the "Save" button
-    And user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+  Scenario: Create the contact for Individual Global Contact
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    Then user fills all the details for "Individual Global Contact"
+    Then user save the global contact
+    And user verifies global contact of "Individual Global Contact" is saved successfully
 
-  Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
-    When user clicks on the "Create" button
-    And user verifies the "Global Contact Creation" page
-    And user enters "<firstName>" as the first name and "<lastName>" as the last name
-    And user clicks on the "Create Individual Contact" button
-    And user verifies the "Individual Global Contact Creation" page
-    And "firstName" field is pre-filled with "<firstName>"
-    And "lastName" field is pre-filled with "<lastName>"
-    And user enter "<zip>" in "Zip" Field
-    Then Verify the city "<city>", state "<state>", and county "<country>" are automatically fetched
-    Examples:
-      | firstName  | lastName  | zip    | city      | state    | country |
-      | Devis66   | Karl66    | 40007  | Bethlehem | Kentucky | Henry   |
 
-  Scenario Outline: Verify that the system validates the EIN and SSN formats correctly
+  Scenario: Verify that city, state and county are automatically fetched on entering zip
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    And First Name and Last Name fields are pre-filled
+    And user enters data in Zip Field
+    Then verify that city, state, and county are automatically fetched
+
+  Scenario: Verify that the system validates the EIN and SSN formats correctly
     When user enters SSN and EIN details
-      | ssn         | ein        |
-      | 123-45-6749 | 12-3456749 |
-    And user enter "<AddressLine1>" in "Address Line 1" Field
-    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
-    Examples:
-      | AddressLine1   |
-      | Sukovia        |
+    And user enters data in Address Line 1 Field
+    Then user verifies global contact of "Individual Global Contact" is saved successfully
 
-  Scenario Outline: Verify that the system trims leading and trailing spaces from text input fields
-    When user clicks on the "Create" button
-    And user verifies the "Global Contact Creation" page
-    And user enters "  <firstName>" as the first name and "  <lastName>  " as the last name
-    And user clicks on the "Create Individual Contact" button
-    And user verifies the "Individual Global Contact Creation" page
-    And "firstName" field is pre-filled with "<firstName>"
-    And "lastName" field is pre-filled with "<lastName>"
-    And user enter "  <AddressLine1>  " in "Address Line 1" Field
-    And user enter "<zip>" in "Zip" Field
+  Scenario: Verify that the system trims leading and trailing spaces from text input fields
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+    And First Name and Last Name fields are pre-filled
+    And user enters data in Address Line 1 Field
+    And user enters data in Zip Field
     And user clicks on the "Save" button
-    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
-    And user is on first page
-    Examples:
-      | firstName   | lastName  | AddressLine1    | zip    |
-      | Smith7      | John7      | 123 Main Street | 40007  |
-
-  Scenario: Verify newly created contact can be edited
-    When user clicks on Name: "John, Smith" from Global Contact List with Type as "Individual"
-    Then Verify user is on Edit Contact Page
-    And user click on "Cancel" Button
-    And user is on first page
-
-  Scenario: Verify individual contact can be edited
-    When user clicks on Name: "Gidye, Gaurav" from Global Contact List with Type as "Individual"
-    Then Verify user is on Edit Contact Page
-    And user click on "Cancel" Button
-    And user is on first page
+    Then user verifies global contact of "Individual Global Contact" is saved successfully
 
   Scenario Outline: Verify name fields can be updated
+    **
     When user clicks on Name: "Karl36, Devis36" from Global Contact List with Type as "Individual"
     And Verify user is on Edit Contact Page
     And user enter "<firstName>" in "First Name" Field
@@ -99,6 +61,7 @@ Feature: 6in1 Global Contacts Feature
     And user enter "<lastName>" in "Last Name" Field
     And user click on "Save" Button
     Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
+  **
     And user verifies updated values "<lastName>, <firstName>" is reflected in Global Contact List
     Then user clicks on Name: "<lastName>, <firstName>" from Global Contact List with Type as "Individual"
     And "firstName" field is pre-filled with "<firstName>"

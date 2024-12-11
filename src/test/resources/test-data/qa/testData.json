@@ -1,0 +1,50 @@
+{
+  "Create": {
+    "firstName": "Nikhil",
+    "lastName": "Ankam",
+    "middleName": "Y",
+    "maidenName": "Gh",
+    "entityName": "Bench",
+    "emailId": "bench@gmail.com",
+    "ptin": "P89876543",
+    "pinEFile": "1234567891",
+    "barId": "1234567891",
+    "caf": "123456789",
+    "addressLine1": "Testing",
+    "addressLine2": "Testing2",
+    "zip": "40007",
+    "city": "Bethlehem",
+    "state":"Kentucky",
+    "country": "Henry",
+    "ssn": "113-23-0923",
+    "ein": "11-6053433",
+    "phoneNumber": "(223) 232-3236",
+    "workNumber": "(243) 443-4346",
+    "fax": "(342) 222-2222"
+  },
+  "Edit": {
+    "firstName": "Nikhil1",
+    "lastName": "Ankam1",
+    "middleName": "Y1",
+    "maidenName": "Gh1",
+    "entityName": "BenchUpdate",
+    "emailId": "bench@gmail.com",
+    "ptin": "P38746537",
+    "pinEFile": "9876543210",
+    "barId": "9876543210",
+    "caf": "987654321",
+    "addressLine1": "TestingUpdate",
+    "addressLine2": "TestingUpdate",
+    "zip": "50010",
+    "ssn": "223-22-3453",
+    "ein": "22-4989033",
+    "phoneNumber": "(333) 232-3234",
+    "workNumber": "(333) 443-4344",
+    "fax": "(333) 222-2222"
+  },
+  "CreateWithSpaces": {
+    "firstName": "  John  ",
+    "lastName": "  Doe  ",
+    "entityName": "  Test Entity  "
+  }
+}
