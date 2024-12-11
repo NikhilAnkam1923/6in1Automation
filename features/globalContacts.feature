@@ -30,6 +30,15 @@ Feature: 6in1 Global Contacts Feature
     Then user save the global contact
     And user verifies global contact of "Individual Global Contact" is saved successfully
 
+  Scenario: Edit the contact for Individual Global Contact
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    Then user fills all the details for "Individual Global Contact"
+    Then user save the global contact
+    And user verifies global contact of "Individual Global Contact" is saved successfully
+    And user "Edit" global contact of "Individual Global Contact"
+    And user verifies global contact of "Individual Global Contact" is saved successfully
+#    And user logged out from the application
 
   Scenario: Verify that city, state and county are automatically fetched on entering zip
     When user navigate to "Global Contact"
@@ -49,95 +58,54 @@ Feature: 6in1 Global Contacts Feature
     And First Name and Last Name fields are pre-filled
     And user enters data in Address Line 1 Field
     And user enters data in Zip Field
-    And user clicks on the "Save" button
+    And user save the global contact
     Then user verifies global contact of "Individual Global Contact" is saved successfully
 
-  Scenario Outline: Verify name fields can be updated
-    **
-    When user clicks on Name: "Karl36, Devis36" from Global Contact List with Type as "Individual"
-    And Verify user is on Edit Contact Page
-    And user enter "<firstName>" in "First Name" Field
-    And user enter "<middleName>" in "Middle Name" Field
-    And user enter "<lastName>" in "Last Name" Field
-    And user click on "Save" Button
-    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
-  **
-    And user verifies updated values "<lastName>, <firstName>" is reflected in Global Contact List
-    Then user clicks on Name: "<lastName>, <firstName>" from Global Contact List with Type as "Individual"
-    And "firstName" field is pre-filled with "<firstName>"
-    And "middleName" field is pre-filled with "<middleName>"
-    And "lastName" field is pre-filled with "<lastName>"
-    And user click on "Cancel" Button
-    And user is on first page
-    Examples:
-      | firstName | middleName   | lastName |
-      | John15     | Smith15     | Karl25   |
+  Scenario: Verify name fields can be updated
+    When user navigate to "Global Contact"
+    When user edit contact from Global Contact List
+    And user enter data in name fields
+    And user save the global contact
+    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    And user verifies updated values are reflected in Global Contact List
+    And Name fields are pre-filled
+
 
   Scenario: Verify SSN added for the contact having empty SSN
-    When user clicks on Name: "Karl15, Devis16" from Global Contact List with Type as "Individual"
+    When user navigate to "Global Contact"
+    When user edit contact from Global Contact List
     And user enters SSN details
-      | ssn         |
-      | 123-42-6732 |
-    And user click on "Save" Button
-    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
-    And user is on first page
+    And user save the global contact
+    Then user verifies global contact of "Individual Global Contact" is saved successfully
 
-  Scenario Outline: Verify all the other fields of individual details can be updated
-    When user clicks on Name: "Karl12, Devis17" from Global Contact List with Type as "Individual"
-    And user enters data in all the individual details fields
-      | firstName | middleName | lastName | maidenName |
-      | Cammer    | York       | Will     | CV         |
-    And user select "Suffix" as "<Suffix>"
-    And user click on "Save" Button
-    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
-    And user is on first page
-    Then user verifies updated values "<lastName>, <firstName>" is reflected in Global Contact List
-    Then user clicks on Name: "<lastName>, <firstName>" from Global Contact List with Type as "Individual"
-    And "firstName" field is pre-filled with "<firstName>"
-    And "middleName" field is pre-filled with "<middleName>"
-    And "lastName" field is pre-filled with "<lastName>"
-    And "maidenName" field is pre-filled with "<maidenName>"
-    And verify "<Suffix>" option is selected from Suffix Dropdown
-    Then user enters data in all the individual details fields
-      | firstName  | middleName | lastName   | maidenName |
-      | Devis17    | Harry      | Karl12     | DK         |
-    And user select "Suffix" as "Atty."
-    And user click on "Save" Button
-    Then user verifies that a confirmation message "Contact details have been successfully saved." is displayed
-    And user is on first page
-    Then user verifies updated values "Karl12, Devis17" is reflected in Global Contact List
-    And user is on first page
-    Examples:
-      | Suffix | firstName | middleName | lastName | maidenName |
-      |   Sr.  | Cammer    | York       | Will     | CV         |
+  Scenario: Verify all the other fields of individual details can be updated
+    Given user navigate to "Global Contact"
+    When user edit contact from Global Contact List
+    And user enter data in name fields
+    And user selects Suffix
+    And user save the global contact
+    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    And user navigate to "Global Contact"
+    Then user verifies updated values are reflected in Global Contact List
+    And Name fields are pre-filled
+    And user verifies Suffix is selected from Dropdown
 
-  Scenario Outline: Verify display result on entity name
-    When user clicks on the "Create" button
-    Then user verifies the "Global Contact Creation" page
-    When user enters Entity Name: "<entityName>"
-    And user clicks on the "Create Entity Contact" button
-    Then user verifies all the matching records are displayed for Entity Name: "<entityName>"
-    Then Verify background color of the contact type: "<contactType>"
-    Then Verify radio buttons are available for all the contacts
-    Then Verify "Create Entity Contact" button is available
+  Scenario: Verify display result on entity name
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    Then user verifies all the matching records are displayed for Entity Global Contact
+    Then user verifies background color of the contact type
+    Then user verifies radio buttons are available for all the contacts
+    Then user verifies Create Entity Contact button is available
+
+  Scenario: Verify all the inputs are by default trimmed while searching both the type of contacts
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+    Then user verifies all the matching records are displayed for Individual Global Contact
     And user click on "Close" Button
-    Examples:
-      | entityName | contactType |
-      |   mark     | Entity      |
-
-
-  Scenario Outline: Verify all the inputs are by default trimmed while searching both the type of contacts
-    When user enters "  <firstName>" as the first name and "  <lastName>  " as the last name
-    And user clicks on the "Create Individual Contact" button
-    Then user verifies all the matching records are displayed for Contact Name: "<lastName>, <firstName>"
-    And user click on "Close" Button
-    And user verifies the "Global Contact Creation" page
-    Then user enters Entity Name: "    <entityName>    "
-    And user clicks on the "Create Entity Contact" button
-    Then user verifies all the matching records are displayed for Entity Name: "<entityName>"
-    Examples:
-      | firstName   | lastName  | entityName |
-      | Smith3      | John3     | mark       |
+    And user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
+    Then user verifies all the matching records are displayed for Entity Global Contact
 
   @Setup
   Scenario: SETUP: Close Browser

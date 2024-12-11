@@ -7,7 +7,6 @@ import com.sixinone.automation.pages.PageFactory;
 import com.sixinone.automation.util.CommonUtil;
 import cucumber.api.java.en.*;
 import io.cucumber.datatable.DataTable;
-import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -70,91 +69,16 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user enters \"([^\"]*)\" as the first name and \"([^\"]*)\" as the last name$")
-    public void userEntersFirstAndLastName(String firstName, String lastName) throws AutomationException {
-        CommonSteps.logInfo("Entering first and last name");
-        PageFactory.globalContactPage().enterFirstnameAndLastNameFields(firstName, lastName);
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("^\"([^\"]*)\" field is pre-filled with \"([^\"]*)\"$")
-    public void fieldIsPrefilledWith(String fieldName, String expectedValue) throws AutomationException {
-        CommonSteps.logInfo("Verifying field " + fieldName + " is pre-filled with value: " + expectedValue);
-        PageFactory.globalContactPage().verifyFieldPrefilled(fieldName, expectedValue);
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("^user enters all required and optional fields$")
-    public void userEntersAllFields(DataTable dataTable) throws AutomationException {
-        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
-
-
-        Map<Object, Object> row = data.get(0);
-
-
-        String middleName = row.get("middleName").toString();
-        String maidenName = row.get("maidenName").toString();
-        String entityName = row.get("entityName").toString();
-        String emailAddress = row.get("emailAddress").toString();
-        String PTIN = row.get("PTIN").toString();
-        String PINeFile = row.get("PINeFile").toString();
-        String BarID = row.get("BarID").toString();
-        String CAF = row.get("CAF").toString();
-
-
-
-        String addressLine1 = row.get("AddressLine1").toString();
-        String addressLine2 = row.get("AddressLine2").toString();
-        String zip = row.get("Zip").toString();
-
-
-        PageFactory.globalContactPage().enterRequiredFields(addressLine1, zip);
-        PageFactory.globalContactPage().enterOptionalFields(middleName, maidenName, entityName,emailAddress,PTIN,PINeFile,BarID,CAF,addressLine2);
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("user enters data in all the individual details fields")
-    public void userEntersDataInAllTheIndividualDetailsFields(DataTable dataTable) throws AutomationException {
-        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
-        Map<Object, Object> row = data.get(0);
-        String firstName = row.get("firstName").toString();
-        String middleName = row.get("middleName").toString();
-        String lastName = row.get("lastName").toString();
-        String maidenName = row.get("maidenName").toString();
-
-        PageFactory.globalContactPage().enterIndividualDetailsFields(firstName,middleName,lastName,maidenName);
-
-    }
-
-
     @When("^user enters SSN and EIN details$")
     public void userEntersSSNAndEINDetails() throws AutomationException, IOException, ParseException {
         PageFactory.globalContactPage().enterSSNAndEIN();
     }
 
 
-    @And("^user enters SSN details$")
-    public void userEntersSSNDetails(DataTable dataTable) throws AutomationException {
-        List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
-        for (Map<String, String> row : data) {
-            String ssn = row.get("ssn");
-            PageFactory.globalContactPage().enterSSN(ssn);
-        }
-    }
-
-    @And("user enters SSN,EIN,Phone Number,workPhone and fax details")
-    public void userEntersSSNEINPhoneNumberWorkPhoneAndFaxDetails(DataTable dataTable) throws AutomationException {
-        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
-
-        Map<Object, Object> row = data.get(0);
-
-        String ssn = row.get("ssn").toString();
-        String ein = row.get("ein").toString();
-        String phoneNumber = row.get("phoneNumber").toString();
-        String workNumber = row.get("workPhone").toString();
-        String fax = row.get("fax").toString();
-
-        PageFactory.globalContactPage().enterSSNEINPhoneNumberWorkNumberAndFax(ssn, ein, phoneNumber, workNumber, fax);
+    @Then("^user enters SSN details$")
+    public void userEntersSSNDetails() throws AutomationException {
+        CommonSteps.logInfo("Entering data in the SSN field");
+        PageFactory.globalContactPage().enterDataInSSNField();
         CommonSteps.takeScreenshot();
     }
 
@@ -162,135 +86,6 @@ public class GlobalContactsSteps {
     public void userEntersDataInAddressLine1Field() throws AutomationException {
         CommonSteps.logInfo("Entering data in the Address Line 1 field");
         PageFactory.globalContactPage().enterAddressLine1Data();
-        CommonSteps.takeScreenshot();
-    }
-
-
-
-    @Then("^Verify the city \"([^\"]*)\", state \"([^\"]*)\", and county \"([^\"]*)\" are automatically fetched$")
-    public void verifyCityStateCountyAreFetched(String expectedCity, String expectedState, String expectedCounty) throws AutomationException {
-        boolean isDataCorrect = PageFactory.globalContactPage().verifyFetchedFields(expectedCity, expectedState, expectedCounty);
-        if (!isDataCorrect) {
-            throw new AutomationException("City, State, or County values are incorrect or not fetched automatically.");
-        }
-        CommonSteps.logInfo("Verified auto-fetched values: City - " + expectedCity + ", State - " + expectedState + ", County - " + expectedCounty);
-        CommonSteps.takeScreenshot();
-    }
-
-
-    @And("^user verifies that a confirmation message \"([^\"]*)\" is displayed$")
-    public void userVerifiesConfirmationMessage(String confirmationMsg) throws AutomationException {
-        PageFactory.globalContactPage().verifyConfirmationMessage(confirmationMsg);
-        CommonSteps.takeScreenshot();
-        PageFactory.globalContactPage().waitForToasterToInvisible(confirmationMsg);
-    }
-
-    @Then("^Verify user is on Edit Contact Page$")
-    public void verifyUserIsOnEditContactPage() throws AutomationException {
-        boolean isOnEditPage = PageFactory.globalContactPage().isUserOnEditContactPage();
-        if (!isOnEditPage) {
-            throw new AutomationException("User is not on the Edit Contact Page.");
-        }
-        CommonSteps.logInfo("User successfully navigated to the Edit Contact Page.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("^user clicks on Name: \"([^\"]*)\" from Global Contact List with Type as \"([^\"]*)\"$")
-    public void userClicksOnNameFromGlobalContactListWithType(String name, String type) throws AutomationException {
-        PageFactory.globalContactPage().clickNameWithType(name, type);
-    }
-
-    @And("^user verifies updated values \"([^\"]*)\" is reflected in Global Contact List$")
-    public void userVerifiesUpdatedValuesAreReflectedInGlobalContactList(String expectedFullName) throws AutomationException {
-        boolean isUpdated = PageFactory.globalContactPage().isContactNameUpdated(expectedFullName);
-        if (!isUpdated) {
-            throw new AutomationException("Updated name '" + expectedFullName + "' is not reflected in the Global Contact List or not found.");
-        }
-        CommonSteps.logInfo("User Verified updated values are reflected in the Global Contact List: " + expectedFullName);
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("^user select \"([^\"]*)\" as \"([^\"]*)\"$")
-    public void userSelectAsLicenseType(String labelName, String option) throws AutomationException {
-        boolean isSelectionSuccessful = PageFactory.globalContactPage().selectOption(labelName, option);
-        if (!isSelectionSuccessful) {
-            throw new AutomationException("Failed to select '" + option + "' from the '" + labelName + "' dropdown.");
-        }
-        CommonSteps.logInfo("User selected '" + option + "' from the '" + labelName + "' dropdown.");
-    }
-
-
-    @And("^verify \"([^\"]*)\" option is selected from Suffix Dropdown$")
-    public void verifyOptionIsSelectedFromDropdown(String expectedOption) throws AutomationException {
-        boolean isVerified = PageFactory.globalContactPage().verifySelectedOption(expectedOption);
-        if (!isVerified) {
-            throw new AutomationException("The option '" + expectedOption + "' is not selected from the Suffix dropdown.");
-        }
-        CommonSteps.logInfo("Verified that the option '" + expectedOption + "' is selected from the Suffix dropdown.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("^user enters Entity Name: \"([^\"]*)\"$")
-    public void userEntersEntityName(String entityName) throws AutomationException {
-        boolean isEntityNameEntered = PageFactory.globalContactPage().enterEntityName(entityName);
-        if (!isEntityNameEntered) {
-            throw new AutomationException("Failed to enter Entity Name: '" + entityName + "'.");
-        }
-        CommonSteps.logInfo("User entered Entity Name: '" + entityName + "'.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^user verifies all the matching records are displayed for Entity Name: \"([^\"]*)\"$")
-    public void userVerifiesMatchingRecordsDisplayed(String entityName) throws AutomationException {
-        List<String> matchingEntityNames = PageFactory.globalContactPage().getAllDisplayedEntityNames();
-        boolean allMatch = matchingEntityNames.stream()
-                .allMatch(name -> name.toLowerCase().contains(entityName.toLowerCase()));
-        if (!allMatch) {
-            throw new AutomationException("Not all displayed entity names match the provided name: '" + entityName + "'. Displayed names: " + matchingEntityNames);
-        }
-        CommonSteps.logInfo("All displayed entity names match the provided name: '" + entityName + "'.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^Verify background color of the contact type: \"([^\"]*)\"$")
-    public void verifyBackgroundColorBasedOnClass(String contactType) throws AutomationException {
-        List<String> mismatchedRows = PageFactory.globalContactPage().verifyClassForContactType(contactType);
-        if (!mismatchedRows.isEmpty()) {
-            throw new AutomationException("The background color for the following rows does not match the expected class for contact type '" + contactType + "': " + mismatchedRows);
-        }
-        CommonSteps.logInfo("Verified background color for all rows with contact type: '" + contactType + "'.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^Verify radio buttons are available for all the contacts$")
-    public void verifyRadioButtonsForAllContacts() throws AutomationException {
-        boolean areRadioButtonsAvailable = PageFactory.globalContactPage().verifyRadioButtonsForContacts();
-        if (!areRadioButtonsAvailable) {
-            throw new AutomationException("Radio buttons are not available for all the contacts.");
-        }
-        CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^Verify \"([^\"]*)\" button is available$")
-    public void verifyButtonIsAvailable(String buttonName) throws AutomationException {
-        boolean isButtonAvailable = PageFactory.globalContactPage().isButtonAvailable(buttonName);
-        if (!isButtonAvailable) {
-            throw new AutomationException("The button '" + buttonName + "' is not available.");
-        }
-        CommonSteps.logInfo("Verified that the '" + buttonName + "' button is available.");
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^user verifies all the matching records are displayed for Contact Name: \"([^\"]*)\"$")
-    public void userVerifiesAllMatchingRecordsForContactName(String expectedContactName) throws AutomationException {
-        List<String> matchingContactNames = PageFactory.globalContactPage().getAllDisplayedContactNames();
-        boolean allMatch = matchingContactNames.stream()
-                .allMatch(name -> name.equalsIgnoreCase(expectedContactName));
-        if (!allMatch) {
-            throw new AutomationException("Not all displayed contact names match the provided name: '" + expectedContactName + "'. Displayed names: " + matchingContactNames);
-        }
-        CommonSteps.logInfo("Verified All displayed contact names match the provided name: '" + expectedContactName + "'.");
         CommonSteps.takeScreenshot();
     }
 
@@ -340,17 +135,11 @@ public class GlobalContactsSteps {
 
     @Then("^verify that city, state, and county are automatically fetched$")
     public void verifyCityStateCountyAreFetched() throws AutomationException, IOException, ParseException {
-        String expectedCity = CommonUtil.getJsonPath("Create").get("Create.city").toString();
-        String expectedState = CommonUtil.getJsonPath("Create").get("Create.state").toString();
-        String expectedCounty = CommonUtil.getJsonPath("Create").get("Create.country").toString();
-
-        boolean isDataCorrect = PageFactory.globalContactPage().verifyFetchedFields(expectedCity, expectedState, expectedCounty);
-        if (!isDataCorrect) {
-            throw new AutomationException("City, State, or County values are incorrect or not fetched automatically.");
-        }
-        CommonSteps.logInfo("Verified auto-fetched values: City - " + expectedCity + ", State - " + expectedState + ", County - " + expectedCounty);
+        CommonSteps.logInfo("Verifying that city, state, and county are automatically fetched.");
+        PageFactory.globalContactPage().verifyAutoFetchedFields();
         CommonSteps.takeScreenshot();
     }
+
 
     @And("^user \"([^\"]*)\" global contact of \"([^\"]*)\" with leading and trailing spaces$")
     public void userCreatesGlobalContactWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
@@ -361,6 +150,80 @@ public class GlobalContactsSteps {
         } else {
             throw new AutomationException("Unsupported action: " + action);
         }
+    }
+
+    @And("^user enter data in name fields$")
+    public void userEnterDataInNameFields() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().enterDataInNameFields();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("^user edit contact from Global Contact List$")
+    public void userEditContactFromGlobalContactList() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Editing contact from Global Contact List");
+        PageFactory.globalContactPage().editContact();
+        CommonSteps.takeScreenshot();
+    }
+
+
+    @Then("^user verifies updated values are reflected in Global Contact List$")
+    public void userVerifiesUpdatedValuesInGlobalContactList() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying updated values are reflected in Global Contact List using filter");
+        PageFactory.globalContactPage().verifyUpdatedValuesInGlobalContactListUsingFilter();
+    }
+
+
+    @And("^Name fields are pre-filled$")
+    public void NameFieldsArePreFilled() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying Name fields are pre-filled");
+        PageFactory.globalContactPage().verifyNameFieldsArePreFilled();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user selects Suffix$")
+    public void userSelectsSuffix() throws AutomationException {
+        CommonSteps.logInfo("Selecting Suffix from the dropdown");
+        PageFactory.globalContactPage().selectSuffixOption();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user verifies Suffix is selected from Dropdown$")
+    public void verifyOptionIsSelectedFromSuffixDropdown() throws AutomationException {
+        CommonSteps.logInfo("Verifying the option is selected from the Suffix dropdown");
+        PageFactory.globalContactPage().verifySuffixOptionSelected();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies all the matching records are displayed for Entity Global Contact$")
+    public void userVerifiesAllMatchingRecordsDisplayed() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying that all displayed records match the entity name");
+        PageFactory.globalContactPage().verifyMatchingRecordsDisplayed();
+        CommonSteps.takeScreenshot();
+    }
+    @Then("^user verifies background color of the contact type$")
+    public void userVerifiesBackgroundColorOfContactType() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying background color for the contact type");
+        PageFactory.globalContactPage().verifyBackgroundColorForContactType();
+        CommonSteps.takeScreenshot();
+    }
+    @Then("^user verifies radio buttons are available for all the contacts$")
+    public void userVerifiesRadioButtonsForAllContacts() throws AutomationException {
+        CommonSteps.logInfo("Verifying that radio buttons are available for all contacts");
+        PageFactory.globalContactPage().verifyRadioButtonsForContacts();
+        CommonSteps.takeScreenshot();
+    }
+    @Then("^user verifies Create Entity Contact button is available$")
+    public void userVerifiesCreateEntityContactButtonIsAvailable() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying the 'Create Entity Contact' button is available");
+        PageFactory.globalContactPage().verifyCreateEntityContactButtonAvailable();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies all the matching records are displayed for Individual Global Contact$")
+    public void userVerifiesAllMatchingRecordsForIndividualGlobalContact() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying all displayed contact names match the expected individual global contact name");
+        PageFactory.globalContactPage().verifyMatchingRecordsForIndividualGlobalContact();
+        CommonSteps.takeScreenshot();
     }
 
 

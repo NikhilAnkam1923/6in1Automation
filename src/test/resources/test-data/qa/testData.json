@@ -1,10 +1,10 @@
 {
   "Create": {
-    "firstName": "Nikhil",
-    "lastName": "Ankam",
+    "firstName": "Devis34",
+    "lastName": "Karl34",
     "middleName": "Y",
     "maidenName": "Gh",
-    "entityName": "Bench",
+    "entityName": "mark",
     "emailId": "bench@gmail.com",
     "ptin": "P89876543",
     "pinEFile": "1234567891",
@@ -16,18 +16,19 @@
     "city": "Bethlehem",
     "state":"Kentucky",
     "country": "Henry",
-    "ssn": "113-23-0923",
-    "ein": "11-6053433",
+    "ssn": "123-33-0923",
+    "ein": "11-6153433",
     "phoneNumber": "(223) 232-3236",
     "workNumber": "(243) 443-4346",
-    "fax": "(342) 222-2222"
+    "fax": "(342) 222-2222",
+    "suffix": "Jr."
   },
   "Edit": {
-    "firstName": "Nikhil1",
-    "lastName": "Ankam1",
+    "firstName": "Devis34",
+    "lastName": "Karl34",
     "middleName": "Y1",
     "maidenName": "Gh1",
-    "entityName": "BenchUpdate",
+    "entityName": "mark",
     "emailId": "bench@gmail.com",
     "ptin": "P38746537",
     "pinEFile": "9876543210",
@@ -43,8 +44,21 @@
     "fax": "(333) 222-2222"
   },
   "CreateWithSpaces": {
-    "firstName": "  John  ",
-    "lastName": "  Doe  ",
-    "entityName": "  Test Entity  "
+    "firstName": "  Gaurav",
+    "lastName": "  Gidye",
+    "entityName": "  mark"
+  },
+  "UpdateNameFields": {
+    "firstName": "Gaurav",
+    "middleName": "Ajit",
+    "lastName": "Gidye",
+    "maidenName": "Gh"
+  },
+  "GlobalContactVerification": {
+    "entityName": "mark",
+    "contactType": "Entity",
+    "expectedButton": "Create Entity Contact",
+    "lastName": "Gidye",
+    "firstName": "Gaurav"
   }
 }
