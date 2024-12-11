@@ -596,7 +596,7 @@ public class GlobalContactPage extends BasePage {
 
             case "Entity Global Contact":
                 waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
-                String entityNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.entityName").toString().trim() + CommonUtil.currentDateAndTime();
+                String entityNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.entityName").toString().trim();
                 WebElement entityNameField = driverUtil.getWebElementAndScroll(ENTITY_NAME_FIELD);
                 entityNameField.clear();
                 entityNameField.sendKeys(entityNameWithSpaces);
