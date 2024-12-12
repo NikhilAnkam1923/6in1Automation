@@ -109,6 +109,7 @@ Feature: 6in1 Global Contacts Feature
     And user navigate to "Global Contact"
     And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
     Then user verifies all the matching records are displayed for Entity Global Contact
+    And user click on "Close" Button
 
   @Setup
   Scenario:SETUP: Close Browser
