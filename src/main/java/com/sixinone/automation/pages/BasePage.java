@@ -128,6 +128,7 @@ public abstract class BasePage {
         return dataMap;
     }
 
+
     abstract String getName();
 
 

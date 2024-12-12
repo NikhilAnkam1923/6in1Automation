@@ -137,6 +137,16 @@ public class WebDriverUtil {
         }
     }
 
+
+    public static WebElement findElementByLinkedText(String locator) {
+        try {
+            WebElement element = DriverFactory.drivers.get().findElement(By.linkText(locator));
+            return element;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public WebElement findElementAndScroll(String locator) {
         try {
             WebElement element = DriverFactory.drivers.get().findElement(By.xpath(locator));
@@ -230,10 +240,24 @@ public class WebDriverUtil {
         waitForVisibleElement(by, MAX_ELEMENT_WAIT);
     }
 
+    public static void waitForVisibleElement(WebElement webElement) {
+        waitForAWhile(1, TimeUnit.SECONDS);
+        waitForVisibleElement(webElement, MAX_ELEMENT_WAIT);
+    }
+
     public static void waitForVisibleElement(By by, int timeout) {
         try {
             WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+        }
+    }
+
+    public static void waitForVisibleElement(WebElement webElement, int timeout) {
+        try {
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
+            wait.until(ExpectedConditions.visibilityOf(webElement));
         } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
@@ -256,6 +280,7 @@ public class WebDriverUtil {
         waitForInvisibleElement(by, DEFAULT_ELEMENT_WAIT);
     }
 
+
     public static void waitForInvisibleElement(By by, int timeout) {
         try {
             WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(timeout));
@@ -264,6 +289,7 @@ public class WebDriverUtil {
             logger.error(ex.getMessage());
         }
     }
+
 
     public static byte[] pngBytesToJpgBytes(byte[] pngBytes) {
         try {
@@ -353,7 +379,7 @@ public class WebDriverUtil {
     }
 
     public void waitForLoaderToDisappear() throws AutomationException {
-        waitForAWhile(60);
+        waitForAWhile(30);
         String elementVisible = waitForElementNotVisible(MAX_WAIT_120, "//div[@role='progressbar']");
         if (elementVisible != null)
             throw new AutomationException("Loader is displayed, even after waiting for 120 seconds");
@@ -405,8 +431,6 @@ public class WebDriverUtil {
         actions.dragAndDrop(srcweelement, destelement).perform();
     }
 
-
-
     public static void dragAndDropUsingJavaScript(WebElement srcweelement, WebElement destelement) {
         final String java_script =
                 "var src=arguments[0],tgt=arguments[1];var dataTransfer={dropEffe" +
@@ -421,5 +445,4 @@ public class WebDriverUtil {
 
         ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript(java_script, srcweelement, destelement);
     }
-
 }

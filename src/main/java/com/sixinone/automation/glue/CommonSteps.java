@@ -29,6 +29,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.SkipException;
 import runner.BaseRunner;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.*;
@@ -132,7 +133,7 @@ public class CommonSteps {
 
 
     @Given("^User launched \"([^\"]*)\"$")
-    public void launchBrowser(String browser) throws AutomationException {
+    public void launchBrowser(String browser) throws AutomationException, IOException {
         logInfo("User launched " + browser);
         if (DriverFactory.drivers.get() == null) {
             WebDriver driver = DriverFactory.getInstance().initDriver(browser);

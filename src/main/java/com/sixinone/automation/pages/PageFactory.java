@@ -1,17 +1,19 @@
 package com.sixinone.automation.pages;
 
+import java.io.IOException;
+
 public class PageFactory {
     private static ThreadLocal<PageFactory> factory = new ThreadLocal<>();
     public LoginPage loginPage;
     public GlobalContactPage globalContactPage;
 
-    private PageFactory() {
+    private PageFactory() throws IOException {
 
         loginPage = new LoginPage();
         globalContactPage = new GlobalContactPage();
     }
 
-    public static void init() {
+    public static void init() throws IOException {
         if (factory.get() == null) {
             PageFactory pageFactory = new PageFactory();
             factory.set(pageFactory);

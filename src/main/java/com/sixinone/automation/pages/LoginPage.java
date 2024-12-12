@@ -19,7 +19,7 @@ public class LoginPage extends BasePage {
     private static final String LOGIN_BTN = "//input[@name='login']";
     private static final String LOGIN_LOGO = "//h2[text()='Login']";
     public static final String SPINNER = "//div[contains(class,'spinner')]";
-    private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
+    private static final String LOGOUT_BTN = "//li[@class='nav-item logout']";
     private static final String ERROR_MSG = "//span[@id='input-error']";
     private static final String EYE_ICON = "//button[@aria-label=\"Show password\"]";
     private static final String REMEBER_ME = "//input[@id='rememberMe']";
@@ -57,6 +57,13 @@ public class LoginPage extends BasePage {
         return driverUtil.getWebElement(LOGIN_LOGO).getText();
     }
 
+    public void doLogoutFrom6in1IfAlreadyLoggedIn() throws AutomationException {
+        if ((driverUtil.getWebElement(LOGOUT_BTN, 5) != null)) {
+            driverUtil.getWebElement(LOGIN_BTN).click();
+        }
+    }
+
+
     public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
         String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
         if (actualMessage.equals(errorMessage)) {
@@ -90,13 +97,6 @@ public class LoginPage extends BasePage {
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         driverUtil.getWebElementAndScroll(LOGIN_LOGO);
-    }
-
-    public void doLogoutFrom6in1IfAlreadyLoggedIn() throws AutomationException {
-        if ((driverUtil.getWebElement(LOGOUT_BTN, 5) != null)) {
-            driverUtil.getWebElement(LOGIN_BTN).click();
-            WebDriverUtil.waitForAWhile();
-        }
     }
 
     public void clickOnEyeIconVisibility() throws AutomationException {

@@ -11,34 +11,71 @@ Feature: 6in1 Global Contacts Feature
       | user-email                           | password   |
       | nikhilankam+11@benchmarkit.solutions | Watch@22   |
 
-  @Smoke
   Scenario: User verify user is on the Global Contact Creation page
     When user navigate to "Global Contact"
     Then user verifies the "Global Contacts" page
     When user clicks on the "Create" button
     Then user verifies the "Global Contact Creation" page
 
-  Scenario: Verify user enters first and last name then clicks Create Individual Contact and lands on the Individual Contact page with pre-filled fields
+  Scenario: Verify first and last name fields are pre-filled
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact"
     And First Name and Last Name fields are pre-filled
 
-  Scenario: Create the contact for Individual Global Contact
+  Scenario: Create the contact for Entity Global Contact
     When user navigate to "Global Contact"
-    And user "Create" global contact of "Individual Global Contact"
-    Then user fills all the details for "Individual Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    Then user fills all the details for "Entity Global Contact"
     Then user save the global contact
-    And user verifies global contact of "Individual Global Contact" is saved successfully
+    And user verifies global contact saved successful message
 
-  Scenario: Edit the contact for Individual Global Contact
+  Scenario: Create and then Edit the same contact for Individual Global Contact
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact"
     Then user fills all the details for "Individual Global Contact"
     Then user save the global contact
-    And user verifies global contact of "Individual Global Contact" is saved successfully
+    And user verifies global contact saved successful message
     And user "Edit" global contact of "Individual Global Contact"
-    And user verifies global contact of "Individual Global Contact" is saved successfully
-#    And user logged out from the application
+    And user verifies global contact saved successful message
+
+  Scenario: Attempt to create a duplicate entity contact with the same EIN
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    Then user enters already existed EIN
+    Then user save the global contact
+    And user should see an error message for duplicate EIN
+
+  Scenario: Verify that validation error messages are removed when required fields are corrected
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    And user attempts to save the global contact without filling the required fields
+    Then user should see validation error messages for the required fields
+    When user fills in the previously empty required fields for "Individual Global Contact"
+    Then user save the global contact
+    And user verifies global contact saved successful message
+
+  Scenario: Verify Entity Name fields are pre-filled
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    And Entity Name fields is pre-filled
+
+  Scenario: Verify Select & Proceed button is enabled after selecting a radio button
+    When user navigate to "Global Contact"
+    When user clicks on the "Create" button
+    When user enters "Joe" as the first name and "Root" as the last name
+    Then user navigates to the page with the records
+    Then user verifies the "Contact (Select or Create New)" page
+    And user selects a radio button for a record
+    Then user verifies the "Select & Proceed" button is enabled
+
+  Scenario Outline: verify user authorization for "<userType>"
+    When user navigate to "Global Contact"
+    Then user verifies authorization for "<userType>"
+    Examples:
+      | userType  |
+      | Licensed  |
+      | Reviewer  |
+      | View Only |
 
   Scenario: Verify that city, state and county are automatically fetched on entering zip
     When user navigate to "Global Contact"
@@ -50,7 +87,7 @@ Feature: 6in1 Global Contacts Feature
   Scenario: Verify that the system validates the EIN and SSN formats correctly
     When user enters SSN and EIN details
     And user enters data in Address Line 1 Field
-    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    Then user verifies global contact saved successful message
 
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     When user navigate to "Global Contact"
@@ -59,14 +96,14 @@ Feature: 6in1 Global Contacts Feature
     And user enters data in Address Line 1 Field
     And user enters data in Zip Field
     And user save the global contact
-    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    Then user verifies global contact saved successful message
 
   Scenario: Verify name fields can be updated
     When user navigate to "Global Contact"
     When user edit contact from Global Contact List
     And user enter data in name fields
     And user save the global contact
-    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    Then user verifies global contact saved successful message
     And user verifies updated values are reflected in Global Contact List
     And Name fields are pre-filled
 
@@ -75,7 +112,7 @@ Feature: 6in1 Global Contacts Feature
     When user edit contact from Global Contact List
     And user enters SSN details
     And user save the global contact
-    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    Then user verifies global contact saved successful message
 
   Scenario: Verify all the other fields of individual details can be updated
     Given user navigate to "Global Contact"
@@ -83,7 +120,7 @@ Feature: 6in1 Global Contacts Feature
     And user enter data in name fields
     And user selects Suffix
     And user save the global contact
-    Then user verifies global contact of "Individual Global Contact" is saved successfully
+    Then user verifies global contact saved successful message
     And user navigate to "Global Contact"
     Then user verifies updated values are reflected in Global Contact List
     And Name fields are pre-filled
@@ -107,5 +144,6 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies all the matching records are displayed for Entity Global Contact
 
   @Setup
-  Scenario: SETUP: Close Browser
+  Scenario:SETUP: Close Browser
+    When user logged out from the application
     Then User close browser
