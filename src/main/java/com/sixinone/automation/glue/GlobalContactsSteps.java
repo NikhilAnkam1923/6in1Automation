@@ -66,6 +66,7 @@ public class GlobalContactsSteps {
     @And("user verifies global contact saved successful message")
     public void userVerifiesGlobalContactSavedSuccessfulMessage() throws AutomationException {
         PageFactory.globalContactPage().verifyGlobalContactSaved();
+
     }
 
     @Then("^user verifies authorization for \"([^\"]*)\"$")
@@ -122,7 +123,6 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("Verifying that the " + buttonName + " button is enabled.");
         PageFactory.globalContactPage().isButtonEnabled(buttonName);
         CommonSteps.takeScreenshot();
-        PageFactory.globalContactPage().clickButton("Close");
     }
 
     @Then("^user enters \"([^\"]*)\" as the first name and \"([^\"]*)\" as the last name$")
@@ -185,6 +185,7 @@ public class GlobalContactsSteps {
         PageFactory.globalContactPage().verifyRadioButtonsForContacts();
         CommonSteps.takeScreenshot();
     }
+
     @Then("^user verifies Create Entity Contact button is available$")
     public void userVerifiesCreateEntityContactButtonIsAvailable() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verifying the 'Create Entity Contact' button is available");
@@ -206,6 +207,12 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @And("user click on the \"([^\"]*)\" button")
+    public void userClickOnTheButton(String button) throws AutomationException {
+        PageFactory.globalContactPage().clickOn(button);
+        CommonSteps.logInfo("click on " + button + "button");
+    }
+
     @Then("user enters already existed EIN")
     public void userEntersAlreadyExistedEIN() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters already existed EIN");
@@ -213,10 +220,37 @@ public class GlobalContactsSteps {
 
     }
 
+    @And("^user click on \"([^\"]*)\" Button in Footer$")
+    public void userClickOnButtonInFooter(String btn) throws AutomationException {
+        CommonSteps.logInfo("user clicks on " + btn + " Button");
+        PageFactory.globalContactPage().clickButtonInFooter(btn);
+    }
+
+    @When("^user enters SSN and EIN details$")
+    public void userEntersSSNAndEINDetails() throws AutomationException {
+        CommonSteps.logInfo("user enters SSN and EIN details");
+        PageFactory.globalContactPage().enterSSNAndEIN();
+    }
+
+    @And("^user enters data Address Line 1 Field$")
+    public void userEntersDataAddressLineField() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user enters  data Address Line 1 Field");
+        PageFactory.globalContactPage().enterAddressLine1();
+    }
+
     @Then("user see all the error messages are removed")
     public void userSeeAllTheErrorMessagesAreRemoved() throws AutomationException {
         CommonSteps.logInfo("see all the error messages are removed");
         PageFactory.globalContactPage().verifyNoValidationErrors();
     }
+
+    @And("^user verifies \"([^\"]*)\" button is available$")
+    public void userVerifiesButtonIsAvailable(String button) throws AutomationException {
+        PageFactory.globalContactPage().isButtonAvailable(button);
+        CommonSteps.logInfo("Verifies the " + button + " button availablability");
+        CommonSteps.takeScreenshot();
+    }
+
+
 }
 

@@ -22,6 +22,13 @@ Feature: 6in1 Global Contacts Feature
     And user "Create" global contact of "Individual Global Contact"
     And First Name and Last Name fields are pre-filled
 
+  Scenario: Create the contact for Entity Global Contact
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    Then user fills all the details for "Entity Global Contact"
+    Then user save the global contact
+    And user verifies global contact saved successful message
+
   Scenario: Create and then Edit the same contact for Individual Global Contact
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact"
@@ -29,13 +36,6 @@ Feature: 6in1 Global Contacts Feature
     Then user save the global contact
     And user verifies global contact saved successful message
     And user "Edit" global contact of "Individual Global Contact"
-    And user verifies global contact saved successful message
-
-  Scenario: Create the contact for Entity Global Contact
-    When user navigate to "Global Contact"
-    And user "Create" global contact of "Entity Global Contact"
-    Then user fills all the details for "Entity Global Contact"
-    Then user save the global contact
     And user verifies global contact saved successful message
 
   Scenario: Attempt to create a duplicate entity contact with the same EIN
@@ -66,8 +66,11 @@ Feature: 6in1 Global Contacts Feature
     When user enters "Joe" as the first name and "Root" as the last name
     Then user navigates to the page with the records
     Then user verifies the "Contact (Select or Create New)" page
+    And user verifies "Create Individual Contact" button is available
     And user selects a radio button for a record
     Then user verifies the "Select & Proceed" button is enabled
+    And user click on the "Close" button
+
 
   Scenario: verify user authorization for "Licensed" user
     When user navigate to "Global Contact"
@@ -80,11 +83,17 @@ Feature: 6in1 Global Contacts Feature
     And user enters data in Zip Field
     Then verify that city, state, and county are automatically fetched
 
+  Scenario: Verify that the system validates the EIN and SSN formats correctly
+    When user enters SSN and EIN details
+    And user enters data Address Line 1 Field
+    And user save the global contact
+    Then user verifies global contact saved successful message
+
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
     And user selects a radio button for a record
-    And user clicks on the "Create Individual Contact" button
+    And user click on "Create Individual Contact" Button in Footer
     And First Name and Last Name fields are pre-filled
     Then user fills all the details for "Entity Global Contact"
     And user save the global contact

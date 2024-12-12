@@ -122,11 +122,11 @@ public class CommonSteps {
     @Then("^user go to application \"([^\"]*)\"$")
     public void launch(String url) throws InterruptedException {
         if (url.startsWith("$")) {
-            System.out.println("URL: " + url);
+            System.out.println("URL: "+url);
             String env = PropertyReader.getEnv();
-            System.out.println("Env:" + env);
+            System.out.println("Env:"+env);
             url = System.getProperty(env + "." + url.substring(1, url.length()));
-            System.out.println("URL: " + url);
+            System.out.println("URL: "+url);
         }
         logInfo("User go to application " + url);
         launchApplication(url);
@@ -251,8 +251,8 @@ public class CommonSteps {
              * if scenario is not present in TestRail then we need to create test case for this scenario.
              * update test scenario result.
              */
-            if (!tags.contains("@Setup") && "true".equalsIgnoreCase(System.getProperty("TestRail"))) {
-                if (testCaseMapping.get(scenario.getName()) == null) {
+            if (!tags.contains("@Setup") && "true".equalsIgnoreCase(System.getProperty("TestRail"))){
+                if(testCaseMapping.get(scenario.getName()) == null) {
                     //Check test scenario in test trail if not present create one.
                     String uri = scenario.getUri();
                     String directoryPath = uri.substring(0, uri.lastIndexOf("/"));
@@ -384,9 +384,25 @@ public class CommonSteps {
         driverUtil.waitForElementClickable(By.xpath(String.format(TAB_XPATH, tabText)));
         try {
             driverUtil.clickUsingJavaScript(String.format(TAB_XPATH, tabText));
-        } catch (Exception e) {
+        }catch(Exception e) {
             driverUtil.waitForAWhile(5);
             tab.click();
         }
     }
+
+    @Then("^user click on \"([^\"]*)\" Button$")
+    public void userClickOnButton(String btnext) throws AutomationException {
+
+        WebElement btn = driverUtil.getWebElementAndScroll(String.format(BTN_XPATH, btnext));
+        if (btn == null)
+            throw new AutomationException(String.format("Unable to find %s text on page or it might taking too long time to load!", btnext));
+        driverUtil.waitForElementClickable(By.xpath(String.format(BTN_XPATH, btnext)));
+        try {
+            driverUtil.clickUsingJavaScript(String.format(BTN_XPATH, btnext));
+        }catch(Exception e) {
+            driverUtil.waitForAWhile(5);
+            btn.click();
+        }
+    }
+
 }
