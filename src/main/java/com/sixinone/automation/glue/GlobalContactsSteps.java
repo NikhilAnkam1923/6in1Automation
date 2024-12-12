@@ -277,11 +277,8 @@ public class GlobalContactsSteps {
 
     @Then("^Verify \"([^\"]*)\" button is available$")
     public void verifyButtonIsAvailable(String buttonName) throws AutomationException {
-        boolean isButtonAvailable = PageFactory.globalContactPage().isButtonAvailable(buttonName);
-        if (!isButtonAvailable) {
-            throw new AutomationException("The button '" + buttonName + "' is not available.");
-        }
-        CommonSteps.logInfo("Verified that the '" + buttonName + "' button is available.");
+        CommonSteps.logInfo("Verifies the "+buttonName+" button is display.");
+        PageFactory.globalContactPage().isButtonAvailable(buttonName);
         CommonSteps.takeScreenshot();
     }
 

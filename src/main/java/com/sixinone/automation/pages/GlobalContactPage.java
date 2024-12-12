@@ -665,13 +665,13 @@ public class GlobalContactPage extends BasePage {
         return true;
     }
 
-    public boolean isButtonAvailable(String buttonName) throws AutomationException {
-        try {
-            String buttonXPath = String.format(BUTTON_IN_FOOTER, buttonName);
-            WebElement buttonElement = driverUtil.getWebElement(buttonXPath, 5);
-            return buttonElement != null && buttonElement.isDisplayed() && buttonElement.isEnabled();
-        } catch (Exception e) {
-            return false;
+    public void isButtonAvailable(String buttonName) throws AutomationException {
+        String buttonXPath = String.format(BUTTON_IN_FOOTER, buttonName);
+        WebElement buttonElement = driverUtil.getWebElement(buttonXPath, 2);
+        if (buttonElement != null && buttonElement.isDisplayed() && buttonElement.isEnabled()) {
+            CommonSteps.logInfo(buttonName + " button is display");
+        } else {
+            throw new AutomationException(buttonName + " button is not display");
         }
     }
 

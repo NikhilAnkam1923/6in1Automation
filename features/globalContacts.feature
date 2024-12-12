@@ -22,13 +22,6 @@ Feature: 6in1 Global Contacts Feature
     And user "Create" global contact of "Individual Global Contact"
     And First Name and Last Name fields are pre-filled
 
-  Scenario: Create the contact for Entity Global Contact
-    When user navigate to "Global Contact"
-    And user "Create" global contact of "Entity Global Contact"
-    Then user fills all the details for "Entity Global Contact"
-    Then user save the global contact
-    And user verifies global contact saved successful message
-
   Scenario: Create and then Edit the same contact for Individual Global Contact
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact"
@@ -36,6 +29,13 @@ Feature: 6in1 Global Contacts Feature
     Then user save the global contact
     And user verifies global contact saved successful message
     And user "Edit" global contact of "Individual Global Contact"
+    And user verifies global contact saved successful message
+
+  Scenario: Create the contact for Entity Global Contact
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact"
+    Then user fills all the details for "Entity Global Contact"
+    Then user save the global contact
     And user verifies global contact saved successful message
 
   Scenario: Attempt to create a duplicate entity contact with the same EIN
@@ -65,6 +65,7 @@ Feature: 6in1 Global Contacts Feature
     When user enters "Joe" as the first name and "Root" as the last name
     Then user navigates to the page with the records
     Then user verifies the "Contact (Select or Create New)" page
+    Then Verify "Create Individual Contact" button is available
     And user selects a radio button for a record
     Then user verifies the "Select & Proceed" button is enabled
 
@@ -77,7 +78,7 @@ Feature: 6in1 Global Contacts Feature
       | Reviewer  |
       | View Only |
 
-# Gaurav Scenarios,he is working on changes-
+ Gaurav Scenarios,he is working on changes-
   Scenario Outline: Verify that city, state and county are automatically fetched on entering zip
     When user clicks on the "Create" button
     And user verifies the "Global Contact Creation" page
