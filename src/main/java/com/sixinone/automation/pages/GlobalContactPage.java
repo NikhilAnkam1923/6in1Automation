@@ -159,6 +159,7 @@ public class GlobalContactPage extends BasePage {
                 waitForVisibleElement(By.xpath(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE));
                 fillField(MIDDLE_NAME_FIELD, "Create.middleName");
                 fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                selectSuffixOption();
                 fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
                 fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
                 fillField(PTIN_FIELD, "Create.ptin");
@@ -554,19 +555,24 @@ public class GlobalContactPage extends BasePage {
 
 
 
-    public void selectSuffixOption() throws AutomationException {
+    public void selectSuffixOption() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        try {
-            String suffixValue = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-            WebElement suffixDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL,"Suffix"));
+        String suffixValue = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
+        WebElement suffixDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, "Suffix"));
+        if (suffixDropdown != null) {
             suffixDropdown.click();
             WebElement suffixOption = driverUtil.getWebElement(String.format(SELECT_OPTION, suffixValue));
-            suffixOption.click();
-            CommonSteps.logInfo("Selected Suffix: " + suffixValue);
-        } catch (Exception e) {
-            throw new AutomationException("Failed to select Suffix: " + e.getMessage());
+            if (suffixOption != null) {
+                suffixOption.click();
+                CommonSteps.logInfo("Selected Suffix: " + suffixValue);
+            } else {
+                throw new AutomationException("Failed to locate Suffix option with value: " + suffixValue);
+            }
+        } else {
+            throw new AutomationException("Failed to locate the Suffix dropdown element.");
         }
     }
+
 
 
 
