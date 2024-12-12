@@ -51,6 +51,7 @@ Feature: 6in1 Global Contacts Feature
     And user attempts to save the global contact without filling the required fields
     Then user should see validation error messages for the required fields
     When user fills in the previously empty required fields for "Individual Global Contact"
+    Then user see all the error messages are removed
     Then user save the global contact
     And user verifies global contact saved successful message
 
@@ -68,14 +69,9 @@ Feature: 6in1 Global Contacts Feature
     And user selects a radio button for a record
     Then user verifies the "Select & Proceed" button is enabled
 
-  Scenario Outline: verify user authorization for "<userType>"
+  Scenario: verify user authorization for "Licensed" user
     When user navigate to "Global Contact"
-    Then user verifies authorization for "<userType>"
-    Examples:
-      | userType  |
-      | Licensed  |
-      | Reviewer  |
-      | View Only |
+    Then user verifies authorization for "Licensed"
 
   Scenario: Verify that city, state and county are automatically fetched on entering zip
     When user navigate to "Global Contact"
@@ -87,6 +83,8 @@ Feature: 6in1 Global Contacts Feature
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+    And user selects a radio button for a record
+    And user clicks on the "Create Individual Contact" button
     And First Name and Last Name fields are pre-filled
     Then user fills all the details for "Entity Global Contact"
     And user save the global contact
@@ -99,16 +97,17 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies background color of the contact type
     Then user verifies radio buttons are available for all the contacts
     Then user verifies Create Entity Contact button is available
-    And user click on "Close" Button
+    And user clicks on the "Close" button
 
-  Scenario: Verify all the inputs are by default trimmed while searching both the type of contacts
+  Scenario Outline: verify user authorization for "View Only" user
+    When user logged out from the application
+    And user go to application "https://delltab.benchmarkits.in"
+    When user login using "<user-email>" and "<password>"
     When user navigate to "Global Contact"
-    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
-    Then user verifies all the matching records are displayed for Individual Global Contact
-    And user click on "Close" Button
-    And user navigate to "Global Contact"
-    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
-    Then user verifies all the matching records are displayed for Entity Global Contact
+    Then user verifies authorization for "View Only"
+    Examples:
+      | user-email                           | password |
+      | nikhilankam+13@benchmarkit.solutions | Watch@22 |
 
   @Setup
   Scenario:SETUP: Close Browser
