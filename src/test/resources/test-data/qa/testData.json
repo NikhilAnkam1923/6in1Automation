@@ -1,10 +1,10 @@
 {
   "Create": {
-    "firstName": "Nikhil",
-    "lastName": "Ankam",
+    "firstName": "Devis34",
+    "lastName": "Karl34",
     "middleName": "Y",
     "maidenName": "Gh",
-    "entityName": "Bench",
+    "entityName": "bench",
     "emailId": "bench@gmail.com",
     "ptin": "P89876543",
     "pinEFile": "1234567891",
@@ -12,20 +12,23 @@
     "caf": "123456789",
     "addressLine1": "Testing",
     "addressLine2": "Testing2",
-    "zip": "50011",
-    "ssn": "113-23-0923",
-    "ein": "11-9999999",
-    "phoneNumber": "(223) 232-3234",
-    "workNumber": "(243) 443-4344",
-    "fax": "(342) 222-2222"
+    "zip": "40007",
+    "city": "Bethlehem",
+    "state":"Kentucky",
+    "country": "Henry",
+    "ssn": "123-33-0923",
+    "ein": "11-6153433",
+    "phoneNumber": "(223) 232-3236",
+    "workNumber": "(243) 443-4346",
+    "fax": "(342) 222-2222",
+    "suffix": "Jr."
   },
-
   "Edit": {
-    "firstName": "Nikhil1",
-    "lastName": "Ankam1",
+    "firstName": "Devis34",
+    "lastName": "Karl34",
     "middleName": "Y1",
-    "maidenName": "Gh1",
-    "entityName": "BenchUpdate",
+    "maidenName": "Gh",
+    "entityName": "bench",
     "emailId": "bench@gmail.com",
     "ptin": "P38746537",
     "pinEFile": "9876543210",
@@ -39,6 +42,23 @@
     "phoneNumber": "(333) 232-3234",
     "workNumber": "(333) 443-4344",
     "fax": "(333) 222-2222"
+  },
+  "CreateWithSpaces": {
+    "firstName": "  Gaurav3",
+    "lastName": "  Gidye3",
+    "entityName": "  mark"
+  },
+  "UpdateNameFields": {
+    "firstName": "Gaurav",
+    "middleName": "Ajit",
+    "lastName": "Gidye",
+    "maidenName": "Gh"
+  },
+  "GlobalContactVerification": {
+    "entityName": "mark",
+    "contactType": "Entity",
+    "expectedButton": "Create Entity Contact",
+    "lastName": "Gidye3",
+    "firstName": "Gaurav3"
   }
 }
-

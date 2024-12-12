@@ -37,7 +37,7 @@ public class CommonUtil {
     }
 
     public static JSONObject getJSONObject(Object jsonObjectData) throws  IOException, ParseException {
-         jsonParser=new JSONParser();
+        jsonParser=new JSONParser();
         FileReader reader=new FileReader(".\\src\\test\\resources\\test-data\\qa\\testData.json");
         Object obj =jsonParser.parse(reader);
         JSONObject jsonObject=(JSONObject)obj;
@@ -123,6 +123,8 @@ public class CommonUtil {
         formatter.setTimeZone(TimeZone.getTimeZone("EST"));
         return formatter.format(date);
     }
+
+
     public static String currentDateAndTime() {
         LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -130,7 +132,6 @@ public class CommonUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return currentDateTime.format(formatter);
     }
-
 
     public static String[] getStringToStringArray(String values) {
         if (values.startsWith("[") && values.endsWith("]")) {

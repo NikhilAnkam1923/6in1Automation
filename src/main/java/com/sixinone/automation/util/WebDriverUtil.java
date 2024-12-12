@@ -45,6 +45,18 @@ public class WebDriverUtil {
         return getWebElement(locator, DEFAULT_ELEMENT_WAIT);
     }
 
+
+    public String getCurrentUrl() {
+        try {
+            return DriverFactory.getInstance().initDriver("chrome").getCurrentUrl();
+        } catch (Exception e) {
+            System.err.println("Failed to fetch the current URL: " + e.getMessage());
+            return null;
+        }
+    }
+
+
+
     public List<WebElement> getWebElements(String locator) throws AutomationException {
         try {
             return DriverFactory.drivers.get().findElements(By.xpath(locator));
@@ -417,15 +429,6 @@ public class WebDriverUtil {
     public static void dragAndDrop(WebElement srcweelement, WebElement destelement) {
         Actions actions = new Actions(DriverFactory.drivers.get());
         actions.dragAndDrop(srcweelement, destelement).perform();
-    }
-
-    public String getCurrentUrl() {
-        try {
-            return DriverFactory.getInstance().initDriver("chrome").getCurrentUrl();
-        } catch (Exception e) {
-            System.err.println("Failed to fetch the current URL: " + e.getMessage());
-            return null;
-        }
     }
 
     public static void dragAndDropUsingJavaScript(WebElement srcweelement, WebElement destelement) {

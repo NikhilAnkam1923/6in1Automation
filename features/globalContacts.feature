@@ -65,7 +65,6 @@ Feature: 6in1 Global Contacts Feature
     When user enters "Joe" as the first name and "Root" as the last name
     Then user navigates to the page with the records
     Then user verifies the "Contact (Select or Create New)" page
-    Then Verify "Create Individual Contact" button is available
     And user selects a radio button for a record
     Then user verifies the "Select & Proceed" button is enabled
 
@@ -77,6 +76,39 @@ Feature: 6in1 Global Contacts Feature
       | Licensed  |
       | Reviewer  |
       | View Only |
+
+  Scenario: Verify that city, state and county are automatically fetched on entering zip
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact"
+    And First Name and Last Name fields are pre-filled
+    And user enters data in Zip Field
+    Then verify that city, state, and county are automatically fetched
+
+  Scenario: Verify that the system trims leading and trailing spaces from text input fields
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+    And First Name and Last Name fields are pre-filled
+    Then user fills all the details for "Entity Global Contact"
+    And user save the global contact
+    Then user verifies global contact saved successful message
+
+  Scenario: Verify display result on entity name
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
+    Then user verifies all the matching records are displayed for Entity Global Contact
+    Then user verifies background color of the contact type
+    Then user verifies radio buttons are available for all the contacts
+    Then user verifies Create Entity Contact button is available
+    And user click on "Close" Button
+
+  Scenario: Verify all the inputs are by default trimmed while searching both the type of contacts
+    When user navigate to "Global Contact"
+    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+    Then user verifies all the matching records are displayed for Individual Global Contact
+    And user click on "Close" Button
+    And user navigate to "Global Contact"
+    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
+    Then user verifies all the matching records are displayed for Entity Global Contact
 
   @Setup
   Scenario:SETUP: Close Browser
