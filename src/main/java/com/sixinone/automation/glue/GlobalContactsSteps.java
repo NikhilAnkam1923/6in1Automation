@@ -28,59 +28,15 @@ public class GlobalContactsSteps {
 
     @When("^user clicks on the \"([^\"]*)\" button$")
     public void userClicksOnButton(String buttonName) throws AutomationException, IOException, ParseException {
-        Map<String, String> buttonDetails = new HashMap<>();
-
-        switch (buttonName) {
-            case "Create":
-                buttonDetails.put(buttonName, GlobalContactPage.CREATE_BUTTON);
-                break;
-            case "Create Individual Contact":
-                buttonDetails.put(buttonName, GlobalContactPage.CREATE_INDIVIDUAL_CONTACT_BTN);
-                break;
-            case "Create Entity Contact":
-                buttonDetails.put(buttonName, GlobalContactPage.CREATE_ENTITY_CONTACT_BTN);
-                break;
-            case "Save":
-                buttonDetails.put(buttonName, GlobalContactPage.SAVE_BUTTON);
-                break;
-            case "Close":
-                buttonDetails.put(buttonName, GlobalContactPage.CLOSE_BUTTON);
-                break;
-            default:
-                throw new AutomationException("Unknown button: " + buttonName);
-        }
-        new GlobalContactPage().clickButton(buttonDetails);
-
+        PageFactory.globalContactPage().clickButton(buttonName);
+        CommonSteps.logInfo("Click on the " + buttonName + " button");
     }
 
 
     @Then("^user verifies the \"([^\"]*)\" page$")
-    public void userVerifiesPage(String pageName) throws AutomationException, IOException {
-        Map<String, String> pageDetails = new HashMap<>();
-
-        switch (pageName) {
-            case "Global Contacts":
-                pageDetails.put(pageName, GlobalContactPage.GLOBAL_CONTACTS_PAGE);
-                break;
-            case "Home":
-                pageDetails.put(pageName, GlobalContactPage.HOME_PAGE);
-                break;
-            case "Global Contact Creation":
-                pageDetails.put(pageName, GlobalContactPage.GLOBAL_CONTACT_CREATION_PAGE);
-                break;
-            case "Individual Global Contact Creation":
-                pageDetails.put(pageName, GlobalContactPage.INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE);
-                break;
-            case "Entity Global Contact Creation":
-                pageDetails.put(pageName, GlobalContactPage.ENTITY_GLOBAL_CONTACT_CREATION_PAGE);
-                break;
-            case "Contact (Select or Create New)":
-                pageDetails.put(pageName, GlobalContactPage.SELECT_OR_CREATENEW_PAGE);
-                break;
-            default:
-                throw new AutomationException("Unknown page: " + pageName);
-        }
-        new GlobalContactPage().verifyPageElements(pageDetails);
+    public void userVerifiesPage(String pageElement) throws AutomationException, IOException {
+        CommonSteps.logInfo("User verifies the " + pageElement + " page");
+        PageFactory.globalContactPage().verifyPageElements(pageElement);
         CommonSteps.takeScreenshot();
     }
 
@@ -169,28 +125,31 @@ public class GlobalContactsSteps {
     public void userCreatesGlobalContact(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         if (action.equals("Create")) {
             PageFactory.globalContactPage().globalContactCreation(action, contactType);
-        } else if (action.equals("Edit"))
+            CommonSteps.takeScreenshot();
+        } else if (action.equals("Edit")) {
             PageFactory.globalContactPage().globalContactEdit(action, contactType);
+            CommonSteps.takeScreenshot();
+        }
     }
 
     @And("^user fills all the details for \"([^\"]*)\"$")
     public void userFillsAllTheDetailsForGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
         PageFactory.globalContactPage().fillGlobalContactDetails(contactType);
+        CommonSteps.takeScreenshot();
     }
 
     @Then("user save the global contact")
     public void userSaveTheGlobalContact() throws AutomationException, IOException {
         PageFactory.globalContactPage().saveGlobalContact();
-        CommonSteps.takeScreenshot();
     }
 
-    @And("^user verifies global contact of \"([^\"]*)\" is saved successfully$")
-    public void userVerifiesGlobalContactOfIsSavedSuccessfully(String contactType) throws AutomationException {
-        PageFactory.globalContactPage().verifyGlobalContactSaved(contactType);
+    @And("user verifies global contact saved successful message")
+    public void userVerifiesGlobalContactSavedSuccessfulMessage() throws AutomationException {
+        PageFactory.globalContactPage().verifyGlobalContactSaved();
     }
 
-    @And("^user verifies authorization for \"([^\"]*)\"$")
-    public void userVerifiesAuthorizationFor(String userType) {
+    @Then("^user verifies authorization for \"([^\"]*)\"$")
+    public void userVerifiesAuthorizationFor(String userType) throws AutomationException {
         CommonSteps.logInfo("user verifies authorization for user type: " + userType);
         PageFactory.globalContactPage().verifyUserType(userType);
         CommonSteps.takeScreenshot();
@@ -207,8 +166,7 @@ public class GlobalContactsSteps {
     public void userAttemptsToSaveTheGlobalContactWithoutFillingTheRequiredFields() throws AutomationException, IOException {
         CommonSteps.logInfo("Attempting to save the global contact without filling the required fields.");
         PageFactory.globalContactPage().clearFields();
-        PageFactory.globalContactPage().buttonClick("Save");
-        CommonSteps.takeScreenshot();
+        PageFactory.globalContactPage().clickButton("Save");
     }
 
     @Then("user should see validation error messages for the required fields")
@@ -234,24 +192,22 @@ public class GlobalContactsSteps {
     @Then("user navigates to the page with the records")
     public void userNavigatesToThePageWithTheRecords() throws AutomationException, IOException {
         CommonSteps.logInfo("user navigates to the page with the records");
-        PageFactory.globalContactPage().buttonClick("Create Individual Contact");
+        PageFactory.globalContactPage().clickButton("Create Individual Contact");
     }
 
     @And("user selects a radio button for a record")
     public void userSelectsARadioButtonForARecord() throws AutomationException, IOException {
         CommonSteps.logInfo("user select the radio button");
-        PageFactory.globalContactPage().buttonClick("Radio Button");
+        PageFactory.globalContactPage().clickButton("Radio Button");
+        CommonSteps.takeScreenshot();
     }
 
     @Then("^user verifies the \"([^\"]*)\" button is enabled$")
     public void userVerifiesTheButtonIsEnabled(String buttonName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verifying that the " + buttonName + " button is enabled.");
-        boolean isButtonEnabled = PageFactory.globalContactPage().isButtonEnabled(buttonName);
-        if (!isButtonEnabled) {
-            throw new AutomationException(buttonName + " button is not enabled as expected.");
-        }
-        CommonSteps.logInfo(buttonName + " button is enabled as expected.");
-        userClicksOnButton("Close");
+        PageFactory.globalContactPage().isButtonEnabled(buttonName);
+        CommonSteps.takeScreenshot();
+        PageFactory.globalContactPage().clickButton("Close");
     }
 
     @And("^user is on first page$")
@@ -291,8 +247,7 @@ public class GlobalContactsSteps {
     @Then("^user verifies all the matching records are displayed for Entity Name: \"([^\"]*)\"$")
     public void userVerifiesMatchingRecordsDisplayed(String entityName) throws AutomationException {
         List<String> matchingEntityNames = PageFactory.globalContactPage().getAllDisplayedEntityNames();
-        boolean allMatch = matchingEntityNames.stream()
-                .allMatch(name -> name.toLowerCase().contains(entityName.toLowerCase()));
+        boolean allMatch = matchingEntityNames.stream().allMatch(name -> name.toLowerCase().contains(entityName.toLowerCase()));
         if (!allMatch) {
             throw new AutomationException("Not all displayed entity names match the provided name: '" + entityName + "'. Displayed names: " + matchingEntityNames);
         }
@@ -333,8 +288,7 @@ public class GlobalContactsSteps {
     @Then("^user verifies all the matching records are displayed for Contact Name: \"([^\"]*)\"$")
     public void userVerifiesAllMatchingRecordsForContactName(String expectedContactName) throws AutomationException {
         List<String> matchingContactNames = PageFactory.globalContactPage().getAllDisplayedContactNames();
-        boolean allMatch = matchingContactNames.stream()
-                .allMatch(name -> name.equalsIgnoreCase(expectedContactName));
+        boolean allMatch = matchingContactNames.stream().allMatch(name -> name.equalsIgnoreCase(expectedContactName));
         if (!allMatch) {
             throw new AutomationException("Not all displayed contact names match the provided name: '" + expectedContactName + "'. Displayed names: " + matchingContactNames);
         }
@@ -354,12 +308,6 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("Verifying field Entity Name is pre-filled with expected value");
         PageFactory.globalContactPage().verifyentityNameFieldPrefilled();
         CommonSteps.takeScreenshot();
-    }
-
-    @When("user clicks on the Select & Proceed button")
-    public void userClicksOnTheSelectProceedButton() throws AutomationException, IOException {
-        CommonSteps.logInfo("user navigates to the Select & Proceed button");
-        PageFactory.globalContactPage().buttonClick("Select & Proceed");
     }
 
     @Then("user enters already existed EIN")

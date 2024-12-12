@@ -116,19 +116,6 @@ public abstract class BasePage {
         waitForInvisibleElement(By.xpath(LOADING_REPORT), WebDriverUtil.MAX_PAGE_LOADING_WAIT);
     }
 
-    public void clickButton(Map<String, String> buttonDetails) throws AutomationException {
-        for (Map.Entry<String, String> entry : buttonDetails.entrySet()) {
-            String buttonName = entry.getKey();
-            String buttonXPath = entry.getValue();
-
-            WebElement button = driverUtil.getWebElement(buttonXPath);
-            if (button == null) {
-                throw new AutomationException("Unable to find the " + buttonName + " button.");
-            }
-            button.click();
-        }
-    }
-
     public static Map<String, String> convertDataTableIntoMap(DataTable dataTable) {
         Map<String, String> dataMap = new HashMap<>();
         List<List<String>> rows = dataTable.asLists(String.class);
