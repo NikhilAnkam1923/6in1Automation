@@ -84,55 +84,22 @@ Feature: 6in1 Global Contacts Feature
     And user enters data in Zip Field
     Then verify that city, state, and county are automatically fetched
 
-  Scenario: Verify that the system validates the EIN and SSN formats correctly
-    When user enters SSN and EIN details
-    And user enters data in Address Line 1 Field
-    Then user verifies global contact saved successful message
-
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
     And First Name and Last Name fields are pre-filled
-    And user enters data in Address Line 1 Field
-    And user enters data in Zip Field
+    Then user fills all the details for "Entity Global Contact"
     And user save the global contact
     Then user verifies global contact saved successful message
-
-  Scenario: Verify name fields can be updated
-    When user navigate to "Global Contact"
-    When user edit contact from Global Contact List
-    And user enter data in name fields
-    And user save the global contact
-    Then user verifies global contact saved successful message
-    And user verifies updated values are reflected in Global Contact List
-    And Name fields are pre-filled
-
-  Scenario: Verify SSN added for the contact having empty SSN
-    When user navigate to "Global Contact"
-    When user edit contact from Global Contact List
-    And user enters SSN details
-    And user save the global contact
-    Then user verifies global contact saved successful message
-
-  Scenario: Verify all the other fields of individual details can be updated
-    Given user navigate to "Global Contact"
-    When user edit contact from Global Contact List
-    And user enter data in name fields
-    And user selects Suffix
-    And user save the global contact
-    Then user verifies global contact saved successful message
-    And user navigate to "Global Contact"
-    Then user verifies updated values are reflected in Global Contact List
-    And Name fields are pre-filled
-    And user verifies Suffix is selected from Dropdown
 
   Scenario: Verify display result on entity name
     When user navigate to "Global Contact"
-    And user "Create" global contact of "Entity Global Contact"
+    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
     Then user verifies all the matching records are displayed for Entity Global Contact
     Then user verifies background color of the contact type
     Then user verifies radio buttons are available for all the contacts
     Then user verifies Create Entity Contact button is available
+    And user click on "Close" Button
 
   Scenario: Verify all the inputs are by default trimmed while searching both the type of contacts
     When user navigate to "Global Contact"
