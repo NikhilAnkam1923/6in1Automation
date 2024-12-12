@@ -172,16 +172,9 @@ public class GlobalContactPage extends BasePage {
         String actualState = getFieldValue(STATE, "text");
         String actualCounty = getFieldValue(COUNTRY, "value");
         if (!expectedCity.equals(actualCity) || !expectedState.equals(actualState) || !expectedCounty.equals(actualCounty)) {
-            throw new AutomationException(
-                    "City, State, or County values are incorrect or not fetched automatically. " +
-                            "Expected - City: " + expectedCity + ", State: " + expectedState + ", County: " + expectedCounty +
-                            ". Actual - City: " + actualCity + ", State: " + actualState + ", County: " + actualCounty
-            );
+            throw new AutomationException("City, State, or County values are incorrect or not fetched automatically. ");
         }
-        CommonSteps.logInfo(
-                "Verified auto-fetched values successfully: City - " + expectedCity +
-                        ", State - " + expectedState + ", County - " + expectedCounty
-        );
+        CommonSteps.logInfo("Verified auto-fetched values successfully ");
     }
 
     private String getFieldValue(String locator, String attribute) throws AutomationException {
@@ -559,6 +552,7 @@ public class GlobalContactPage extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
+    //update this
     public void enterAddressLine1Data() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         try {
@@ -574,6 +568,7 @@ public class GlobalContactPage extends BasePage {
     }
 
 
+    //update this,make this simple and short
     public void globalContactCreationWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException {
         Map<String, String> buttonDetails = new HashMap<>();
         buttonClick(action);
@@ -611,6 +606,7 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.takeScreenshot();
     }
 
+    //remove this
     public void enterDataInNameFields() throws AutomationException, IOException, ParseException {
         String firstName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.firstName").toString();
         String middleName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.middleName").toString();
@@ -633,6 +629,7 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(MAIDEN_NAME_FIELD).sendKeys(maidenName);
     }
 
+    //need to compare, conflict
     public void filterContactByName(String lastName, String firstName) throws AutomationException {
         WebElement searchField = driverUtil.getWebElement(NAME_FILTER_INPUT);
         searchField.sendKeys(Keys.CONTROL + "a");
@@ -641,11 +638,13 @@ public class GlobalContactPage extends BasePage {
         driverUtil.waitForLoaderToDisappear();
     }
 
+
     public void clickOnContactName(String lastName, String firstName) throws AutomationException {
         WebElement contactNameElement = driverUtil.getWebElement(String.format(CONTACT_NAME_XPATH, lastName, firstName));
         contactNameElement.click();
     }
 
+    //conflict
     public void verifyUserOnEditPage() throws AutomationException {
         String currentUrl = driverUtil.getCurrentUrl();
         String expectedUrlPattern = "/law-firm/global-contacts/person/edit/";
@@ -654,6 +653,7 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
+    //conflict
     public void editContact() throws AutomationException, IOException, ParseException {
         String firstName = CommonUtil.getJsonPath("Edit").get("Edit.firstName").toString().trim();
         String lastName = CommonUtil.getJsonPath("Edit").get("Edit.lastName").toString().trim();
@@ -675,6 +675,7 @@ public class GlobalContactPage extends BasePage {
         clickOnContactName(updatedLastName, updatedFirstName);
     }
 
+    //remove this may be
     public void verifyNameFieldsArePreFilled() throws AutomationException, IOException, ParseException {
         String expectedFirstName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.firstName").toString().trim();
         String expectedMiddleName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.middleName").toString().trim();
@@ -699,6 +700,7 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("Verified that Name fields are pre-filled with expected values.");
     }
 
+    //remove this
     public void enterDataInSSNField() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         try {
@@ -754,6 +756,7 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("All displayed entity names match the expected name: '" + expectedEntityName + "'.");
     }
 
+    //reduce this code
     public void verifyBackgroundColorForContactType() throws AutomationException, IOException, ParseException {
         String contactType = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.contactType").toString();
         String expectedClass = contactType.equalsIgnoreCase("Entity") ? "entity-row-color" : "";

@@ -147,8 +147,6 @@ public class GlobalContactsSteps {
             PageFactory.globalContactPage().globalContactCreationWithSpaces(action, contactType);
         } else if (action.equals("Edit")) {
             PageFactory.globalContactPage().globalContactEdit(action, contactType);
-        } else {
-            throw new AutomationException("Unsupported action: " + action);
         }
     }
 

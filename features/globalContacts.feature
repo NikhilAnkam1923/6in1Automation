@@ -70,7 +70,6 @@ Feature: 6in1 Global Contacts Feature
     And user verifies updated values are reflected in Global Contact List
     And Name fields are pre-filled
 
-
   Scenario: Verify SSN added for the contact having empty SSN
     When user navigate to "Global Contact"
     When user edit contact from Global Contact List
