@@ -236,5 +236,23 @@ public class GlobalContactsSteps {
         PageFactory.globalContactPage().enterExistedEIN();
 
     }
+
+    @And("^user click on \"([^\"]*)\" Button in Footer$")
+    public void userClickOnButtonInFooter(String btn) throws AutomationException {
+        CommonSteps.logInfo("user clicks on "+btn+" Button");
+        PageFactory.globalContactPage().clickButtonInFooter(btn);
+    }
+
+    @When("^user enters SSN and EIN details$")
+    public void userEntersSSNAndEINDetails() throws AutomationException {
+        CommonSteps.logInfo("user enters SSN and EIN details");
+        PageFactory.globalContactPage().enterSSNAndEIN();
+    }
+
+    @And("^user enters data Address Line 1 Field$")
+    public void userEntersDataAddressLineField() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user enters  data Address Line 1 Field");
+        PageFactory.globalContactPage().enterAddressLine1();
+    }
 }
 

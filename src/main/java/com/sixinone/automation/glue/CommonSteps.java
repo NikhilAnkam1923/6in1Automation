@@ -391,6 +391,7 @@ public class CommonSteps {
 
     @Then("^user click on \"([^\"]*)\" Button$")
     public void userClickOnButton(String btnext) throws AutomationException {
+
         WebElement btn = driverUtil.getWebElementAndScroll(String.format(BTN_XPATH, btnext));
         if (btn == null)
             throw new AutomationException(String.format("Unable to find %s text on page or it might taking too long time to load!", btnext));

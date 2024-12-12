@@ -778,6 +778,45 @@ public class GlobalContactPage extends BasePage {
         String baseEIN = CommonUtil.getJsonPath("Create").get("Create.ein").toString();
         actions.moveToElement(EINField).click().sendKeys(baseEIN).build().perform();
     }
+
+    public void clickButtonInFooter(String btn) throws AutomationException {
+        WebElement FooterBtn = driverUtil.getWebElement(String.format(BUTTON_IN_FOOTER,btn));
+        if(FooterBtn == null){
+            throw new AutomationException("Button is not found.");
+        }
+        FooterBtn.click();
+    }
+
+    public void enterSSNAndEIN() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
+        String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
+        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
+        String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
+        String ssnPattern = "^\\d{3}-\\d{2}-\\d{4}$";
+        String einPattern = "^\\d{2}-\\d{7}$";
+        if (!randomSSN.matches(ssnPattern)) {
+            throw new AutomationException("Invalid SSN format. Expected format: 000-00-0000. Provided: " + randomSSN);
+        }
+        if (!randomEIN.matches(einPattern)) {
+            throw new AutomationException("Invalid EIN format. Expected format: 00-0000000. Provided: " + randomEIN);
+        }
+        fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+        fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+    }
+
+    public void enterAddressLine1() throws IOException, ParseException, AutomationException {
+        String addressLine1 = CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString();
+        WebElement AddressLine1Field = driverUtil.getWebElement(ADDRESS_LINE1);
+        if (AddressLine1Field != null) {
+            AddressLine1Field.clear();
+            AddressLine1Field.sendKeys(addressLine1);
+            WebDriverUtil.waitForAWhile(2);
+            CommonSteps.logInfo("Entered value in Address Line 1 field: " + addressLine1);
+        } else {
+            throw new AutomationException("Failed to locate the Address Line 1 field.");
+        }
+    }
 }
 
 

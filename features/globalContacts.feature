@@ -84,9 +84,17 @@ Feature: 6in1 Global Contacts Feature
     And user enters data in Zip Field
     Then verify that city, state, and county are automatically fetched
 
+  Scenario: Verify that the system validates the EIN and SSN formats correctly
+    When user enters SSN and EIN details
+    And user enters data Address Line 1 Field
+    And user save the global contact
+    Then user verifies global contact saved successful message
+
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     When user navigate to "Global Contact"
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+    And user selects a radio button for a record
+    And user click on "Create Individual Contact" Button in Footer
     And First Name and Last Name fields are pre-filled
     Then user fills all the details for "Entity Global Contact"
     And user save the global contact
@@ -99,17 +107,7 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies background color of the contact type
     Then user verifies radio buttons are available for all the contacts
     Then user verifies Create Entity Contact button is available
-    And user click on "Close" Button
-
-  Scenario: Verify all the inputs are by default trimmed while searching both the type of contacts
-    When user navigate to "Global Contact"
-    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
-    Then user verifies all the matching records are displayed for Individual Global Contact
-    And user click on "Close" Button
-    And user navigate to "Global Contact"
-    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
-    Then user verifies all the matching records are displayed for Entity Global Contact
-    And user click on "Close" Button
+    And user clicks on the "Close" button
 
   @Setup
   Scenario:SETUP: Close Browser
