@@ -44,9 +44,28 @@
     "fax": "(333) 222-2222"
   },
   "CreateWithSpaces": {
-    "firstName": "  Anna     ",
-    "lastName": "  Atkinson      ",
-    "entityName": "  mark     "
+    "firstName": "  Anna",
+    "lastName": "  Atkinson",
+    "entityName": "  mark     ",
+    "middleName": "  John   ",
+    "maidenName": "   Jonny   ",
+    "emailId": "   benchmark@gmail.com   ",
+    "ptin": "   P89876543  ",
+    "pinEFile": "   1234567891  ",
+    "barId": "  1234567891  ",
+    "caf": "   123456789   ",
+    "addressLine1": "   Simla Town   ",
+    "addressLine2": "  Jack Market  ",
+    "zip": "40007",
+    "city": "Bethlehem",
+    "state":"Kentucky",
+    "country": "Henry",
+    "ssn": "123-33-0923",
+    "ein": "11-6153433",
+    "phoneNumber": "(223) 232-3236",
+    "workNumber": "(243) 443-4346",
+    "fax": "(342) 222-2222",
+    "suffix": "Jr."
   },
   "UpdateNameFields": {
     "firstName": "jeremy",

@@ -21,20 +21,6 @@ public class GlobalContactsSteps {
         PageFactory.loginPage().loginTo6in1(userEmail, password);
     }
 
-    @When("^user clicks on the \"([^\"]*)\" button$")
-    public void userClicksOnButton(String buttonName) throws AutomationException, IOException, ParseException {
-        PageFactory.globalContactPage().clickButton(buttonName);
-        CommonSteps.logInfo("Click on the " + buttonName + " button");
-    }
-
-
-    @Then("^user verifies the \"([^\"]*)\" page$")
-    public void userVerifiesPage(String pageElement) throws AutomationException, IOException {
-        CommonSteps.logInfo("User verifies the " + pageElement + " page");
-        PageFactory.globalContactPage().verifyPageElements(pageElement);
-        CommonSteps.takeScreenshot();
-    }
-
     @When("^user navigate to \"([^\"]*)\"$")
     public void userNavigateToTab(String tab) throws AutomationException, IOException {
         PageFactory.globalContactPage().tabNavigation(tab);
@@ -44,10 +30,10 @@ public class GlobalContactsSteps {
     @And("^user \"([^\"]*)\" global contact of \"([^\"]*)\"$")
     public void userCreatesGlobalContact(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         if (action.equals("Create")) {
-            PageFactory.globalContactPage().globalContactCreation(action, contactType);
+            PageFactory.globalContactPage().globalContactCreation(contactType);
             CommonSteps.takeScreenshot();
         } else if (action.equals("Edit")) {
-            PageFactory.globalContactPage().globalContactEdit(action, contactType);
+            PageFactory.globalContactPage().globalContactEdit(contactType);
             CommonSteps.takeScreenshot();
         }
     }
@@ -55,6 +41,12 @@ public class GlobalContactsSteps {
     @And("^user fills all the details for \"([^\"]*)\"$")
     public void userFillsAllTheDetailsForGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
         PageFactory.globalContactPage().fillGlobalContactDetails(contactType);
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user fills all the details for \"([^\"]*)\" with spaces$")
+    public void userFillsAllTheDetailsForGlobalContactWithSpaces(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        PageFactory.globalContactPage().fillGlobalContactDetailsWithSpaces(contactType);
         CommonSteps.takeScreenshot();
     }
 
@@ -87,7 +79,7 @@ public class GlobalContactsSteps {
     public void userAttemptsToSaveTheGlobalContactWithoutFillingTheRequiredFields() throws AutomationException, IOException {
         CommonSteps.logInfo("Attempting to save the global contact without filling the required fields.");
         PageFactory.globalContactPage().clearFields();
-        PageFactory.globalContactPage().clickButton("Save");
+        PageFactory.globalContactPage().clickButtonSave();
     }
 
     @Then("user should see validation error messages for the required fields")
@@ -108,13 +100,13 @@ public class GlobalContactsSteps {
     @Then("user navigates to the page with the records")
     public void userNavigatesToThePageWithTheRecords() throws AutomationException, IOException {
         CommonSteps.logInfo("user navigates to the page with the records");
-        PageFactory.globalContactPage().clickButton("Create Individual Contact");
+        PageFactory.globalContactPage().clickButtonCreateIndividualContact();
     }
 
     @And("user selects a radio button for a record")
     public void userSelectsARadioButtonForARecord() throws AutomationException, IOException {
         CommonSteps.logInfo("user select the radio button");
-        PageFactory.globalContactPage().clickButton("Radio Button");
+        PageFactory.globalContactPage().clickButtonRadioButton();
         CommonSteps.takeScreenshot();
     }
 
@@ -159,9 +151,9 @@ public class GlobalContactsSteps {
     @And("^user \"([^\"]*)\" global contact of \"([^\"]*)\" with leading and trailing spaces$")
     public void userCreatesGlobalContactWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         if (action.equals("Create")) {
-            PageFactory.globalContactPage().globalContactCreationWithSpaces(action, contactType);
+            PageFactory.globalContactPage().globalContactCreationWithSpaces(contactType);
         } else if (action.equals("Edit")) {
-            PageFactory.globalContactPage().globalContactEditWithSpaces(action, contactType);
+            PageFactory.globalContactPage().globalContactEditWithSpaces(contactType);
         }
     }
 
@@ -172,24 +164,19 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("^user verifies background color of the contact type$")
-    public void userVerifiesBackgroundColorOfContactType() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying background color for the contact type");
-        PageFactory.globalContactPage().verifyBackgroundColorForContactType();
+    @Then("^user verifies background color of the \"([^\"]*)\"$")
+    public void userVerifiesBackgroundColorOfContactType(String contactType) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying background color for the contact type: " + contactType);
+        PageFactory.globalContactPage().verifyBackgroundColorForContactType(contactType);
         CommonSteps.takeScreenshot();
     }
+
+
 
     @Then("^user verifies radio buttons are available for all the contacts$")
     public void userVerifiesRadioButtonsForAllContacts() throws AutomationException {
         CommonSteps.logInfo("Verifying that radio buttons are available for all contacts");
         PageFactory.globalContactPage().verifyRadioButtonsForContacts();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^user verifies Create Entity Contact button is available$")
-    public void userVerifiesCreateEntityContactButtonIsAvailable() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying the 'Create Entity Contact' button is available");
-        PageFactory.globalContactPage().verifyCreateEntityContactButtonAvailable();
         CommonSteps.takeScreenshot();
     }
 
@@ -252,6 +239,49 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("Verifies the EIN and SSN formats");
         CommonSteps.takeScreenshot();
 
+    }
+
+    @When("user clicks on the Create button")
+    public void userClicksOnTheCreateButton() throws AutomationException {
+        PageFactory.globalContactPage().clickButtonCreate();
+    }
+
+    @And("user click on the Close button")
+    public void userClickOnTheCloseButton() throws AutomationException {
+        PageFactory.globalContactPage().clickButtonClose();
+    }
+
+    @Then("user verifies the Global Contacts page")
+    public void userVerifiesTheGlobalContactsPage() throws AutomationException {
+        CommonSteps.logInfo("User verifies the Global Contacts page");
+        PageFactory.globalContactPage().verifyPageGlobalContacts();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies the Global Contact Creation page")
+    public void userVerifiesTheGlobalContactCreationPage() throws AutomationException {
+        CommonSteps.logInfo("User verifies the Global Contact Creation page");
+        PageFactory.globalContactPage().verifyPageGlobalContactCreation();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies the Contact \\(Select or Create New) page")
+    public void userVerifiesTheContactSelectOrCreateNewPage() throws AutomationException {
+        CommonSteps.logInfo("User verifies the Contact (Select or Create New) page");
+        PageFactory.globalContactPage().verifyPageContactSelectorCreateNew();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user clicks on the Close button")
+    public void userClicksOnTheCloseButton() throws AutomationException {
+        PageFactory.globalContactPage().clickOn("Close");
+    }
+
+    @Then("user verifies the Home page")
+    public void userVerifiesTheHomePage() throws AutomationException {
+        CommonSteps.logInfo("User verifies the Home page");
+        PageFactory.globalContactPage().verifyPageHome();
+        CommonSteps.takeScreenshot();
     }
 }
 
