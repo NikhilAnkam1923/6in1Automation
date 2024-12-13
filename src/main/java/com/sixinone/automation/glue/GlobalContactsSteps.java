@@ -226,21 +226,15 @@ public class GlobalContactsSteps {
         PageFactory.globalContactPage().clickButtonInFooter(btn);
     }
 
-    @When("^user enters SSN and EIN details$")
-    public void userEntersSSNAndEINDetails() throws AutomationException {
-        CommonSteps.logInfo("user enters SSN and EIN details");
-        PageFactory.globalContactPage().enterSSNAndEIN();
-    }
-
     @And("^user enters data Address Line 1 Field$")
     public void userEntersDataAddressLineField() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters  data Address Line 1 Field");
         PageFactory.globalContactPage().enterAddressLine1();
     }
 
-    @Then("user see all the error messages are removed")
-    public void userSeeAllTheErrorMessagesAreRemoved() throws AutomationException {
-        CommonSteps.logInfo("see all the error messages are removed");
+    @Then("user verify all the error messages are removed")
+    public void userVerifyAllTheErrorMessagesAreRemoved() throws AutomationException {
+        CommonSteps.logInfo("verify all the error messages are removed");
         PageFactory.globalContactPage().verifyNoValidationErrors();
     }
 
@@ -252,5 +246,12 @@ public class GlobalContactsSteps {
     }
 
 
+    @Then("Verify that the system validates the EIN and SSN formats correctly")
+    public void verifyThatTheSystemValidatesTheEINAndSSNFormatsCorrectly() throws AutomationException {
+        PageFactory.globalContactPage().validateSSNAndEINFormat();
+        CommonSteps.logInfo("Verifies the EIN and SSN formats");
+        CommonSteps.takeScreenshot();
+
+    }
 }
 
