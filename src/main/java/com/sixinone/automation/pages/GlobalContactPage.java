@@ -124,9 +124,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void globalContactCreation(String action, String contactType) throws AutomationException, IOException, ParseException {
-        clickButton(action);
-        LocalTime currentTime = LocalTime.now();
-        System.out.println("Current Time: " + currentTime);
+        //clickButton(action);
         switch (contactType) {
             case "Individual Global Contact":
                 waitForVisibleElement(By.xpath(CREATE_INDIVIDUAL_CONTACT_BTN));
@@ -137,6 +135,7 @@ public class GlobalContactPage extends BasePage {
                 clickButton("Create Individual Contact");
                 break;
             case "Entity Global Contact":
+                clickButton(action);
                 waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
                 driverUtil.getWebElementAndScroll(ENTITY_NAME_FIELD).sendKeys(CommonUtil.getJsonPath("Create").get("Create.entityName").toString() + CommonUtil.currentDateAndTime());
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value");
@@ -391,8 +390,8 @@ public class GlobalContactPage extends BasePage {
         switch (contactType) {
             case "Individual Global Contact":
                 waitForVisibleElement(By.xpath(CREATE_INDIVIDUAL_CONTACT_BTN));
-                String firstNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.firstName").toString();
-                String lastNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.lastName").toString();
+                String firstNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.firstName"+CommonUtil.currentDateAndTime()).toString();
+                String lastNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.lastName"+CommonUtil.currentDateAndTime()).toString();
                 WebElement lastNameField = driverUtil.getWebElementAndScroll(LAST_NAME_FIELD);
                 WebElement firstNameField = driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD);
                 lastNameField.clear();
@@ -471,7 +470,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyMatchingRecordsDisplayed() throws AutomationException, IOException, ParseException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebDriverUtil.waitForElementNotVisible(30, SPINNER);
         String expectedEntityName = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.entityName").toString();
         List<String> displayedEntityNames = getAllDisplayedEntityNames();
         boolean allMatch = displayedEntityNames.stream()
@@ -486,7 +485,6 @@ public class GlobalContactPage extends BasePage {
         String contactType = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.contactType").toString();
         String expectedClass = contactType.equalsIgnoreCase("Entity") ? "entity-row-color" : "";
         List<String> mismatchedRows = new ArrayList<>();
-
         do {
             List<WebElement> rows = driverUtil.getWebElements(ALL_DATA_ROWS_XPATH);
             rows.stream()
@@ -522,7 +520,7 @@ public class GlobalContactPage extends BasePage {
                 break;
             }
             nextPageButton.click();
-            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+            WebDriverUtil.waitForElementNotVisible(30, SPINNER);
         }
         CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
     }
@@ -559,17 +557,17 @@ public class GlobalContactPage extends BasePage {
     public void verifyUserType(String userType) throws AutomationException {
         switch (userType) {
             case "Licensed":
-                waitForVisibleElement(By.xpath(CREATE_BUTTON), 3);
-                waitForElementClickable(By.xpath(CREATE_BUTTON), 3);
+                waitForVisibleElement(By.xpath(CREATE_BUTTON), 1);
+                //waitForElementClickable(By.xpath(CREATE_BUTTON), 1);
                 if (driverUtil.getWebElement(CREATE_BUTTON).isDisplayed() && driverUtil.getWebElement(CREATE_BUTTON).isEnabled()) {
-                    clickButton("Create");
+                    //clickButton("Create");
                     CommonSteps.logInfo(userType + " user: Create button is Visible & Clickable and indicating eligibility to create Global Contacts.");
                 } else {
                     throw new AutomationException(userType + " user: Create button is not visible or clickable within the timeout.");
                 }
                 break;
             case "View Only":
-                waitForInvisibleElement(By.xpath(CREATE_BUTTON), 3);
+                waitForInvisibleElement(By.xpath(CREATE_BUTTON), 2);
                 WebElement createButton = driverUtil.getWebElement(CREATE_BUTTON);
                 if (createButton != null && createButton.isDisplayed()) {
                     throw new AutomationException("Create button should not be visible for View Only user.");
@@ -715,22 +713,19 @@ public class GlobalContactPage extends BasePage {
         FooterBtn.click();
     }
 
-    public void enterSSNAndEIN() throws AutomationException {
-        Actions actions = new Actions(DriverFactory.drivers.get());
-        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
-        String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
-        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
-        String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
+    public void validateSSNAndEINFormat() throws AutomationException {
+
+        String SSNField = driverUtil.getWebElementAndScroll(SSN_FIELD).getAttribute("value");
+        String EINField = driverUtil.getWebElement(EIN_FIELD).getAttribute("value");
         String ssnPattern = "^\\d{3}-\\d{2}-\\d{4}$";
         String einPattern = "^\\d{2}-\\d{7}$";
-        if (!randomSSN.matches(ssnPattern)) {
-            throw new AutomationException("Invalid SSN format. Expected format: 000-00-0000. Provided: " + randomSSN);
+        if (!SSNField.matches(ssnPattern)) {
+            throw new AutomationException("Invalid SSN format. Expected format: 000-00-0000. Provided: " + SSNField);
         }
-        if (!randomEIN.matches(einPattern)) {
-            throw new AutomationException("Invalid EIN format. Expected format: 00-0000000. Provided: " + randomEIN);
+        if (!EINField.matches(einPattern)) {
+            throw new AutomationException("Invalid EIN format. Expected format: 00-0000000. Provided: " + EINField);
         }
-        fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
-        fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+        CommonSteps.logInfo("Correct SSN and EIN format provided");
     }
 
     public void enterAddressLine1() throws IOException, ParseException, AutomationException {
