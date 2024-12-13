@@ -38,7 +38,7 @@ public class LoginPage extends BasePage {
         enterUsername(userEmail);
         enterPassword(password);
         clickOnLoginButton();
-        driverUtil.waitForLoaderToDisappear();
+        //driverUtil.waitForLoaderToDisappear();
     }
 
     public void enterUsername(String userEmail) throws AutomationException {
