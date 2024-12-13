@@ -70,16 +70,16 @@ Feature: 6in1 Global Contacts Feature
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
     And First Name and Last Name fields are pre-filled
-    Then user fills all the details for "Individual Global Contact"
+    Then user fills all the details for "Individual Global Contact" with spaces
     And user save the global contact
     Then user verifies global contact saved successful message
 
   Scenario: Verify display result on entity name
     And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
     Then user verifies all the matching records are displayed for Entity Global Contact
-    Then user verifies background color of the contact type
+    Then user verifies background color of the "Entity Global Contact"
     Then user verifies radio buttons are available for all the contacts
-    Then user verifies Create Entity Contact button is available
+    Then user verifies "Create Entity Contact" button is available
     And user clicks on the "Close" button
 
   Scenario Outline: verify user authorization for "View Only" user

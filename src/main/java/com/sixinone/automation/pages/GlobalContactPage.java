@@ -69,6 +69,7 @@ public class GlobalContactPage extends BasePage {
     public static final String SELECT_AND_PROCEED_BTN ="//button[contains(text(),'Select & Proceed')]";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
     public static final String CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='3'] //input[@aria-label='Filter']";
+    public static final String CONTACT_TYPE_FILTER_INPUT_RECORDS = "//th[@aria-colindex='5'] //input[@aria-label='Filter']";
     public static final String ACTIONS_BUTTON = "//td[@class='action-column text-center']//button[@class='dropdown-toggle btn btn-primary']";
     public static final String CONTACT_NAME_XPATH = "(//a[contains(@class,'column-edit-link')][text()='%s, %s'])[1]";
     public static final String ENTITY_NAME_FIELD = "//input[@name='entityName']";
@@ -192,6 +193,52 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
+    public void fillGlobalContactDetailsWithSpaces(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
+        String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
+        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
+        String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
+
+        switch (contactType) {
+            case "Individual Global Contact":
+                waitForVisibleElement(By.xpath(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE));
+                fillFieldWithSpaces(MIDDLE_NAME_FIELD, "CreateWithSpaces.middleName");
+                fillFieldWithSpaces(MAIDEN_NAME_FIELD, "CreateWithSpaces.maidenName");
+                selectSuffixOption();
+                fillFieldWithSpaces(ENTITY_NAME_FIELD_CREATE, "CreateWithSpaces.entityName");
+                fillFieldWithSpaces(EMAIL_ADDRESS_FIELD, "CreateWithSpaces.emailId");
+                fillFieldWithSpaces(PTIN_FIELD, "CreateWithSpaces.ptin");
+                fillFieldWithSpaces(PINEFILE_FIELD, "CreateWithSpaces.pinEFile");
+                fillFieldWithSpaces(BARID_FIELD, "CreateWithSpaces.barId");
+                fillFieldWithSpaces(CAF_FIELD, "CreateWithSpaces.caf");
+                fillFieldWithSpaces(ADDRESS_LINE2, "CreateWithSpaces.addressLine2");
+                fillFieldWithSpaces(ZIP, "CreateWithSpaces.zip");
+                fillFieldWithSpaces(ADDRESS_LINE1, "CreateWithSpaces.addressLine1");
+                fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                fillFieldWithSpaces(PHONE_NUMBER_FIELD, "CreateWithSpaces.phoneNumber", actions);
+                fillFieldWithSpaces(WORK_NUMBER_FIELD, "CreateWithSpaces.workNumber", actions);
+                fillFieldWithSpaces(FAX_FIELD, "CreateWithSpaces.fax", actions);
+                break;
+            case "Entity Global Contact":
+                waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
+                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                fillFieldWithSpaces(ENTITY_NAME_FIELD_CREATE, "CreateWithSpaces.entityName");
+                selectSuffixOption();
+                fillFieldWithSpaces(EMAIL_ADDRESS_FIELD, "CreateWithSpaces.emailId");
+                fillFieldWithSpaces(ADDRESS_LINE1, "CreateWithSpaces.addressLine1");
+                fillFieldWithSpaces(ZIP, "CreateWithSpaces.zip");
+                fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+                fillFieldWithSpaces(PHONE_NUMBER_FIELD, "CreateWithSpaces.phoneNumber", actions);
+                fillFieldWithSpaces(WORK_NUMBER_FIELD, "CreateWithSpaces.workNumber", actions);
+                fillFieldWithSpaces(FAX_FIELD, "CreateWithSpaces.fax", actions);
+                break;
+            default:
+                throw new AutomationException("Unknown contact type: " + contactType);
+        }
+    }
+
     private void fillField(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
         WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
         field.clear();
@@ -203,6 +250,20 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(field)
                 .click()
                 .sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString())
+                .perform();
+    }
+
+    private void fillFieldWithSpaces(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        field.clear();
+        field.sendKeys(CommonUtil.getJsonPath("CreateWithSpaces").get(jsonKey).toString().trim());
+    }
+
+    private void fillFieldWithSpaces(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElement(fieldLocator);
+        actions.moveToElement(field)
+                .click()
+                .sendKeys(CommonUtil.getJsonPath("CreateWithSpaces").get(jsonKey).toString().trim())
                 .perform();
     }
 
@@ -223,6 +284,12 @@ public class GlobalContactPage extends BasePage {
     public String filterByContactType(String contactType) throws AutomationException {
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT).click();
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT).sendKeys(contactType);
+        return contactType;
+    }
+
+    public String filterByContactTypeOnRecords(String contactType) throws AutomationException {
+        driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT_RECORDS).click();
+        driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT_RECORDS).sendKeys(contactType);
         return contactType;
     }
 
@@ -390,14 +457,15 @@ public class GlobalContactPage extends BasePage {
         switch (contactType) {
             case "Individual Global Contact":
                 waitForVisibleElement(By.xpath(CREATE_INDIVIDUAL_CONTACT_BTN));
-                String firstNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.firstName"+CommonUtil.currentDateAndTime()).toString();
-                String lastNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.lastName"+CommonUtil.currentDateAndTime()).toString();
+                String firstNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.firstName").toString()+CommonUtil.currentDateAndTime();
+                System.out.println(firstNameWithSpaces);
+                String lastNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.lastName").toString()+CommonUtil.currentDateAndTime();
                 WebElement lastNameField = driverUtil.getWebElementAndScroll(LAST_NAME_FIELD);
                 WebElement firstNameField = driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD);
                 lastNameField.clear();
-                lastNameField.sendKeys(lastNameWithSpaces);
+                lastNameField.sendKeys("  "+lastNameWithSpaces+"    ");
                 firstNameField.clear();
-                firstNameField.sendKeys(firstNameWithSpaces);
+                firstNameField.sendKeys("  "+firstNameWithSpaces+"    ");
                 CommonSteps.takeScreenshot();
                 firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value").trim();
                 lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value").trim();
@@ -408,7 +476,7 @@ public class GlobalContactPage extends BasePage {
                 String entityNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.entityName").toString();
                 WebElement entityNameField = driverUtil.getWebElementAndScroll(ENTITY_NAME_FIELD);
                 entityNameField.clear();
-                entityNameField.sendKeys(entityNameWithSpaces);
+                entityNameField.sendKeys("    "+entityNameWithSpaces+"    ");
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value").trim();
                 clickButton("Create Entity Contact");
                 break;
@@ -481,8 +549,8 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("All displayed entity names match the expected name: '" + expectedEntityName + "'.");
     }
 
-    public void verifyBackgroundColorForContactType() throws AutomationException, IOException, ParseException {
-        String contactType = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.contactType").toString();
+    public void verifyBackgroundColorForContactType(String contactType) throws AutomationException, IOException, ParseException {
+        filterByContactTypeOnRecords(contactType.replace("Global Contact", "").trim());
         String expectedClass = contactType.equalsIgnoreCase("Entity") ? "entity-row-color" : "";
         List<String> mismatchedRows = new ArrayList<>();
         do {
@@ -493,10 +561,11 @@ public class GlobalContactPage extends BasePage {
         } while (clickNextPage());
 
         if (!mismatchedRows.isEmpty()) {
-            throw new AutomationException("The background color does not match for rows: " + mismatchedRows);
+            throw new AutomationException("The background color does not match for Entity Global Contact: " + mismatchedRows);
         }
         CommonSteps.logInfo("Verified background color for all rows with contact type: '" + contactType + "'.");
     }
+
 
     private boolean clickNextPage() throws AutomationException {
         WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
@@ -523,16 +592,6 @@ public class GlobalContactPage extends BasePage {
             WebDriverUtil.waitForElementNotVisible(30, SPINNER);
         }
         CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
-    }
-
-    public void verifyCreateEntityContactButtonAvailable() throws AutomationException, IOException, ParseException {
-        String expectedButton = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.expectedButton").toString();
-        String buttonXPath = String.format(BUTTON_IN_FOOTER, expectedButton);
-        WebElement buttonElement = driverUtil.getWebElement(buttonXPath, 5);
-        if (buttonElement == null || !buttonElement.isDisplayed() || !buttonElement.isEnabled()) {
-            throw new AutomationException("The button '" + expectedButton + "' is not available.");
-        }
-        CommonSteps.logInfo("Verified that the '" + expectedButton + "' button is available.");
     }
 
     public void verifyMatchingRecordsForIndividualGlobalContact() throws AutomationException, IOException, ParseException {

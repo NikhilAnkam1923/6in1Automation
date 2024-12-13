@@ -58,6 +58,12 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @And("^user fills all the details for \"([^\"]*)\" with spaces$")
+    public void userFillsAllTheDetailsForGlobalContactWithSpaces(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        PageFactory.globalContactPage().fillGlobalContactDetailsWithSpaces(contactType);
+        CommonSteps.takeScreenshot();
+    }
+
     @Then("user save the global contact")
     public void userSaveTheGlobalContact() throws AutomationException, IOException {
         PageFactory.globalContactPage().saveGlobalContact();
@@ -172,24 +178,19 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("^user verifies background color of the contact type$")
-    public void userVerifiesBackgroundColorOfContactType() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying background color for the contact type");
-        PageFactory.globalContactPage().verifyBackgroundColorForContactType();
+    @Then("^user verifies background color of the \"([^\"]*)\"$")
+    public void userVerifiesBackgroundColorOfContactType(String contactType) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verifying background color for the contact type: " + contactType);
+        PageFactory.globalContactPage().verifyBackgroundColorForContactType(contactType);
         CommonSteps.takeScreenshot();
     }
+
+
 
     @Then("^user verifies radio buttons are available for all the contacts$")
     public void userVerifiesRadioButtonsForAllContacts() throws AutomationException {
         CommonSteps.logInfo("Verifying that radio buttons are available for all contacts");
         PageFactory.globalContactPage().verifyRadioButtonsForContacts();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^user verifies Create Entity Contact button is available$")
-    public void userVerifiesCreateEntityContactButtonIsAvailable() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying the 'Create Entity Contact' button is available");
-        PageFactory.globalContactPage().verifyCreateEntityContactButtonAvailable();
         CommonSteps.takeScreenshot();
     }
 
