@@ -179,6 +179,7 @@ public class GlobalContactPage extends BasePage {
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
                 fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
+                selectSuffixOption();
                 fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
                 fillField(ADDRESS_LINE1, "Create.addressLine1");
                 fillField(ZIP, "Create.zip");
@@ -230,7 +231,9 @@ public class GlobalContactPage extends BasePage {
         firstName = filterByName();
         filterByContactType(contactType.replace("Global Contact", "").trim());
         driverUtil.getWebElement(ACTIONS_BUTTON).click();
+        //driverUtil.waitForElementToBeClickable(action);
         clickButton(action);
+        //driverUtil.waitForLoaderToDisappear();
         switch (contactType) {
             case "Individual Global Contact":
                 contactInformationFieldsForEdit("Individual Global Contact");
@@ -326,18 +329,9 @@ public class GlobalContactPage extends BasePage {
 
     public void enterDataInZipField() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        String fieldData = CommonUtil.getJsonPath("Create").get("Create.zip").toString();
-        WebElement zipField = driverUtil.getWebElement(ZIP);
-        if (zipField != null) {
-            zipField.clear();
-            zipField.sendKeys(fieldData + Keys.ENTER);
-            WebDriverUtil.waitForAWhile(2);
-            CommonSteps.logInfo("Entered value in Zip field: " + fieldData);
-        } else {
-            throw new AutomationException("Failed to locate the Zip field.");
-        }
+        driverUtil.getWebElement(ZIP).sendKeys(CommonUtil.getJsonPath("Create").get("Create.zip").toString() + Keys.ENTER);
+        waitForAWhile();
     }
-
 
     public void enterFirstnameAndLastNameFields(String firstName, String lastName) throws AutomationException {
         WebElement firstNameField = driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD);
@@ -358,7 +352,6 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("First Name and Last Name are prefilled correctly.");
     }
 
-
     public void verifyentityNameFieldPrefilled() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         String actualEntityName = driverUtil.getWebElement(ENTITY_NAME_FIELD_CREATE).getAttribute("value");
@@ -367,7 +360,6 @@ public class GlobalContactPage extends BasePage {
         }
         CommonSteps.logInfo("Entity Name is prefilled correctly.");
     }
-
 
     public void verifyAutoFetchedFields() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
@@ -392,48 +384,6 @@ public class GlobalContactPage extends BasePage {
             throw new AutomationException("Failed to locate element for locator: " + locator);
         }
     }
-
-
-    public List<String> getAllDisplayedEntityNames() throws AutomationException {
-        List<String> entityNames = new ArrayList<>();
-        while (true) {
-            List<WebElement> nameElements = driverUtil.getWebElements(ENTITY_NAMES_COLUMN);
-            for (WebElement nameElement : nameElements) {
-                String nameText = nameElement.getText().trim();
-                if (!nameText.isEmpty()) {
-                    entityNames.add(nameText);
-                }
-            }
-            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE ,2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
-                break;
-            }
-            nextPageButton.click();
-            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        }
-        return entityNames;
-    }
-
-    public List<String> getAllDisplayedContactNames() throws AutomationException {
-        List<String> contactNames = new ArrayList<>();
-        while (true) {
-            List<WebElement> contactNameElements = driverUtil.getWebElements(CONTACT_NAMES_COLUMN);
-            for (WebElement nameElement : contactNameElements) {
-                String nameText = nameElement.getText().trim();
-                if (!nameText.isEmpty()) {
-                    contactNames.add(nameText);
-                }
-            }
-            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
-                break;
-            }
-            nextPageButton.click();
-            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        }
-        return contactNames;
-    }
-
 
     public void globalContactCreationWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException {
         clickButton(action);
@@ -502,59 +452,6 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-
-    //need to compare, conflict
-    public void filterContactByName(String lastName, String firstName) throws AutomationException {
-        WebElement searchField = driverUtil.getWebElement(NAME_FILTER_INPUT);
-        searchField.sendKeys(Keys.CONTROL + "a");
-        searchField.sendKeys(Keys.BACK_SPACE);
-        searchField.sendKeys(lastName + ", " + firstName);
-        driverUtil.waitForLoaderToDisappear();
-    }
-
-
-    public void clickOnContactName(String lastName, String firstName) throws AutomationException {
-        WebElement contactNameElement = driverUtil.getWebElement(String.format(CONTACT_NAME_XPATH, lastName, firstName));
-        contactNameElement.click();
-    }
-
-    public void verifyUpdatedValuesInGlobalContactListUsingFilter() throws AutomationException, IOException, ParseException {
-        String updatedFirstName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.firstName").toString();
-        String updatedLastName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.lastName").toString();
-        filterContactByName(updatedLastName, updatedFirstName);
-        WebElement contactElement = driverUtil.getWebElement(String.format(CONTACT_NAME_XPATH, updatedLastName, updatedFirstName));
-        if (contactElement == null) {
-            throw new AutomationException("Updated contact with name " + updatedLastName + ", " + updatedFirstName + " is not found in the Global Contact List.");
-        }
-        CommonSteps.logInfo("Verified updated values in Global Contact List: " + updatedLastName + ", " + updatedFirstName);
-        CommonSteps.takeScreenshot();
-        clickOnContactName(updatedLastName, updatedFirstName);
-    }
-
-    public void verifyNameFieldsArePreFilled() throws AutomationException, IOException, ParseException {
-        String expectedFirstName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.firstName").toString().trim();
-        String expectedMiddleName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.middleName").toString().trim();
-        String expectedLastName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.lastName").toString().trim();
-        String expectedMaidenName = CommonUtil.getJsonPath("UpdateNameFields").get("UpdateNameFields.maidenName").toString().trim();
-
-        validateField(FIRST_NAME_FIELD, "First Name", expectedFirstName);
-        validateField(MIDDLE_NAME_FIELD, "Middle Name", expectedMiddleName);
-        validateField(LAST_NAME_FIELD, "Last Name", expectedLastName);
-        validateField(MAIDEN_NAME_FIELD, "Maiden Name", expectedMaidenName);
-
-        CommonSteps.logInfo("Verified that Name fields are pre-filled with expected values.");
-    }
-
-    private void validateField(String fieldLocator, String fieldName, String expectedValue) throws AutomationException {
-        WebElement field = driverUtil.getWebElement(fieldLocator);
-        String actualValue = field.getAttribute("value").trim();
-        if (!actualValue.equals(expectedValue)) {
-            throw new AutomationException(fieldName + " field is not pre-filled with expected value: " + expectedValue);
-        }
-    }
-
-
-
     public void selectSuffixOption() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         String suffixValue = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
@@ -572,26 +469,6 @@ public class GlobalContactPage extends BasePage {
             throw new AutomationException("Failed to locate the Suffix dropdown element.");
         }
     }
-
-
-
-
-    public void verifySuffixOptionSelected() throws AutomationException, IOException, ParseException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-        WebElement selectedOption = driverUtil.getWebElement(SELECTED_OPTION);
-        if (selectedOption != null) {
-            String actualSuffix = selectedOption.getText().trim();
-            if (actualSuffix.equals(expectedSuffix)) {
-                CommonSteps.logInfo("Verified selected Suffix option: " + actualSuffix);
-            } else {
-                throw new AutomationException("Expected Suffix: '" + expectedSuffix + "' but found: '" + actualSuffix + "'");
-            }
-        } else {
-            throw new AutomationException("Failed to locate the selected Suffix option element.");
-        }
-    }
-
 
     public void verifyMatchingRecordsDisplayed() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
@@ -623,7 +500,6 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("Verified background color for all rows with contact type: '" + contactType + "'.");
     }
 
-
     private boolean clickNextPage() throws AutomationException {
         WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
         if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
@@ -633,7 +509,6 @@ public class GlobalContactPage extends BasePage {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         return true;
     }
-
 
     public void verifyRadioButtonsForContacts() throws AutomationException {
         while (true) {
@@ -684,7 +559,6 @@ public class GlobalContactPage extends BasePage {
     public void verifyUserType(String userType) throws AutomationException {
         switch (userType) {
             case "Licensed":
-            case "Reviewer":
                 waitForVisibleElement(By.xpath(CREATE_BUTTON), 3);
                 waitForElementClickable(By.xpath(CREATE_BUTTON), 3);
                 if (driverUtil.getWebElement(CREATE_BUTTON).isDisplayed() && driverUtil.getWebElement(CREATE_BUTTON).isEnabled()) {
@@ -708,9 +582,8 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-
     public void verifyDuplicateEINError() throws AutomationException {
-//            WebDriverUtil.waitForVisibleElement(By.xpath(EIN_DUPLICATION_ERROR));
+        // WebDriverUtil.waitForVisibleElement(By.xpath(EIN_DUPLICATION_ERROR));
         WebElement errorMessage = driverUtil.getWebElement(EIN_ERROR);
         CommonSteps.takeScreenshot();
         if (errorMessage == null || !errorMessage.isDisplayed()) {
@@ -777,6 +650,55 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
+    public List<String> getAllDisplayedEntityNames() throws AutomationException {
+        List<String> entityNames = new ArrayList<>();
+        while (true) {
+            List<WebElement> nameElements = driverUtil.getWebElements(ENTITY_NAMES_COLUMN);
+            for (WebElement nameElement : nameElements) {
+                String nameText = nameElement.getText().trim();
+                if (!nameText.isEmpty()) {
+                    entityNames.add(nameText);
+                }
+            }
+            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
+            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
+                break;
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        }
+        return entityNames;
+    }
+
+    public void isButtonAvailable(String buttonName) throws AutomationException {
+        String buttonXPath = String.format(BUTTON_IN_FOOTER, buttonName);
+        WebElement buttonElement = driverUtil.getWebElement(buttonXPath, 2);
+        if (buttonElement != null && buttonElement.isDisplayed() && buttonElement.isEnabled()) {
+            CommonSteps.logInfo(buttonName + " button is display");
+        } else {
+            throw new AutomationException(buttonName + " button is not display");
+        }
+    }
+
+    public List<String> getAllDisplayedContactNames() throws AutomationException {
+        List<String> contactNames = new ArrayList<>();
+        while (true) {
+            List<WebElement> contactNameElements = driverUtil.getWebElements(CONTACT_NAMES_COLUMN);
+            for (WebElement nameElement : contactNameElements) {
+                String nameText = nameElement.getText().trim();
+                if (!nameText.isEmpty()) {
+                    contactNames.add(nameText);
+                }
+            }
+            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
+            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
+                break;
+            }
+            nextPageButton.click();
+            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        }
+        return contactNames;
+    }
 
     public void enterExistedEIN() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
@@ -786,8 +708,8 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void clickButtonInFooter(String btn) throws AutomationException {
-        WebElement FooterBtn = driverUtil.getWebElement(String.format(BUTTON_IN_FOOTER,btn));
-        if(FooterBtn == null){
+        WebElement FooterBtn = driverUtil.getWebElement(String.format(BUTTON_IN_FOOTER, btn));
+        if (FooterBtn == null) {
             throw new AutomationException("Button is not found.");
         }
         FooterBtn.click();
@@ -822,6 +744,11 @@ public class GlobalContactPage extends BasePage {
         } else {
             throw new AutomationException("Failed to locate the Address Line 1 field.");
         }
+    }
+
+    public void clickOn(String button) throws AutomationException {
+        String buttonXPath = String.format(BUTTON_IN_FOOTER, button);
+        driverUtil.getWebElement(buttonXPath).click();
     }
 }
 

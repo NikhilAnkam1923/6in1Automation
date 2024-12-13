@@ -8,8 +8,8 @@ Feature: 6in1 Global Contacts Feature
     When user login using "<user-email>" and "<password>"
     Then user verifies the "Home" page
     Examples:
-      | user-email                           | password   |
-      | nikhilankam+11@benchmarkit.solutions | Watch@22   |
+      | user-email                           | password |
+      | nikhilankam+11@benchmarkit.solutions | Watch@22 |
 
   Scenario: User verify user is on the Global Contact Creation page
     When user navigate to "Global Contact"
@@ -51,6 +51,7 @@ Feature: 6in1 Global Contacts Feature
     And user attempts to save the global contact without filling the required fields
     Then user should see validation error messages for the required fields
     When user fills in the previously empty required fields for "Individual Global Contact"
+    Then user see all the error messages are removed
     Then user save the global contact
     And user verifies global contact saved successful message
 
@@ -65,17 +66,15 @@ Feature: 6in1 Global Contacts Feature
     When user enters "Joe" as the first name and "Root" as the last name
     Then user navigates to the page with the records
     Then user verifies the "Contact (Select or Create New)" page
+    And user verifies "Create Individual Contact" button is available
     And user selects a radio button for a record
     Then user verifies the "Select & Proceed" button is enabled
+    And user click on the "Close" button
 
-  Scenario Outline: verify user authorization for "<userType>"
+
+  Scenario: verify user authorization for "Licensed" user
     When user navigate to "Global Contact"
-    Then user verifies authorization for "<userType>"
-    Examples:
-      | userType  |
-      | Licensed  |
-      | Reviewer  |
-      | View Only |
+    Then user verifies authorization for "Licensed"
 
   Scenario: Verify that city, state and county are automatically fetched on entering zip
     When user navigate to "Global Contact"
@@ -108,6 +107,16 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies radio buttons are available for all the contacts
     Then user verifies Create Entity Contact button is available
     And user clicks on the "Close" button
+
+  Scenario Outline: verify user authorization for "View Only" user
+    When user logged out from the application
+    And user go to application "https://delltab.benchmarkits.in"
+    When user login using "<user-email>" and "<password>"
+    When user navigate to "Global Contact"
+    Then user verifies authorization for "View Only"
+    Examples:
+      | user-email                           | password |
+      | nikhilankam+13@benchmarkit.solutions | Watch@22 |
 
   @Setup
   Scenario:SETUP: Close Browser

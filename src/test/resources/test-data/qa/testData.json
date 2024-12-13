@@ -1,17 +1,17 @@
 {
   "Create": {
-    "firstName": "Devis34",
-    "lastName": "Karl34",
-    "middleName": "Y",
-    "maidenName": "Gh",
-    "entityName": "bench",
-    "emailId": "bench@gmail.com",
+    "firstName": "Devis",
+    "lastName": "Karl",
+    "middleName": "John",
+    "maidenName": "Jonny",
+    "entityName": "benchmark",
+    "emailId": "benchmark@gmail.com",
     "ptin": "P89876543",
     "pinEFile": "1234567891",
     "barId": "1234567891",
     "caf": "123456789",
-    "addressLine1": "Testing",
-    "addressLine2": "Testing2",
+    "addressLine1": "Simla Town",
+    "addressLine2": "Jack Market",
     "zip": "40007",
     "city": "Bethlehem",
     "state":"Kentucky",
@@ -24,18 +24,18 @@
     "suffix": "Jr."
   },
   "Edit": {
-    "firstName": "Devis34",
-    "lastName": "Karl34",
-    "middleName": "Y1",
-    "maidenName": "Gh",
-    "entityName": "bench",
-    "emailId": "bench@gmail.com",
+    "firstName": "Sam",
+    "lastName": "Minatti",
+    "middleName": "Simakina",
+    "maidenName": "Katro",
+    "entityName": "highmark",
+    "emailId": "highmark@gmail.com",
     "ptin": "P38746537",
     "pinEFile": "9876543210",
     "barId": "9876543210",
     "caf": "987654321",
-    "addressLine1": "TestingUpdate",
-    "addressLine2": "TestingUpdate",
+    "addressLine1": "Township",
+    "addressLine2": "Lake",
     "zip": "50010",
     "ssn": "223-22-3453",
     "ein": "22-4989033",
@@ -44,21 +44,21 @@
     "fax": "(333) 222-2222"
   },
   "CreateWithSpaces": {
-    "firstName": "  Gaurav26",
-    "lastName": "  Gidye26",
-    "entityName": "  mark"
+    "firstName": "  Anna     ",
+    "lastName": "  Atkinson      ",
+    "entityName": "  mark     "
   },
   "UpdateNameFields": {
-    "firstName": "Gaurav",
-    "middleName": "Ajit",
-    "lastName": "Gidye",
-    "maidenName": "Gh"
+    "firstName": "jeremy",
+    "middleName": "Snider",
+    "lastName": "Pitter",
+    "maidenName": "Patty"
   },
   "GlobalContactVerification": {
     "entityName": "mark",
     "contactType": "Entity",
     "expectedButton": "Create Entity Contact",
-    "lastName": "Gidye26",
-    "firstName": "Gaurav26"
+    "lastName": "Anna",
+    "firstName": "Atkinson"
   }
 }

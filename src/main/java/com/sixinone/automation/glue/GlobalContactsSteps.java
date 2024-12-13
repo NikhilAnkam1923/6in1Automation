@@ -66,6 +66,7 @@ public class GlobalContactsSteps {
     @And("user verifies global contact saved successful message")
     public void userVerifiesGlobalContactSavedSuccessfulMessage() throws AutomationException {
         PageFactory.globalContactPage().verifyGlobalContactSaved();
+
     }
 
     @Then("^user verifies authorization for \"([^\"]*)\"$")
@@ -103,11 +104,6 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user should see that validation error messages are removed")
-    public void userShouldSeeValidationMessagesRemoved() throws AutomationException {
-        CommonSteps.logInfo("Verifying that validation error messages are removed after correcting the fields.");
-        PageFactory.globalContactPage().verifyNoValidationErrors();
-    }
 
     @Then("user navigates to the page with the records")
     public void userNavigatesToThePageWithTheRecords() throws AutomationException, IOException {
@@ -127,7 +123,6 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("Verifying that the " + buttonName + " button is enabled.");
         PageFactory.globalContactPage().isButtonEnabled(buttonName);
         CommonSteps.takeScreenshot();
-        PageFactory.globalContactPage().clickButton("Close");
     }
 
     @Then("^user enters \"([^\"]*)\" as the first name and \"([^\"]*)\" as the last name$")
@@ -170,45 +165,27 @@ public class GlobalContactsSteps {
         }
     }
 
-
-    @Then("^user verifies updated values are reflected in Global Contact List$")
-    public void userVerifiesUpdatedValuesInGlobalContactList() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying updated values are reflected in Global Contact List using filter");
-        PageFactory.globalContactPage().verifyUpdatedValuesInGlobalContactListUsingFilter();
-    }
-
-    @And("^Name fields are pre-filled$")
-    public void NameFieldsArePreFilled() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying Name fields are pre-filled");
-        PageFactory.globalContactPage().verifyNameFieldsArePreFilled();
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("^user verifies Suffix is selected from Dropdown$")
-    public void verifyOptionIsSelectedFromSuffixDropdown() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verifying the option is selected from the Suffix dropdown");
-        PageFactory.globalContactPage().verifySuffixOptionSelected();
-        CommonSteps.takeScreenshot();
-    }
-
     @Then("^user verifies all the matching records are displayed for Entity Global Contact$")
     public void userVerifiesAllMatchingRecordsDisplayed() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verifying that all displayed records match the entity name");
         PageFactory.globalContactPage().verifyMatchingRecordsDisplayed();
         CommonSteps.takeScreenshot();
     }
+
     @Then("^user verifies background color of the contact type$")
     public void userVerifiesBackgroundColorOfContactType() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verifying background color for the contact type");
         PageFactory.globalContactPage().verifyBackgroundColorForContactType();
         CommonSteps.takeScreenshot();
     }
+
     @Then("^user verifies radio buttons are available for all the contacts$")
     public void userVerifiesRadioButtonsForAllContacts() throws AutomationException {
         CommonSteps.logInfo("Verifying that radio buttons are available for all contacts");
         PageFactory.globalContactPage().verifyRadioButtonsForContacts();
         CommonSteps.takeScreenshot();
     }
+
     @Then("^user verifies Create Entity Contact button is available$")
     public void userVerifiesCreateEntityContactButtonIsAvailable() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verifying the 'Create Entity Contact' button is available");
@@ -230,6 +207,12 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @And("user click on the \"([^\"]*)\" button")
+    public void userClickOnTheButton(String button) throws AutomationException {
+        PageFactory.globalContactPage().clickOn(button);
+        CommonSteps.logInfo("click on " + button + "button");
+    }
+
     @Then("user enters already existed EIN")
     public void userEntersAlreadyExistedEIN() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters already existed EIN");
@@ -239,7 +222,7 @@ public class GlobalContactsSteps {
 
     @And("^user click on \"([^\"]*)\" Button in Footer$")
     public void userClickOnButtonInFooter(String btn) throws AutomationException {
-        CommonSteps.logInfo("user clicks on "+btn+" Button");
+        CommonSteps.logInfo("user clicks on " + btn + " Button");
         PageFactory.globalContactPage().clickButtonInFooter(btn);
     }
 
@@ -254,5 +237,20 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("user enters  data Address Line 1 Field");
         PageFactory.globalContactPage().enterAddressLine1();
     }
+
+    @Then("user see all the error messages are removed")
+    public void userSeeAllTheErrorMessagesAreRemoved() throws AutomationException {
+        CommonSteps.logInfo("see all the error messages are removed");
+        PageFactory.globalContactPage().verifyNoValidationErrors();
+    }
+
+    @And("^user verifies \"([^\"]*)\" button is available$")
+    public void userVerifiesButtonIsAvailable(String button) throws AutomationException {
+        PageFactory.globalContactPage().isButtonAvailable(button);
+        CommonSteps.logInfo("Verifies the " + button + " button availablability");
+        CommonSteps.takeScreenshot();
+    }
+
+
 }
 
