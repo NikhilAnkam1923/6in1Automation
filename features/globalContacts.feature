@@ -6,7 +6,7 @@ Feature: 6in1 Global Contacts Feature
     Given User launched "chrome"
     And user go to application "$6in1_url"
     When user login using "<user-email>" and "<password>"
-    Then user verifies the "Home" page
+    Then user verifies the Home page
     Examples:
       | user-email                           | password |
       | nikhilankam+11@benchmarkit.solutions | Watch@22 |
@@ -14,11 +14,11 @@ Feature: 6in1 Global Contacts Feature
   Scenario: User verify user is on the Global Contact Creation page
     When user navigate to "Global Contact"
     #verify landed on "Global Contacts" page
-    Then user verifies the "Global Contacts" page
+    Then user verifies the Global Contacts page
     #verify user authorization for "Licensed" user
     Then user verifies authorization for "Licensed"
-    When user clicks on the "Create" button
-    Then user verifies the "Global Contact Creation" page
+    When user clicks on the Create button
+    Then user verifies the Global Contact Creation page
 
   Scenario: Create and then Edit the same contact for Individual Global Contact
     And user "Create" global contact of "Individual Global Contact"
@@ -56,16 +56,16 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario: Verify Select & Proceed button is enabled after selecting a radio button
     When user navigate to "Global Contact"
-    When user clicks on the "Create" button
+    When user clicks on the Create button
     When user enters "Joe" as the first name and "Root" as the last name
     Then user navigates to the page with the records
-    Then user verifies the "Contact (Select or Create New)" page
+    Then user verifies the Contact (Select or Create New) page
     #verifies "Create Individual Contact" button availability
     And user verifies "Create Individual Contact" button is available
     And user selects a radio button for a record
     #verifies the "Select & Proceed" button is enable
     Then user verifies the "Select & Proceed" button is enabled
-    And user click on the "Close" button
+    And user click on the Close button
 
   Scenario: Verify that the system trims leading and trailing spaces from text input fields
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
@@ -75,12 +75,13 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies global contact saved successful message
 
   Scenario: Verify display result on entity name
+    When user clicks on the Create button
     And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
     Then user verifies all the matching records are displayed for Entity Global Contact
     Then user verifies background color of the "Entity Global Contact"
     Then user verifies radio buttons are available for all the contacts
     Then user verifies "Create Entity Contact" button is available
-    And user clicks on the "Close" button
+    And user clicks on the Close button
 
   Scenario Outline: verify user authorization for "View Only" user
     When user logged out from the application

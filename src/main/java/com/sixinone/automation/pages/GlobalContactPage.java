@@ -88,35 +88,29 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(String.format("//div[@class='nav']//div//*[contains(text(),'%s')]//parent::a", tab)).click();
     }
 
-    public void clickButton(String buttonName) throws AutomationException {
-        switch (buttonName) {
-            case "Create":
-                driverUtil.getWebElement(CREATE_BUTTON).click();
-                break;
-            case "Create Individual Contact":
-                driverUtil.getWebElement(CREATE_INDIVIDUAL_CONTACT_BTN).click();
-                break;
-            case "Create Entity Contact":
-                driverUtil.getWebElement(CREATE_ENTITY_CONTACT_BTN).click();
-                break;
-            case "Save":
-                driverUtil.getWebElement(SAVE_BUTTON).click();
-                break;
-            case "Radio Button":
-                driverUtil.getWebElement(RADIO_BUTTON).click();
-                break;
-            case "Edit":
-                driverUtil.getWebElement(EDIT_BUTTON).click();
-                break;
-            case "Select & Proceed":
-                driverUtil.getWebElement(SELECT_AND_PROCEED_BTN).click();
-                break;
-            case "Close":
-                driverUtil.getWebElement(CLOSE_BUTTON).click();
-                break;
-            default:
-                throw new AutomationException("Unknown button: " + buttonName);
-        }
+    public void clickButtonCreate() throws AutomationException {
+        driverUtil.getWebElement(CREATE_BUTTON).click();
+    }
+    public void clickButtonCreateIndividualContact() throws AutomationException {
+        driverUtil.getWebElement(CREATE_INDIVIDUAL_CONTACT_BTN).click();
+    }
+    public void clickButtonCreateEntityContact() throws AutomationException {
+        driverUtil.getWebElement(CREATE_ENTITY_CONTACT_BTN).click();
+    }
+    public void clickButtonSave() throws AutomationException {
+        driverUtil.getWebElement(SAVE_BUTTON).click();
+    }
+    public void clickButtonRadioButton() throws AutomationException {
+        driverUtil.getWebElement(RADIO_BUTTON).click();
+    }
+    public void clickButtonEdit() throws AutomationException {
+        driverUtil.getWebElement(EDIT_BUTTON).click();
+    }
+    public void clickButtonSelectAndProceed() throws AutomationException {
+        driverUtil.getWebElement(SELECT_AND_PROCEED_BTN).click();
+    }
+    public void clickButtonClose() throws AutomationException {
+        driverUtil.getWebElement(CLOSE_BUTTON).click();
     }
 
     public void clearFields() throws AutomationException {
@@ -124,7 +118,7 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD_CREATE).clear();
     }
 
-    public void globalContactCreation(String action, String contactType) throws AutomationException, IOException, ParseException {
+    public void globalContactCreation(String contactType) throws AutomationException, IOException, ParseException {
         //clickButton(action);
         switch (contactType) {
             case "Individual Global Contact":
@@ -133,14 +127,14 @@ public class GlobalContactPage extends BasePage {
                 driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD).sendKeys(CommonUtil.getJsonPath("Create").get("Create.firstName").toString() + CommonUtil.currentDateAndTime());
                 firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
                 lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value");
-                clickButton("Create Individual Contact");
+                clickButtonCreateIndividualContact();
                 break;
             case "Entity Global Contact":
-                clickButton(action);
+                clickButtonCreate();
                 waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
                 driverUtil.getWebElementAndScroll(ENTITY_NAME_FIELD).sendKeys(CommonUtil.getJsonPath("Create").get("Create.entityName").toString() + CommonUtil.currentDateAndTime());
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value");
-                clickButton("Create Entity Contact");
+                clickButtonCreateEntityContact();
                 break;
             default:
                 throw new AutomationException("Unknown button: " + " ");
@@ -293,21 +287,21 @@ public class GlobalContactPage extends BasePage {
         return contactType;
     }
 
-    public void globalContactEdit(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
+    public void globalContactEdit(String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         firstName = filterByName();
         filterByContactType(contactType.replace("Global Contact", "").trim());
         driverUtil.getWebElement(ACTIONS_BUTTON).click();
         //driverUtil.waitForElementToBeClickable(action);
-        clickButton(action);
+        clickButtonEdit();
         //driverUtil.waitForLoaderToDisappear();
         switch (contactType) {
             case "Individual Global Contact":
                 contactInformationFieldsForEdit("Individual Global Contact");
-                clickButton("Save");
+                clickButtonSave();
                 break;
             case "Entity Global Contact":
                 contactInformationFieldsForEdit("Entity Global Contact");
-                clickButton("Save");
+                clickButtonSave();
                 break;
         }
         CommonSteps.takeScreenshot();
@@ -347,7 +341,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void saveGlobalContact() throws AutomationException, IOException {
-        clickButton("Save");
+        clickButtonSave();
     }
 
     public void verifyGlobalContactSaved() throws AutomationException {
@@ -361,35 +355,63 @@ public class GlobalContactPage extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    public void verifyPageElements(String pageElement) throws AutomationException {
+    public void verifyPageGlobalContacts() throws AutomationException {
         WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        WebElement element = null;
-        switch (pageElement) {
-            case "Global Contacts":
-                element = driverUtil.getWebElement(GLOBAL_CONTACTS_PAGE);
-                break;
-            case "Home":
-                element = driverUtil.getWebElement(HOME_PAGE);
-                break;
-            case "Global Contact Creation":
-                element = driverUtil.getWebElement(GLOBAL_CONTACT_CREATION_PAGE);
-                break;
-            case "Individual Global Contact Creation":
-                element = driverUtil.getWebElement(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE);
-                break;
-            case "Entity Global Contact Creation":
-                element = driverUtil.getWebElement(ENTITY_GLOBAL_CONTACT_CREATION_PAGE);
-                break;
-            case "Contact (Select or Create New)":
-                element = driverUtil.getWebElement(SELECT_OR_CREATENEW_PAGE);
-                break;
-            default:
-                throw new AutomationException("Unknown page: " + element);
-        }
+        WebElement element =driverUtil.getWebElement(GLOBAL_CONTACTS_PAGE);
         if (element != null) {
             waitForVisibleElement(element);
         } else {
-            throw new AutomationException(String.format("%s Page is not displayed or it takes time to load", pageElement));
+            throw new AutomationException("Page is not displayed or it takes time to load");
+        }
+    }
+
+    public void verifyPageHome() throws AutomationException {
+        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebElement element = driverUtil.getWebElement(HOME_PAGE);
+        if (element != null) {
+            waitForVisibleElement(element);
+        } else {
+            throw new AutomationException("Page is not displayed or it takes time to load");
+        }
+    }
+
+    public void verifyPageGlobalContactCreation() throws AutomationException {
+        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebElement  element = driverUtil.getWebElement(GLOBAL_CONTACT_CREATION_PAGE);
+        if (element != null) {
+            waitForVisibleElement(element);
+        } else {
+            throw new AutomationException("Page is not displayed or it takes time to load");
+        }
+    }
+
+    public void verifyPageIndividualGlobalContactCreation() throws AutomationException {
+        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebElement element = driverUtil.getWebElement(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE);
+        if (element != null) {
+            waitForVisibleElement(element);
+        } else {
+            throw new AutomationException("Page is not displayed or it takes time to load");
+        }
+    }
+
+    public void verifyPageEntityGlobalContactCreation() throws AutomationException {
+        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebElement element = driverUtil.getWebElement(ENTITY_GLOBAL_CONTACT_CREATION_PAGE);
+        if (element != null) {
+            waitForVisibleElement(element);
+        } else {
+            throw new AutomationException("Page is not displayed or it takes time to load");
+        }
+    }
+
+    public void verifyPageContactSelectorCreateNew() throws AutomationException {
+        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebElement element = driverUtil.getWebElement(SELECT_OR_CREATENEW_PAGE);
+        if (element != null) {
+            waitForVisibleElement(element);
+        } else {
+            throw new AutomationException("Page is not displayed or it takes time to load");
         }
     }
 
@@ -451,8 +473,8 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-    public void globalContactCreationWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException {
-        clickButton(action);
+    public void globalContactCreationWithSpaces(String contactType) throws AutomationException, IOException, ParseException {
+//        clickButtonCreate();
         WebDriverUtil.waitForAWhile(2);
         switch (contactType) {
             case "Individual Global Contact":
@@ -469,7 +491,7 @@ public class GlobalContactPage extends BasePage {
                 CommonSteps.takeScreenshot();
                 firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value").trim();
                 lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value").trim();
-                clickButton("Create Individual Contact");
+                clickButtonCreateIndividualContact();
                 break;
             case "Entity Global Contact":
                 waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
@@ -478,18 +500,18 @@ public class GlobalContactPage extends BasePage {
                 entityNameField.clear();
                 entityNameField.sendKeys("    "+entityNameWithSpaces+"    ");
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value").trim();
-                clickButton("Create Entity Contact");
+                clickButtonCreateEntityContact();
                 break;
             default:
                 throw new AutomationException("Unknown contact type: " + contactType);
         }
     }
 
-    public void globalContactEditWithSpaces(String action, String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
+    public void globalContactEditWithSpaces(String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         firstName = filterByName();
         filterByContactType(contactType.replace("Global Contact", "").trim());
         driverUtil.getWebElement(ACTIONS_BUTTON).click();
-        clickButton(action);
+        clickButtonEdit();
         WebDriverUtil.waitForAWhile(2);
         switch (contactType) {
             case "Individual Global Contact":
@@ -504,7 +526,7 @@ public class GlobalContactPage extends BasePage {
                 CommonSteps.takeScreenshot();
                 firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value").trim();
                 lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value").trim();
-                clickButton("Save");
+                clickButtonSave();
                 break;
             case "Entity Global Contact":
                 String updatedEntityName = CommonUtil.getJsonPath("EditWithSpaces").get("EditWithSpaces.entityName").toString();
@@ -512,7 +534,7 @@ public class GlobalContactPage extends BasePage {
                 entityNameField.clear();
                 entityNameField.sendKeys(updatedEntityName);
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value").trim();
-                clickButton("Save");
+                clickButtonSave();
                 break;
             default:
                 throw new AutomationException("Unknown contact type: " + contactType);
