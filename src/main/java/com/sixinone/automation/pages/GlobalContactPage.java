@@ -66,10 +66,11 @@ public class GlobalContactPage extends BasePage {
     private static final String CONTACT_NAMES_COLUMN = "//td[@aria-colindex='2']";
     public static final String RADIO_BUTTON = "//input[@type='radio']";
     public static final String EDIT_BUTTON = "//a[text()='Edit']";
-    public static final String SELECT_AND_PROCEED_BTN ="//button[contains(text(),'Select & Proceed')]";
+    public static final String SELECT_AND_PROCEED_BTN = "//button[contains(text(),'Select & Proceed')]";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
     public static final String CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='3'] //input[@aria-label='Filter']";
     public static final String CONTACT_TYPE_FILTER_INPUT_RECORDS = "//th[@aria-colindex='5'] //input[@aria-label='Filter']";
+    // public static final String CONTACT_TYPE_FILTER_INPUT_RECORDS = "//span[@id=':r7t:']/parent::div[@class='k-filtercell-operator']/parent::div/span/input[@aria-label='Filter']";
     public static final String ACTIONS_BUTTON = "//td[@class='action-column text-center']//button[@class='dropdown-toggle btn btn-primary']";
     public static final String CONTACT_NAME_XPATH = "(//a[contains(@class,'column-edit-link')][text()='%s, %s'])[1]";
     public static final String ENTITY_NAME_FIELD = "//input[@name='entityName']";
@@ -91,25 +92,32 @@ public class GlobalContactPage extends BasePage {
     public void clickButtonCreate() throws AutomationException {
         driverUtil.getWebElement(CREATE_BUTTON).click();
     }
+
     public void clickButtonCreateIndividualContact() throws AutomationException {
         waitForAWhile(1);
         driverUtil.getWebElement(CREATE_INDIVIDUAL_CONTACT_BTN).click();
     }
+
     public void clickButtonCreateEntityContact() throws AutomationException {
         driverUtil.getWebElement(CREATE_ENTITY_CONTACT_BTN).click();
     }
+
     public void clickButtonSave() throws AutomationException {
         driverUtil.getWebElement(SAVE_BUTTON).click();
     }
+
     public void clickButtonRadioButton() throws AutomationException {
         driverUtil.getWebElement(RADIO_BUTTON).click();
     }
+
     public void clickButtonEdit() throws AutomationException {
         driverUtil.getWebElement(EDIT_BUTTON).click();
     }
+
     public void clickButtonSelectAndProceed() throws AutomationException {
         driverUtil.getWebElement(SELECT_AND_PROCEED_BTN).click();
     }
+
     public void clickButtonClose() throws AutomationException {
         driverUtil.getWebElement(CLOSE_BUTTON).click();
     }
@@ -245,6 +253,7 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(field)
                 .click()
                 .sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString())
+                .build()
                 .perform();
     }
 
@@ -259,6 +268,7 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(field)
                 .click()
                 .sendKeys(CommonUtil.getJsonPath("CreateWithSpaces").get(jsonKey).toString().trim())
+                .build()
                 .perform();
     }
 
@@ -267,6 +277,7 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(field)
                 .click()
                 .sendKeys(value)
+                .build()
                 .perform();
     }
 
@@ -357,8 +368,8 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyPageGlobalContacts() throws AutomationException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        WebElement element =driverUtil.getWebElement(GLOBAL_CONTACTS_PAGE);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebElement element = driverUtil.getWebElement(GLOBAL_CONTACTS_PAGE);
         if (element != null) {
             waitForVisibleElement(element);
         } else {
@@ -367,7 +378,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyPageHome() throws AutomationException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebElement element = driverUtil.getWebElement(HOME_PAGE);
         if (element != null) {
             waitForVisibleElement(element);
@@ -377,8 +388,8 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyPageGlobalContactCreation() throws AutomationException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        WebElement  element = driverUtil.getWebElement(GLOBAL_CONTACT_CREATION_PAGE);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebElement element = driverUtil.getWebElement(GLOBAL_CONTACT_CREATION_PAGE);
         if (element != null) {
             waitForVisibleElement(element);
         } else {
@@ -387,7 +398,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyPageIndividualGlobalContactCreation() throws AutomationException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebElement element = driverUtil.getWebElement(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE);
         if (element != null) {
             waitForVisibleElement(element);
@@ -402,7 +413,6 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void enterDataInZipField() throws AutomationException, IOException, ParseException {
-        //WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ZIP).sendKeys(CommonUtil.getJsonPath("Create").get("Create.zip").toString() + Keys.ENTER);
         waitForAWhile();
@@ -416,10 +426,6 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyfirstNamelastNameFieldPrefilled() throws AutomationException {
-        //WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-
-        //WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-
         String actualFirstName = driverUtil.getWebElement(FIRST_NAME_FIELD_CREATE).getAttribute("value");
         String actualLastName = driverUtil.getWebElement(LAST_NAME_FIELD_CREATE).getAttribute("value");
 
@@ -461,30 +467,28 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void globalContactCreationWithSpaces(String contactType) throws AutomationException, IOException, ParseException {
-        //clickButton(action);
-       // WebDriverUtil.waitForAWhile(2);
         switch (contactType) {
             case "Individual Global Contact":
-                waitForVisibleElement(By.xpath(CREATE_INDIVIDUAL_CONTACT_BTN));
-                String firstNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.firstName").toString()+CommonUtil.currentDateAndTime();
-                String lastNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.lastName").toString()+CommonUtil.currentDateAndTime();
+                //waitForVisibleElement(By.xpath(CREATE_INDIVIDUAL_CONTACT_BTN));
+                String firstNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.firstName").toString() + CommonUtil.currentDateAndTime();
+                String lastNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.lastName").toString() + CommonUtil.currentDateAndTime();
                 WebElement lastNameField = driverUtil.getWebElementAndScroll(LAST_NAME_FIELD);
                 WebElement firstNameField = driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD);
                 lastNameField.clear();
-                lastNameField.sendKeys("  "+lastNameWithSpaces+"    ");
+                lastNameField.sendKeys("  " + lastNameWithSpaces + "    ");
                 firstNameField.clear();
-                firstNameField.sendKeys("  "+firstNameWithSpaces+"    ");
+                firstNameField.sendKeys("  " + firstNameWithSpaces + "    ");
                 CommonSteps.takeScreenshot();
                 firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value").trim();
                 lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value").trim();
                 clickButtonCreateIndividualContact();
                 break;
             case "Entity Global Contact":
-                waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
+                //waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
                 String entityNameWithSpaces = CommonUtil.getJsonPath("CreateWithSpaces").get("CreateWithSpaces.entityName").toString();
                 WebElement entityNameField = driverUtil.getWebElementAndScroll(ENTITY_NAME_FIELD);
                 entityNameField.clear();
-                entityNameField.sendKeys("    "+entityNameWithSpaces+"    ");
+                entityNameField.sendKeys("    " + entityNameWithSpaces + "    ");
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value").trim();
                 clickButtonCreateEntityContact();
                 break;
@@ -494,7 +498,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyPageContactSelectorCreateNew() throws AutomationException {
-        WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebElement element = driverUtil.getWebElement(SELECT_OR_CREATENEW_PAGE);
         if (element != null) {
             waitForVisibleElement(element);
@@ -581,7 +585,6 @@ public class GlobalContactPage extends BasePage {
             return false;
         }
         nextPageButton.click();
-        //WebDriverUtil.waitForElementNotVisible(60, SPINNER);
         waitForInvisibleElement(By.xpath(SPINNER));
         return true;
     }
@@ -598,7 +601,6 @@ public class GlobalContactPage extends BasePage {
                 break;
             }
             nextPageButton.click();
-            //WebDriverUtil.waitForElementNotVisible(30, SPINNER);
             waitForInvisibleElement(By.xpath(SPINNER));
 
         }
@@ -627,7 +629,6 @@ public class GlobalContactPage extends BasePage {
         switch (userType) {
             case "Licensed":
                 waitForVisibleElement(By.xpath(CREATE_BUTTON));
-                //waitForElementClickable(By.xpath(CREATE_BUTTON), 1);
                 if (driverUtil.getWebElement(CREATE_BUTTON).isDisplayed() && driverUtil.getWebElement(CREATE_BUTTON).isEnabled()) {
                     //clickButton("Create");
                     CommonSteps.logInfo(userType + " user: Create button is Visible & Clickable and indicating eligibility to create Global Contacts.");
@@ -728,11 +729,20 @@ public class GlobalContactPage extends BasePage {
                 }
             }
             WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
+
+            if (nextPageButton == null) {
+                CommonSteps.logInfo("Next page button is not found. Exiting pagination.");
                 break;
             }
+
+            String isDisabled = nextPageButton.getAttribute("aria-disabled");
+            if ("true".equals(isDisabled)) {
+                CommonSteps.logInfo("Next page button is disabled. Reached the last page.");
+                break;
+            }
+
             nextPageButton.click();
-            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         }
         return entityNames;
     }
@@ -762,7 +772,7 @@ public class GlobalContactPage extends BasePage {
                 break;
             }
             nextPageButton.click();
-            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
+            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         }
         return contactNames;
     }
