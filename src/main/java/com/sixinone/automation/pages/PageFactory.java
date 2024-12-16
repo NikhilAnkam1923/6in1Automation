@@ -6,6 +6,7 @@ public class PageFactory {
     private static ThreadLocal<PageFactory> factory = new ThreadLocal<>();
     public LoginPage loginPage;
     public GlobalContactPage globalContactPage;
+    public EstateCreationPage estateCreationPage;
 
     private PageFactory() throws IOException {
 
@@ -26,6 +27,10 @@ public class PageFactory {
 
     public static GlobalContactPage globalContactPage() {
         return factory.get().globalContactPage;
+    }
+
+    public static EstateCreationPage estateCreationPage() {
+        return factory.get().estateCreationPage;
     }
 }
 
