@@ -547,6 +547,7 @@ public class GlobalContactPage extends BasePage {
 
     public void verifyMatchingRecordsDisplayed() throws AutomationException, IOException, ParseException {
         waitForInvisibleElement(By.xpath(SPINNER));
+        filterByContactTypeOnRecords("Entity");
         String expectedEntityName = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.entityName").toString();
         List<String> displayedEntityNames = getAllDisplayedEntityNames();
         boolean allMatch = displayedEntityNames.stream()
@@ -558,7 +559,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyBackgroundColorForContactType(String contactType) throws AutomationException, IOException, ParseException {
-        filterByContactTypeOnRecords(contactType.replace("Global Contact", "").trim());
+//        filterByContactTypeOnRecords(contactType.replace("Global Contact", "").trim());
         String expectedClass = contactType.equalsIgnoreCase("Entity") ? "entity-row-color" : "";
         List<String> mismatchedRows = new ArrayList<>();
         do {
@@ -719,7 +720,8 @@ public class GlobalContactPage extends BasePage {
 
     public List<String> getAllDisplayedEntityNames() throws AutomationException {
         List<String> entityNames = new ArrayList<>();
-        while (true) {
+
+        do {
             List<WebElement> nameElements = driverUtil.getWebElements(ENTITY_NAMES_COLUMN);
             for (WebElement nameElement : nameElements) {
                 String nameText = nameElement.getText().trim();
@@ -727,13 +729,8 @@ public class GlobalContactPage extends BasePage {
                     entityNames.add(nameText);
                 }
             }
-            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
-                break;
-            }
-            nextPageButton.click();
-            WebDriverUtil.waitForElementNotVisible(60, SPINNER);
-        }
+        } while (clickNextPage());
+
         return entityNames;
     }
 
