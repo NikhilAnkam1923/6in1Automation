@@ -11,15 +11,20 @@ Feature: 6in1 Global Contacts Feature
       | user-email                           | password |
       | nikhilankam+11@benchmarkit.solutions | Watch@22 |
 
-Scenario: user verify after filling decendent information clicking on next button other details are opened
-  When user clicks on the Create button
-  Then user fills the first name,last name and SSN details
-  And user click on Proceed button
-  Then user see the Create a new estate with the entered name button for new user
-  And user click on Create a new estate with the entered name button for new user
-  Then user fills decendent basic information for new user
-  And user click on Next button
-  Then verify other details page is opened
+
+  Scenario: user verify after filling decedent information clicking on next button other details are opened
+    When user clicks on the Create button
+    Then user fills the first name,last name and SSN details
+    And user click on Proceed button
+    Then user see the Create a new estate with the entered name button for new user
+    And user click on Create a new estate with the entered name button for new user
+    Then user fills decedent basic information for new user
+    And user click on Next button
+    Then verify Decedent details page is opened
+
+  Scenario: Verify validations for all the fields under last address/domicile
+    When user fill Last Address/Domicile details
+
 
 
   @Setup

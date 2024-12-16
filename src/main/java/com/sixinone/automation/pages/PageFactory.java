@@ -12,6 +12,7 @@ public class PageFactory {
 
         loginPage = new LoginPage();
         globalContactPage = new GlobalContactPage();
+        estateCreationPage = new EstateCreationPage();
     }
 
     public static void init() throws IOException {

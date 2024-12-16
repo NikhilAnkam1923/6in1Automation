@@ -79,5 +79,14 @@
     "expectedButton": "Create Entity Contact",
     "lastName": "Anna",
     "firstName": "Atkinson"
+  },
+  "EstateCreate": {
+    "firstName": "jeremy",
+    "middleName": "A.",
+    "lastName": "Pitter",
+    "displayName": "John Doe",
+    "alsoKnownAs": "Johnny",
+    "ssn": "123-33-0923",
+    "suffix": "Jr."
   }
 }
