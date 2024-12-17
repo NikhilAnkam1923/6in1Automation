@@ -8,12 +8,9 @@ import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
-
-import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class EstateCreationPage extends BasePage{
 
@@ -33,7 +30,8 @@ public class EstateCreationPage extends BasePage{
     private static final String DROPDOWN_LABEL = "//label[text()='%s']/following-sibling::div/span/following-sibling::div//div[contains(@class,'select__indicators')]";
     private static final String SELECT_OPTION = "//div[contains(@class,'select__menu-list')]//div[text()='%s']";
     private static final String DECEDENT_DETAILS_PAGE = "//button[text()='Decedent Info']";
-
+    private static final String MAX_CHAR_LIMIT_ERROR = "//div[@class='invalid-feedback' and contains(text(),'You have exceeded the maximum character limit of 100')]";
+    private static final String SPECIAL_CHAR_ERROR = "//div[@class='invalid-feedback' and contains(text(),'Allowed special characters are , / and &')]";
     private static final String ADDRESS_LINE1 = "//input[@name='domicileAddress.addressLine1']";
     private static final String ADDRESS_LINE2 = "//input[@name='domicileAddress.addressLine2']";
     private static final String ZIP = "//input[@name='domicileAddress.zip']";
@@ -132,6 +130,62 @@ public class EstateCreationPage extends BasePage{
         CommonSteps.logInfo("Verified the 'Decedent Details' page is opened.");
     }
 
+    private String getFieldValue(String locator, String attribute) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(locator, 5);
+        if (field != null) {
+            return attribute.equalsIgnoreCase("value") ? field.getAttribute("value") : field.getText().trim();
+        } else {
+            throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
+
+    public void verifyAutoFetchedFields() throws AutomationException, IOException, ParseException {
+        String expectedCity = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.city").toString();
+        String expectedState = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.state").toString();
+        String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.country").toString();
+        WebDriverUtil.waitForAWhile(2);
+        String actualCity = getFieldValue(CITY, "value");
+        String actualState = getFieldValue(STATE, "text");
+        String actualCounty = getFieldValue(COUNTRY, "value");
+        if (!expectedCity.equals(actualCity) || !expectedState.equals(actualState) || !expectedCounty.equals(actualCounty)) {
+            throw new AutomationException("City, State, or County values are incorrect or not fetched automatically. ");
+        }
+    }
+
+    public void fillLastAddressDomicileDetails() throws AutomationException, IOException, ParseException {
+        fillField(ADDRESS_LINE1, "EstateCreate.addressLine1");
+        fillField(ADDRESS_LINE2, "EstateCreate.addressLine2");
+        fillField(ZIP, "EstateCreate.zip");
+        driverUtil.getWebElement(ADDRESS_LINE2).click();
+        verifyAutoFetchedFields();
+        fillField(MUNICIPALITY, "EstateCreate.municipality");
+        CommonSteps.logInfo("Last Address/Domicile details have been filled successfully.");
+    }
+
+    public void verifyFieldValidations() throws AutomationException {
+        WebElement addressLine1 = driverUtil.getWebElement(ADDRESS_LINE1);
+        WebElement addressLine2 = driverUtil.getWebElement(ADDRESS_LINE2);
+        addressLine1.clear();
+        addressLine2.clear();
+        addressLine1.sendKeys("A".repeat(101));
+        addressLine2.sendKeys("B".repeat(101));
+        driverUtil.getWebElement(ZIP).click();
+        WebElement errorMaxChar = driverUtil.getWebElement(MAX_CHAR_LIMIT_ERROR);
+        if (errorMaxChar == null || !errorMaxChar.isDisplayed()) {
+            throw new AutomationException("Validation for exceeding max character limit is not displayed.");
+        }
+
+        addressLine1.clear();
+        addressLine2.clear();
+        addressLine1.sendKeys("Invalid@#$%");
+        addressLine2.sendKeys("##@@Invalid");
+        driverUtil.getWebElement(ZIP).click();
+        WebElement errorSpecialChar = driverUtil.getWebElement(SPECIAL_CHAR_ERROR);
+        if (errorSpecialChar == null || !errorSpecialChar.isDisplayed()) {
+            throw new AutomationException("Validation for allowed special characters is not displayed.");
+        }
+        CommonSteps.logInfo("Verified Validations for all fields under last address/domicile.");
+    }
 
     private void verifyRadioButtonSelection(WebElement selected, WebElement unselected) throws AutomationException {
         if (!selected.isSelected() || unselected.isSelected()) {
@@ -149,9 +203,7 @@ public class EstateCreationPage extends BasePage{
         verifyRadioButtonSelection(townshipRadio, boroughRadio);
         boroughRadio.click();
         verifyRadioButtonSelection(boroughRadio, townshipRadio);
-        CommonSteps.logInfo("Township and Borough radio buttons toggle correctly.");
+        CommonSteps.logInfo("Verified Township and Borough radio buttons toggle correctly.");
     }
-
-
 
 }

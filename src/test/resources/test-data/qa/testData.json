@@ -87,6 +87,13 @@
     "displayName": "John Doe",
     "alsoKnownAs": "Johnny",
     "ssn": "123-33-0923",
-    "suffix": "Jr."
+    "suffix": "Jr.",
+    "addressLine1": "123 Elm Street",
+    "addressLine2": "Apartment 4B",
+    "zip": "40007",
+    "city": "Bethlehem",
+    "state":"Kentucky",
+    "country": "Henry",
+    "municipality": "Test Municipality"
   }
 }

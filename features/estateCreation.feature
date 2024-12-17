@@ -24,6 +24,8 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario: Verify validations for all the fields under last address/domicile
     When user fill Last Address/Domicile details
+    Then user verify validations for all the fields
+    And user verifies Township and Borough radio buttons toggle correctly
 
 
 
