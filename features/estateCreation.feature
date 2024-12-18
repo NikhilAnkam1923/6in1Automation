@@ -22,6 +22,15 @@ Feature: 6in1 Global Contacts Feature
     And user click on Next button
     Then verify Decedent details page is opened
 
+  Scenario: Verify validations for all the fields under last address/domicile
+    When user fill Last Address/Domicile details
+    Then user verify validations for all the fields of Last Address/Domicile
+    And user verifies Township and Borough radio buttons toggle correctly
+
+  Scenario: Verify validations for place of deaths
+    When user fills Place of Death details
+    Then user verify validations for all the fields of Place of Death
+
   Scenario: Verify Life Details fields, validations, and behaviors
     #verify Last Residence field validation for invalid input
     When user enters invalid input in the Last Residence field
@@ -40,6 +49,26 @@ Feature: 6in1 Global Contacts Feature
     Then the system calculate and displays correct Age at Death
 #   And user enters an invalid Date of Death earlier than Date of Birth
 #   Then the validation error message should be displayed
+
+  Scenario: Verify an estate is saved with all the fields
+    When user fill Life Details
+    And user clicks on Estate tab
+    And user fills Estate details
+    And user clicks on Decedent Info tab
+    Then user verify each field of Decedent Info retained the entered value
+    And user clicks on Estate tab
+    Then user verify each field of Estate retained the entered value
+
+  Scenario: Verify validations for file number
+    Then user verifies validations for File Number Fields
+
+  Scenario: Verify created estate can be archived
+    When user clicks on Actions menu of Estate "Estate of John Doe"
+    And user selects "Archive" option
+    And user selects Reason For Archive
+    And user enters Archive Description
+    And user clicks on Archive Button
+    And user verifies Estate archived successful message
 
   Scenario Outline: verify user authorization for "View Only" user
     When user logged out from the application
