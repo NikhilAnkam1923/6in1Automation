@@ -24,9 +24,32 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario: Verify validations for all the fields under last address/domicile
     When user fill Last Address/Domicile details
-    Then user verify validations for all the fields
+    Then user verify validations for all the fields of Last Address/Domicile
     And user verifies Township and Borough radio buttons toggle correctly
 
+  Scenario: Verify validations for place of deaths
+    When user fills Place of Death details
+    Then user verify validations for all the fields of Place of Death
+
+  Scenario: Verify an estate is saved with all the fields
+    When user fill Life Details
+    And user clicks on Estate tab
+    And user fills Estate details
+    And user clicks on Decedent Info tab
+    Then user verify each field of Decedent Info retained the entered value
+    And user clicks on Estate tab
+    Then user verify each field of Estate retained the entered value
+
+  Scenario: Verify validations for file number
+    Then user verifies validations for File Number Fields
+
+  Scenario: Verify created estate can be archived
+    When user clicks on Actions menu of Estate "Estate of John Doe"
+    And user selects "Archive" option
+    And user selects Reason For Archive
+    And user enters Archive Description
+    And user clicks on Archive Button
+    And user verifies Estate archived successful message
 
 
   @Setup
