@@ -14,7 +14,7 @@
     "addressLine2": "Jack Market",
     "zip": "40007",
     "city": "Bethlehem",
-    "state":"Kentucky",
+    "state": "Kentucky",
     "country": "Henry",
     "ssn": "123-33-0923",
     "ein": "11-6153433",
@@ -58,7 +58,7 @@
     "addressLine2": "  Jack Market  ",
     "zip": "40007",
     "city": "Bethlehem",
-    "state":"Kentucky",
+    "state": "Kentucky",
     "country": "Henry",
     "ssn": "123-33-0923",
     "ein": "11-6153433",
@@ -81,12 +81,21 @@
     "firstName": "Atkinson"
   },
   "EstateCreate": {
-    "firstName": "jeremy",
+    "firstName": "Amigo",
     "middleName": "A.",
-    "lastName": "Pitter",
-    "displayName": "John Doe",
-    "alsoKnownAs": "Johnny",
+    "lastName": "Jack",
+    "displayName": "Amigo Jack",
+    "alsoKnownAs": "Jacky",
     "ssn": "123-33-0923",
     "suffix": "Jr."
+  },
+  "EstateLifeDetails": {
+    "lastResidenceInvalid": "chjdsvcdsdchjgdchjdsagchjdgjhdsagchdsgccghdghsagdgccghdsagccdhcdghjdgyudcgdsygcjdsgcsdvcdsvcdsvcjdsavcdsvcjvcsa",
+    "lastResidence":"Jiange",
+    "dateOfBirth": "02/11/1990",
+    "dateOfDeath": "02/11/2022",
+    "altValDate": "01/04/2022",
+    "maritalStatusDivorced":"Divorced",
+    "maritalStatusOthers": "Married"
   }
 }

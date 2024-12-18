@@ -283,5 +283,6 @@ public class GlobalContactsSteps {
         PageFactory.globalContactPage().verifyPageHome();
         CommonSteps.takeScreenshot();
     }
+
 }
 
