@@ -384,7 +384,6 @@ public class EstateCreationPage extends BasePage {
     public void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
         fieldElement.sendKeys(Keys.CONTROL + "a");
-        waitForAWhile(2);
         fieldElement.sendKeys(Keys.BACK_SPACE);
     }
 
