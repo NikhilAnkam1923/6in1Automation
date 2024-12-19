@@ -135,6 +135,7 @@ public class EstateCreationPage extends BasePage {
         fillField(FIRST_NAME_FIELD, "EstateCreate.firstName");
         fillField(LAST_NAME_FIELD, "EstateCreate.lastName");
         fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+        decedentSSN = randomSSN;
     }
 
     public void clickOnProceedButton() throws AutomationException {
@@ -232,8 +233,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillLastAddressDomicileDetails() throws AutomationException, IOException, ParseException {
-        decedentSSN = driverUtil.getWebElement(DECEDENT_SSN).getAttribute("value");
-
         clearField(DOMICILE_ADDRESS_LINE1);
         fillField(DOMICILE_ADDRESS_LINE1, "EstateCreate.addressLine1");
         clearField(DOMICILE_ADDRESS_LINE2);
@@ -461,7 +460,7 @@ public class EstateCreationPage extends BasePage {
         String expectedDateOfBirth = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfBirth").toString();
         String expectedDateOfDeath = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfDeath").toString();
         String expectedAltValDate = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.altValDate").toString();
-        String expectedMaritalStatus = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatus").toString();
+        String expectedMaritalStatus = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatusOthers").toString();
 
         WebDriverUtil.waitForAWhile(1);
         String actualFirstName = getFieldValue(DECEDENT_FIRST_NAME, "value");
