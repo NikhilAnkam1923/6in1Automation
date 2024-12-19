@@ -71,18 +71,17 @@ Feature: 6in1 Global Contacts Feature
     When user fill Life Details
     And user clicks on Estate tab
     And user fills Estate details
+    # Verify validations for file number
+    Then user verifies validations for File Number Fields
     And user clicks on Decedent Info tab
     Then user verify each field of Decedent Info retained the entered value
     And user clicks on Estate tab
     Then user verify each field of Estate retained the entered value
 
-  Scenario: Verify validations for file number
-    Then user verifies validations for File Number Fields
-
   Scenario: Verify created estate can be archived
-    When user clicks on Actions menu of Estate "Estate of John Doe"
+    When user clicks on Actions menu of Estate "Amigo Jack"
     And user selects "Archive" option
-    And user selects Reason For Archive
+    And user selects Reason "Estate Closed" For Archive
     And user enters Archive Description
     And user clicks on Archive Button
     And user verifies Estate archived successful message

@@ -96,6 +96,7 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_3_ERR = "//div[@class='invalid-feedback' and contains(text(),'File Number must be at least 4 digits.')]";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
     private static final String SSN_ERROR_MESSAGE = "//div[@class='invalid-feedback' and contains(text(), 'SSN')]";
+    private static final String NAME_FILTER = "//th[@aria-label='Filter' and @aria-colindex='1']/div/div/span/input";
 
     static String ageAtDeath;
     static String decedentSSN;
@@ -137,6 +138,7 @@ public class EstateCreationPage extends BasePage {
         fillField(FIRST_NAME_FIELD, "EstateCreate.firstName");
         fillField(LAST_NAME_FIELD, "EstateCreate.lastName");
         fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+        decedentSSN = randomSSN;
     }
 
     public void clickOnProceedButton() throws AutomationException {
@@ -152,11 +154,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void clickCreateNewEstateButton() throws AutomationException {
-        WebElement createEstateButton = driverUtil.getWebElement(CREATE_NEW_ESTATE_BTN);
-        if (createEstateButton == null) {
-            throw new AutomationException("'Create a new estate with the entered name' button is not found.");
-        }
-        createEstateButton.click();
+        driverUtil.getWebElement(CREATE_NEW_ESTATE_BTN).click();
     }
 
     public void selectSuffixOption() throws AutomationException, IOException, ParseException {
@@ -201,7 +199,6 @@ public class EstateCreationPage extends BasePage {
         if (page == null || !page.isDisplayed()) {
             throw new AutomationException("The 'Decedent Details' page is not opened.");
         }
-        CommonSteps.logInfo("Verified the 'Decedent Details' page is opened.");
     }
 
     private static String getFieldValue(String locator, String attribute) throws AutomationException {
@@ -240,8 +237,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillLastAddressDomicileDetails() throws AutomationException, IOException, ParseException {
-        decedentSSN = driverUtil.getWebElement(DECEDENT_SSN).getAttribute("value");
-
         clearField(DOMICILE_ADDRESS_LINE1);
         fillField(DOMICILE_ADDRESS_LINE1, "EstateCreate.addressLine1");
         clearField(DOMICILE_ADDRESS_LINE2);
@@ -252,7 +247,6 @@ public class EstateCreationPage extends BasePage {
         verifyAutoFetchedFieldsOfDomicileAddress();
         clearField(DOMICILE_MUNICIPALITY);
         fillField(DOMICILE_MUNICIPALITY, "EstateCreate.municipality");
-        CommonSteps.logInfo("User Filled The Last Address/Domicile details.");
     }
 
     public void verifyDomicileAddressFieldValidations() throws AutomationException, IOException, ParseException {
@@ -388,12 +382,9 @@ public class EstateCreationPage extends BasePage {
         fillField(ALT_VAL_DATE_FIELD, "EstateCreate.altValDate");
         driverUtil.getWebElement(ALT_VAL_DATE_FIELD).sendKeys(Keys.TAB);
         ageAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
-        CommonSteps.logInfo("User Filled The Life details.");
     }
 
     public void clickOnEstateTab() throws AutomationException {
-//        driverUtil.getWebElement("//a[text()='Aantako Maco']").click();
-//        waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.scrollPageToTop();
         driverUtil.getWebElement(ESTATE_TAB).click();
     }
@@ -456,7 +447,6 @@ public class EstateCreationPage extends BasePage {
         clearField(FILE_NUMBER_PART_3);
         fillField(FILE_NUMBER_PART_3, "EstateCreate.fileNumberPart3");
         selectDefaultAddressRadioButton("Accountant");
-        CommonSteps.logInfo("User Filled The Estate details.");
 
     }
 
@@ -488,7 +478,7 @@ public class EstateCreationPage extends BasePage {
         String expectedDateOfBirth = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfBirth").toString();
         String expectedDateOfDeath = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfDeath").toString();
         String expectedAltValDate = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.altValDate").toString();
-        String expectedMaritalStatus = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatus").toString();
+        String expectedMaritalStatus = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatusOthers").toString();
 
         WebDriverUtil.waitForAWhile(1);
         String actualFirstName = getFieldValue(DECEDENT_FIRST_NAME, "value");
@@ -537,8 +527,6 @@ public class EstateCreationPage extends BasePage {
         verifyField("Age at Death", ageAtDeath, actualAgeAtDeath);
         verifyField("Alt Val Date", expectedAltValDate, actualAltValDate);
         verifyField("Marital Status", expectedMaritalStatus, actualMaritalStatus);
-
-        CommonSteps.logInfo("Verified that each field of Decedent Info retained the entered value");
     }
 
 
@@ -574,29 +562,34 @@ public class EstateCreationPage extends BasePage {
         verifyField("File Number Part 1", expectedFileNumberPart1, actualFileNumberPart1);
         verifyField("File Number Part 2", expectedFileNumberPart2, actualFileNumberPart2);
         verifyField("File Number Part 3", expectedFileNumberPart3, actualFileNumberPart3);
-
-        CommonSteps.logInfo("Verified that each field of Estate retained the entered value.");
+    }
+    public void filterByEstateName(String estateName) throws AutomationException {
+        driverUtil.getWebElement(NAME_FILTER).click();
+        driverUtil.getWebElement(NAME_FILTER).sendKeys(estateName);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     public void clickOnActionsMenu(String estateName) throws AutomationException {
         driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN, estateName)).click();
+        filterByEstateName(estateName);
+        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,estateName)).click();
     }
 
     public void selectActionsOption(String actionsOption) throws AutomationException {
         driverUtil.getWebElement(String.format(ACTIONS_OPTION_XPATH, actionsOption)).click();
     }
 
-    public void selectReasonForArchive() throws AutomationException, IOException, ParseException {
+    public void selectReasonForArchive(String reason) throws AutomationException, IOException, ParseException {
         WebElement reasonForArchiveDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, "Select Reason"));
         reasonForArchiveDropdown.click();
-        WebElement reasonForArchive = driverUtil.getWebElement(String.format(SELECT_OPTION, "Estate Closed"));
+        WebElement reasonForArchive = driverUtil.getWebElement(String.format(SELECT_OPTION, reason));
         reasonForArchive.click();
     }
 
     public void enterArchiveDescription() throws AutomationException {
-        driverUtil.getWebElement(ARCHIVE_DESCRIPTION).sendKeys("Testing");
+        driverUtil.getWebElement(ARCHIVE_DESCRIPTION).sendKeys("Automation Testing");
     }
 
     public void clickOnArchiveBtn() throws AutomationException {
