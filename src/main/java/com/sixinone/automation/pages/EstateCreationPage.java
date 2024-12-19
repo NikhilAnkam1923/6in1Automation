@@ -1,5 +1,6 @@
 package com.sixinone.automation.pages;
 
+import com.github.dockerjava.api.model.Driver;
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
@@ -7,13 +8,21 @@ import com.sixinone.automation.util.CommonUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class EstateCreationPage extends BasePage{
+import static com.sixinone.automation.util.WebDriverUtil.*;
+
+public class EstateCreationPage extends BasePage {
 
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String FIRST_NAME_FIELD = "//input[@name='firstName']";
@@ -53,12 +62,15 @@ public class EstateCreationPage extends BasePage{
     private static final String PLACE_OF_DEATH_COUNTRY = "//input[@name='placeOfDeath.county']";
     private static final String POD_MAX_CHAR_LIMIT_ERROR = "//div[text()='Place of Death']/following-sibling::div/div/div/div/div/div/label[text()='Address Line 1']/following-sibling::div[@class='invalid-feedback' and contains(text(),'You have exceeded the maximum character limit of 100')]";
     private static final String POD_SPECIAL_CHAR_ERROR = "//div[text()='Place of Death']/following-sibling::div/div/div/div/div/div/label[text()='Address Line 1']/following-sibling::div[@class='invalid-feedback' and contains(text(),'Allowed special characters are , / and &')]";
-    private static final String LAST_RESIDENCE_FIELD = "//input[@name='lifeDetails.lastResidence']";
     private static final String DATE_OF_BIRTH_FIELD = "//label[text()='Date of Birth']/following-sibling::div//div//input";
     private static final String DATE_OF_DEATH_FIELD = "//label[text()='Date of Death']/following-sibling::div//div//input";
     private static final String AGE_AT_DEATH_FIELD = "//input[@name='lifeDetails.ageAtDeath']";
     private static final String ALT_VAL_DATE_FIELD = "//label[text()='Alt Val Date']/following-sibling::div//div//input";
     private static final String SELECTED_MARITAL_STATUS = "//div[text()='Life Details']/following-sibling::div//input[@name='lifeDetails.ageAtDeath'] /ancestor::div[contains(@class, 'col-')]/following-sibling::div//label[contains(text(), 'Marital Status')] /following-sibling::div//div[contains(@class, 'select__single-value')]";
+    private static final String LAST_RESIDENCE_FIELD = "//input[@name='lifeDetails.lastResidence']";
+    private static final String LAST_RESIDENCE_ERROR_MSG = "//input[@name='lifeDetails.lastResidence']/following-sibling::div[@class='invalid-feedback'  and (text()='You have exceeded the maximum character limit of 50'  or text()='Allowed special characters are , and &')]";
+    private static final String DATEPICKER = "//div[@class='react-datepicker__month-container']";
+    private static final String DATE_DIVORCED_DECREE = "//label[text()='Date Divorced Decree']/following-sibling::div";
     private static final String ESTATE_TAB = "//button[@role='tab' and text()='Estate']";
     private static final String DECEDENT_INFO_TAB = "//button[@role='tab' and text()='Decedent Info']";
     private static final String ESTATE_CHECKBOX_XPATH = "//input[contains(@aria-label,'%s')]";
@@ -149,19 +161,27 @@ public class EstateCreationPage extends BasePage{
         suffixOption.click();
     }
 
-    public void selectMaritalStatus() throws AutomationException, IOException, ParseException {
-        String maritalStatus = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatus").toString();
+    public void fillDecedentBasicInformation() throws AutomationException, IOException, ParseException {
+        fillField(DECEDENT_MIDDLE_NAME, "EstateCreate.middleName");
+        fillField(DECEDENT_DISPLAY_NAME, "EstateCreate.displayName");
+        selectSuffixOption();
+        fillField(DECEDENT_ALSO_KNOWN_AS,"EstateCreate.alsoKnownAs");
+    }
+
+    public void selectMaritalStatusOptionDivorced() throws AutomationException, IOException, ParseException {
+        String maritalStatusValue = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatusDivorced").toString();
         WebElement maritalStatusDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, "Marital Status"));
         maritalStatusDropdown.click();
-        WebElement maritalStatusOption = driverUtil.getWebElement(String.format(SELECT_OPTION, maritalStatus));
+        WebElement maritalStatusOption = driverUtil.getWebElement(String.format(SELECT_OPTION, maritalStatusValue));
         maritalStatusOption.click();
     }
 
-    public void fillDecedentBasicInformation() throws AutomationException, IOException, ParseException {
-        fillField(DECEDENT_MIDDLE_NAME,"EstateCreate.middleName");
-        fillField(DECEDENT_DISPLAY_NAME,"EstateCreate.displayName");
-        selectSuffixOption();
-        fillField(DECEDENT_ALSO_KNOWN_AS,"EstateCreate.alsoKnownAs");
+    public void selectMaritalStatusOptionOthers() throws AutomationException, IOException, ParseException {
+        String maritalStatusValue = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatusOthers").toString();
+        WebElement maritalStatusDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, "Marital Status"));
+        maritalStatusDropdown.click();
+        WebElement maritalStatusOption = driverUtil.getWebElement(String.format(SELECT_OPTION, maritalStatusValue));
+        maritalStatusOption.click();
     }
 
     public void clickOnNextButton() throws AutomationException {
@@ -224,12 +244,6 @@ public class EstateCreationPage extends BasePage{
         verifyAutoFetchedFieldsOfDomicileAddress();
         clearField(DOMICILE_MUNICIPALITY);
         fillField(DOMICILE_MUNICIPALITY, "EstateCreate.municipality");
-    }
-
-    public void clearField(String fieldXpath) throws AutomationException {
-        WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
-        fieldElement.sendKeys(Keys.CONTROL+"a");
-        fieldElement.sendKeys(Keys.BACK_SPACE);
     }
 
     public void verifyDomicileAddressFieldValidations() throws AutomationException, IOException, ParseException {
@@ -352,7 +366,7 @@ public class EstateCreationPage extends BasePage{
         fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
         clearField(DATE_OF_DEATH_FIELD);
         fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath");
-        selectMaritalStatus();
+        selectMaritalStatusOptionOthers();
         clearField(ALT_VAL_DATE_FIELD);
         fillField(ALT_VAL_DATE_FIELD, "EstateCreate.altValDate");
         driverUtil.getWebElement(ALT_VAL_DATE_FIELD).sendKeys(Keys.TAB);
@@ -368,10 +382,32 @@ public class EstateCreationPage extends BasePage{
         driverUtil.getWebElement(String.format(ESTATE_CHECKBOX_XPATH,checkboxName)).click();
     }
 
+    public void clearField(String fieldXpath) throws AutomationException {
+        WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
+        fieldElement.sendKeys(Keys.CONTROL + "a");
+        waitForAWhile(2);
+        fieldElement.sendKeys(Keys.BACK_SPACE);
+    }
+
+    public void enterInvalidLastResidence() throws AutomationException, IOException, ParseException {
+        String lastResidenceValue = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
+        if (lastResidenceValue != null && !lastResidenceValue.isEmpty()) {
+            clearField(LAST_RESIDENCE_FIELD);
+        }
+        fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidenceInvalid");
+        driverUtil.getWebElement("//body").click();
+    }
     public void selectDefaultAddressRadioButton(String checkboxName) throws AutomationException {
         driverUtil.getWebElement(String.format(DEFAULT_ADDRESS_RADIO_BTN_XPATH,checkboxName)).click();
     }
 
+    public void verifyLastResidenceFieldValidationErrors() throws AutomationException {
+        waitForVisibleElement(By.xpath(LAST_RESIDENCE_ERROR_MSG));
+        if (!driverUtil.getWebElement(LAST_RESIDENCE_ERROR_MSG).isDisplayed()) {
+            throw new AutomationException("Error messages are not displayed for invalid input.");
+        }
+        CommonSteps.logInfo("Error messages are displayed for invalid inputs.");
+    }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
         selectCheckBox("Use model accounting");
@@ -595,4 +631,102 @@ public class EstateCreationPage extends BasePage{
         CommonSteps.logInfo("Verified validations for File Number fields.");
     }
 
+    public void enterValidLastResidence() throws AutomationException, IOException, ParseException {
+
+        String lastResidenceValue = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
+        if (lastResidenceValue != null && !lastResidenceValue.isEmpty()) {
+            clearField(LAST_RESIDENCE_FIELD);
+        }
+        fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidence");
+        driverUtil.getWebElement("//body").click();
+    }
+
+    public void lastResidenceNotDisplayErrorForValidInput() throws AutomationException {
+        waitForInvisibleElement(By.xpath(LAST_RESIDENCE_ERROR_MSG));
+        WebElement errorMessage = driverUtil.getWebElement(LAST_RESIDENCE_ERROR_MSG);
+        if (errorMessage == null || !errorMessage.isDisplayed()) {
+            CommonSteps.logInfo("No validation error message is visible for valid Last Residence field. Field has been corrected successfully.");
+        } else {
+            throw new AutomationException("Validation error is still visible after corrections: " + errorMessage.getText());
+        }
+    }
+
+    public void clickOnDatesDatePickerOpen() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        driverUtil.getWebElement(DATE_OF_BIRTH_FIELD).click();
+        verifyDatePickerIsDisplay();
+        actions.sendKeys(Keys.ENTER);
+        driverUtil.getWebElement(DATE_OF_DEATH_FIELD).click();
+        verifyDatePickerIsDisplay();
+        actions.sendKeys(Keys.ENTER);
+        driverUtil.getWebElement(ALT_VAL_DATE_FIELD).click();
+        verifyDatePickerIsDisplay();
+        actions.sendKeys(Keys.ENTER);
+    }
+
+    public void verifyDatePickerIsDisplay() throws AutomationException {
+        waitForVisibleElement(By.xpath(DATEPICKER));
+        if (driverUtil.getWebElement(DATEPICKER).isDisplayed()) {
+            CommonSteps.logInfo("Date picker open for Dates field");
+        } else {
+            throw new AutomationException("Date picker not opened for Dates field");
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    public void entersDOBandDOD() throws AutomationException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        //clearField(DATE_OF_BIRTH);
+        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth",actions);
+        actions.sendKeys(Keys.ENTER);
+        //clearField(DATE_OF_DEATH);
+        fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath",actions);
+        actions.sendKeys(Keys.ENTER);
+        waitForAWhile(3);
+    }
+
+    public void calculateAgeAtDeath() throws AutomationException {
+        String dob = driverUtil.getWebElement(DATE_OF_BIRTH_FIELD).getAttribute("value");
+        String dod = driverUtil.getWebElement(DATE_OF_DEATH_FIELD).getAttribute("value");
+
+        String displayedAge = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
+
+        int expectedAge = calculateExpectedAge(dob, dod);
+
+        if (Integer.parseInt(displayedAge) == expectedAge) {
+            CommonSteps.logInfo("Age at Death is correctly calculated: " + displayedAge);
+        } else {
+            throw new AutomationException("Incorrect Age at Death. Expected: " + expectedAge + ", but Found: " + displayedAge);
+        }
+    }
+
+    public int calculateExpectedAge(String dob, String dod) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDate birthDate = LocalDate.parse(dob, formatter);
+        LocalDate deathDate = LocalDate.parse(dod, formatter);
+
+        return Period.between(birthDate, deathDate).getYears();
+    }
+
+    public void divorcedDecreeFieldDisplayCheck() throws AutomationException {
+        WebElement dateDivorcedDecree = driverUtil.getWebElement(DATE_DIVORCED_DECREE);
+        if (dateDivorcedDecree.isDisplayed()) {
+            CommonSteps.logInfo("The Date Divorced Decree field displayed");
+        } else {
+            throw new AutomationException("The Date Divorced Decree field is not displayed");
+        }
+
+    }
+
+    public void divorcedDecreeFieldNotDisplayCheck() throws AutomationException {
+        waitForInvisibleElement(By.xpath(DATE_DIVORCED_DECREE));
+        WebElement dateDivorcedDecree = driverUtil.getWebElement(DATE_DIVORCED_DECREE);
+        if (dateDivorcedDecree==null || !dateDivorcedDecree.isDisplayed()) {
+            CommonSteps.logInfo("The Date Divorced Decree field not displayed");
+        } else {
+            throw new AutomationException("The Date Divorced Decree field is displayed for other selections");
+        }
+    }
 }
