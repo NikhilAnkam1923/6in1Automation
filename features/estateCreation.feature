@@ -46,7 +46,7 @@ Feature: 6in1 Global Contacts Feature
   Scenario: Verify created estate can be archived
     When user clicks on Actions menu of Estate "Estate of John Doe"
     And user selects "Archive" option
-    And user selects Reason For Archive
+    And user selects Reason "Estate Closed" For Archive
     And user enters Archive Description
     And user clicks on Archive Button
     And user verifies Estate archived successful message
