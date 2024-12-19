@@ -412,7 +412,6 @@ public class WebDriverUtil {
         body.click();
         body.sendKeys(Keys.PAGE_UP);
         body.sendKeys(Keys.PAGE_UP);
-
     }
 
 
