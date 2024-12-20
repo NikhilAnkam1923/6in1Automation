@@ -51,6 +51,17 @@ Feature: 6in1 Global Contacts Feature
 #   And user enters an invalid Date of Death earlier than Date of Birth
 #   Then the validation error message should be displayed
 
+  Scenario: Verify an estate is saved with all the fields
+    When user fill Life Details
+    And user clicks on Estate tab
+    And user fills Estate details
+    #Verify, validations for file number
+    Then user verifies validations for File Number Fields
+    And user clicks on Decedent Info tab
+    Then user verify each field of Decedent Info retained the entered value
+    And user clicks on Estate tab
+    Then user verify each field of Estate retained the entered value
+
   Scenario: verify for Codicil Date picker open and values stored in correct format
     When user clicks on Estate tab
     And user clicks on the codicil date fields date picker should open for these fields
@@ -66,20 +77,10 @@ Feature: 6in1 Global Contacts Feature
     When I select "Fiduciary Address or Attny" address option
     Then only "Fiduciary Address or Attny" address should be selected
 
-
-  Scenario: Verify an estate is saved with all the fields
-    When user fill Life Details
-    And user clicks on Estate tab
-    And user fills Estate details
-    # Verify validations for file number
-    Then user verifies validations for File Number Fields
-    And user clicks on Decedent Info tab
-    Then user verify each field of Decedent Info retained the entered value
-    And user clicks on Estate tab
-    Then user verify each field of Estate retained the entered value
-
   Scenario: Verify created estate can be archived
-    When user clicks on Actions menu of Estate "Amigo Jack"
+    #Verify, if the estate is displayed on the listing page
+    When user verifies estate is displayed on listing page
+    When user clicks on Actions menu of Estate "Jonny Vasco"
     And user selects "Archive" option
     And user selects Reason "Estate Closed" For Archive
     And user enters Archive Description

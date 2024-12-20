@@ -100,6 +100,7 @@ public class EstateCreationPage extends BasePage {
 
     static String ageAtDeath;
     static String decedentSSN;
+    public static String displayName;
 
     @Override
     String getName() {
@@ -128,6 +129,17 @@ public class EstateCreationPage extends BasePage {
                 .sendKeys(value)
                 .build()
                 .perform();
+    }
+
+    public static void scrollPageToTop() throws AutomationException {
+        WebElement body = DriverFactory.drivers.get().findElement(By.tagName("body"));
+        body.click();
+//        do{
+//        body.sendKeys(Keys.PAGE_UP);
+//        }while (driverUtil.getWebElement(ESTATE_TAB).isDisplayed());
+        body.sendKeys(Keys.PAGE_UP);
+        body.sendKeys(Keys.PAGE_UP);
+        body.sendKeys(Keys.PAGE_UP);
     }
 
     public void enterFirstAndLastNameAndSSN() throws AutomationException, IOException, ParseException {
@@ -170,6 +182,7 @@ public class EstateCreationPage extends BasePage {
         fillField(DECEDENT_DISPLAY_NAME, "EstateCreate.displayName");
         selectSuffixOption();
         fillField(DECEDENT_ALSO_KNOWN_AS, "EstateCreate.alsoKnownAs");
+        displayName = getFieldValue(DECEDENT_DISPLAY_NAME,"value");
         CommonSteps.logInfo("User Filled The Decedent's basic information.");
     }
 
@@ -385,7 +398,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void clickOnEstateTab() throws AutomationException {
-        WebDriverUtil.scrollPageToTop();
+        scrollPageToTop();
         driverUtil.getWebElement(ESTATE_TAB).click();
     }
 
@@ -570,10 +583,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void clickOnActionsMenu(String estateName) throws AutomationException {
-        driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN, estateName)).click();
-        filterByEstateName(estateName);
         driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,estateName)).click();
     }
 
@@ -838,5 +847,11 @@ public class EstateCreationPage extends BasePage {
                 }
             }
         }
+    }
+
+    public void verifyEstateOnListingPage() throws AutomationException {
+        driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        filterByEstateName(displayName);
     }
 }

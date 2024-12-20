@@ -322,6 +322,10 @@ public class EstateCreationSteps {
     }
 
 
-
-
+    @When("user verifies estate is displayed on listing page")
+    public void userVerifiesEstateIsDisplayedOnListingPage() throws AutomationException {
+        PageFactory.estateCreationPage().verifyEstateOnListingPage();
+        CommonSteps.logInfo("Verified that Estate is displayed on listing page.");
+        CommonSteps.takeScreenshot();
+    }
 }
