@@ -71,7 +71,9 @@ Feature: 6in1 Global Contacts Feature
     Then user verify each field of Estate retained the entered value
 
   Scenario: Verify created estate can be archived
-    When user clicks on Actions menu of Estate "Amigo Jack"
+    #Verify, if the estate is displayed on the listing page
+    When user verifies estate is displayed on listing page
+    When user clicks on Actions menu of Estate
     And user selects "Archive" option
     And user selects Reason "Estate Closed" For Archive
     And user enters Archive Description

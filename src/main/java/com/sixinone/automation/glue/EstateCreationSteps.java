@@ -61,13 +61,6 @@ public class EstateCreationSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user enters invalid input in the Last Residence field")
-    public void userEntersInvalidInputInTheLastResidenceField() throws AutomationException, IOException, ParseException {
-        PageFactory.estateCreationPage().enterInvalidLastResidence();
-        CommonSteps.logInfo("user enters invalid input in the Last Residence field");
-
-    }
-
     @And("user enters valid Date of Birth and Date of Death")
     public void userEntersValidDateOfBirthAndDateOfDeath() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().entersDOBandDOD();
@@ -164,10 +157,10 @@ public class EstateCreationSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user clicks on Actions menu of Estate \"([^\"]*)\"$")
-    public void userClicksOnActionsMenuOfEstate(String estateName) throws AutomationException {
-        PageFactory.estateCreationPage().clickOnActionsMenu(estateName);
-        CommonSteps.logInfo("User clicked on the Actions menu of Estate: " + estateName);
+    @When("^user clicks on Actions menu of Estate$")
+    public void userClicksOnActionsMenuOfEstate() throws AutomationException {
+        PageFactory.estateCreationPage().clickOnActionsMenu();
+        CommonSteps.logInfo("User clicked on the Actions menu of Estate");
     }
 
     @And("^user selects \"([^\"]*)\" option$")
@@ -252,5 +245,12 @@ public class EstateCreationSteps {
     public void userFillsLifeDetailsAndValidateTheFields() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().fillLifeDetailsAndValidatefields();
         CommonSteps.logInfo("user fills Life Details and validate the fields");
+    }
+
+    @When("user verifies estate is displayed on listing page")
+    public void userVerifiesEstateIsDisplayedOnListingPage() throws AutomationException {
+        PageFactory.estateCreationPage().verifyEstateOnListingPage();
+        CommonSteps.logInfo("Verified that Estate is displayed on listing page.");
+        CommonSteps.takeScreenshot();
     }
 }
