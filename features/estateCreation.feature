@@ -15,8 +15,9 @@ Feature: 6in1 Global Contacts Feature
   Scenario: user verify after filling decedent information clicking on next button other details are opened
     When user clicks on the Create button
     Then user fills the first name,last name and SSN details
+    Then for different SSN number no validation should be thrown
     And user click on Proceed button
-    Then user see the Create a new estate with the entered name button for new user
+    And user see the Create a new estate with the entered name button for new user
     And user click on Create a new estate with the entered name button for new user
     Then user fills decedent basic information for new user
     And user click on Next button
@@ -49,6 +50,22 @@ Feature: 6in1 Global Contacts Feature
     Then the system calculate and displays correct Age at Death
 #   And user enters an invalid Date of Death earlier than Date of Birth
 #   Then the validation error message should be displayed
+
+  Scenario: verify for Codicil Date picker open and values stored in correct format
+    When user clicks on Estate tab
+    And user clicks on the codicil date fields date picker should open for these fields
+    And user enters codicil dates
+    Then user verify values stored in correct date format
+
+  Scenario: Verify only one address can be selected at a time
+    Then an address should be selected by default
+    When I select "Accountant" address option
+    Then only "Accountant" address should be selected
+    When I select "Preparer Address" address option
+    Then only "Preparer Address" address should be selected
+    When I select "Fiduciary Address or Attny" address option
+    Then only "Fiduciary Address or Attny" address should be selected
+
 
   Scenario: Verify an estate is saved with all the fields
     When user fill Life Details

@@ -13,10 +13,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +85,7 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_PART_1 = "//input[@name='fileNumberPart1']";
     private static final String FILE_NUMBER_PART_2 = "//input[@name='fileNumberPart2']";
     private static final String FILE_NUMBER_PART_3 = "//input[@name='fileNumberPart3']";
-    private static final String DEFAULT_ADDRESS_RADIO_BTN_XPATH = "//div//label[text()='%s']/preceding-sibling::input[@name='defaultAddress']";
+    private static final String ADDRESS_RADIO_BTN_XPATH = "//div//label[text()='%s']/preceding-sibling::input[@name='defaultAddress']";
     private static final String ESTATE_ACTION_BTN = "//tbody//tr//td//a[text()='%s'] /ancestor::td/following-sibling::td[contains(@class,'action-column')]/div/button";
     private static final String ACTIONS_OPTION_XPATH = "//div[@role='menu' and @class='slideright dropdown-menu show']/a[@role='menuitem' and text()='%s']";
     private static final String ARCHIVE_DESCRIPTION = "//textarea[@name='description']";
@@ -93,6 +95,7 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_2_ERR = "//div[@class='invalid-feedback' and contains(text(),'Year must be exactly 2 digits.')]";
     private static final String FILE_NUMBER_3_ERR = "//div[@class='invalid-feedback' and contains(text(),'File Number must be at least 4 digits.')]";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
+    private static final String SSN_ERROR_MESSAGE = "//div[@class='invalid-feedback' and contains(text(), 'SSN')]";
     private static final String NAME_FILTER = "//th[@aria-label='Filter' and @aria-colindex='1']/div/div/span/input";
 
     static String ageAtDeath;
@@ -166,7 +169,8 @@ public class EstateCreationPage extends BasePage {
         fillField(DECEDENT_MIDDLE_NAME, "EstateCreate.middleName");
         fillField(DECEDENT_DISPLAY_NAME, "EstateCreate.displayName");
         selectSuffixOption();
-        fillField(DECEDENT_ALSO_KNOWN_AS,"EstateCreate.alsoKnownAs");
+        fillField(DECEDENT_ALSO_KNOWN_AS, "EstateCreate.alsoKnownAs");
+        CommonSteps.logInfo("User Filled The Decedent's basic information.");
     }
 
     public void selectMaritalStatusOptionDivorced() throws AutomationException, IOException, ParseException {
@@ -314,6 +318,8 @@ public class EstateCreationPage extends BasePage {
         verifyRadioButtonSelection(boroughRadio, townshipRadio);
         jsExecutor.executeScript("arguments[0].click();", townshipRadio);
         verifyRadioButtonSelection(townshipRadio, boroughRadio);
+
+        CommonSteps.logInfo("Verified Township and Borough radio buttons toggle correctly.");
     }
 
     public void fillPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
@@ -325,6 +331,7 @@ public class EstateCreationPage extends BasePage {
         fillField(PLACE_OF_DEATH_ZIP, "EstateCreate.PODzip");
         driverUtil.getWebElement(PLACE_OF_DEATH_ZIP).sendKeys(Keys.TAB);
         verifyAutoFetchedFieldsOfPlaceOfDeathAddress();
+        CommonSteps.logInfo("User Filled The Place of Death details.");
     }
 
     public void verifyPlaceOfDeathFieldValidations() throws AutomationException, IOException, ParseException {
@@ -359,12 +366,17 @@ public class EstateCreationPage extends BasePage {
 
     public void fillLifeDetails() throws AutomationException, IOException, ParseException {
 
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+
         clearField(LAST_RESIDENCE_FIELD);
         fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidence");
         clearField(DATE_OF_BIRTH_FIELD);
         fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
+        actions.sendKeys(Keys.ENTER);
         clearField(DATE_OF_DEATH_FIELD);
         fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath");
+        actions.sendKeys(Keys.ENTER);
         selectMaritalStatusOptionOthers();
         clearField(ALT_VAL_DATE_FIELD);
         fillField(ALT_VAL_DATE_FIELD, "EstateCreate.altValDate");
@@ -378,7 +390,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void selectCheckBox(String checkboxName) throws AutomationException {
-        driverUtil.getWebElement(String.format(ESTATE_CHECKBOX_XPATH,checkboxName)).click();
+        driverUtil.getWebElement(String.format(ESTATE_CHECKBOX_XPATH, checkboxName)).click();
     }
 
     public void clearField(String fieldXpath) throws AutomationException {
@@ -395,8 +407,9 @@ public class EstateCreationPage extends BasePage {
         fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidenceInvalid");
         driverUtil.getWebElement("//body").click();
     }
+
     public void selectDefaultAddressRadioButton(String checkboxName) throws AutomationException {
-        driverUtil.getWebElement(String.format(DEFAULT_ADDRESS_RADIO_BTN_XPATH,checkboxName)).click();
+        driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, checkboxName)).click();
     }
 
     public void verifyLastResidenceFieldValidationErrors() throws AutomationException {
@@ -408,15 +421,21 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
         selectCheckBox("Use model accounting");
         clearField(DATE_OF_WILL);
         fillField(DATE_OF_WILL, "EstateCreate.dateOfWill");
+        actions.sendKeys(Keys.ENTER);
         clearField(CODICILE_DATE_1);
         fillField(CODICILE_DATE_1, "EstateCreate.codicilDate1");
+        actions.sendKeys(Keys.ENTER);
         clearField(CODICILE_DATE_2);
         fillField(CODICILE_DATE_2, "EstateCreate.codicilDate2");
+        actions.sendKeys(Keys.ENTER);
         clearField(CODICILE_DATE_3);
         fillField(CODICILE_DATE_3, "EstateCreate.codicilDate3");
+        actions.sendKeys(Keys.ENTER);
         clearField(PROBATE_COURT_NAME);
         fillField(PROBATE_COURT_NAME, "EstateCreate.probateCourtName");
         clearField(PROBATE_COURT_LOCATION);
@@ -482,7 +501,7 @@ public class EstateCreationPage extends BasePage {
         String actualLastResidence = getFieldValue(LAST_RESIDENCE_FIELD, "value");
         String actualDateOfBirth = getFieldValue(DATE_OF_BIRTH_FIELD, "value");
         String actualDateOfDeath = getFieldValue(DATE_OF_DEATH_FIELD, "value");
-        String actualAgeAtDeath = getFieldValue(AGE_AT_DEATH_FIELD,"value");
+        String actualAgeAtDeath = getFieldValue(AGE_AT_DEATH_FIELD, "value");
         String actualAltValDate = getFieldValue(ALT_VAL_DATE_FIELD, "value");
         String actualMaritalStatus = getFieldValue(SELECTED_MARITAL_STATUS, "text");
 
@@ -491,7 +510,7 @@ public class EstateCreationPage extends BasePage {
         verifyField("Last Name", expectedLastName, actualLastName);
         verifyField("Display Name", expectedDisplayName, actualDisplayName);
         verifyField("Also Known As", expectedAlsoKnownAs, actualAlsoKnownAs);
-        verifyField("SSN",decedentSSN,actualSSN);
+        verifyField("SSN", decedentSSN, actualSSN);
         verifyField("Suffix", expectedSuffix, actualSuffix);
         verifyField("Address Line 1", expectedAddressLine1, actualAddressLine1);
         verifyField("Address Line 2", expectedAddressLine2, actualAddressLine2);
@@ -544,7 +563,6 @@ public class EstateCreationPage extends BasePage {
         verifyField("File Number Part 2", expectedFileNumberPart2, actualFileNumberPart2);
         verifyField("File Number Part 3", expectedFileNumberPart3, actualFileNumberPart3);
     }
-
     public void filterByEstateName(String estateName) throws AutomationException {
         driverUtil.getWebElement(NAME_FILTER).click();
         driverUtil.getWebElement(NAME_FILTER).sendKeys(estateName);
@@ -554,12 +572,13 @@ public class EstateCreationPage extends BasePage {
     public void clickOnActionsMenu(String estateName) throws AutomationException {
         driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN, estateName)).click();
         filterByEstateName(estateName);
         driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,estateName)).click();
     }
 
     public void selectActionsOption(String actionsOption) throws AutomationException {
-        driverUtil.getWebElement(String.format(ACTIONS_OPTION_XPATH,actionsOption)).click();
+        driverUtil.getWebElement(String.format(ACTIONS_OPTION_XPATH, actionsOption)).click();
     }
 
     public void selectReasonForArchive(String reason) throws AutomationException, IOException, ParseException {
@@ -675,10 +694,10 @@ public class EstateCreationPage extends BasePage {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
         //clearField(DATE_OF_BIRTH);
-        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth",actions);
+        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth", actions);
         actions.sendKeys(Keys.ENTER);
         //clearField(DATE_OF_DEATH);
-        fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath",actions);
+        fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath", actions);
         actions.sendKeys(Keys.ENTER);
         waitForAWhile(3);
     }
@@ -720,10 +739,104 @@ public class EstateCreationPage extends BasePage {
     public void divorcedDecreeFieldNotDisplayCheck() throws AutomationException {
         waitForInvisibleElement(By.xpath(DATE_DIVORCED_DECREE));
         WebElement dateDivorcedDecree = driverUtil.getWebElement(DATE_DIVORCED_DECREE);
-        if (dateDivorcedDecree==null || !dateDivorcedDecree.isDisplayed()) {
+        if (dateDivorcedDecree == null || !dateDivorcedDecree.isDisplayed()) {
             CommonSteps.logInfo("The Date Divorced Decree field not displayed");
         } else {
             throw new AutomationException("The Date Divorced Decree field is displayed for other selections");
+        }
+    }
+
+    public void validateSSNForSameName() throws AutomationException, IOException, ParseException {
+        WebElement errorSSNElement = driverUtil.getWebElement(SSN_ERROR_MESSAGE);
+        if (errorSSNElement != null && errorSSNElement.isDisplayed()) {
+            throw new AutomationException("Error displayed incorrectly for a different SSN also");
+        } else {
+            CommonSteps.logInfo("No error message display for different SSN with same names as expected");
+        }
+    }
+
+    public void clickOnCodicilDatesDatePickerOpen() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        driverUtil.getWebElement(CODICILE_DATE_1).click();
+        verifyDatePickerIsDisplay();
+        actions.sendKeys(Keys.ENTER);
+        driverUtil.getWebElement(CODICILE_DATE_2).click();
+        verifyDatePickerIsDisplay();
+        actions.sendKeys(Keys.ENTER);
+        driverUtil.getWebElement(CODICILE_DATE_3).click();
+        verifyDatePickerIsDisplay();
+        actions.sendKeys(Keys.ENTER);
+    }
+
+    public void entersCodicilDates() throws AutomationException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        clearField(CODICILE_DATE_1);
+        fillField(CODICILE_DATE_1, "EstateCreate.codicilDate1", actions);
+        //actions.sendKeys(Keys.ENTER);
+        clearField(CODICILE_DATE_2);
+        fillField(CODICILE_DATE_2, "EstateCreate.codicilDate2", actions);
+        //actions.sendKeys(Keys.ENTER);
+        clearField(CODICILE_DATE_3);
+        fillField(CODICILE_DATE_3, "EstateCreate.codicilDate3", actions);
+        //actions.sendKeys(Keys.ENTER);
+    }
+
+    public void validateDateFormat() throws AutomationException {
+        String codicilDate1 = driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value");
+        String codicilDate2 = driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value");
+        String codicilDate3 = driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value");
+
+        String expectedDateFormat = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/([0-9]{4})$";
+
+        if (!codicilDate1.matches(expectedDateFormat)) {
+            throw new AutomationException("The date " + codicilDate1 + " is not in the correct format (MM/dd/yyyy).");
+        } else {
+            CommonSteps.logInfo("The date " + codicilDate1 + " is in the correct format (MM/dd/yyyy).");
+        }
+
+        if (!codicilDate2.matches(expectedDateFormat)) {
+            throw new AutomationException("The date " + codicilDate2 + " is not in the correct format (MM/dd/yyyy).");
+        } else {
+            CommonSteps.logInfo("The date " + codicilDate2 + " is in the correct format (MM/dd/yyyy).");
+        }
+        if (!codicilDate3.matches(expectedDateFormat)) {
+            throw new AutomationException("The date " + codicilDate3 + " is not in the correct format (MM/dd/yyyy).");
+        } else {
+            CommonSteps.logInfo("The date " + codicilDate3 + " is in the correct format (MM/dd/yyyy).");
+        }
+    }
+
+    public void selectAddress(String address) throws AutomationException {
+        WebElement radioButton = driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, address));
+        if (!radioButton.isSelected()) {
+            radioButton.click();
+        }
+    }
+
+    public String getSelectedAddress() throws AutomationException {
+        List<String> addresses = Arrays.asList("Fiduciary Address or Attny", "Accountant", "Preparer Address");
+        for (String address : addresses) {
+            WebElement radioButton = driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, address));
+            if (radioButton.isSelected()) {
+                return address;
+            }
+        }
+        throw new AutomationException("No address is selected by default.");
+    }
+
+    public void verifyOnlyOneAddressSelected(String expectedAddress) throws AutomationException {
+        List<String> addresses = Arrays.asList("Fiduciary Address or Attny", "Accountant", "Preparer Address");
+        for (String address : addresses) {
+            WebElement radioButton = driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, address));
+            if (address.equals(expectedAddress)) {
+                if (!radioButton.isSelected()) {
+                    throw new AutomationException(expectedAddress + " is not selected.");
+                }
+            } else {
+                if (radioButton.isSelected()) {
+                    throw new AutomationException(address + " is incorrectly selected.");
+                }
+            }
         }
     }
 }

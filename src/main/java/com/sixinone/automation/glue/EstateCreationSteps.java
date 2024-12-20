@@ -29,7 +29,7 @@ public class EstateCreationSteps {
         CommonSteps.logInfo("User clicked on the Proceed button.");
     }
 
-    @Then("^user see the Create a new estate with the entered name button for new user$")
+    @And("^user see the Create a new estate with the entered name button for new user$")
     public void userSeeCreateNewEstateButton() throws AutomationException {
         PageFactory.estateCreationPage().verifyCreateNewEstateButtonIsDisplayed();
         CommonSteps.logInfo("Verified the 'Create a new estate with the entered name' button for new user is displayed.");
@@ -242,5 +242,86 @@ public class EstateCreationSteps {
         PageFactory.estateCreationPage().verifyFileNumberFieldValidations();
         CommonSteps.logInfo("User verified validations for File Number Fields.");
     }
+
+    @Then("for different SSN number no validation should be thrown")
+    public void forDifferentSSNNumberNoValidationShouldBeThrown() throws AutomationException, IOException, ParseException {
+        PageFactory.estateCreationPage().validateSSNForSameName();
+        CommonSteps.logInfo("For different SSN number with same first and last name no validation should be thrown");
+    }
+    @And("user clicks on the codicil date fields date picker should open for these fields")
+    public void userClicksOnTheCodicilDateFieldsDatePickerShouldOpenForTheseFields() throws AutomationException {
+        PageFactory.estateCreationPage().clickOnCodicilDatesDatePickerOpen();
+        CommonSteps.logInfo("user clicks on the codicil date fields date picker should open for these fields");
+    }
+
+
+    @And("user enters codicil dates")
+    public void userEntersCodicilDates() throws AutomationException, IOException, ParseException {
+        PageFactory.estateCreationPage().entersCodicilDates();
+        CommonSteps.logInfo("Enter codicil dates");
+    }
+
+    @Then("user verify values stored in correct date format")
+    public void userVerifyValuesStoredInCorrectDateFormat() throws AutomationException {
+            PageFactory.estateCreationPage().validateDateFormat();
+            CommonSteps.logInfo("user verify values stored in correct date format mm/dd/yyyy");
+        }
+
+//    @Then("Fiduciary Address or Attny should be selected by default")
+//    public void fiduciaryAddressShouldBeSelectedByDefault() throws AutomationException {
+//        PageFactory.estateCreationPage().verifyDefaultFiduciaryAddressSelected();
+//        CommonSteps.logInfo("Fiduciary Address or Attny is selected by default.");
+//    }
+//
+//    @When("I select Accountant address option")
+//    public void iSelectAccountantAddressOption() throws AutomationException {
+//        PageFactory.estateCreationPage().selectAccountantAddress();
+//        CommonSteps.logInfo("User selects the Accountant address option.");
+//    }
+//
+//    @Then("only Accountant address should be selected")
+//    public void onlyAccountantAddressShouldBeSelected() throws AutomationException {
+//        PageFactory.estateCreationPage().verifyOnlyAccountantAddressSelected();
+//        CommonSteps.logInfo("Only the Accountant address is selected.");
+//    }
+//
+//    @And("no other address should be selected")
+//    public void noOtherAddressShouldBeSelected() throws AutomationException {
+//        PageFactory.estateCreationPage().verifyNoOtherAddressSelected();
+//        CommonSteps.logInfo("No other address is selected.");
+//    }
+//
+//    @When("I select Preparer Address or Fiduciary Address or Attny address option")
+//    public void iSelectPreparerAddressOption() throws AutomationException {
+//        PageFactory.estateCreationPage().selectPreparerAddressOption();
+//        CommonSteps.logInfo("User selects the Preparer Address or Fiduciary Address or Attny option.");
+//    }
+//
+//    @Then("only Preparer Address or Fiduciary Address or Attny should be selected")
+//    public void onlyPreparerAddressShouldBeSelected() throws AutomationException {
+//        PageFactory.estateCreationPage().verifyOnlyPreparerAddressSelected();
+//        CommonSteps.logInfo("Only the Preparer Address or Fiduciary Address or Attny is selected.");
+//    }
+
+    @Then("an address should be selected by default")
+    public void verifyAddressSelectedByDefault() throws AutomationException {
+        String selectedAddress = PageFactory.estateCreationPage().getSelectedAddress();
+        CommonSteps.logInfo("The default selected address is: " + selectedAddress);
+    }
+
+    @When("I select {string} address option")
+    public void selectAddressOption(String address) throws AutomationException {
+        PageFactory.estateCreationPage().selectAddress(address);
+        CommonSteps.logInfo("User selected the " + address + " address option.");
+    }
+
+    @Then("only {string} address should be selected")
+    public void verifyOnlyAddressSelected(String address) throws AutomationException {
+        PageFactory.estateCreationPage().verifyOnlyOneAddressSelected(address);
+        CommonSteps.logInfo("Verified that only the " + address + " address is selected.");
+    }
+
+
+
 
 }
