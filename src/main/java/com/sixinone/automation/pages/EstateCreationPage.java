@@ -20,6 +20,7 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static com.sixinone.automation.util.WebDriverUtil.*;
@@ -134,9 +135,6 @@ public class EstateCreationPage extends BasePage {
     public static void scrollPageToTop() throws AutomationException {
         WebElement body = DriverFactory.drivers.get().findElement(By.tagName("body"));
         body.click();
-//        do{
-//        body.sendKeys(Keys.PAGE_UP);
-//        }while (driverUtil.getWebElement(ESTATE_TAB).isDisplayed());
         body.sendKeys(Keys.PAGE_UP);
         body.sendKeys(Keys.PAGE_UP);
         body.sendKeys(Keys.PAGE_UP);
@@ -582,8 +580,8 @@ public class EstateCreationPage extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    public void clickOnActionsMenu(String estateName) throws AutomationException {
-        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,estateName)).click();
+    public void clickOnActionsMenu() throws AutomationException {
+        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,displayName)).click();
     }
 
     public void selectActionsOption(String actionsOption) throws AutomationException {

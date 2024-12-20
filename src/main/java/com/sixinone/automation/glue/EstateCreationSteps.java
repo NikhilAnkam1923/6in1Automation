@@ -201,10 +201,10 @@ public class EstateCreationSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user clicks on Actions menu of Estate \"([^\"]*)\"$")
-    public void userClicksOnActionsMenuOfEstate(String estateName) throws AutomationException {
-        PageFactory.estateCreationPage().clickOnActionsMenu(estateName);
-        CommonSteps.logInfo("User clicked on the Actions menu of Estate: " + estateName);
+    @When("^user clicks on Actions menu of Estate$")
+    public void userClicksOnActionsMenuOfEstate() throws AutomationException {
+        PageFactory.estateCreationPage().clickOnActionsMenu();
+        CommonSteps.logInfo("User clicked on the Actions menu of Estate");
     }
 
     @And("^user selects \"([^\"]*)\" option$")

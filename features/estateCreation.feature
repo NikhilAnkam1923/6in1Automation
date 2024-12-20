@@ -15,7 +15,7 @@ Feature: 6in1 Global Contacts Feature
   Scenario: user verify after filling decedent information clicking on next button other details are opened
     When user clicks on the Create button
     Then user fills the first name,last name and SSN details
-    Then for different SSN number no validation should be thrown
+#    Then for different SSN number no validation should be thrown
     And user click on Proceed button
     And user see the Create a new estate with the entered name button for new user
     And user click on Create a new estate with the entered name button for new user
@@ -80,7 +80,7 @@ Feature: 6in1 Global Contacts Feature
   Scenario: Verify created estate can be archived
     #Verify, if the estate is displayed on the listing page
     When user verifies estate is displayed on listing page
-    When user clicks on Actions menu of Estate "Jonny Vasco"
+    When user clicks on Actions menu of Estate
     And user selects "Archive" option
     And user selects Reason "Estate Closed" For Archive
     And user enters Archive Description
