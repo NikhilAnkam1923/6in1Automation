@@ -630,7 +630,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void enterValidLastResidence() throws AutomationException, IOException, ParseException {
-
         String lastResidenceValue = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
         if (lastResidenceValue != null && !lastResidenceValue.isEmpty()) {
             clearField(LAST_RESIDENCE_FIELD);
