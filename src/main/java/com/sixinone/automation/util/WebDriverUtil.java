@@ -407,17 +407,13 @@ public class WebDriverUtil {
         js.executeScript("window.scrollBy(0,-250);");
     }
 
-    public static void scrollPageToTop(){
+    public static void scrollPageToTop() {
         WebElement body = DriverFactory.drivers.get().findElement(By.tagName("body"));
         body.click();
         body.sendKeys(Keys.PAGE_UP);
         body.sendKeys(Keys.PAGE_UP);
-<<<<<<< HEAD
-=======
         body.sendKeys(Keys.PAGE_UP);
->>>>>>> 42a3e7d0998b1ab2e27d8b32461316d7d152a812
     }
-
 
     public void switchToFrame(String xpath) throws AutomationException {
         try {

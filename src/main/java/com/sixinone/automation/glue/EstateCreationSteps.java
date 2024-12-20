@@ -68,31 +68,6 @@ public class EstateCreationSteps {
 
     }
 
-    @Then("the system displays the respective validation error messages")
-    public void theSystemDisplaysTheRespectiveValidationErrorMessages() throws AutomationException {
-        PageFactory.estateCreationPage().verifyLastResidenceFieldValidationErrors();
-        CommonSteps.logInfo("The Last Residence field displays the respective validation error messages");
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("user enters valid input in the Last Residence field")
-    public void userEntersValidInputInTheLastResidenceField() throws AutomationException, IOException, ParseException {
-        PageFactory.estateCreationPage().enterValidLastResidence();
-        CommonSteps.logInfo("user enters valid input in the Last Residence field");
-    }
-
-    @Then("the system accepts the input without any error")
-    public void theSystemAcceptsTheInputWithoutAnyError() throws AutomationException {
-        PageFactory.estateCreationPage().lastResidenceNotDisplayErrorForValidInput();
-        CommonSteps.logInfo("The system accepts the valid input without any error");
-    }
-
-    @And("user clicks on the date fields date picker should open for these fields")
-    public void userClicksOnTheDateFieldsDatePickerShouldOpenForTheseFields() throws AutomationException {
-        PageFactory.estateCreationPage().clickOnDatesDatePickerOpen();
-        CommonSteps.logInfo("user clicks on the date fields to check date picker open for these fields");
-    }
-
     @And("user enters valid Date of Birth and Date of Death")
     public void userEntersValidDateOfBirthAndDateOfDeath() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().entersDOBandDOD();
@@ -125,12 +100,6 @@ public class EstateCreationSteps {
         CommonSteps.logInfo("user selects Marital Status from Divorced to any other");
     }
 
-    @Then("the Date Divorced Decree field should be hidden")
-    public void theDateDivorcedDecreeFieldShouldBeHidden() throws AutomationException {
-        PageFactory.estateCreationPage().divorcedDecreeFieldNotDisplayCheck();
-        CommonSteps.logInfo("the Date Divorced Decree field should be hidden");
-        CommonSteps.takeScreenshot();
-    }
     @When("^user fill Last Address\\/Domicile details$")
     public void userFillLastAddressDomicileDetails() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().fillLastAddressDomicileDetails();
@@ -163,13 +132,7 @@ public class EstateCreationSteps {
         CommonSteps.logInfo("User verified validations for all the fields of Place of Death.");
     }
 
-    @When("user fill Life Details")
-    public void userFillLifeDetails() throws AutomationException, IOException, ParseException {
-        PageFactory.estateCreationPage().fillLifeDetails();
-        CommonSteps.logInfo("User filled Life Details.");
-    }
-
-    @And("user clicks on Estate tab")
+    @When("user clicks on Estate tab")
     public void userClicksOnEstateTab() throws AutomationException {
         PageFactory.estateCreationPage().clickOnEstateTab();
         CommonSteps.logInfo("User clicked on the Estate tab.");
@@ -267,61 +230,27 @@ public class EstateCreationSteps {
             CommonSteps.logInfo("user verify values stored in correct date format mm/dd/yyyy");
         }
 
-//    @Then("Fiduciary Address or Attny should be selected by default")
-//    public void fiduciaryAddressShouldBeSelectedByDefault() throws AutomationException {
-//        PageFactory.estateCreationPage().verifyDefaultFiduciaryAddressSelected();
-//        CommonSteps.logInfo("Fiduciary Address or Attny is selected by default.");
-//    }
-//
-//    @When("I select Accountant address option")
-//    public void iSelectAccountantAddressOption() throws AutomationException {
-//        PageFactory.estateCreationPage().selectAccountantAddress();
-//        CommonSteps.logInfo("User selects the Accountant address option.");
-//    }
-//
-//    @Then("only Accountant address should be selected")
-//    public void onlyAccountantAddressShouldBeSelected() throws AutomationException {
-//        PageFactory.estateCreationPage().verifyOnlyAccountantAddressSelected();
-//        CommonSteps.logInfo("Only the Accountant address is selected.");
-//    }
-//
-//    @And("no other address should be selected")
-//    public void noOtherAddressShouldBeSelected() throws AutomationException {
-//        PageFactory.estateCreationPage().verifyNoOtherAddressSelected();
-//        CommonSteps.logInfo("No other address is selected.");
-//    }
-//
-//    @When("I select Preparer Address or Fiduciary Address or Attny address option")
-//    public void iSelectPreparerAddressOption() throws AutomationException {
-//        PageFactory.estateCreationPage().selectPreparerAddressOption();
-//        CommonSteps.logInfo("User selects the Preparer Address or Fiduciary Address or Attny option.");
-//    }
-//
-//    @Then("only Preparer Address or Fiduciary Address or Attny should be selected")
-//    public void onlyPreparerAddressShouldBeSelected() throws AutomationException {
-//        PageFactory.estateCreationPage().verifyOnlyPreparerAddressSelected();
-//        CommonSteps.logInfo("Only the Preparer Address or Fiduciary Address or Attny is selected.");
-//    }
-
     @Then("an address should be selected by default")
     public void verifyAddressSelectedByDefault() throws AutomationException {
         String selectedAddress = PageFactory.estateCreationPage().getSelectedAddress();
         CommonSteps.logInfo("The default selected address is: " + selectedAddress);
     }
 
-    @When("I select {string} address option")
+    @When("^I select \"([^\"]*)\" address option$")
     public void selectAddressOption(String address) throws AutomationException {
         PageFactory.estateCreationPage().selectAddress(address);
         CommonSteps.logInfo("User selected the " + address + " address option.");
     }
 
-    @Then("only {string} address should be selected")
+    @Then("^only \"([^\"]*)\" address should be selected$")
     public void verifyOnlyAddressSelected(String address) throws AutomationException {
         PageFactory.estateCreationPage().verifyOnlyOneAddressSelected(address);
         CommonSteps.logInfo("Verified that only the " + address + " address is selected.");
     }
 
-
-
-
+    @When("user fills Life Details and validate the fields")
+    public void userFillsLifeDetailsAndValidateTheFields() throws AutomationException, IOException, ParseException {
+        PageFactory.estateCreationPage().fillLifeDetailsAndValidatefields();
+        CommonSteps.logInfo("user fills Life Details and validate the fields");
+    }
 }

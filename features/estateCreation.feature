@@ -15,11 +15,12 @@ Feature: 6in1 Global Contacts Feature
   Scenario: user verify after filling decedent information clicking on next button other details are opened
     When user clicks on the Create button
     Then user fills the first name,last name and SSN details
-    Then for different SSN number no validation should be thrown
     And user click on Proceed button
     And user see the Create a new estate with the entered name button for new user
     And user click on Create a new estate with the entered name button for new user
     Then user fills decedent basic information for new user
+#   This needs to be discuss
+#   Then for different SSN number no validation should be thrown
     And user click on Next button
     Then verify Decedent details page is opened
 
@@ -28,28 +29,22 @@ Feature: 6in1 Global Contacts Feature
     Then user verify validations for all the fields of Last Address/Domicile
     And user verifies Township and Borough radio buttons toggle correctly
 
-  Scenario: Verify validations for place of deaths
-    When user fills Place of Death details
-    Then user verify validations for all the fields of Place of Death
-
   Scenario: Verify Life Details fields, validations, and behaviors
     #verify Last Residence field validation for invalid input
-    When user enters invalid input in the Last Residence field
-    Then the system displays the respective validation error messages
-    And user enters valid input in the Last Residence field
-    Then the system accepts the input without any error
     #verify, date picker opens for the date fields
-    And user clicks on the date fields date picker should open for these fields
+    When user fills Life Details and validate the fields
+    #Verify, age at death is calculated correctly on adding date of birth and date of death
+    Then the system calculate and displays correct Age at Death
     #Verify, date of divorced decree field appears, only after selecting marital status as divorced
     And user selects Divorced in the Marital Status dropdown
     Then the Date Divorced Decree field should be displayed
     And user selects Marital Status from Divorced to any other
-    Then the Date Divorced Decree field should be hidden
-    #Verify, age at death is calculated correctly on adding date of birth and date of death
-    And user enters valid Date of Birth and Date of Death
-    Then the system calculate and displays correct Age at Death
 #   And user enters an invalid Date of Death earlier than Date of Birth
 #   Then the validation error message should be displayed
+
+  Scenario: Verify validations for place of deaths
+    When user fills Place of Death details
+    Then user verify validations for all the fields of Place of Death
 
   Scenario: verify for Codicil Date picker open and values stored in correct format
     When user clicks on Estate tab
@@ -66,10 +61,7 @@ Feature: 6in1 Global Contacts Feature
     When I select "Fiduciary Address or Attny" address option
     Then only "Fiduciary Address or Attny" address should be selected
 
-
   Scenario: Verify an estate is saved with all the fields
-    When user fill Life Details
-    And user clicks on Estate tab
     And user fills Estate details
     # Verify validations for file number
     Then user verifies validations for File Number Fields

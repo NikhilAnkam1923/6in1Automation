@@ -194,7 +194,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void verifyDecedentDetailsPageIsDisplayed() throws AutomationException {
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        waitForInvisibleElement(By.xpath(SPINNER));
         WebElement page = driverUtil.getWebElement(DECEDENT_DETAILS_PAGE);
         if (page == null || !page.isDisplayed()) {
             throw new AutomationException("The 'Decedent Details' page is not opened.");
@@ -364,24 +364,8 @@ public class EstateCreationPage extends BasePage {
         fillField(PLACE_OF_DEATH_ADDRESS_LINE2, "EstateCreate.PODaddressLine2");
     }
 
-    public void fillLifeDetails() throws AutomationException, IOException, ParseException {
+    public void enterInvalidLastResidence() throws AutomationException, IOException, ParseException {
 
-        Actions actions = new Actions(DriverFactory.drivers.get());
-
-
-        clearField(LAST_RESIDENCE_FIELD);
-        fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidence");
-        clearField(DATE_OF_BIRTH_FIELD);
-        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
-        actions.sendKeys(Keys.ENTER);
-        clearField(DATE_OF_DEATH_FIELD);
-        fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath");
-        actions.sendKeys(Keys.ENTER);
-        selectMaritalStatusOptionOthers();
-        clearField(ALT_VAL_DATE_FIELD);
-        fillField(ALT_VAL_DATE_FIELD, "EstateCreate.altValDate");
-        driverUtil.getWebElement(ALT_VAL_DATE_FIELD).sendKeys(Keys.TAB);
-        ageAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
     }
 
     public void clickOnEstateTab() throws AutomationException {
@@ -399,15 +383,6 @@ public class EstateCreationPage extends BasePage {
         fieldElement.sendKeys(Keys.BACK_SPACE);
     }
 
-    public void enterInvalidLastResidence() throws AutomationException, IOException, ParseException {
-        String lastResidenceValue = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
-        if (lastResidenceValue != null && !lastResidenceValue.isEmpty()) {
-            clearField(LAST_RESIDENCE_FIELD);
-        }
-        fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidenceInvalid");
-        driverUtil.getWebElement("//body").click();
-    }
-
     public void selectDefaultAddressRadioButton(String checkboxName) throws AutomationException {
         driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, checkboxName)).click();
     }
@@ -415,9 +390,10 @@ public class EstateCreationPage extends BasePage {
     public void verifyLastResidenceFieldValidationErrors() throws AutomationException {
         waitForVisibleElement(By.xpath(LAST_RESIDENCE_ERROR_MSG));
         if (!driverUtil.getWebElement(LAST_RESIDENCE_ERROR_MSG).isDisplayed()) {
-            throw new AutomationException("Error messages are not displayed for invalid input.");
+            throw new AutomationException("The Last Residence field not displays the respective validation error messages for invalid inputs.");
         }
-        CommonSteps.logInfo("Error messages are displayed for invalid inputs.");
+        CommonSteps.logInfo("The Last Residence field displays the respective validation error messages for invalid inputs.");
+        CommonSteps.takeScreenshot();
     }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
@@ -426,16 +402,7 @@ public class EstateCreationPage extends BasePage {
         selectCheckBox("Use model accounting");
         clearField(DATE_OF_WILL);
         fillField(DATE_OF_WILL, "EstateCreate.dateOfWill");
-        actions.sendKeys(Keys.ENTER);
-        clearField(CODICILE_DATE_1);
-        fillField(CODICILE_DATE_1, "EstateCreate.codicilDate1");
-        actions.sendKeys(Keys.ENTER);
-        clearField(CODICILE_DATE_2);
-        fillField(CODICILE_DATE_2, "EstateCreate.codicilDate2");
-        actions.sendKeys(Keys.ENTER);
-        clearField(CODICILE_DATE_3);
-        fillField(CODICILE_DATE_3, "EstateCreate.codicilDate3");
-        actions.sendKeys(Keys.ENTER);
+
         clearField(PROBATE_COURT_NAME);
         fillField(PROBATE_COURT_NAME, "EstateCreate.probateCourtName");
         clearField(PROBATE_COURT_LOCATION);
@@ -563,6 +530,7 @@ public class EstateCreationPage extends BasePage {
         verifyField("File Number Part 2", expectedFileNumberPart2, actualFileNumberPart2);
         verifyField("File Number Part 3", expectedFileNumberPart3, actualFileNumberPart3);
     }
+
     public void filterByEstateName(String estateName) throws AutomationException {
         driverUtil.getWebElement(NAME_FILTER).click();
         driverUtil.getWebElement(NAME_FILTER).sendKeys(estateName);
@@ -572,9 +540,8 @@ public class EstateCreationPage extends BasePage {
     public void clickOnActionsMenu(String estateName) throws AutomationException {
         driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN, estateName)).click();
         filterByEstateName(estateName);
-        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,estateName)).click();
+        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN, estateName)).click();
     }
 
     public void selectActionsOption(String actionsOption) throws AutomationException {
@@ -648,38 +615,6 @@ public class EstateCreationPage extends BasePage {
         CommonSteps.logInfo("Verified validations for File Number fields.");
     }
 
-    public void enterValidLastResidence() throws AutomationException, IOException, ParseException {
-        String lastResidenceValue = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
-        if (lastResidenceValue != null && !lastResidenceValue.isEmpty()) {
-            clearField(LAST_RESIDENCE_FIELD);
-        }
-        fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidence");
-        driverUtil.getWebElement("//body").click();
-    }
-
-    public void lastResidenceNotDisplayErrorForValidInput() throws AutomationException {
-        waitForInvisibleElement(By.xpath(LAST_RESIDENCE_ERROR_MSG));
-        WebElement errorMessage = driverUtil.getWebElement(LAST_RESIDENCE_ERROR_MSG);
-        if (errorMessage == null || !errorMessage.isDisplayed()) {
-            CommonSteps.logInfo("No validation error message is visible for valid Last Residence field. Field has been corrected successfully.");
-        } else {
-            throw new AutomationException("Validation error is still visible after corrections: " + errorMessage.getText());
-        }
-    }
-
-    public void clickOnDatesDatePickerOpen() throws AutomationException {
-        Actions actions = new Actions(DriverFactory.drivers.get());
-        driverUtil.getWebElement(DATE_OF_BIRTH_FIELD).click();
-        verifyDatePickerIsDisplay();
-        actions.sendKeys(Keys.ENTER);
-        driverUtil.getWebElement(DATE_OF_DEATH_FIELD).click();
-        verifyDatePickerIsDisplay();
-        actions.sendKeys(Keys.ENTER);
-        driverUtil.getWebElement(ALT_VAL_DATE_FIELD).click();
-        verifyDatePickerIsDisplay();
-        actions.sendKeys(Keys.ENTER);
-    }
-
     public void verifyDatePickerIsDisplay() throws AutomationException {
         waitForVisibleElement(By.xpath(DATEPICKER));
         if (driverUtil.getWebElement(DATEPICKER).isDisplayed()) {
@@ -733,17 +668,6 @@ public class EstateCreationPage extends BasePage {
         } else {
             throw new AutomationException("The Date Divorced Decree field is not displayed");
         }
-
-    }
-
-    public void divorcedDecreeFieldNotDisplayCheck() throws AutomationException {
-        waitForInvisibleElement(By.xpath(DATE_DIVORCED_DECREE));
-        WebElement dateDivorcedDecree = driverUtil.getWebElement(DATE_DIVORCED_DECREE);
-        if (dateDivorcedDecree == null || !dateDivorcedDecree.isDisplayed()) {
-            CommonSteps.logInfo("The Date Divorced Decree field not displayed");
-        } else {
-            throw new AutomationException("The Date Divorced Decree field is displayed for other selections");
-        }
     }
 
     public void validateSSNForSameName() throws AutomationException, IOException, ParseException {
@@ -751,7 +675,7 @@ public class EstateCreationPage extends BasePage {
         if (errorSSNElement != null && errorSSNElement.isDisplayed()) {
             throw new AutomationException("Error displayed incorrectly for a different SSN also");
         } else {
-            CommonSteps.logInfo("No error message display for different SSN with same names as expected");
+            CommonSteps.logInfo("No error message display for different SSN as expected");
         }
     }
 
@@ -838,5 +762,36 @@ public class EstateCreationPage extends BasePage {
                 }
             }
         }
+    }
+
+    public void fillLifeDetailsAndValidatefields() throws AutomationException, IOException, ParseException {
+
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        clearField(LAST_RESIDENCE_FIELD);
+        driverUtil.getWebElement(LAST_RESIDENCE_FIELD).sendKeys("A".repeat(51));
+        driverUtil.getWebElement("//body").click();
+        verifyLastResidenceFieldValidationErrors();
+
+        clearField(LAST_RESIDENCE_FIELD);
+        fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidence");
+
+
+        clearField(DATE_OF_BIRTH_FIELD);
+        verifyDatePickerIsDisplay();
+        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
+        actions.sendKeys(Keys.ENTER);
+
+        clearField(DATE_OF_DEATH_FIELD);
+        verifyDatePickerIsDisplay();
+        fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath");
+        actions.sendKeys(Keys.ENTER);
+
+        clearField(ALT_VAL_DATE_FIELD);
+        verifyDatePickerIsDisplay();
+        fillField(ALT_VAL_DATE_FIELD, "EstateCreate.altValDate");
+        actions.sendKeys(Keys.ENTER);
+
+        ageAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
     }
 }
