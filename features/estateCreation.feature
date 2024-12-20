@@ -9,7 +9,7 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies the Home page
     Examples:
       | user-email                           | password |
-      | nikhilankam+11@benchmarkit.solutions | Watch@22 |
+      | nikhilankam+14@benchmarkit.solutions | Watch@22 |
 
 
   Scenario: user verify after filling decedent information clicking on next button other details are opened
@@ -80,12 +80,11 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario Outline: verify user authorization for "View Only" user
     When user logged out from the application
-    And user go to application "https://delltab.benchmarkits.in"
     When user login using "<user-email>" and "<password>"
     Then user verifies authorization for "View Only"
     Examples:
       | user-email                           | password |
-      | nikhilankam+13@benchmarkit.solutions | Watch@22 |
+      | nikhilankam+15@benchmarkit.solutions | Watch@22 |
 
   @Setup
   Scenario:SETUP: Close Browser
