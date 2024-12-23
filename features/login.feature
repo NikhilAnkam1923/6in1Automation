@@ -1,4 +1,4 @@
-@6in1 @Smoke @Regression
+@Smoke @Regression
 Feature: 6in1 Login Feature
 
 

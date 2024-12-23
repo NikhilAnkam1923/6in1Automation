@@ -293,6 +293,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public String filterByContactTypeOnRecords(String contactType) throws AutomationException {
+        waitForVisibleElement(By.xpath(CONTACT_TYPE_FILTER_INPUT_RECORDS));
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT_RECORDS).click();
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT_RECORDS).sendKeys(contactType);
         return contactType;
@@ -362,8 +363,8 @@ public class GlobalContactPage extends BasePage {
         }
         CommonSteps.logInfo("Confirmation message is: " + confirmationElement.getText());
         CommonSteps.takeScreenshot();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(CONFIRMATION_MESSAGE));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact details have been successfully saved.")));
+        //WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     public void verifyPageGlobalContacts() throws AutomationException {
@@ -565,6 +566,7 @@ public class GlobalContactPage extends BasePage {
         String expectedClass = contactType.equalsIgnoreCase("Entity") ? "entity-row-color" : "";
         List<String> mismatchedRows = new ArrayList<>();
         do {
+            waitForVisibleElement(By.xpath(ALL_DATA_ROWS_XPATH));
             List<WebElement> rows = driverUtil.getWebElements(ALL_DATA_ROWS_XPATH);
             rows.stream()
                     .filter(row -> !row.getAttribute("class").contains(expectedClass))
@@ -650,7 +652,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyDuplicateEINError() throws AutomationException {
-        // WebDriverUtil.waitForVisibleElement(By.xpath(EIN_DUPLICATION_ERROR));
+        WebDriverUtil.waitForVisibleElement(By.xpath(EIN_ERROR));
         WebElement errorMessage = driverUtil.getWebElement(EIN_ERROR);
         CommonSteps.takeScreenshot();
         if (errorMessage == null || !errorMessage.isDisplayed()) {

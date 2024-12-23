@@ -4,7 +4,7 @@ Feature: 6in1 Global Contacts Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "$6in1_url"
+    And user go to application "https://pumashoes.benchmarkits.in"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
