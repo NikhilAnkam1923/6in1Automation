@@ -9,7 +9,7 @@ public class PageFactory {
     public LoginPage loginPage;
     public GlobalContactPage globalContactPage;
     public EstateCreationPage estateCreationPage;
-    private EstateContactsPage estateContactsPage;
+    public EstateContactsPage estateContactsPage;
 
     private PageFactory() throws IOException {
 
