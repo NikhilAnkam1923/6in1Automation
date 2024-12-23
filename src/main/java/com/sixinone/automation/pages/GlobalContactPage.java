@@ -627,7 +627,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyUserType(String userType) throws AutomationException {
-        switch (userType) {
+              switch (userType) {
             case "Licensed":
                 waitForVisibleElement(By.xpath(CREATE_BUTTON));
                 if (driverUtil.getWebElement(CREATE_BUTTON).isDisplayed() && driverUtil.getWebElement(CREATE_BUTTON).isEnabled()) {
@@ -638,9 +638,8 @@ public class GlobalContactPage extends BasePage {
                 }
                 break;
             case "View Only":
-                //waitForInvisibleElement(By.xpath(CREATE_BUTTON), 2);
-                WebElement createButton = driverUtil.getWebElement(CREATE_BUTTON);
-                if (createButton != null && createButton.isDisplayed()) {
+                WebElement createButton = driverUtil.getWebElement(CREATE_BUTTON,2);
+                if (createButton!=null && createButton.isDisplayed()) {
                     throw new AutomationException("Create button should not be visible for View Only user.");
                 } else {
                     CommonSteps.logInfo("View Only user: Create button is not visible as expected.");
