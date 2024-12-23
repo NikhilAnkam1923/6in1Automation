@@ -1,5 +1,5 @@
 @6in1 @Smoke @Regression
-Feature: 6in1 Global Contacts Feature
+Feature: 6in1 estate creation Feature
 
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
