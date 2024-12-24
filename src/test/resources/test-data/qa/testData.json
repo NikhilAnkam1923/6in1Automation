@@ -118,5 +118,8 @@
     "fileNumberPart1": "22",
     "fileNumberPart2": "23",
     "fileNumberPart3": "1234"
+  },
+  "EstateContact": {
+  "role": "Beneficiary"
   }
 }

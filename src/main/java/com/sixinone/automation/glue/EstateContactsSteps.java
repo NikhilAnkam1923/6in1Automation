@@ -70,4 +70,24 @@ public class EstateContactsSteps {
         CommonSteps.logInfo("Verified that the contact is visible in the Global Contacts list.");
         CommonSteps.takeScreenshot();
     }
+
+    @And("user verifies that the newly created contact is selected by default")
+    public void userVerifiesThatTheNewlyCreatedContactIsSelectedByDefault() throws AutomationException {
+        PageFactory.estateContactsPage().verifyNewlyCreatedContactIsSelectedByDefault();
+        CommonSteps.logInfo("Verified that the newly created contact is selected by default.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user selects the Role for Contact")
+    public void userSelectsTheRoleForContact() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().selectRoles();
+        CommonSteps.logInfo("User selected the Role for Contact.");
+    }
+
+    @Then("user verifies that the role is assigned successfully")
+    public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException {
+        PageFactory.estateContactsPage().verifyRoleAssignedSuccessMessage();
+        CommonSteps.logInfo("Verified that the role is assigned successfully.");
+        CommonSteps.takeScreenshot();
+    }
 }

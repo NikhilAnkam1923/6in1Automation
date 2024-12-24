@@ -33,7 +33,7 @@ public class GlobalContactPage extends BasePage {
     private static final String SSN_FIELD = "//input[@id='contact.ssn']";
     private static final String EIN_FIELD = "//input[@id='contact.ein']";
     public static final String SAVE_BUTTON = "//button[text()='Save']";
-    private static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
+    public static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     public static final String CREATE_INDIVIDUAL_CONTACT_BTN = "//button[text()='Create Individual Contact']";
     public static final String CREATE_ENTITY_CONTACT_BTN = "//button[text()='Create Entity Contact']";
@@ -101,7 +101,7 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(CREATE_ENTITY_CONTACT_BTN).click();
     }
 
-    public void clickButtonSave() throws AutomationException {
+    public static void clickButtonSave() throws AutomationException {
         driverUtil.getWebElement(SAVE_BUTTON).click();
     }
 
