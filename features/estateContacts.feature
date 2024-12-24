@@ -28,6 +28,11 @@ Feature: 6in1 estate contacts Feature
       And user selects the Role for Contact
       Then user verifies that the role is assigned successfully
       And user verifies the contact is visible in the Estate Contacts list
+      #Verify, notification is displayed on removing the role.
+      When user selects the Estate Contact
+      And user clicks on Estate-Specific Fields
+      And user clicks on Select Role button and uncheck the checked role
+      Then user verifies that notification is displayed on removing the role
       And user verifies the contact is visible in the Global Contacts list
 
   @Setup

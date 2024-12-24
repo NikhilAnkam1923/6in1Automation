@@ -90,4 +90,29 @@ public class EstateContactsSteps {
         CommonSteps.logInfo("Verified that the role is assigned successfully.");
         CommonSteps.takeScreenshot();
     }
+
+    @When("user selects the Estate Contact")
+    public void userSelectsTheEstateContact() throws AutomationException {
+        PageFactory.estateContactsPage().selectEstateContact();
+        CommonSteps.logInfo("User selected the Estate Contact.");
+    }
+
+    @And("user clicks on Estate-Specific Fields")
+    public void userClicksOnEstateSpecificFields() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnEstateSpecificFields();
+        CommonSteps.logInfo("Clicked on the Estate-Specific Fields.");
+    }
+
+    @And("user clicks on Select Role button and uncheck the checked role")
+    public void userClicksOnSelectRoleButtonAndUncheckTheCheckedRole() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().uncheckTheCheckedRole();
+        CommonSteps.logInfo("Clicked on Select Role button and unchecked the checked role.");
+    }
+
+    @Then("user verifies that notification is displayed on removing the role")
+    public void userVerifiesThatNotificationIsDisplayedOnRemovingTheRole() throws AutomationException {
+        PageFactory.estateContactsPage().verifyNotificationIsDisplayedOnRemovingTheRole();
+        CommonSteps.logInfo("Verified that notification is displayed on removing the role.");
+        CommonSteps.takeScreenshot();
+    }
 }

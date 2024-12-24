@@ -59,8 +59,12 @@ public class EstateContactsPage extends BasePage {
     private static final String CONTACT_NAME_IN_GLOBAL_CONTACT = "//td//a[contains(@class,'column-edit-link') and text()='%s']";
     private static final String NEW_ESTATE_CONTACT_MODAL_TITLE = "//div[contains(@class,'modal-title') and text()='Add a New Estate Contact - %s']";
     private static final String SELECT_ROLE_BTN = "//div[@class='modal-content']//button[text()='Select Role']";
-    private static final String ROLE_CHECKBOX = "//div[@class='modal-content']//label[@class='form-check-label' and text()='%s']/preceding-sibling::input";
-    private static final String ROLE_SAVE_BTN = "//div[@class='modal-content']/div[@class='modal-header']/div[text()='Select Role']/ancestor::div[@class='modal-content']//button[text()='Save']";
+    private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";
+    private static final String ROLE_CHECKBOX = "//div[@class='modal-content']//label[@class='form-check-label' and text()='%s']/preceding-sibling::input[not(@checked)]";
+    private static final String ROLE_UNCHECK = "//div[@class='modal-content']//label[@class='form-check-label' and text()='%s']/preceding-sibling::input";
+    private static final String ROLE_SAVE_BTN = "(//button[@type='button'][normalize-space()='Save'])[3]";
+    private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
+    private static final String NO_ROLES_SELECTED_NOTIFICATION = "//div[@class='modal-inner-content']/div[@class='icon-danger']/following-sibling::div/p/span[contains(text(),'You have not selected any role for this contact in this Estate.')]";
 
 
     public static String individualContactName;
@@ -87,20 +91,24 @@ public class EstateContactsPage extends BasePage {
         driverUtil.getWebElement(ADD_CONTACT_BTN).click();
     }
 
+    private boolean clickNextPage() throws AutomationException {
+        WebElement nextPageButton = driverUtil.getWebElement(MODAL_NEXT_PAGE, 2);
+        if (nextPageButton == null) {
+            return false;
+        }
+        nextPageButton.click();
+        waitForInvisibleElement(By.xpath(SPINNER));
+        return true;
+    }
+
     public void verifyAddButtonInGlobalContacts() throws AutomationException {
-        while (true) {
+        do {
             List<WebElement> addButtons = driverUtil.getWebElements(ADD_BUTTON);
             List<WebElement> rows = driverUtil.getWebElements(ALL_MODAL_ROWS_XPATH);
             if (addButtons.size() != rows.size()) {
                 throw new AutomationException("Mismatch in the number of Add buttons and data rows.");
             }
-            WebElement nextPageButton = driverUtil.getWebElement(MODAL_NEXT_PAGE, 2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
-                break;
-            }
-            nextPageButton.click();
-            waitForInvisibleElement(By.xpath(SPINNER));
-        }
+        } while (clickNextPage());
     }
 
     public void verifyCreateContactButtons() throws AutomationException {
@@ -233,7 +241,10 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyContactInGlobalContactsList() throws AutomationException, IOException {
-//        GlobalContactPage.clickButtonClose();
+        //temp use
+        driverUtil.getWebElement("//button[text()='Cancel' and @class='me-3 btn btn-light-outline']").click();
+        driverUtil.getWebElement("//button[text()='Close' and @class='ms-2 btn btn-light-outline']").click();
+
         driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         GlobalContactPage.tabNavigation("Global Contact");
@@ -266,8 +277,32 @@ public class EstateContactsPage extends BasePage {
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
-        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
         CommonSteps.takeScreenshot();
+        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
+    }
+
+    public void selectEstateContact() throws AutomationException {
+        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT,individualContactName)).click();
+    }
+
+    public void clickOnEstateSpecificFields() throws AutomationException {
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+    }
+
+    public void uncheckTheCheckedRole() throws AutomationException, IOException, ParseException {
+        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.role").toString();
+
+        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
+        driverUtil.getWebElement(String.format(ROLE_UNCHECK,role)).click();
+//        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
+        GlobalContactPage.clickButtonSave();
+    }
+
+    public void verifyNotificationIsDisplayedOnRemovingTheRole() throws AutomationException {
+        WebElement rolesNotification = driverUtil.getWebElement(NO_ROLES_SELECTED_NOTIFICATION);
+        if(!rolesNotification.isDisplayed()){
+            throw new AutomationException("Notification is not displayed on removing the role");
+        }
     }
 }
