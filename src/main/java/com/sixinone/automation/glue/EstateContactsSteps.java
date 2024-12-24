@@ -5,6 +5,9 @@ import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 
 public class EstateContactsSteps {
 
@@ -41,4 +44,30 @@ public class EstateContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @And("^user fills the details for \"([^\"]*)\"$")
+    public void userFillsAllTheDetailsForNewGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        PageFactory.estateContactsPage().fillNewGlobalContactDetails(contactType);
+        CommonSteps.logInfo("User fills all the details for "+contactType);
+    }
+
+    @When("user clicks on the Create New Individual Contact button")
+    public void userClicksOnTheCreateNewIndividualContactButton() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnNewIndividualContactBtn();
+        CommonSteps.logInfo("Clicked on the Create New Individual Contact button.");
+
+    }
+
+    @Then("user verifies the contact is visible in the Estate Contacts list")
+    public void userVerifiesTheContactIsVisibleInTheEstateContactsList() throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactInEstateContactsList();
+        CommonSteps.logInfo("Verified that the contact is visible in the Estate Contacts list.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user verifies the contact is visible in the Global Contacts list")
+    public void userVerifiesTheContactIsVisibleInTheGlobalContactsList() throws AutomationException, IOException {
+        PageFactory.estateContactsPage().verifyContactInGlobalContactsList();
+        CommonSteps.logInfo("Verified that the contact is visible in the Global Contacts list.");
+        CommonSteps.takeScreenshot();
+    }
 }

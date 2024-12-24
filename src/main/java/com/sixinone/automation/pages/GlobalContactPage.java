@@ -84,7 +84,7 @@ public class GlobalContactPage extends BasePage {
     public static final String STATE_ERROR_REQUIRED_XPATH = "//div[@id='State']";
     public static final String CLOSE_BUTTON = "//button[text()='Close']";
 
-    public void tabNavigation(String tab) throws AutomationException, IOException {
+    public static void tabNavigation(String tab) throws AutomationException, IOException {
         driverUtil.getWebElement(String.format("//div[@class='nav']//div//*[contains(text(),'%s')]//parent::a", tab)).click();
     }
 
@@ -117,7 +117,7 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(SELECT_AND_PROCEED_BTN).click();
     }
 
-    public void clickButtonClose() throws AutomationException {
+    public static void clickButtonClose() throws AutomationException {
         driverUtil.getWebElement(CLOSE_BUTTON).click();
     }
 
