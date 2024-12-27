@@ -21,8 +21,8 @@ Feature: 6in1 estate contacts Feature
     Scenario: Verify, new individual contact can be created
       When user clicks on the Create New Individual Contact button
       And user fills the details for "New Individual Global Contact"
-      And user save the global contact
-      Then user verifies global contact saved successful message
+      And user click on Next button
+      Then user verifies global contact created successful message
       #Verify, roles can be assigned for newly added contact.
       And user verifies that the newly created contact is selected by default
       And user selects the Role for Contact
@@ -33,6 +33,16 @@ Feature: 6in1 estate contacts Feature
       And user clicks on Estate-Specific Fields
       And user clicks on Select Role button and uncheck the checked role
       Then user verifies that notification is displayed on removing the role
+      #Verify, remove contact from estate button is enabled on removing the role.
+      And user saves the Estate Contact without roles
+      Then user verifies that the Remove Contact from Estate button is enabled
+      #Verify, contact can be removed.
+      And user clicks on Remove Contact from Estate button
+      And user clicks on Remove button
+      Then user verifies global contact removed from estate successful message
+      #Verify, removed contact is displayed in the contact list to add in the estate.
+      And user clicks on the Add Contact button
+      Then user verifies removed contact is displayed in the contact list to add back to the estate
       And user verifies the contact is visible in the Global Contacts list
 
   @Setup

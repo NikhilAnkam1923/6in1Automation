@@ -1,13 +1,11 @@
 package com.sixinone.automation.pages;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.openqa.selenium.interactions.Actions;
@@ -33,30 +31,20 @@ public class EstateContactsPage extends BasePage {
     private static final String DROPDOWN_LABEL = "//label[text()='%s']/following-sibling::div/span/following-sibling::div//div[contains(@class,'select__indicators')]";
     private static final String SELECT_OPTION = "//div[contains(@class,'select__menu-list')]//div[text()='%s']";
     public static final String INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE = "//div[text()='Individual Details']";
-    public static final String ENTITY_GLOBAL_CONTACT_CREATION_PAGE = "//div[@class='section-header mt-0' and following-sibling::div//input[@id='contact.firstName']]";
-    private static final String WORK_NUMBER_FIELD = "//input[@name='contact.workPhone']";
-    private static final String FAX_FIELD = "//input[@name='contact.faxNumber']";
-    private static final String PTIN_FIELD = "//input[@name='contact.ptin']";
-    private static final String PINEFILE_FIELD = "//input[@name='contact.pin']";
-    private static final String BARID_FIELD = "//input[@name='contact.barID']";
-    private static final String CAF_FIELD = "//input[@name='contact.caf']";
-    private static final String ADDRESS_LINE1 = "//input[@name='address.addressLine1']";
-    private static final String ADDRESS_LINE2 = "//input[@name='address.addressLine2']";
-    private static final String ZIP = "//input[@name='address.zip']";
+    public static final String ENTITY_GLOBAL_CONTACT_CREATION_PAGE = "//div[text()='Entity Details']";
     private static final String FIRST_NAME_FIELD = "//input[contains(@name,'firstName')]";
     private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
-    private static final String PHONE_NUMBER_FIELD = "//input[@name='contact.phoneNumber']";
-    private static final String EMAIL_ADDRESS_FIELD = "//input[@name='contact.emailAddress']";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
-    private static final String MAIDEN_NAME_FIELD = "//input[@name='contact.maidenName']";
+    private static final String MAIDEN_NAME_FIELD = "//input[@id='contact.maidenName']";
     private static final String ENTITY_NAME_FIELD_CREATE = "//input[@name='contact.entityName']";
-    private static final String SSN_FIELD = "//input[@id='contact.ssn']";
     private static final String EIN_FIELD = "//input[@id='contact.ein']";
     private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
+    public static final String MODAL_NAME_FILTER_INPUT = "//div[@class='modal-body']//th[@aria-colindex='2'] //input[@aria-label='Filter']";
     private static final String CONTACT_NAME_IN_GLOBAL_CONTACT = "//td//a[contains(@class,'column-edit-link') and text()='%s']";
+    private static final String CONTACT_NAME_IN_ADD_CONTACT_LIST = "//div[@class='modal-body']//td[@aria-colindex='2' and text()='%s']";
     private static final String NEW_ESTATE_CONTACT_MODAL_TITLE = "//div[contains(@class,'modal-title') and text()='Add a New Estate Contact - %s']";
     private static final String SELECT_ROLE_BTN = "//div[@class='modal-content']//button[text()='Select Role']";
     private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";
@@ -65,7 +53,9 @@ public class EstateContactsPage extends BasePage {
     private static final String ROLE_SAVE_BTN = "(//button[@type='button'][normalize-space()='Save'])[3]";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String NO_ROLES_SELECTED_NOTIFICATION = "//div[@class='modal-inner-content']/div[@class='icon-danger']/following-sibling::div/p/span[contains(text(),'You have not selected any role for this contact in this Estate.')]";
-
+    private static final String NO_ROLES_SAVE_BTN = "//button[@class='btn btn-danger' and text()='Save']";
+    private static final String REMOVE_CONTACT_FROM_ESTATE_BTN = "//button[@aria-label='Delink' and text()='Remove Contact from Estate']";
+    private static final String REMOVE_BUTTON = "//button[@class='btn btn-danger' and text()='Remove']";
 
     public static String individualContactName;
 
@@ -76,6 +66,7 @@ public class EstateContactsPage extends BasePage {
     public void navigateToEstateContactsTab() throws AutomationException {
         WebElement tempUser = driverUtil.getWebElement("//a[text()='Jonny Vasco']");
         tempUser.click();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
     }
 
@@ -85,6 +76,7 @@ public class EstateContactsPage extends BasePage {
         if (!nameColumn.isDisplayed() || !rolesColumn.isDisplayed()) {
             throw new AutomationException("Name or Roles column is not displayed in the left pane.");
         }
+        waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     public void clickAddContactButton() throws AutomationException {
@@ -154,11 +146,9 @@ public class EstateContactsPage extends BasePage {
         suffixOption.click();
     }
 
-    public void fillNewGlobalContactDetails(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+    public void fillNewGlobalContactDetails(String contactType) throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
-        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
         String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
-        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
         String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
 
         switch (contactType) {
@@ -170,46 +160,11 @@ public class EstateContactsPage extends BasePage {
                 selectSuffixOption();
                 fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
                 individualContactName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value")+", "+driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
-                fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
-                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
-                fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
-                fillField(WORK_NUMBER_FIELD, "Create.workNumber", actions);
-                fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
-                fillField(FAX_FIELD, "Create.fax", actions);
-                fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
-                fillField(PTIN_FIELD, "Create.ptin");
-                fillField(PINEFILE_FIELD, "Create.pinEFile");
-                fillField(BARID_FIELD, "Create.barId");
-                fillField(CAF_FIELD, "Create.caf");
-                fillField(ADDRESS_LINE1, "Create.addressLine1");
-                fillField(ADDRESS_LINE2, "Create.addressLine2");
-                fillField(ZIP, "Create.zip");
-                driverUtil.getWebElement(ZIP).sendKeys(Keys.TAB);
-                WebDriverUtil.waitForAWhile(1);
                 break;
             case "New Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
                 fillField(ENTITY_NAME_FIELD_CREATE,"Create.entityName");
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
-                fillField(FIRST_NAME_FIELD, "Create.firstName");
-                fillField(MIDDLE_NAME_FIELD, "Create.middleName");
-                fillField(LAST_NAME_FIELD,"Create.lastName");
-                selectSuffixOption();
-                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
-                fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
-                fillField(WORK_NUMBER_FIELD, "Create.workNumber", actions);
-                fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
-                fillField(FAX_FIELD, "Create.fax", actions);
-                fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
-                fillField(PTIN_FIELD, "Create.ptin");
-                fillField(PINEFILE_FIELD, "Create.pinEFile");
-                fillField(BARID_FIELD, "Create.barId");
-                fillField(CAF_FIELD, "Create.caf");
-                fillField(ADDRESS_LINE1, "Create.addressLine1");
-                fillField(ADDRESS_LINE2, "Create.addressLine2");
-                fillField(ZIP, "Create.zip");
-                driverUtil.getWebElement(ZIP).sendKeys(Keys.TAB);
-                WebDriverUtil.waitForAWhile(1);
                 break;
             default:
                 throw new AutomationException("Unknown contact type: " + contactType);
@@ -232,6 +187,12 @@ public class EstateContactsPage extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
+    public  void filterContactByNameInAddContact(String contactName) throws AutomationException {
+        driverUtil.getWebElement(MODAL_NAME_FILTER_INPUT).click();
+        driverUtil.getWebElement(MODAL_NAME_FILTER_INPUT).sendKeys(contactName);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
     public void verifyContactInEstateContactsList() throws AutomationException {
         filterByContactName(individualContactName);
         WebElement ContactNameInEstateList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT,individualContactName));
@@ -241,10 +202,7 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyContactInGlobalContactsList() throws AutomationException, IOException {
-        //temp use
-        driverUtil.getWebElement("//button[text()='Cancel' and @class='me-3 btn btn-light-outline']").click();
-        driverUtil.getWebElement("//button[text()='Close' and @class='ms-2 btn btn-light-outline']").click();
-
+        GlobalContactPage.clickButtonClose();
         driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         GlobalContactPage.tabNavigation("Global Contact");
@@ -295,7 +253,6 @@ public class EstateContactsPage extends BasePage {
 
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_UNCHECK,role)).click();
-//        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
         GlobalContactPage.clickButtonSave();
     }
 
@@ -303,6 +260,56 @@ public class EstateContactsPage extends BasePage {
         WebElement rolesNotification = driverUtil.getWebElement(NO_ROLES_SELECTED_NOTIFICATION);
         if(!rolesNotification.isDisplayed()){
             throw new AutomationException("Notification is not displayed on removing the role");
+        }
+    }
+
+    public void saveWithoutRole() throws AutomationException {
+        driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
+        driverUtil.getWebElementAndScroll(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles updated successfully."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles updated successfully.")));
+    }
+
+    public void verifyRemoveContactButtonEnabled() throws AutomationException {
+        WebElement removeContactButton = driverUtil.getWebElement(REMOVE_CONTACT_FROM_ESTATE_BTN);
+        if (!removeContactButton.isEnabled()) {
+            throw new AutomationException("The 'Remove Contact from Estate' button is not enabled.");
+        }
+    }
+
+    public void verifyGlobalContactCreated() throws AutomationException {
+        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully."));
+        if (confirmationElement == null || !confirmationElement.isDisplayed()) {
+            throw new AutomationException("Confirmation message not displayed");
+        }
+        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
+        CommonSteps.takeScreenshot();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully.")));
+    }
+
+    public void clickOnRemoveContactFromEstateBtn() throws AutomationException {
+        driverUtil.getWebElement(REMOVE_CONTACT_FROM_ESTATE_BTN).click();
+    }
+
+    public void clickOnRemoveBtn() throws AutomationException {
+        driverUtil.getWebElement(REMOVE_BUTTON).click();
+    }
+
+    public void verifyContactRemovedSuccessMessage() throws AutomationException {
+        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate."));
+        if (confirmationElement == null || !confirmationElement.isDisplayed()) {
+            throw new AutomationException("Confirmation message not displayed");
+        }
+        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
+        CommonSteps.takeScreenshot();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate.")));
+
+    }
+
+    public void verifyContactInAddContactsList() throws AutomationException {
+        filterContactByNameInAddContact(individualContactName);
+        WebElement ContactNameInAddContactList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ADD_CONTACT_LIST,individualContactName));
+        if(!ContactNameInAddContactList.isDisplayed()){
+            throw new AutomationException("Removed contact is not displayed in the Add Contact list.");
         }
     }
 }

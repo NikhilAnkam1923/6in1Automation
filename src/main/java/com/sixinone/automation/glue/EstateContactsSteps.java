@@ -88,7 +88,6 @@ public class EstateContactsSteps {
     public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException {
         PageFactory.estateContactsPage().verifyRoleAssignedSuccessMessage();
         CommonSteps.logInfo("Verified that the role is assigned successfully.");
-        CommonSteps.takeScreenshot();
     }
 
     @When("user selects the Estate Contact")
@@ -113,6 +112,50 @@ public class EstateContactsSteps {
     public void userVerifiesThatNotificationIsDisplayedOnRemovingTheRole() throws AutomationException {
         PageFactory.estateContactsPage().verifyNotificationIsDisplayedOnRemovingTheRole();
         CommonSteps.logInfo("Verified that notification is displayed on removing the role.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user saves the Estate Contact without roles")
+    public void userSavesTheEstateContactWithoutRoles() throws AutomationException {
+        PageFactory.estateContactsPage().saveWithoutRole();
+        CommonSteps.logInfo("Saved the Estate Contact without roles.");
+    }
+
+    @Then("user verifies that the Remove Contact from Estate button is enabled")
+    public void userVerifiesThatTheRemoveContactFromEstateButtonIsEnabled() throws AutomationException {
+        PageFactory.estateContactsPage().verifyRemoveContactButtonEnabled();
+        CommonSteps.logInfo("Verified that the 'Remove Contact from Estate' button is enabled.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies global contact created successful message")
+    public void userVerifiesGlobalContactCreatedSuccessfulMessage() throws AutomationException {
+        PageFactory.estateContactsPage().verifyGlobalContactCreated();
+        CommonSteps.logInfo("Verified that Global Contact is created successfully.");
+    }
+
+    @And("user clicks on Remove Contact from Estate button")
+    public void userClicksOnRemoveContactFromEstateButton() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnRemoveContactFromEstateBtn();
+        CommonSteps.logInfo("Clicked on Remove Contact from Estate button.");
+    }
+
+    @And("user clicks on Remove button")
+    public void userClicksOnRemoveButton() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnRemoveBtn();
+        CommonSteps.logInfo("Clicked on Remove button.");
+    }
+
+    @Then("user verifies global contact removed from estate successful message")
+    public void userVerifiesGlobalContactRemovedFromEstateSuccessfulMessage() throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactRemovedSuccessMessage();
+        CommonSteps.logInfo("Verified that the Contact is removed from estate successfully.");
+    }
+
+    @Then("user verifies removed contact is displayed in the contact list to add back to the estate")
+    public void userVerifiesRemovedContactIsDisplayedInTheContactListToAddBackToTheEstate() throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactInAddContactsList();
+        CommonSteps.logInfo("Verified that the removed contact is displayed in the contact list to add back to the estate.");
         CommonSteps.takeScreenshot();
     }
 }
