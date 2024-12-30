@@ -283,7 +283,7 @@ public class EstateContactsPage extends BasePage {
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
-        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
+        CommonSteps.logInfo("Verified that Global Contact is created successfully.");
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully.")));
     }
@@ -301,7 +301,7 @@ public class EstateContactsPage extends BasePage {
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
-        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
+        CommonSteps.logInfo("Verified that the Contact is removed from estate successfully.");
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate.")));
 
