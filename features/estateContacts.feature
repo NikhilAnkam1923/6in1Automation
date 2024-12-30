@@ -49,16 +49,16 @@ Feature: 6in1 estate contacts Feature
     When user clicks on Save Button without selecting any role
     Then "You have not selected any role for this contact in this Estate. Please recheck and then proceed." Error should be thrown
 
-  Scenario: Verify new individual contact can be created
+  Scenario: Verify, new individual contact can be created
     When user clicks on the Create New Individual Contact button
     And user fills the details for "New Individual Global Contact"
-    And user save the global contact
-    Then user verifies global contact saved successful message
-      #Verify roles can be assigned for newly added contact.
+    And user click on Next button
+    Then user verifies global contact created successful message
+      #Verify, roles can be assigned for newly added contact.
     And user verifies that the newly created contact is selected by default
     And user selects the Role for Contact
-    Then user verifies that the role is assigned successfully
-    And user verifies the contact is visible in the Estate Contacts list
+    Then user verifies the contact is visible in the Estate Contacts list
+    And user verifies that the role is assigned successfully
       #Verify, notification is displayed on removing the role.
     When user selects the Estate Contact
     And user clicks on Estate-Specific Fields
@@ -75,7 +75,6 @@ Feature: 6in1 estate contacts Feature
     And user clicks on the Add Contact button
     Then user verifies removed contact is displayed in the contact list to add back to the estate
     And user verifies the contact is visible in the Global Contacts list
-
 
   @Setup
   Scenario:SETUP: Close Browser

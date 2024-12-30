@@ -145,7 +145,6 @@ public class EstateContactsSteps {
     @Then("user verifies global contact created successful message")
     public void userVerifiesGlobalContactCreatedSuccessfulMessage() throws AutomationException {
         PageFactory.estateContactsPage().verifyGlobalContactCreated();
-        CommonSteps.logInfo("Verified that Global Contact is created successfully.");
     }
 
     @And("user clicks on Remove Contact from Estate button")
@@ -163,7 +162,6 @@ public class EstateContactsSteps {
     @Then("user verifies global contact removed from estate successful message")
     public void userVerifiesGlobalContactRemovedFromEstateSuccessfulMessage() throws AutomationException {
         PageFactory.estateContactsPage().verifyContactRemovedSuccessMessage();
-        CommonSteps.logInfo("Verified that the Contact is removed from estate successfully.");
     }
 
     @Then("user verifies removed contact is displayed in the contact list to add back to the estate")

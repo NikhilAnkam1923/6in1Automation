@@ -180,7 +180,6 @@ public class EstateCreationPage extends BasePage {
         selectSuffixOption();
         fillField(DECEDENT_ALSO_KNOWN_AS, "EstateCreate.alsoKnownAs");
         displayName = getFieldValue(DECEDENT_DISPLAY_NAME,"value");
-        CommonSteps.logInfo("User Filled The Decedent's basic information.");
     }
 
     public void selectMaritalStatusOptionDivorced() throws AutomationException, IOException, ParseException {
@@ -299,8 +298,6 @@ public class EstateCreationPage extends BasePage {
             throw new AutomationException("Validation for exceeding max character limit is not displayed.");
         }
 
-
-        CommonSteps.logInfo("Verified Validations for all fields under last address/domicile.");
         CommonSteps.takeScreenshot();
         clearField(DOMICILE_ADDRESS_LINE1);
         fillField(DOMICILE_ADDRESS_LINE1, "EstateCreate.addressLine1");
@@ -328,8 +325,6 @@ public class EstateCreationPage extends BasePage {
         verifyRadioButtonSelection(boroughRadio, townshipRadio);
         jsExecutor.executeScript("arguments[0].click();", townshipRadio);
         verifyRadioButtonSelection(townshipRadio, boroughRadio);
-
-        CommonSteps.logInfo("Verified Township and Borough radio buttons toggle correctly.");
     }
 
     public void fillPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
@@ -341,7 +336,6 @@ public class EstateCreationPage extends BasePage {
         fillField(PLACE_OF_DEATH_ZIP, "EstateCreate.PODzip");
         driverUtil.getWebElement(PLACE_OF_DEATH_ZIP).sendKeys(Keys.TAB);
         verifyAutoFetchedFieldsOfPlaceOfDeathAddress();
-        CommonSteps.logInfo("User Filled The Place of Death details.");
     }
 
     public void verifyPlaceOfDeathFieldValidations() throws AutomationException, IOException, ParseException {

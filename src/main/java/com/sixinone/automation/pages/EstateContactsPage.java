@@ -83,6 +83,7 @@ public class EstateContactsPage extends BasePage {
         if (!nameColumn.isDisplayed() || !rolesColumn.isDisplayed()) {
             throw new AutomationException("Name or Roles column is not displayed in the left pane.");
         }
+        waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     public void clickAddContactButton() throws AutomationException {
@@ -122,14 +123,8 @@ public class EstateContactsPage extends BasePage {
 
     private void fillField(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
         WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
-        if (field != null) {
-            if (!field.getAttribute("value").isEmpty()) {
-                field.clear();
-            }
-            field.sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString());
-        } else {
-            throw new AutomationException("Field not found for locator: " + fieldLocator);
-        }
+        field.clear();
+        field.sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString());
     }
 
     private void fillField(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
@@ -210,6 +205,8 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyContactInEstateContactsList() throws AutomationException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
         filterByContactName(individualContactName);
         WebElement ContactNameInEstateList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, individualContactName));
         if (!ContactNameInEstateList.isDisplayed()) {
@@ -247,13 +244,14 @@ public class EstateContactsPage extends BasePage {
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
         driverUtil.getWebElement(SAVE_BUTTON_AFTER_SELECTROLE).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
+        GlobalContactPage.clickButtonSave();
     }
 
     public void verifyRoleAssignedSuccessfully() throws AutomationException, IOException, ParseException {
-        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAccountant").toString();
+        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.role").toString();
 
         WebElement nameAndRole = driverUtil.getWebElement(String.format(NAME_AND_ROLE_ROW,individualContactName,role));
-        if(nameAndRole != null && !nameAndRole.isDisplayed()){
+        if(!nameAndRole.isDisplayed()){
             throw new AutomationException("Role is not assigned to for the contact.");
         }
     }
@@ -317,7 +315,7 @@ public class EstateContactsPage extends BasePage {
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
-        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
+        CommonSteps.logInfo("Verified that Global Contact is created successfully.");
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully.")));
     }
@@ -335,7 +333,7 @@ public class EstateContactsPage extends BasePage {
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
-        CommonSteps.logInfo("Verified Confirmation message is: " + confirmationElement.getText());
+        CommonSteps.logInfo("Verified that the Contact is removed from estate successfully.");
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate.")));
 
