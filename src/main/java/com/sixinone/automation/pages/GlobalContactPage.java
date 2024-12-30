@@ -357,13 +357,13 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyGlobalContactSaved() throws AutomationException {
-        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Contact details have been successfully saved."));
+        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Contact created successfully."));
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
         CommonSteps.logInfo("Confirmation message is: " + confirmationElement.getText());
         CommonSteps.takeScreenshot();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact details have been successfully saved.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
         //WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 

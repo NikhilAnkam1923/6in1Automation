@@ -1,5 +1,6 @@
 package com.sixinone.automation.glue;
 
+import com.aspose.pdf.Page;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
@@ -85,8 +86,8 @@ public class EstateContactsSteps {
     }
 
     @Then("user verifies that the role is assigned successfully")
-    public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException {
-        PageFactory.estateContactsPage().verifyRoleAssignedSuccessMessage();
+    public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyRoleAssignedSuccessfully();
         CommonSteps.logInfo("Verified that the role is assigned successfully.");
         CommonSteps.takeScreenshot();
     }
@@ -116,8 +117,8 @@ public class EstateContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user click on Add button for selected \"([^\"]*)\" contact with a White background")
-    public void userClickOnAddButtonForSelectedContactWithAWhiteBackground(String contactType) throws AutomationException {
+    @When("^user click on Add button for selected \"([^\"]*)\" contact with a \"([^\"]*)\" background$")
+    public void userClickOnAddButtonForSelectedContactWithABackground(String contactType, String color) throws AutomationException {
         PageFactory.estateContactsPage().clickOnAddButtonForSpecificContactType(contactType);
     }
 
@@ -128,4 +129,80 @@ public class EstateContactsSteps {
     }
 
 
+    @And("user saves the Estate Contact without roles")
+    public void userSavesTheEstateContactWithoutRoles() throws AutomationException {
+        PageFactory.estateContactsPage().saveWithoutRole();
+        CommonSteps.logInfo("Saved the Estate Contact without roles.");
+    }
+
+    @Then("user verifies that the Remove Contact from Estate button is enabled")
+    public void userVerifiesThatTheRemoveContactFromEstateButtonIsEnabled() throws AutomationException {
+        PageFactory.estateContactsPage().verifyRemoveContactButtonEnabled();
+        CommonSteps.logInfo("Verified that the 'Remove Contact from Estate' button is enabled.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies global contact created successful message")
+    public void userVerifiesGlobalContactCreatedSuccessfulMessage() throws AutomationException {
+        PageFactory.estateContactsPage().verifyGlobalContactCreated();
+        CommonSteps.logInfo("Verified that Global Contact is created successfully.");
+    }
+
+    @And("user clicks on Remove Contact from Estate button")
+    public void userClicksOnRemoveContactFromEstateButton() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnRemoveContactFromEstateBtn();
+        CommonSteps.logInfo("Clicked on Remove Contact from Estate button.");
+    }
+
+    @And("user clicks on Remove button")
+    public void userClicksOnRemoveButton() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnRemoveBtn();
+        CommonSteps.logInfo("Clicked on Remove button.");
+    }
+
+    @Then("user verifies global contact removed from estate successful message")
+    public void userVerifiesGlobalContactRemovedFromEstateSuccessfulMessage() throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactRemovedSuccessMessage();
+        CommonSteps.logInfo("Verified that the Contact is removed from estate successfully.");
+    }
+
+    @Then("user verifies removed contact is displayed in the contact list to add back to the estate")
+    public void userVerifiesRemovedContactIsDisplayedInTheContactListToAddBackToTheEstate() throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactInAddContactsList();
+        CommonSteps.logInfo("Verified that the removed contact is displayed in the contact list to add back to the estate.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user clicks on the Create New Entity Contact button")
+    public void userClicksOnTheCreateNewEntityContactButton() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnNewEntityContactBtn();
+        CommonSteps.logInfo("Clicked on the Create New Entity Contact button.");
+
+    }
+
+    @Then("^verify user is on create contact page for \"([^\"]*)\" type$")
+    public void verifyUserIsOnCreateContactPageForType(String contactPage) throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactPage(contactPage);
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user clicks on Save Button without selecting any role")
+    public void userClicksOnSaveButtonWithoutSelectingAnyRole() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnAfterSelectRoleSaveButton();
+    }
+
+    @Then("^\"([^\"]*)\" Error should be thrown$")
+    public void errorShouldBeThrown(String errorMsg) throws AutomationException {
+        PageFactory.estateContactsPage().errorMsgCheck(errorMsg);
+
+    }
+
+    @And("user verifies that the Remove Contact from Estate button is disable")
+    public void userVerifiesThatTheRemoveContactFromEstateButtonIsDisable() throws AutomationException {
+        PageFactory.estateContactsPage().verifyRemoveContactButtonDisabled();
+        CommonSteps.logInfo("Verified that the 'Remove Contact from Estate' button is disabled.");
+        CommonSteps.takeScreenshot();
+    }
 }
+
+
