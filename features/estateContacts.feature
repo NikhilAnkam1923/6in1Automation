@@ -26,8 +26,8 @@ Feature: 6in1 estate contacts Feature
       #Verify, roles can be assigned for newly added contact.
       And user verifies that the newly created contact is selected by default
       And user selects the Role for Contact
-      Then user verifies that the role is assigned successfully
-      And user verifies the contact is visible in the Estate Contacts list
+      Then user verifies the contact is visible in the Estate Contacts list
+      And user verifies that the role is assigned successfully
       #Verify, notification is displayed on removing the role.
       When user selects the Estate Contact
       And user clicks on Estate-Specific Fields

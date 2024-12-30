@@ -85,9 +85,10 @@ public class EstateContactsSteps {
     }
 
     @Then("user verifies that the role is assigned successfully")
-    public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException {
-        PageFactory.estateContactsPage().verifyRoleAssignedSuccessMessage();
+    public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyRoleAssignedSuccessfully();
         CommonSteps.logInfo("Verified that the role is assigned successfully.");
+        CommonSteps.takeScreenshot();
     }
 
     @When("user selects the Estate Contact")
