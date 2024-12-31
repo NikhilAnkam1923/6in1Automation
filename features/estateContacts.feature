@@ -24,7 +24,7 @@ Feature: 6in1 estate contacts Feature
       #Verify user can save and assign role to the contact successfully.
     And user selects the Role for Contact
       #verify assigned roles should be displayed in front of the name under roles column
-    Then user verifies that the role is assigned successfully
+    Then user verifies that the role is assigned successfully for "Individual" contact
 
   Scenario:Verify existing entity type of contact can be added
     When user clicks on the Add Contact button
@@ -32,7 +32,7 @@ Feature: 6in1 estate contacts Feature
     Then user verify landed on Select Role page
     And user selects the Role for Contact
       #verify assigned roles should be displayed in front of the name under roles column
-    Then user verifies that the role is assigned successfully
+    Then user verifies that the role is assigned successfully for "Entity" contact
       #verify remove contact from estate button is disabled if the role is still assigned.
     And user verifies that the Remove Contact from Estate button is disable
 
@@ -58,7 +58,7 @@ Feature: 6in1 estate contacts Feature
     And user verifies that the newly created contact is selected by default
     And user selects the Role for Contact
     Then user verifies the contact is visible in the Estate Contacts list
-    And user verifies that the role is assigned successfully
+    And user verifies that the role is assigned successfully for "Individual" contact
       #Verify, notification is displayed on removing the role.
     When user selects the Estate Contact
     And user clicks on Estate-Specific Fields

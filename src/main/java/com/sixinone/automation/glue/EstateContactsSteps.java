@@ -85,15 +85,15 @@ public class EstateContactsSteps {
         CommonSteps.logInfo("User selected the Role for Contact.");
     }
 
-    @Then("user verifies that the role is assigned successfully")
-    public void userVerifiesThatTheRoleIsAssignedSuccessfully() throws AutomationException, IOException, ParseException {
-        PageFactory.estateContactsPage().verifyRoleAssignedSuccessfully();
+    @Then("^user verifies that the role is assigned successfully for \"([^\"]*)\" contact$")
+    public void userVerifiesThatTheRoleIsAssignedSuccessfully(String contactType) throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyRoleAssignedSuccessfully(contactType);
         CommonSteps.logInfo("Verified that the role is assigned successfully.");
         CommonSteps.takeScreenshot();
     }
 
     @When("user selects the Estate Contact")
-    public void userSelectsTheEstateContact() throws AutomationException {
+    public void userSelectsTheEstateContact() throws AutomationException, IOException, ParseException {
         PageFactory.estateContactsPage().selectEstateContact();
         CommonSteps.logInfo("User selected the Estate Contact.");
     }

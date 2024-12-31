@@ -121,6 +121,7 @@
   },
   "EstateContact": {
     "roleAccountant": "Accountant",
-    "roleAttorney": "Attorney"
+    "roleAttorney": "Attorney",
+    "roleBeneficiary": "Beneficiary"
   }
 }
