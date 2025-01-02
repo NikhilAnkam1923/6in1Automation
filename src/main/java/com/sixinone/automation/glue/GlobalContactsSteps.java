@@ -78,7 +78,7 @@ public class GlobalContactsSteps {
     @And("user attempts to save the global contact without filling the required fields")
     public void userAttemptsToSaveTheGlobalContactWithoutFillingTheRequiredFields() throws AutomationException, IOException {
         CommonSteps.logInfo("Attempting to save the global contact without filling the required fields.");
-        PageFactory.globalContactPage().clearFields();
+        PageFactory.globalContactPage().clearNameFields();
         PageFactory.globalContactPage().clickButtonNext();
     }
 

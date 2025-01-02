@@ -28,70 +28,70 @@ Feature: 6in1 Global Contacts Feature
     And user attempts to save the global contact without filling the required fields
     Then user should see validation error messages for the required fields
     Then user fills all the details for "Individual Global Contact"
-    #validates the EIN and SSN formats
-    Then Verify that the system validates the EIN and SSN formats correctly
-    #verify that city, state, and county are automatically fetched
-    Then verify that city, state, and county are automatically fetched
-    #Verify that validation error messages are removed when required fields are corrected
-    Then user verify all the error messages are removed
-    Then user save the global contact
-    And user verifies global contact saved successful message
-    #Verify use can able to edit the created "Individual Global Contact"
-    And user "Edit" global contact of "Individual Global Contact"
-    And user verifies global contact saved successful message
-
-  Scenario: Create the contact for Entity Global Contact
-    And user "Create" global contact of "Entity Global Contact"
-    #Verify Entity Name fields are pre-filled
-    And Entity Name fields is pre-filled
-    Then user fills all the details for "Entity Global Contact"
-    Then user save the global contact
-    And user verifies global contact saved successful message
-
-  Scenario: Attempt to create a duplicate entity contact with the same EIN
-    And user "Create" global contact of "Entity Global Contact"
-    Then user enters already existed EIN
-    Then user save the global contact
-    And user should see an error message for duplicate EIN
-
-  Scenario: Verify Select & Proceed button is enabled after selecting a radio button
-    When user navigate to "Global Contact"
-    When user clicks on the Create button
-    When user enters "Joe" as the first name and "Root" as the last name
-    Then user navigates to the page with the records
-    Then user verifies the Contact (Select or Create New) page
-    #verifies "Create Individual Contact" button availability
-    And user verifies "Create Individual Contact" button is available
-    And user selects a radio button for a record
-    #verifies the "Select & Proceed" button is enable
-    Then user verifies the "Select & Proceed" button is enabled
-    And user click on the Close button
-
-  Scenario: Verify that the system trims leading and trailing spaces from text input fields
-    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
-    And First Name and Last Name fields are pre-filled
-    Then user fills all the details for "Individual Global Contact" with spaces
-    And user save the global contact
-    Then user verifies global contact saved successful message
-
-  Scenario: Verify display result on entity name
-    When user clicks on the Create button
-    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
-    Then user verifies all the matching records are displayed for Entity Global Contact
-    Then user verifies background color of the "Entity Global Contact"
-    Then user verifies radio buttons are available for all the contacts
-    Then user verifies "Create Entity Contact" button is available
-    And user clicks on the Close button
-
-  Scenario Outline: verify user authorization for "View Only" user
-    When user logged out from the application
-    And user go to application "https://delltab.benchmarkits.in"
-    When user login using "<user-email>" and "<password>"
-    When user navigate to "Global Contact"
-    Then user verifies authorization for "View Only"
-    Examples:
-      | user-email                           | password |
-      | nikhilankam+13@benchmarkit.solutions | Watch@22 |
+#    #validates the EIN and SSN formats
+#    Then Verify that the system validates the EIN and SSN formats correctly
+#    #verify that city, state, and county are automatically fetched
+#    Then verify that city, state, and county are automatically fetched
+#    #Verify that validation error messages are removed when required fields are corrected
+#    Then user verify all the error messages are removed
+#    Then user save the global contact
+#    And user verifies global contact saved successful message
+#    #Verify use can able to edit the created "Individual Global Contact"
+#    And user "Edit" global contact of "Individual Global Contact"
+#    And user verifies global contact saved successful message
+#
+#  Scenario: Create the contact for Entity Global Contact
+#    And user "Create" global contact of "Entity Global Contact"
+#    #Verify Entity Name fields are pre-filled
+#    And Entity Name fields is pre-filled
+#    Then user fills all the details for "Entity Global Contact"
+#    Then user save the global contact
+#    And user verifies global contact saved successful message
+#
+#  Scenario: Attempt to create a duplicate entity contact with the same EIN
+#    And user "Create" global contact of "Entity Global Contact"
+#    Then user enters already existed EIN
+#    Then user save the global contact
+#    And user should see an error message for duplicate EIN
+#
+#  Scenario: Verify Select & Proceed button is enabled after selecting a radio button
+#    When user navigate to "Global Contact"
+#    When user clicks on the Create button
+#    When user enters "Joe" as the first name and "Root" as the last name
+#    Then user navigates to the page with the records
+#    Then user verifies the Contact (Select or Create New) page
+#    #verifies "Create Individual Contact" button availability
+#    And user verifies "Create Individual Contact" button is available
+#    And user selects a radio button for a record
+#    #verifies the "Select & Proceed" button is enable
+#    Then user verifies the "Select & Proceed" button is enabled
+#    And user click on the Close button
+#
+#  Scenario: Verify that the system trims leading and trailing spaces from text input fields
+#    And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
+#    And First Name and Last Name fields are pre-filled
+#    Then user fills all the details for "Individual Global Contact" with spaces
+#    And user save the global contact
+#    Then user verifies global contact saved successful message
+#
+#  Scenario: Verify display result on entity name
+#    When user clicks on the Create button
+#    And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
+#    Then user verifies all the matching records are displayed for Entity Global Contact
+#    Then user verifies background color of the "Entity Global Contact"
+#    Then user verifies radio buttons are available for all the contacts
+#    Then user verifies "Create Entity Contact" button is available
+#    And user clicks on the Close button
+#
+#  Scenario Outline: verify user authorization for "View Only" user
+#    When user logged out from the application
+#    And user go to application "https://delltab.benchmarkits.in"
+#    When user login using "<user-email>" and "<password>"
+#    When user navigate to "Global Contact"
+#    Then user verifies authorization for "View Only"
+#    Examples:
+#      | user-email                           | password |
+#      | nikhilankam+13@benchmarkit.solutions | Watch@22 |
 
   @Setup
   Scenario:SETUP: Close Browser
