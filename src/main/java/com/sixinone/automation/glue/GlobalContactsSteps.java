@@ -79,7 +79,7 @@ public class GlobalContactsSteps {
     public void userAttemptsToSaveTheGlobalContactWithoutFillingTheRequiredFields() throws AutomationException, IOException {
         CommonSteps.logInfo("Attempting to save the global contact without filling the required fields.");
         PageFactory.globalContactPage().clearFields();
-        PageFactory.globalContactPage().clickButtonSave();
+        PageFactory.globalContactPage().clickButtonNext();
     }
 
     @Then("user should see validation error messages for the required fields")

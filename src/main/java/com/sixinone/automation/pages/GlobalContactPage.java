@@ -83,6 +83,7 @@ public class GlobalContactPage extends BasePage {
     public static final String CITY_ERROR_REQUIRED_XPATH = "//input[@id='address.city']/following-sibling::div";
     public static final String STATE_ERROR_REQUIRED_XPATH = "//div[@id='State']";
     public static final String CLOSE_BUTTON = "//button[text()='Close']";
+    public static final String NEXT_BUTTON = "//button[text()='Next']";
 
     public static void tabNavigation(String tab) throws AutomationException, IOException {
         driverUtil.getWebElement(String.format("//div[@class='nav']//div//*[contains(text(),'%s')]//parent::a", tab)).click();
@@ -103,6 +104,10 @@ public class GlobalContactPage extends BasePage {
 
     public static void clickButtonSave() throws AutomationException {
         driverUtil.getWebElement(SAVE_BUTTON).click();
+    }
+
+    public static void clickButtonNext() throws AutomationException {
+        driverUtil.getWebElement(NEXT_BUTTON).click();
     }
 
     public void clickButtonRadioButton() throws AutomationException {
@@ -159,18 +164,19 @@ public class GlobalContactPage extends BasePage {
         switch (contactType) {
             case "Individual Global Contact":
                 waitForVisibleElement(By.xpath(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE));
+                fillField(FIRST_NAME_FIELD, "Create.firstName");
                 fillField(MIDDLE_NAME_FIELD, "Create.middleName");
-                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                fillField(LAST_NAME_FIELD, "Create.lastName");
                 selectSuffixOption();
+                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                clickButtonNext();
+                WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
                 fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
                 fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
                 fillField(PTIN_FIELD, "Create.ptin");
                 fillField(PINEFILE_FIELD, "Create.pinEFile");
                 fillField(BARID_FIELD, "Create.barId");
                 fillField(CAF_FIELD, "Create.caf");
-                fillField(ADDRESS_LINE2, "Create.addressLine2");
-                fillField(ZIP, "Create.zip");
-                fillField(ADDRESS_LINE1, "Create.addressLine1");
                 fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
                 fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
@@ -179,12 +185,20 @@ public class GlobalContactPage extends BasePage {
                 break;
             case "Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
-                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
                 fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
+                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                clickButtonNext();
+                WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
+                fillField(FIRST_NAME_FIELD, "Create.firstName");
+                fillField(MIDDLE_NAME_FIELD, "Create.middleName");
+                fillField(LAST_NAME_FIELD, "Create.lastName");
                 selectSuffixOption();
+                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
                 fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
-                fillField(ADDRESS_LINE1, "Create.addressLine1");
-                fillField(ZIP, "Create.zip");
+                fillField(PTIN_FIELD, "Create.ptin");
+                fillField(PINEFILE_FIELD, "Create.pinEFile");
+                fillField(BARID_FIELD, "Create.barId");
+                fillField(CAF_FIELD, "Create.caf");
                 fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
                 fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
                 fillField(WORK_NUMBER_FIELD, "Create.workNumber", actions);
