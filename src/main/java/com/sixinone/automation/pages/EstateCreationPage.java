@@ -1,6 +1,6 @@
 package com.sixinone.automation.pages;
 
-import com.github.dockerjava.api.model.Driver;
+
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
@@ -10,7 +10,6 @@ import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -20,8 +19,6 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class EstateCreationPage extends BasePage {
@@ -625,10 +622,8 @@ public class EstateCreationPage extends BasePage {
     public void entersDOBandDOD() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
-        //clearField(DATE_OF_BIRTH);
         fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth", actions);
         actions.sendKeys(Keys.ENTER);
-        //clearField(DATE_OF_DEATH);
         fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath", actions);
         actions.sendKeys(Keys.ENTER);
         waitForAWhile(3);
