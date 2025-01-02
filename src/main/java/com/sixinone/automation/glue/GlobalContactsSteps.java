@@ -284,5 +284,24 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @And("user clicks on Mange Address button")
+    public void userClicksOnMangeAddressButton() throws AutomationException {
+        PageFactory.globalContactPage().clickBtnManageAddress();
+    }
+
+    @And("user clicks on Add New Address button")
+    public void userClicksOnAddNewAddressButton() throws AutomationException {
+        PageFactory.globalContactPage().clickBtnAddNewAddress();
+    }
+
+    @And("user fills Address information")
+    public void userFillsAddressInformation() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().fillAddressInfo();
+    }
+
+    @And("user click on Save button")
+    public void userClickOnSaveButton() throws AutomationException {
+        PageFactory.globalContactPage().clickButtonSave();
+    }
 }
 
