@@ -19,6 +19,7 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+
 import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class EstateCreationPage extends BasePage {
@@ -176,7 +177,7 @@ public class EstateCreationPage extends BasePage {
         fillField(DECEDENT_DISPLAY_NAME, "EstateCreate.displayName");
         selectSuffixOption();
         fillField(DECEDENT_ALSO_KNOWN_AS, "EstateCreate.alsoKnownAs");
-        displayName = getFieldValue(DECEDENT_DISPLAY_NAME,"value");
+        displayName = getFieldValue(DECEDENT_DISPLAY_NAME, "value");
     }
 
     public void selectMaritalStatusOptionDivorced() throws AutomationException, IOException, ParseException {
@@ -371,7 +372,10 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void selectCheckBox(String checkboxName) throws AutomationException {
-        driverUtil.getWebElement(String.format(ESTATE_CHECKBOX_XPATH, checkboxName)).click();
+        WebElement checkbox = driverUtil.getWebElement(String.format(ESTATE_CHECKBOX_XPATH, checkboxName));
+        if (!checkbox.isSelected()) {
+            checkbox.click();
+        }
     }
 
     public void clearField(String fieldXpath) throws AutomationException {
@@ -394,8 +398,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
-        Actions actions = new Actions(DriverFactory.drivers.get());
-
         selectCheckBox("Use model accounting");
         clearField(DATE_OF_WILL);
         fillField(DATE_OF_WILL, "EstateCreate.dateOfWill");
@@ -535,7 +537,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void clickOnActionsMenu() throws AutomationException {
-        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN,displayName)).click();
+        driverUtil.getWebElement(String.format(ESTATE_ACTION_BTN, displayName)).click();
     }
 
     public void selectActionsOption(String actionsOption) throws AutomationException {
@@ -732,7 +734,7 @@ public class EstateCreationPage extends BasePage {
     public String getSelectedAddress() throws AutomationException {
         List<String> addresses = Arrays.asList("Fiduciary Address or Attny", "Accountant", "Preparer Address");
         for (String address : addresses) {
-            WebElement radioButton = driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, address));
+            WebElement radioButton = driverUtil.getWebElementAndScroll(String.format(ADDRESS_RADIO_BTN_XPATH, address));
             if (radioButton.isSelected()) {
                 return address;
             }

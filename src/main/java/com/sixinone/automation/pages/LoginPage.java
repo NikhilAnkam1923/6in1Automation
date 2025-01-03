@@ -2,6 +2,7 @@ package com.sixinone.automation.pages;
 
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -19,7 +20,7 @@ public class LoginPage extends BasePage {
     private static final String LOGIN_BTN = "//input[@name='login']";
     private static final String LOGIN_LOGO = "//h2[text()='Login']";
     public static final String SPINNER = "//div[contains(class,'spinner')]";
-    private static final String LOGOUT_BTN = "//li[@class='nav-item logout']";
+    private static final String LOGOUT_BTN = "//a[@aria-label='Logout']";
     private static final String ERROR_MSG = "//span[@id='input-error']";
     private static final String EYE_ICON = "//button[@aria-label=\"Show password\"]";
     private static final String REMEBER_ME = "//input[@id='rememberMe']";
@@ -94,9 +95,18 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
+        WebDriverUtil.waitForVisibleElement(By.xpath(LOGOUT_BTN));
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        driverUtil.getWebElementAndScroll(LOGIN_LOGO);
+        WebElement loginLogo = driverUtil.getWebElementAndScroll(LOGIN_LOGO);
+        if(loginLogo.isDisplayed())
+        {
+            CommonSteps.logInfo("Successfully logout done");
+        }
+        else {
+            throw new AutomationException("Logout failed");
+        }
+
     }
 
     public void clickOnEyeIconVisibility() throws AutomationException {

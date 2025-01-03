@@ -26,12 +26,12 @@ public class GlobalContactPage extends BasePage {
     private static final String PHONE_NUMBER_FIELD = "//input[@name='contact.phoneNumber']";
     private static final String EMAIL_ADDRESS_FIELD = "//input[@name='contact.emailAddress']";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
-    private static final String MAIDEN_NAME_FIELD = "//input[@name='contact.maidenName']";
+    private static final String MAIDEN_NAME_FIELD = "//input[@id='contact.maidenName']";
     private static final String LAST_NAME_FIELD_CREATE = "//input[@id='contact.lastName']";
     private static final String FIRST_NAME_FIELD_CREATE = "//input[@id='contact.firstName']";
     private static final String ENTITY_NAME_FIELD_CREATE = "//input[@name='contact.entityName']";
-    private static final String SSN_FIELD = "//input[@id='contact.ssn']";
-    private static final String EIN_FIELD = "//input[@id='contact.ein']";
+    private static final String SSN_FIELD = "//input[@name='contact.ssn']";
+    private static final String EIN_FIELD = "//input[@name='contact.ein']";
     public static final String SAVE_BUTTON = "//button[text()='Save']";
     public static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
@@ -83,6 +83,7 @@ public class GlobalContactPage extends BasePage {
     public static final String CITY_ERROR_REQUIRED_XPATH = "//input[@id='address.city']/following-sibling::div";
     public static final String STATE_ERROR_REQUIRED_XPATH = "//div[@id='State']";
     public static final String CLOSE_BUTTON = "//button[text()='Close']";
+    public static final String NEXT_BUTTON = "//button[text()='Next']";
 
     public static void tabNavigation(String tab) throws AutomationException, IOException {
         driverUtil.getWebElement(String.format("//div[@class='nav']//div//*[contains(text(),'%s')]//parent::a", tab)).click();
@@ -105,6 +106,10 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(SAVE_BUTTON).click();
     }
 
+    public static void clickButtonNext() throws AutomationException {
+        driverUtil.getWebElement(NEXT_BUTTON).click();
+    }
+
     public void clickButtonRadioButton() throws AutomationException {
         driverUtil.getWebElement(RADIO_BUTTON).click();
     }
@@ -121,9 +126,17 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(CLOSE_BUTTON).click();
     }
 
-    public void clearFields() throws AutomationException {
-        driverUtil.getWebElementAndScroll(LAST_NAME_FIELD_CREATE).clear();
-        driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD_CREATE).clear();
+    public void clearField(String fieldXpath) throws AutomationException {
+        WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
+        fieldElement.sendKeys(Keys.CONTROL + "a");
+        fieldElement.sendKeys(Keys.BACK_SPACE);
+    }
+
+    public void clearNameFields() throws AutomationException {
+//        driverUtil.getWebElementAndScroll(LAST_NAME_FIELD_CREATE).clear();
+//        driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD_CREATE).clear();
+        clearField(LAST_NAME_FIELD_CREATE);
+        clearField(FIRST_NAME_FIELD_CREATE);
     }
 
     public void globalContactCreation(String contactType) throws AutomationException, IOException, ParseException {
@@ -159,18 +172,19 @@ public class GlobalContactPage extends BasePage {
         switch (contactType) {
             case "Individual Global Contact":
                 waitForVisibleElement(By.xpath(INDIVIDUAL_GLOBAL_CONTACT_CREATION_PAGE));
+                fillField(FIRST_NAME_FIELD, "Create.firstName");
                 fillField(MIDDLE_NAME_FIELD, "Create.middleName");
-                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                fillField(LAST_NAME_FIELD, "Create.lastName");
                 selectSuffixOption();
+                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                clickButtonNext();
+                WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
                 fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
                 fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
                 fillField(PTIN_FIELD, "Create.ptin");
                 fillField(PINEFILE_FIELD, "Create.pinEFile");
                 fillField(BARID_FIELD, "Create.barId");
                 fillField(CAF_FIELD, "Create.caf");
-                fillField(ADDRESS_LINE2, "Create.addressLine2");
-                fillField(ZIP, "Create.zip");
-                fillField(ADDRESS_LINE1, "Create.addressLine1");
                 fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
                 fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
@@ -179,12 +193,20 @@ public class GlobalContactPage extends BasePage {
                 break;
             case "Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
-                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
                 fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
+                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                clickButtonNext();
+                WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
+                fillField(FIRST_NAME_FIELD, "Create.firstName");
+                fillField(MIDDLE_NAME_FIELD, "Create.middleName");
+                fillField(LAST_NAME_FIELD, "Create.lastName");
                 selectSuffixOption();
+                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
                 fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
-                fillField(ADDRESS_LINE1, "Create.addressLine1");
-                fillField(ZIP, "Create.zip");
+                fillField(PTIN_FIELD, "Create.ptin");
+                fillField(PINEFILE_FIELD, "Create.pinEFile");
+                fillField(BARID_FIELD, "Create.barId");
+                fillField(CAF_FIELD, "Create.caf");
                 fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
                 fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
                 fillField(WORK_NUMBER_FIELD, "Create.workNumber", actions);
@@ -663,10 +685,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void verifyRequiredFieldValidationErrors() throws AutomationException {
-        if (!driverUtil.getWebElement(ADDRESS_LINE1_ERROR_REQUIRED_XPATH).isDisplayed() ||
-                !driverUtil.getWebElement(ZIP_ERROR_REQUIRED_XPATH).isDisplayed() ||
-                !driverUtil.getWebElement(CITY_ERROR_REQUIRED_XPATH).isDisplayed() ||
-                !driverUtil.getWebElement(STATE_ERROR_REQUIRED_XPATH).isDisplayed()) {
+        if (!driverUtil.getWebElement(REQUIRED_FIELD_ERROR_XPATH).isDisplayed()) {
             throw new AutomationException("Error messages are not displayed.");
         }
         CommonSteps.logInfo("Error messages are displayed.");
