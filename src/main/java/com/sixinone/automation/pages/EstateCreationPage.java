@@ -507,7 +507,7 @@ public class EstateCreationPage extends BasePage {
         String expectedFileNumberPart2 = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.fileNumberPart2").toString();
         String expectedFileNumberPart3 = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.fileNumberPart3").toString();
 
-        WebDriverUtil.waitForAWhile(1);
+        WebDriverUtil.waitForAWhile(2);
 
         String actualDateOfWill = getFieldValue(DATE_OF_WILL, "value");
         String actualCodicilDate1 = getFieldValue(CODICILE_DATE_1, "value");
@@ -518,6 +518,8 @@ public class EstateCreationPage extends BasePage {
         String actualFileNumberPart1 = getFieldValue(FILE_NUMBER_PART_1, "value");
         String actualFileNumberPart2 = getFieldValue(FILE_NUMBER_PART_2, "value");
         String actualFileNumberPart3 = getFieldValue(FILE_NUMBER_PART_3, "value");
+
+        waitForLoadingPage();
 
         verifyField("Date of Will", expectedDateOfWill, actualDateOfWill);
         verifyField("Codicil Date 1", expectedCodicilDate1, actualCodicilDate1);
