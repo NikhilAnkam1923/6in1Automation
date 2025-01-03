@@ -42,7 +42,8 @@
     "ein": "22-4989033",
     "phoneNumber": "(333) 232-3234",
     "workNumber": "(333) 443-4344",
-    "fax": "(333) 222-2222"
+    "fax": "(333) 222-2222",
+    "addressComments": "address updated"
   },
   "CreateWithSpaces": {
     "firstName": "  Anna",

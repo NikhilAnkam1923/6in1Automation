@@ -1,11 +1,14 @@
 package com.sixinone.automation.glue;
 
 import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.pages.GlobalContactPage;
 import com.sixinone.automation.pages.PageFactory;
 
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.WebDriverUtil;
 import cucumber.api.java.en.*;
 import org.json.simple.parser.ParseException;
+import org.openqa.selenium.By;
 
 import java.io.IOException;
 
@@ -302,6 +305,55 @@ public class GlobalContactsSteps {
     @And("user click on Save button")
     public void userClickOnSaveButton() throws AutomationException {
         PageFactory.globalContactPage().clickButtonSave();
+    }
+
+    @And("user switched to edit mode")
+    public void userSwitchedToEditMode() throws AutomationException {
+        PageFactory.globalContactPage().userSwitchedToEditMode();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies global contact is created successfully")
+    public void userVerifiesGlobalContactCreatedSuccessfulMessage() throws AutomationException {
+        PageFactory.globalContactPage().verifyGlobalContactCreated();
+    }
+
+    @Then("user fills entity and contact information")
+    public void userFillsEntityAndContactInformation() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().fillEntityAndContactInfo();
+    }
+
+    @Then("user verifies address information saved successfully")
+    public void userVerifiesAddressInformationSavedSuccessfully() throws AutomationException {
+        PageFactory.globalContactPage().verifyAddressSavedSuccessfully();
+    }
+
+    @Then("user fills Contact Person's Details and contact information")
+    public void userFillsContactPersonSDetailsAndContactInformation() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().fillsContactPersonSDetailsAndContactInformation();
+    }
+
+    @And("user close the Address bar")
+    public void userCloseTheAddressBar() throws AutomationException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address updated successfully.")));
+        PageFactory.globalContactPage().closeTheAddressBar();
+    }
+
+    @Then("user verifies multiple addresses can be added")
+    public void userVerifiesMultipleAddressesCanBeAdded() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().addMultipleAddresses();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies address can be edited and reflected the changed address")
+    public void userVerifiesAddressCanBeEditedAndReflectedTheChangedAddress() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().editAddress();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies added addresses list displayed correctly")
+    public void userVerifiesAddedAddressesListDisplayedCorrectly() throws AutomationException {
+        PageFactory.globalContactPage().verifyAddedAddressesListDisplayedCorrectly();
     }
 }
 

@@ -28,21 +28,32 @@ Feature: 6in1 Global Contacts Feature
     And user attempts to save the global contact without filling the required fields
     Then user should see validation error messages for the required fields
     Then user fills all the details for "Individual Global Contact"
+    #Verify that validation error messages are removed when required fields are corrected
+    Then user verify all the error messages are removed
+    And user click on Next button
+    Then user verifies global contact is created successfully
+    #Verify, individual contact page is opened in edit mode and all details are auto saved.
+    And user switched to edit mode
+    Then user fills entity and contact information
     #validates the EIN and SSN formats
     Then Verify that the system validates the EIN and SSN formats correctly
+    #Verify, address can be added.
     #verify that city, state, and county are automatically fetched
     And user clicks on Mange Address button
-    And user clicks on Add New Address button
     And user fills Address information
     Then verify that city, state, and county are automatically fetched
     And user click on Save button
-#    #Verify that validation error messages are removed when required fields are corrected
-#    Then user verify all the error messages are removed
-#    Then user save the global contact
-#    And user verifies global contact saved successful message
-#    #Verify use can able to edit the created "Individual Global Contact"
-#    And user "Edit" global contact of "Individual Global Contact"
-#    And user verifies global contact saved successful message
+    Then user verifies address information saved successfully
+    #Verify, multiple addresses can be added.
+    Then user verifies multiple addresses can be added
+    #Verify, added address can be edited.
+    Then user verifies address can be edited and reflected the changed address
+    And user close the Address bar
+    #Verify, added address's list is displayed correctly.
+    Then user verifies added addresses list displayed correctly
+##    #Verify user can able to edit the created "Individual Global Contact"
+##    And user "Edit" global contact of "Individual Global Contact"
+##    And user verifies global contact saved successful message
 
   Scenario: Create the contact for Entity Global Contact
     When user navigate to "Global Contact"
@@ -50,8 +61,23 @@ Feature: 6in1 Global Contacts Feature
     #Verify Entity Name fields are pre-filled
     And Entity Name fields is pre-filled
     Then user fills all the details for "Entity Global Contact"
-#    Then user save the global contact
-#    And user verifies global contact saved successful message
+    And user click on Next button
+    Then user verifies global contact is created successfully
+    #Verify, entity contact page is opened in edit mode and all details are auto saved.
+    And user switched to edit mode
+    Then user fills Contact Person's Details and contact information
+    And user clicks on Mange Address button
+    And user fills Address information
+    Then verify that city, state, and county are automatically fetched
+    And user click on Save button
+    Then user verifies address information saved successfully
+    #Verify, multiple addresses can be added.
+    Then user verifies multiple addresses can be added
+    #Verify, added address can be edited.
+    Then user verifies address can be edited and reflected the changed address
+    And user close the Address bar
+    #Verify, added address's list is displayed correctly.
+    Then user verifies added addresses list displayed correctly
 
   Scenario: Attempt to create a duplicate entity contact with the same EIN
     When user navigate to "Global Contact"
@@ -77,8 +103,8 @@ Feature: 6in1 Global Contacts Feature
     And user "Create" global contact of "Individual Global Contact" with leading and trailing spaces
     And First Name and Last Name fields are pre-filled
     Then user fills all the details for "Individual Global Contact" with spaces
-#    And user save the global contact
-#    Then user verifies global contact saved successful message
+    And user click on Next button
+    Then user verifies global contact is created successfully
 
   Scenario: Verify display result on entity name
     When user navigate to "Global Contact"
