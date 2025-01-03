@@ -53,6 +53,7 @@ Feature: 6in1 estate creation Feature
     Then user verify values stored in correct date format
 
   Scenario: Verify only one address can be selected at a time
+    And user clicks on Estate tab
     Then an address should be selected by default
     When I select "Accountant" address option
     Then only "Accountant" address should be selected
@@ -62,6 +63,7 @@ Feature: 6in1 estate creation Feature
     Then only "Fiduciary Address or Attny" address should be selected
 
   Scenario: Verify an estate is saved with all the fields
+    And user clicks on Estate tab
     And user fills Estate details
     # Verify validations for file number
     Then user verifies validations for File Number Fields
@@ -71,6 +73,7 @@ Feature: 6in1 estate creation Feature
     Then user verify each field of Estate retained the entered value
 
   Scenario: Verify created estate can be archived
+    And user clicks on Estate tab
     #Verify, if the estate is displayed on the listing page
     When user verifies estate is displayed on listing page
     When user clicks on Actions menu of Estate

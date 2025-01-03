@@ -398,7 +398,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
-        clickOnEstateTab();
         selectCheckBox("Use model accounting");
         clearField(DATE_OF_WILL);
         fillField(DATE_OF_WILL, "EstateCreate.dateOfWill");
