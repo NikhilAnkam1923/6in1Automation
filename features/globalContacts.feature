@@ -51,9 +51,11 @@ Feature: 6in1 Global Contacts Feature
     And user close the Address bar
     #Verify, added address's list is displayed correctly.
     Then user verifies added addresses list displayed correctly
-##    #Verify user can able to edit the created "Individual Global Contact"
-##    And user "Edit" global contact of "Individual Global Contact"
-##    And user verifies global contact saved successful message
+    When user navigate to "Global Contact"
+    Then user verifies all details of global contact are auto-saved
+    #Verify user can able to edit the created "Individual Global Contact"
+    When user navigate to "Global Contact"
+    And user "Edit" global contact of "Individual Global Contact"
 
   Scenario: Create the contact for Entity Global Contact
     When user navigate to "Global Contact"

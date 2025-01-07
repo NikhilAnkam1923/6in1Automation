@@ -8,10 +8,16 @@ import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.python.antlr.ast.Str;
+import org.stringtemplate.v4.ST;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.sixinone.automation.util.WebDriverUtil.*;
@@ -23,6 +29,7 @@ public class GlobalContactPage extends BasePage {
     public static final String CREATE_BUTTON = "//button[text()='Create']";
     private static final String FIRST_NAME_FIELD = "//input[contains(@name,'firstName')]";
     private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
+    private static final String CONTACT_NAME = "//td//a[text()='%s']";
     private static final String PHONE_NUMBER_FIELD = "//input[@name='contact.phoneNumber']";
     private static final String EMAIL_ADDRESS_FIELD = "//input[@name='contact.emailAddress']";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
@@ -61,7 +68,7 @@ public class GlobalContactPage extends BasePage {
     private static final String CAF_FIELD = "//input[@name='contact.caf']";
     private static final String DROPDOWN_LABEL = "//label[text()='%s']/following-sibling::div/span/following-sibling::div//div[contains(@class,'select__indicators')]";
     private static final String SELECT_OPTION = "//div[contains(@class,'select__menu-list')]//div[text()='%s']";
-    private static final String SELECTED_OPTION = "//div[contains(@class,'select__single-value')]";
+    private static final String SELECTED_SUFFIX = "//div[contains(@class,'select__single-value')]";
     public static final String ENTITY_NAMES_COLUMN = "//td[@aria-colindex='4']";
     public static final String ALL_DATA_ROWS_XPATH = "//tbody//tr";
     public static final String RADIO_BUTTONS_XPATH = "//td//div//input[@type='radio']";
@@ -95,6 +102,8 @@ public class GlobalContactPage extends BasePage {
     public static final String ADDRESS_COLUMN_MODAL = "//div[@class='modal-body']//table//tr/th[contains(text(), 'Address')]/ancestor::table//tbody//tr//td[position() = count(//tr/th[contains(text(), 'Address')]/preceding-sibling::th) + 1]";
     public static final String ADDRESS_ROW_ON_EDIT_PAGE = "//ol[@class='mb-2 list-group list-group-numbered']//div[@class='font14 list-group-item']";
     List<String> modalAddresses;
+    static String enteredEIN;
+    static String enteredSSN;
 
 
     public static void tabNavigation(String tab) throws AutomationException, IOException {
@@ -117,11 +126,6 @@ public class GlobalContactPage extends BasePage {
 
     public static void clickButtonSave() throws AutomationException {
         driverUtil.getWebElement(SAVE_BUTTON).click();
-
-        //temp use
-//        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Address added successfully.")));
-//        driverUtil.getWebElement("//button[@aria-label='Close']").click();
     }
 
     public static void clickButtonNext() throws AutomationException {
@@ -144,15 +148,13 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(CLOSE_BUTTON).click();
     }
 
-    public void clearField(String fieldXpath) throws AutomationException {
+    public static void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
         fieldElement.sendKeys(Keys.CONTROL + "a");
         fieldElement.sendKeys(Keys.BACK_SPACE);
     }
 
     public void clearNameFields() throws AutomationException {
-//        driverUtil.getWebElementAndScroll(LAST_NAME_FIELD_CREATE).clear();
-//        driverUtil.getWebElementAndScroll(FIRST_NAME_FIELD_CREATE).clear();
         clearField(LAST_NAME_FIELD_CREATE);
         clearField(FIRST_NAME_FIELD_CREATE);
     }
@@ -182,9 +184,7 @@ public class GlobalContactPage extends BasePage {
 
     public void fillGlobalContactDetails(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
-        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
         String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
-        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
         String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
 
         switch (contactType) {
@@ -195,6 +195,8 @@ public class GlobalContactPage extends BasePage {
                 fillField(LAST_NAME_FIELD, "Create.lastName");
                 selectSuffixOption();
                 fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
+                lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value");
                 break;
             case "Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
@@ -232,6 +234,19 @@ public class GlobalContactPage extends BasePage {
         field.sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString());
     }
 
+    private void fillFieldWithClipboard(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
+
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(value), null);
+
+        field.click();
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.keyDown(Keys.CONTROL).sendKeys("v").keyUp(Keys.CONTROL).build().perform();
+    }
+
+
+
     private void fillField(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
         actions.moveToElement(field)
@@ -265,9 +280,11 @@ public class GlobalContactPage extends BasePage {
                 .perform();
     }
 
-    public String filterByName() throws AutomationException {
+
+    public static String filterByName() throws AutomationException {
         driverUtil.getWebElement(NAME_FILTER_INPUT).click();
-        driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(firstName);
+        clearField(NAME_FILTER_INPUT);
+        driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(lastName+", "+firstName);
         return firstName;
     }
 
@@ -309,38 +326,67 @@ public class GlobalContactPage extends BasePage {
 
         switch (contactType) {
             case "Individual Global Contact":
+                clearField(FIRST_NAME_FIELD);
                 fillField(FIRST_NAME_FIELD, "Edit.firstName");
+                clearField(MIDDLE_NAME_FIELD);
                 fillField(MIDDLE_NAME_FIELD, "Edit.middleName");
+                clearField(LAST_NAME_FIELD);
                 fillField(LAST_NAME_FIELD, "Edit.lastName");
+                clearField(MAIDEN_NAME_FIELD);
                 fillField(MAIDEN_NAME_FIELD, "Edit.maidenName");
+                clearField(ENTITY_NAME_FIELD_CREATE);
                 fillField(ENTITY_NAME_FIELD_CREATE, "Edit.entityName");
+                clearField(EIN_FIELD);
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                clearField(PHONE_NUMBER_FIELD);
                 fillField(PHONE_NUMBER_FIELD, "Edit.phoneNumber", actions);
+                clearField(WORK_NUMBER_FIELD);
                 fillField(WORK_NUMBER_FIELD, "Edit.workNumber", actions);
+                clearField(EMAIL_ADDRESS_FIELD);
                 fillField(EMAIL_ADDRESS_FIELD, "Edit.emailId");
+                clearField(FAX_FIELD);
                 fillField(FAX_FIELD, "Edit.fax", actions);
+                clearField(SSN_FIELD);
                 fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+                clearField(PTIN_FIELD);
                 fillField(PTIN_FIELD, "Edit.ptin");
+                clearField(PINEFILE_FIELD);
                 fillField(PINEFILE_FIELD, "Edit.pinEFile");
+                clearField(BARID_FIELD);
                 fillField(BARID_FIELD, "Edit.barId");
+                clearField(CAF_FIELD);
                 fillField(CAF_FIELD, "Edit.caf");
-
+                break;
             case "Entity Global Contact":
+                clearField(ENTITY_NAME_FIELD_CREATE);
                 fillField(ENTITY_NAME_FIELD_CREATE, "Edit.entityName");
+                clearField(ENTITY_EIN_FIELD);
                 fillFieldWithRandom(ENTITY_EIN_FIELD, randomEIN, actions);
+                clearField(FIRST_NAME_FIELD);
                 fillField(FIRST_NAME_FIELD, "Edit.firstName");
+                clearField(MIDDLE_NAME_FIELD);
                 fillField(MIDDLE_NAME_FIELD, "Edit.middleName");
+                clearField(LAST_NAME_FIELD);
                 fillField(LAST_NAME_FIELD, "Edit.lastName");
-                selectSuffixOption();
+                clearField(MAIDEN_NAME_FIELD);
                 fillField(MAIDEN_NAME_FIELD, "Edit.maidenName");
+                clearField(EMAIL_ADDRESS_FIELD);
                 fillField(EMAIL_ADDRESS_FIELD, "Edit.emailId");
+                clearField(PTIN_FIELD);
                 fillField(PTIN_FIELD, "Edit.ptin");
+                clearField(PINEFILE_FIELD);
                 fillField(PINEFILE_FIELD, "Edit.pinEFile");
+                clearField(BARID_FIELD);
                 fillField(BARID_FIELD, "Edit.barId");
+                clearField(CAF_FIELD);
                 fillField(CAF_FIELD, "Edit.caf");
+                clearField(SSN_FIELD);
                 fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+                clearField(PHONE_NUMBER_FIELD);
                 fillField(PHONE_NUMBER_FIELD, "Edit.phoneNumber", actions);
+                clearField(WORK_NUMBER_FIELD);
                 fillField(WORK_NUMBER_FIELD, "Edit.workNumber", actions);
+                clearField(FAX_FIELD);
                 fillField(FAX_FIELD, "Edit.fax", actions);
                 break;
 
@@ -361,7 +407,6 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("Confirmation message is: " + confirmationElement.getText());
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
-        //WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     public void verifyPageGlobalContacts() throws AutomationException {
@@ -454,7 +499,7 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("Verified auto-fetched values successfully ");
     }
 
-    private String getFieldValue(String locator, String attribute) throws AutomationException {
+    private static String getFieldValue(String locator, String attribute) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
         if (field != null) {
             return attribute.equalsIgnoreCase("value") ? field.getAttribute("value") : field.getText().trim();
@@ -855,24 +900,25 @@ public class GlobalContactPage extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully.")));
     }
 
-    public void fillEntityAndContactInfo() throws AutomationException, IOException, ParseException {
+    public void fillEntityAndContactInfo() throws AutomationException, IOException, ParseException, AWTException {
         Actions actions = new Actions(DriverFactory.drivers.get());
         String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
         String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
         String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
         String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
 
-        fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
-        fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
-        fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
-        fillField(WORK_NUMBER_FIELD, "Create.workNumber", actions);
-        fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
-        fillField(FAX_FIELD, "Create.fax", actions);
+        fillFieldWithClipboard(PHONE_NUMBER_FIELD, "Create.phoneNumber");
         fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
-        fillField(PTIN_FIELD, "Create.ptin");
-        fillField(PINEFILE_FIELD, "Create.pinEFile");
-        fillField(BARID_FIELD, "Create.barId");
-        fillField(CAF_FIELD, "Create.caf");
+        fillFieldWithClipboard(BARID_FIELD, "Create.barId");
+        fillFieldWithClipboard(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
+        fillFieldWithClipboard(EMAIL_ADDRESS_FIELD, "Create.emailId");
+        fillFieldWithClipboard(CAF_FIELD, "Create.caf");
+        fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+        fillFieldWithClipboard(WORK_NUMBER_FIELD, "Create.workNumber");
+        fillFieldWithClipboard(PTIN_FIELD, "Create.ptin");
+        fillFieldWithClipboard(FAX_FIELD, "Create.fax");
+        fillFieldWithClipboard(PINEFILE_FIELD, "Create.pinEFile");
+        WebDriverUtil.waitForAWhile(5);
     }
 
     public void verifyAddressSavedSuccessfully() throws AutomationException {
@@ -965,6 +1011,73 @@ public class GlobalContactPage extends BasePage {
 
     private static String getAddressLine1(String address) {
         return address.split(",")[0].trim();
+    }
+
+    private static void verifyField(String fieldName, String expectedValue, String actualValue) throws AutomationException {
+        if (!expectedValue.equals(actualValue)) {
+            throw new AutomationException(fieldName + " is incorrect or not fetched correctly. Expected: " + expectedValue + ", but got: " + actualValue);
+        }
+    }
+
+    public static void verifyGlobalContactDetailsAutoSaved() throws IOException, ParseException, AutomationException {
+
+        String expectedFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
+        String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
+        String expectedLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
+        String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
+        String expectedMaidenName = CommonUtil.getJsonPath("Create").get("Create.maidenName").toString();
+        String expectedEntityName = CommonUtil.getJsonPath("Create").get("Create.entityName").toString();
+        String expectedPhone = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
+        String expectedWorkPhone = CommonUtil.getJsonPath("Create").get("Create.workNumber").toString();
+        String expectedEmailAddress = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
+        String expectedFax = CommonUtil.getJsonPath("Create").get("Create.fax").toString();
+        String expectedPTIN = CommonUtil.getJsonPath("Create").get("Create.ptin").toString();
+        String expectedPINeFile = CommonUtil.getJsonPath("Create").get("Create.pinEFile").toString();
+        String expectedBarID = CommonUtil.getJsonPath("Create").get("Create.barId").toString();
+        String expectedCAF = CommonUtil.getJsonPath("Create").get("Create.caf").toString();
+
+        filterByName();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        String contactName = lastName+", "+firstName;
+        driverUtil.getWebElement(String.format(CONTACT_NAME,contactName)).click();
+
+
+        WebDriverUtil.waitForAWhile(1);
+        String actualFirstName = getFieldValue(FIRST_NAME_FIELD, "value");
+        String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
+        String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");
+        String actualSuffix = getFieldValue(SELECTED_SUFFIX, "text");
+        String actualMaidenName = getFieldValue(MAIDEN_NAME_FIELD, "value");
+
+        String actualEntityName = getFieldValue(ENTITY_NAME_FIELD_CREATE, "value");
+        String actualEIN = getFieldValue(EIN_FIELD, "value");
+
+        String actualPhone = getFieldValue(PHONE_NUMBER_FIELD, "value");
+        String actualWorkPhone = getFieldValue(WORK_NUMBER_FIELD, "value");
+        String actualEmailAddress = getFieldValue(EMAIL_ADDRESS_FIELD, "value");
+        String actualFax = getFieldValue(FAX_FIELD, "value");
+        String actualSSN = getFieldValue(SSN_FIELD, "value");
+        String actualPTIN = getFieldValue(PTIN_FIELD, "value");
+        String actualPINeFile = getFieldValue(PINEFILE_FIELD, "value");
+        String actualBarID = getFieldValue(BARID_FIELD, "value");
+        String actualCAF = getFieldValue(CAF_FIELD, "value");
+
+        verifyField("First Name", expectedFirstName, actualFirstName);
+        verifyField("Middle Name", expectedMiddleName, actualMiddleName);
+        verifyField("Last Name", expectedLastName, actualLastName);
+        verifyField("Suffix", expectedSuffix, actualSuffix);
+        verifyField("Maiden Name",expectedMaidenName,actualMaidenName);
+        verifyField("Entity Name",expectedEntityName,actualEntityName);
+        verifyField("EIN",enteredEIN,actualEIN);
+        verifyField("Phone",expectedPhone,actualPhone);
+        verifyField("Work Phone",expectedWorkPhone,actualWorkPhone);
+        verifyField("Email Address",expectedEmailAddress,actualEmailAddress);
+        verifyField("Fax",expectedFax,actualFax);
+        verifyField("SSN",enteredSSN,actualSSN);
+        verifyField("PTIN",expectedPTIN,actualPTIN);
+        verifyField("PIN e-File",expectedPINeFile,actualPINeFile);
+        verifyField("Bar ID",expectedBarID,actualBarID);
+        verifyField("CAF",expectedCAF,actualCAF);
     }
 }
 

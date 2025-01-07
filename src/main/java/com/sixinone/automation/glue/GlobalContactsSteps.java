@@ -10,6 +10,7 @@ import cucumber.api.java.en.*;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 
+import java.awt.*;
 import java.io.IOException;
 
 
@@ -319,7 +320,7 @@ public class GlobalContactsSteps {
     }
 
     @Then("user fills entity and contact information")
-    public void userFillsEntityAndContactInformation() throws AutomationException, IOException, ParseException {
+    public void userFillsEntityAndContactInformation() throws AutomationException, IOException, ParseException, AWTException {
         PageFactory.globalContactPage().fillEntityAndContactInfo();
     }
 
@@ -354,6 +355,13 @@ public class GlobalContactsSteps {
     @Then("user verifies added addresses list displayed correctly")
     public void userVerifiesAddedAddressesListDisplayedCorrectly() throws AutomationException {
         PageFactory.globalContactPage().verifyAddedAddressesListDisplayedCorrectly();
+    }
+
+    @Then("user verifies all details of global contact are auto-saved")
+    public void userVerifiesAllDetailsOfGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
+        PageFactory.globalContactPage().verifyGlobalContactDetailsAutoSaved();
+        CommonSteps.logInfo("User verified that all details of global contact are auto-saved.");
+        CommonSteps.takeScreenshot();
     }
 }
 
