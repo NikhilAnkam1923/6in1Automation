@@ -58,9 +58,9 @@ public class EstateContactsSteps {
 
     }
 
-    @Then("user verifies the contact is visible in the Estate Contacts list")
-    public void userVerifiesTheContactIsVisibleInTheEstateContactsList() throws AutomationException {
-        PageFactory.estateContactsPage().verifyContactInEstateContactsList();
+    @Then("^user verifies the \"([^\"]*)\" contact is visible in the Estate Contacts list$")
+    public void userVerifiesTheContactIsVisibleInTheEstateContactsList(String contactType) throws AutomationException {
+        PageFactory.estateContactsPage().verifyContactInEstateContactsList(contactType);
         CommonSteps.logInfo("Verified that the contact is visible in the Estate Contacts list.");
         CommonSteps.takeScreenshot();
     }
@@ -77,6 +77,11 @@ public class EstateContactsSteps {
         PageFactory.estateContactsPage().verifyNewlyCreatedContactIsSelectedByDefault();
         CommonSteps.logInfo("Verified that the newly created contact is selected by default.");
         CommonSteps.takeScreenshot();
+    }
+
+    @Then("user click on Select Role button for Contact")
+        public void clickOnSelectRoleButton() throws AutomationException {
+        PageFactory.estateContactsPage().selectRoleButton();
     }
 
     @And("user selects the Role for Contact")
@@ -201,6 +206,25 @@ public class EstateContactsSteps {
         CommonSteps.logInfo("Verified that the 'Remove Contact from Estate' button is disabled.");
         CommonSteps.takeScreenshot();
     }
+
+    @Then("if the contact has multiple addresses, address selection page appear,user able to handle address selection task")
+    public void ifTheContactHasMultipleAddressesAddressSelectionPageAppearHandleAddressSelectionTask() throws AutomationException {
+            PageFactory.estateContactsPage().handleAddressSelection();
+            CommonSteps.logInfo("if the contact has multiple addresses, address selection page appear,user able to handle address selection task");
+        }
+
+    @And("user clicks on Save Button of error pop up")
+    public void userClicksOnSaveButtonOfErrorPopUp() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnErrorPopUpSaveButton();
+        CommonSteps.logInfo("user clicks on Save Button of error pop up");
+    }
+
+    @Then("user verifies contact can be saved without selecting any role message")
+    public void userVerifiesContactCanBeSavedWithoutSelectingAnyRoleMessage() throws AutomationException {
+    PageFactory.estateContactsPage().verifyWithoutSelectingRoleContactSavedMsg();
+
+    }
 }
+    
 
 

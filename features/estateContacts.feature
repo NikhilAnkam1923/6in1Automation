@@ -22,56 +22,69 @@ Feature: 6in1 estate contacts Feature
     When user click on Add button for selected "Individual" contact with a "White" background
     Then user verify landed on Select Role page
       #Verify user can save and assign role to the contact successfully.
+    Then user click on Select Role button for Contact
     And user selects the Role for Contact
-      #verify assigned roles should be displayed in front of the name under roles column
+    Then if the contact has multiple addresses, address selection page appear,user able to handle address selection task
+      #Verify added individual contact is assigned the selected role
     Then user verifies that the role is assigned successfully for "Individual" contact
 
   Scenario:Verify existing entity type of contact can be added
     When user clicks on the Add Contact button
     When user click on Add button for selected "Entity" contact with a "Blue" background
     Then user verify landed on Select Role page
+    Then user click on Select Role button for Contact
+      #Verify role page appears after creating/selecting contact
     And user selects the Role for Contact
-      #verify assigned roles should be displayed in front of the name under roles column
+    Then if the contact has multiple addresses, address selection page appear,user able to handle address selection task
+      #Verify added entity contact is assigned the selected role
     Then user verifies that the role is assigned successfully for "Entity" contact
-      #verify remove contact from estate button is disabled if the role is still assigned.
+      #Verify remove contact from estate button is disabled if the role is still assigned
     And user verifies that the Remove Contact from Estate button is disable
 
-#On Hold
   Scenario: Verify new entity contact can be created
     When user clicks on the Create New Entity Contact button
     Then verify user is on create contact page for "Entity Details" type
     And user fills the details for "New Entity Global Contact"
     And user click on Next button
     Then user verifies global contact saved successful message
-      #Verify After creating contact user should be navigated to roles assignment page.
-    Then user verify landed on Select Role page
-      #Verify Error should be thrown for saving contact without selecting any role.
+      #Verify roles can be assigned for newly added contact.
+    And user verifies that the newly created contact is selected by default
+    Then user click on Select Role button for Contact
+    And user selects the Role for Contact
+    Then user verifies the "Entity" contact is visible in the Estate Contacts list
+    And user verifies that the role is assigned successfully for "Entity" contact
+    Then user clicks on the Add Contact button
+    Then user click on Add button for selected "Entity" contact with a "Blue" background
+      #Verify contact can be saved without selecting any role
     When user clicks on Save Button without selecting any role
     Then "You have not selected any role for this contact in this Estate. Please recheck and then proceed." Error should be thrown
+    And user clicks on Save Button of error pop up
+    Then user verifies contact can be saved without selecting any role message
 
-  Scenario: Verify, new individual contact can be created
+  Scenario: Verify new individual contact can be created
     When user clicks on the Create New Individual Contact button
     And user fills the details for "New Individual Global Contact"
     And user click on Next button
     Then user verifies global contact created successful message
-      #Verify, roles can be assigned for newly added contact.
+      #Verify roles can be assigned for newly added contact.
     And user verifies that the newly created contact is selected by default
+    Then user click on Select Role button for Contact
     And user selects the Role for Contact
-    Then user verifies the contact is visible in the Estate Contacts list
+    Then user verifies the "Individual" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Individual" contact
-      #Verify, notification is displayed on removing the role.
+      #Verify notification is displayed on removing the role
     When user selects the Estate Contact
     And user clicks on Estate-Specific Fields
     And user clicks on Select Role button and uncheck the checked role
     Then user verifies that notification is displayed on removing the role
-      #Verify, remove contact from estate button is enabled on removing the role.
+      #Verify remove contact from estate button is enabled on removing the role
     And user saves the Estate Contact without roles
     Then user verifies that the Remove Contact from Estate button is enabled
-      #Verify, contact can be removed.
+      #Verify contact can be removed
     And user clicks on Remove Contact from Estate button
     And user clicks on Remove button
     Then user verifies global contact removed from estate successful message
-      #Verify, removed contact is displayed in the contact list to add in the estate.
+      #Verify removed contact is displayed in the contact list to add in the estate
     And user clicks on the Add Contact button
     Then user verifies removed contact is displayed in the contact list to add back to the estate
     And user verifies the contact is visible in the Global Contacts list

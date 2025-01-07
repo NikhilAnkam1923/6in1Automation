@@ -11,16 +11,6 @@ import java.io.IOException;
 
 
 public class GlobalContactsSteps {
-
-    @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
-    public static void userLoginTo6in1(String userEmail, String password) throws AutomationException {
-        PageFactory.loginPage().doLogoutFrom6in1IfAlreadyLoggedIn();
-        userEmail = CommonUtil.processString(userEmail);
-        password = CommonUtil.processString(password);
-        CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
-        PageFactory.loginPage().loginTo6in1(userEmail, password);
-    }
-
     @When("^user navigate to \"([^\"]*)\"$")
     public void userNavigateToTab(String tab) throws AutomationException, IOException {
         PageFactory.globalContactPage().tabNavigation(tab);
@@ -40,12 +30,14 @@ public class GlobalContactsSteps {
 
     @And("^user fills all the details for \"([^\"]*)\"$")
     public void userFillsAllTheDetailsForGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        CommonSteps.logInfo("user fills all the details for "+contactType);
         PageFactory.globalContactPage().fillGlobalContactDetails(contactType);
         CommonSteps.takeScreenshot();
     }
 
     @And("^user fills all the details for \"([^\"]*)\" with spaces$")
     public void userFillsAllTheDetailsForGlobalContactWithSpaces(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
+        CommonSteps.logInfo("user fills all the details for "+contactType+" with spaces" );
         PageFactory.globalContactPage().fillGlobalContactDetailsWithSpaces(contactType);
         CommonSteps.takeScreenshot();
     }
@@ -170,7 +162,6 @@ public class GlobalContactsSteps {
         PageFactory.globalContactPage().verifyBackgroundColorForContactType(contactType);
         CommonSteps.takeScreenshot();
     }
-
 
 
     @Then("^user verifies radio buttons are available for all the contacts$")

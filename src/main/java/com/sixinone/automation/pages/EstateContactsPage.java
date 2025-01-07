@@ -20,6 +20,7 @@ import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class EstateContactsPage extends BasePage {
 
+    public static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static final String NAME_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Name']";
     public static final String ROLES_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Roles']";
@@ -38,7 +39,7 @@ public class EstateContactsPage extends BasePage {
     private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
     private static final String MAIDEN_NAME_FIELD = "//input[@id='contact.maidenName']";
-    private static final String ENTITY_NAME_FIELD_CREATE = "//input[@id='contact.entityName']";
+    private static final String ENTITY_NAME_FIELD = "//input[@id='contact.entityName']";
     private static final String EIN_FIELD = "//input[@id='contact.ein']";
     private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
@@ -66,7 +67,15 @@ public class EstateContactsPage extends BasePage {
     private static final String NAME_AND_ROLE_ROW = "//tbody//tr/td[text()='%s']/following-sibling::td[text()='%s']";
     private static final String CANCEL_BTN = "//button[text()='Cancel']";
     private static final String CLOSE_BTN_IN_FOOTER = "//div[@class='modal-footer']//button[text()='Close']";
+    private static final String SELECT_ADDRESS_PAGE = "//div[text()='Select Address']";
+    private static final String ADDRESS_SELECT_BTN = "//input[@aria-label='radio-792']";
+    private static final String SET_ADDRESS_BTN = "//button[text()='Set Address']";
+    private static final String SET_ADDRESS_SUCCESSFUL_MSG = "//div[text()='Address successfully set for the Estate contact.']";
+    private static final String ERROR_POPUP_SAVEBTN = "//button[@class='btn btn-danger']";
+    public static final String CLOSE_BUTTON = "//button[text()='Close']";
+
     public static String individualContactName;
+    public static String entityContactName;
 
     String getName() {
         return "";
@@ -76,6 +85,7 @@ public class EstateContactsPage extends BasePage {
         WebElement tempUser = driverUtil.getWebElement("//a[text()='Jonny Vasco']");
         tempUser.click();
         waitForInvisibleElement(By.xpath(SPINNER));
+        waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
         driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
     }
 
@@ -172,8 +182,9 @@ public class EstateContactsPage extends BasePage {
                 break;
             case "New Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
-                fillField(ENTITY_NAME_FIELD_CREATE, "Create.entityName");
+                fillField(ENTITY_NAME_FIELD, "Create.entityName");
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                entityContactName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value");
                 break;
             default:
                 throw new AutomationException("Unknown contact type: " + contactType);
@@ -181,8 +192,9 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void clickOnNewIndividualContactBtn() throws AutomationException {
-        driverUtil.getWebElement(CANCEL_BTN).click();
-        driverUtil.getWebElement(CLOSE_BTN_IN_FOOTER).click();
+//        driverUtil.getWebElement(CANCEL_BTN).click();
+//        driverUtil.getWebElement(CLOSE_BTN_IN_FOOTER).click();
+        clickAddContactButton();
         driverUtil.getWebElement(CREATE_NEW_INDIVIDUAL_BTN).click();
     }
 
@@ -216,18 +228,28 @@ public class EstateContactsPage extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    public void verifyContactInEstateContactsList() throws AutomationException {
+    public void verifyContactInEstateContactsList(String contactType) throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
-        filterByContactName(individualContactName);
-        WebElement ContactNameInEstateList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, individualContactName));
-        if (!ContactNameInEstateList.isDisplayed()) {
-            throw new AutomationException("Contact is not visible in the Estate Contacts list");
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
+
+        switch (contactType) {
+            case "Individual":
+                filterByContactName(individualContactName);
+                WebElement individualContactNameInEstateList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, individualContactName));
+                if (!individualContactNameInEstateList.isDisplayed()) {
+                    throw new AutomationException("Individual Contact is not visible in the Estate Contacts list");
+                }
+            case "Entity":
+                filterByContactName(entityContactName);
+                WebElement entityContactNameInEstateList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, entityContactName));
+                if (!entityContactNameInEstateList.isDisplayed()) {
+                    throw new AutomationException("Entity Contact is not visible in the Estate Contacts list");
+                }
         }
     }
 
     public void verifyContactInGlobalContactsList() throws AutomationException, IOException {
-        GlobalContactPage.clickButtonClose();
+        clickButtonClose();
         driverUtil.getWebElement(ESTATE_BREADCRUMB).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         GlobalContactPage.tabNavigation("Global Contact");
@@ -241,6 +263,10 @@ public class EstateContactsPage extends BasePage {
         }
     }
 
+    public static void clickButtonClose() throws AutomationException {
+        driverUtil.getWebElement(CLOSE_BUTTON).click();
+    }
+
     public void verifyNewlyCreatedContactIsSelectedByDefault() throws AutomationException {
         WebElement newEstateContact = driverUtil.getWebElement(String.format(NEW_ESTATE_CONTACT_MODAL_TITLE, individualContactName));
         if (!newEstateContact.isDisplayed()) {
@@ -248,39 +274,43 @@ public class EstateContactsPage extends BasePage {
         }
     }
 
+    public void selectRoleButton() throws AutomationException {
+        waitForVisibleElement(By.xpath(SELECT_ROLE_BTN));
+        waitForAWhile(3);
+        driverUtil.getWebElement(SELECT_ROLE_BTN).click();
+    }
+
     public void selectRoles() throws AutomationException, IOException, ParseException {
         String roleAccountant = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAccountant").toString();
-
-        driverUtil.getWebElement(SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_CHECKBOX, roleAccountant)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
         driverUtil.getWebElement(SAVE_BUTTON_AFTER_SELECTROLE).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
     }
 
     public void verifyRoleAssignedSuccessfully(String contactType) throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
         String lastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
         String firstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-        String individualName = lastName+", "+firstName;
+        String individualName = lastName + ", " + firstName;
         String entityName = CommonUtil.getJsonPath("Create").get("Create.entityName").toString();
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAccountant").toString();
         String displayName = contactType.equals("Individual") ? individualName : entityName;
 
         filterByContactName(displayName);
-        WebElement nameAndRole = driverUtil.getWebElement(String.format(NAME_AND_ROLE_ROW,displayName,role));
-        if(!nameAndRole.isDisplayed()){
+        WebElement nameAndRole = driverUtil.getWebElement(String.format(NAME_AND_ROLE_ROW, displayName, role));
+        if (!nameAndRole.isDisplayed()) {
             throw new AutomationException("Role is not assigned to for the contact.");
         }
     }
 
     public void selectEstateContact() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
         String lastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
         String firstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-        String individualName = lastName+", "+firstName;
+        String individualName = lastName + ", " + firstName;
         filterByContactName(individualName);
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, individualName)).click();
     }
@@ -291,7 +321,6 @@ public class EstateContactsPage extends BasePage {
 
     public void uncheckTheCheckedRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAccountant").toString();
-
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -312,7 +341,7 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifySelectRolePage() throws AutomationException {
-        waitForVisibleElement(By.xpath(SELECTED_ROLES_PAGE_HEADING), 2);
+        waitForVisibleElement(By.xpath(SELECTED_ROLES_PAGE_HEADING));
         WebElement selectedRolePageHeading = driverUtil.getWebElement(SELECTED_ROLES_PAGE_HEADING);
         if (selectedRolePageHeading != null && selectedRolePageHeading.isDisplayed()) {
             CommonSteps.logInfo("user landed on Select Role page");
@@ -323,8 +352,8 @@ public class EstateContactsPage extends BasePage {
 
     public void saveWithoutRole() throws AutomationException {
         driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
-        driverUtil.getWebElementAndScroll(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles updated successfully."));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Roles updated successfully.")));
+        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
     }
 
     public void verifyRemoveContactButtonEnabled() throws AutomationException {
@@ -335,13 +364,13 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyGlobalContactCreated() throws AutomationException {
-        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully."));
+        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Contact created successfully."));
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
         CommonSteps.logInfo("Verified that Global Contact is created successfully.");
         CommonSteps.takeScreenshot();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact created successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
     }
 
     public void clickOnRemoveContactFromEstateBtn() throws AutomationException {
@@ -353,13 +382,13 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyContactRemovedSuccessMessage() throws AutomationException {
-        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate."));
+        WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate."));
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
         }
         CommonSteps.logInfo("Verified that the Contact is removed from estate successfully.");
         CommonSteps.takeScreenshot();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact successfully delinked from the Estate.")));
 
     }
 
@@ -386,13 +415,11 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void errorMsgCheck(String expectedErrorMessage) throws AutomationException {
-        WebElement errorMessage = driverUtil.getWebElementAndScroll(String.format(ERROR_MSG,expectedErrorMessage));
+        WebElement errorMessage = driverUtil.getWebElementAndScroll(String.format(ERROR_MSG, expectedErrorMessage));
         String actualErrorMessage = errorMessage.getText();
-
         if (!actualErrorMessage.equals(expectedErrorMessage)) {
             throw new AutomationException("Expected error message: '" + expectedErrorMessage + "' but found: '" + actualErrorMessage + "'");
-        }
-        else {
+        } else {
             CommonSteps.logInfo("Verified error thrown for saving contact without selecting any role");
         }
     }
@@ -403,6 +430,50 @@ public class EstateContactsPage extends BasePage {
             throw new AutomationException("The 'Remove Contact from Estate' button is enabled.");
         }
 
+    }
+
+    public void handleAddressSelection() throws AutomationException {
+        WebElement selectAddressPage = driverUtil.getWebElement(SELECT_ADDRESS_PAGE, 3);
+        if (selectAddressPage != null && selectAddressPage.isDisplayed()) {
+            CommonSteps.logInfo("The contact has multiple addresses to select.");
+
+            WebElement addressSelectBtn = driverUtil.getWebElement(ADDRESS_SELECT_BTN);
+            if (addressSelectBtn != null) {
+                addressSelectBtn.click();
+                CommonSteps.logInfo("Address selection button clicked.");
+
+                WebElement setAddressBtn = driverUtil.getWebElement(SET_ADDRESS_BTN);
+                if (setAddressBtn != null) {
+                    setAddressBtn.click();
+                    CommonSteps.logInfo("Set Address button clicked.");
+
+                    waitForVisibleElement(By.xpath(SET_ADDRESS_SUCCESSFUL_MSG));
+                    WebElement successMsg = driverUtil.getWebElement(SET_ADDRESS_SUCCESSFUL_MSG);
+                    if (successMsg != null && successMsg.isDisplayed()) {
+                        CommonSteps.logInfo("Address is set successfully.");
+                        waitForInvisibleElement(By.xpath(SET_ADDRESS_SUCCESSFUL_MSG));
+                    } else {
+                        throw new AutomationException("Address is not set successfully.");
+                    }
+                } else {
+                    throw new AutomationException("Set Address button not found.");
+                }
+            } else {
+                throw new AutomationException("Address select button not found.");
+            }
+        } else {
+            CommonSteps.logInfo("The contact does not have multiple addresses. Skipping address selection.");
+        }
+    }
+
+    public void clickOnErrorPopUpSaveButton() throws AutomationException {
+        waitForVisibleElement(By.xpath(ERROR_POPUP_SAVEBTN));
+        driverUtil.getWebElement(ERROR_POPUP_SAVEBTN).click();
+    }
+
+    public void verifyWithoutSelectingRoleContactSavedMsg() throws AutomationException {
+        driverUtil.getWebElement(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles.")));
     }
 }
 

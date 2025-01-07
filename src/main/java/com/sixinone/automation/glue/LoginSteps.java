@@ -19,24 +19,19 @@ import static com.sixinone.automation.pages.BasePage.driverUtil;
 
 public class LoginSteps {
 
+    @When("^user login using \"([^\"]*)\" and \"([^\"]*)\"$")
+    public static void userLoginTo6in1(String userEmail, String password) throws AutomationException {
+        PageFactory.loginPage().doLogoutFrom6in1IfAlreadyLoggedIn();
+        userEmail = CommonUtil.processString(userEmail);
+        password = CommonUtil.processString(password);
+        CommonSteps.logInfo("User login with user: " + userEmail + " and password: *********");
+        PageFactory.loginPage().loginTo6in1(userEmail, password);
+    }
+
     @When("user click on Login button")
     public void userClickOnLoginButton() throws AutomationException {
         CommonSteps.logInfo("user click on Login button");
         PageFactory.loginPage().clickOnLoginButton();
-    }
-
-    @When("user login using credentials")
-    public void userLoginUsingCredentials(DataTable dataTable) throws AutomationException {
-      //  PageFactory.loginPage().doLogoutFrom6in1IfAlreadyLoggedIn();
-        List<Map<Object, Object>> data = dataTable.asMaps(String.class, String.class);
-        Map<Object, Object> row = data.get(0);
-
-        String userEmail = row.get("userEmail").toString();
-        String password = row.get("password").toString();
-        String userType = row.get("userType").toString();
-        CommonSteps.logInfo("User login with user: " + userEmail + " and password: ********* as" + userType + " ");
-        PageFactory.loginPage().loginTo6in1(userEmail, password);
-        CommonSteps.takeScreenshot();
     }
 
     @Given("user verify login page ui attributes")
