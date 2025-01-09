@@ -80,7 +80,7 @@ public class EstateContactsSteps {
     }
 
     @Then("user click on Select Role button for Contact")
-        public void clickOnSelectRoleButton() throws AutomationException {
+    public void clickOnSelectRoleButton() throws AutomationException {
         PageFactory.estateContactsPage().selectRoleButton();
     }
 
@@ -103,7 +103,7 @@ public class EstateContactsSteps {
         CommonSteps.logInfo("User selected the Estate Contact.");
     }
 
-    @And("user clicks on Estate-Specific Fields")
+    @Then("user clicks on Estate-Specific Fields")
     public void userClicksOnEstateSpecificFields() throws AutomationException {
         PageFactory.estateContactsPage().clickOnEstateSpecificFields();
         CommonSteps.logInfo("Clicked on the Estate-Specific Fields.");
@@ -189,7 +189,7 @@ public class EstateContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user clicks on Save Button without selecting any role")
+    @And("user clicks on Save Button without selecting any role")
     public void userClicksOnSaveButtonWithoutSelectingAnyRole() throws AutomationException {
         PageFactory.estateContactsPage().clickOnAfterSelectRoleSaveButton();
     }
@@ -209,9 +209,9 @@ public class EstateContactsSteps {
 
     @Then("if the contact has multiple addresses, address selection page appear,user able to handle address selection task")
     public void ifTheContactHasMultipleAddressesAddressSelectionPageAppearHandleAddressSelectionTask() throws AutomationException {
-            PageFactory.estateContactsPage().handleAddressSelection();
-            CommonSteps.logInfo("if the contact has multiple addresses, address selection page appear,user able to handle address selection task");
-        }
+        PageFactory.estateContactsPage().handleAddressSelection();
+        CommonSteps.logInfo("if the contact has multiple addresses, address selection page appear,user able to handle address selection task");
+    }
 
     @And("user clicks on Save Button of error pop up")
     public void userClicksOnSaveButtonOfErrorPopUp() throws AutomationException {
@@ -221,8 +221,27 @@ public class EstateContactsSteps {
 
     @Then("user verifies contact can be saved without selecting any role message")
     public void userVerifiesContactCanBeSavedWithoutSelectingAnyRoleMessage() throws AutomationException {
-    PageFactory.estateContactsPage().verifyWithoutSelectingRoleContactSavedMsg();
+        PageFactory.estateContactsPage().verifyWithoutSelectingRoleContactSavedMsg();
+    }
 
+    @Then("^user verifies edit mode for created \"([^\"]*)\" contacts$")
+    public void userVerifiesEditModeForCreatedContacts(String contactType) throws AutomationException {
+        PageFactory.estateContactsPage().verifiesEditMode(contactType);
+    }
+
+    @And("^user fills all the details for \"([^\"]*)\" contacts$")
+    public void userFillsAllTheDetailsForContacts(String contactType) throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().fillsAllDetailsForContacts(contactType);
+    }
+
+    @And("user clicks on Global Fields")
+    public void userClicksOnGlobalFields() throws AutomationException {
+        PageFactory.estateContactsPage().clickOnGlobalFields();
+    }
+
+    @Then("user verify other details of the added Individual contact can be auto saved")
+    public void userVerifyOtherDetailsOfTheAddedIndividualContactCanBeAutoSaved() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyOtherDetailsSaved();
     }
 }
     

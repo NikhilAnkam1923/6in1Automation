@@ -39,8 +39,8 @@ public class EstateContactsPage extends BasePage {
     private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
     private static final String MAIDEN_NAME_FIELD = "//input[@id='contact.maidenName']";
-    private static final String ENTITY_NAME_FIELD = "//input[@id='contact.entityName']";
-    private static final String EIN_FIELD = "//input[@id='contact.ein']";
+    private static final String ENTITY_NAME_FIELD = "//input[contains(@name,'entityName')]";
+    private static final String EIN_FIELD = "//input[contains(translate(@name, 'EIN', 'ein'), 'ein')]";
     private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
@@ -73,6 +73,7 @@ public class EstateContactsPage extends BasePage {
     private static final String SET_ADDRESS_SUCCESSFUL_MSG = "//div[text()='Address successfully set for the Estate contact.']";
     private static final String ERROR_POPUP_SAVEBTN = "//button[@class='btn btn-danger']";
     public static final String CLOSE_BUTTON = "//button[text()='Close']";
+    public static final String GLOBAL_FIELD = "//a[text()='Global Fields']";
 
     public static String individualContactName;
     public static String entityContactName;
@@ -163,6 +164,14 @@ public class EstateContactsPage extends BasePage {
         suffixDropdown.click();
         WebElement suffixOption = driverUtil.getWebElement(String.format(SELECT_OPTION, suffixValue));
         suffixOption.click();
+    }
+
+    public void selectGenderOption() throws AutomationException, IOException, ParseException {
+        String genderValue = CommonUtil.getJsonPath("Create").get("Create.gender").toString();
+        WebElement genderDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, "Gender"));
+        genderDropdown.click();
+        WebElement genderOption = driverUtil.getWebElement(String.format(SELECT_OPTION, genderValue));
+        genderOption.click();
     }
 
     public void fillNewGlobalContactDetails(String contactType) throws AutomationException, IOException, ParseException {
@@ -475,5 +484,74 @@ public class EstateContactsPage extends BasePage {
         driverUtil.getWebElement(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles."));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles.")));
     }
+
+    public void verifiesEditMode(String contactType) throws AutomationException {
+        switch (contactType) {
+            case "Individual":
+                String firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
+                String lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value");
+                if (firstName.isEmpty() && lastName.isEmpty()) {
+                    throw new AutomationException("verification of the edit mode for Individual is failed");
+                }
+            case "Entity":
+                String entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value");
+                if (entityName.isEmpty()) {
+                    throw new AutomationException("verification of the edit mode for entity is failed");
+                }
+        }
+    }
+
+    public void fillsAllDetailsForContacts(String contactType) throws AutomationException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
+        String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
+
+        switch (contactType) {
+            case "Individual":
+                fillField(MIDDLE_NAME_FIELD, "Create.middleName");
+                selectSuffixOption();
+                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+
+                fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+                break;
+            case "Entity":
+                fillField(FIRST_NAME_FIELD, "Create.firstName");
+                fillField(MIDDLE_NAME_FIELD, "Create.middleName");
+                fillField(LAST_NAME_FIELD, "Create.lastName");
+                selectSuffixOption();
+                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
+                selectGenderOption();
+                break;
+            default:
+                throw new AutomationException("Unknown contact type: " + contactType);
+        }
+    }
+
+    public void clickOnGlobalFields() throws AutomationException {
+        driverUtil.getWebElement(GLOBAL_FIELD).click();
+    }
+
+    private static void verifyField(String fieldName, String expectedValue, String actualValue) throws AutomationException {
+        if (!expectedValue.equals(actualValue)) {
+            throw new AutomationException(fieldName + " is incorrect or not fetched correctly. Expected: " + expectedValue + ", but got: " + actualValue);
+        }
+    }
+
+    public void verifyOtherDetailsSaved() throws IOException, ParseException, AutomationException {
+        String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
+        WebDriverUtil.waitForAWhile(1);
+        String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
+        verifyField("Middle Name", expectedMiddleName, actualMiddleName);
+    }
+
+    private static String getFieldValue(String locator, String attribute) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(locator, 5);
+        if (field != null) {
+            return attribute.equalsIgnoreCase("value") ? field.getAttribute("value") : field.getText().trim();
+        } else {
+            throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
 }
+
 

@@ -53,10 +53,11 @@ Feature: 6in1 estate contacts Feature
     And user selects the Role for Contact
     Then user verifies the "Entity" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Entity" contact
+
+  Scenario: Verify contact can be saved without selecting any role
     Then user clicks on the Add Contact button
     Then user click on Add button for selected "Entity" contact with a "Blue" background
-      #Verify contact can be saved without selecting any role
-    When user clicks on Save Button without selecting any role
+    And user clicks on Save Button without selecting any role
     Then "You have not selected any role for this contact in this Estate. Please recheck and then proceed." Error should be thrown
     And user clicks on Save Button of error pop up
     Then user verifies contact can be saved without selecting any role message
@@ -72,9 +73,18 @@ Feature: 6in1 estate contacts Feature
     And user selects the Role for Contact
     Then user verifies the "Individual" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Individual" contact
-      #Verify notification is displayed on removing the role
+
+  Scenario: Verify other details of the added Individual contact can be auto saved
+    Then user verifies edit mode for created "Individual" contacts
+    And user fills all the details for "Individual" contacts
+    Then user clicks on Estate-Specific Fields
+    And user clicks on Global Fields
+    Then user verify other details of the added Individual contact can be auto saved
+
+
+  Scenario: Verify notification is displayed on removing the role
     When user selects the Estate Contact
-    And user clicks on Estate-Specific Fields
+    Then user clicks on Estate-Specific Fields
     And user clicks on Select Role button and uncheck the checked role
     Then user verifies that notification is displayed on removing the role
       #Verify remove contact from estate button is enabled on removing the role
@@ -88,6 +98,7 @@ Feature: 6in1 estate contacts Feature
     And user clicks on the Add Contact button
     Then user verifies removed contact is displayed in the contact list to add back to the estate
     And user verifies the contact is visible in the Global Contacts list
+
 
   @Setup
   Scenario:SETUP: Close Browser
