@@ -68,6 +68,8 @@ Feature: 6in1 Global Contacts Feature
     #Verify, entity contact page is opened in edit mode and all details are auto saved.
     And user switched to edit mode
     Then user fills Contact Person's Details and contact information
+    When user navigate to "Global Contact"
+    Then user verifies all details of Entity Global Contact are auto-saved
     And user clicks on Mange Address button
     And user fills Address information
     Then verify that city, state, and county are automatically fetched
@@ -80,8 +82,6 @@ Feature: 6in1 Global Contacts Feature
     And user close the Address bar
     #Verify, added address's list is displayed correctly.
     Then user verifies added addresses list displayed correctly
-    When user navigate to "Global Contact"
-    Then user verifies all details of Entity Global Contact are auto-saved
 
   Scenario: Attempt to create a duplicate entity contact with the same EIN
     When user navigate to "Global Contact"

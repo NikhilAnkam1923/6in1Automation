@@ -160,6 +160,7 @@ public class GlobalContactsSteps {
     @Then("^user verifies radio buttons are available for all the contacts$")
     public void userVerifiesRadioButtonsForAllContacts() throws AutomationException {
         PageFactory.globalContactPage().verifyRadioButtonsForContacts();
+        CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
         CommonSteps.takeScreenshot();
     }
 

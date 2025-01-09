@@ -244,8 +244,9 @@ public class GlobalContactPage extends BasePage {
         String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
         for (char c : value.toCharArray()) {
             field.sendKeys(String.valueOf(c));
-            WebDriverUtil.waitForAWhile(1);
         }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
     }
 
     private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
@@ -254,8 +255,9 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(field).click().build().perform();
         for (char c : value.toCharArray()) {
             actions.sendKeys(String.valueOf(c)).build().perform();
-            WebDriverUtil.waitForAWhile(1);
         }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
     }
 
     private void fillFieldWithRandomWithKeyStrokes(String fieldLocator, String value, Actions actions) throws AutomationException {
@@ -263,8 +265,9 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(field).click().build().perform();
         for (char c : value.toCharArray()) {
             actions.sendKeys(String.valueOf(c)).build().perform();
-            WebDriverUtil.waitForAWhile(1);
         }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
     }
 
     private void fillFieldWithRandom(String fieldLocator, String value, Actions actions) throws AutomationException {
@@ -627,7 +630,6 @@ public class GlobalContactPage extends BasePage {
             waitForInvisibleElement(By.xpath(SPINNER));
 
         }
-        CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
     }
 
     public void verifyMatchingRecordsForIndividualGlobalContact() throws AutomationException, IOException, ParseException {
@@ -686,27 +688,6 @@ public class GlobalContactPage extends BasePage {
     public void verifyRequiredFieldValidationErrors() throws AutomationException {
         if (!driverUtil.getWebElement(REQUIRED_FIELD_ERROR_XPATH).isDisplayed()) {
             throw new AutomationException("Error messages are not displayed.");
-        }
-    }
-
-
-    public void fillRequiredFields(String contactType) throws AutomationException, IOException, ParseException {
-        switch (contactType) {
-            case "Individual Global Contact":
-                WebElement zipField = driverUtil.getWebElementAndScroll(ZIP);
-                zipField.clear();
-                zipField.sendKeys(CommonUtil.getJsonPath("Create").get("Create.zip").toString());
-                WebElement addressLine1Field = driverUtil.getWebElementAndScroll(ADDRESS_LINE1);
-                addressLine1Field.clear();
-                addressLine1Field.sendKeys(CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString());
-                WebDriverUtil.waitForAWhile();
-                WebElement stateErrorElement = driverUtil.getWebElement(STATE_ERROR_REQUIRED_XPATH);
-                if (stateErrorElement != null && stateErrorElement.isDisplayed()) {
-                    throw new AutomationException("All the required fields are not filled");
-                }
-                break;
-            case "Entity Global Contact":
-                break;
         }
     }
 
@@ -823,19 +804,6 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-    public void enterAddressLine1() throws IOException, ParseException, AutomationException {
-        String addressLine1 = CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString();
-        WebElement AddressLine1Field = driverUtil.getWebElement(ADDRESS_LINE1);
-        if (AddressLine1Field != null) {
-            AddressLine1Field.clear();
-            AddressLine1Field.sendKeys(addressLine1);
-            WebDriverUtil.waitForAWhile(2);
-            CommonSteps.logInfo("Entered value in Address Line 1 field: " + addressLine1);
-        } else {
-            throw new AutomationException("Failed to locate the Address Line 1 field.");
-        }
-    }
-
     public void clickOn(String button) throws AutomationException {
         String buttonXPath = String.format(BUTTON_IN_FOOTER, button);
         driverUtil.getWebElement(buttonXPath).click();
@@ -894,7 +862,6 @@ public class GlobalContactPage extends BasePage {
         fillFieldWithKeyStrokes(PTIN_FIELD, "Create.ptin");
         fillFieldWithKeyStrokes(FAX_FIELD, "Create.fax",actions);
         fillFieldWithKeyStrokes(PINEFILE_FIELD, "Create.pinEFile");
-        WebDriverUtil.waitForAWhile(2);
     }
 
     public void verifyAddressSavedSuccessfully() throws AutomationException {
@@ -930,7 +897,6 @@ public class GlobalContactPage extends BasePage {
         fillFieldWithKeyStrokes(PHONE_NUMBER_FIELD, "Create.phoneNumber", actions);
         fillFieldWithKeyStrokes(WORK_NUMBER_FIELD, "Create.workNumber", actions);
         fillFieldWithKeyStrokes(FAX_FIELD, "Create.fax", actions);
-        WebDriverUtil.waitForAWhile(2);
     }
 
     public void closeTheAddressBar() throws AutomationException {
