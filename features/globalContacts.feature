@@ -37,6 +37,8 @@ Feature: 6in1 Global Contacts Feature
     Then user fills entity and contact information
     #validates the EIN and SSN formats
     Then Verify that the system validates the EIN and SSN formats correctly
+    When user navigate to "Global Contact"
+    Then user verifies all details of Individual Global Contact are auto-saved
     #Verify, address can be added.
     #verify that city, state, and county are automatically fetched
     And user clicks on Mange Address button
@@ -51,8 +53,6 @@ Feature: 6in1 Global Contacts Feature
     And user close the Address bar
     #Verify, added address's list is displayed correctly.
     Then user verifies added addresses list displayed correctly
-    When user navigate to "Global Contact"
-    Then user verifies all details of global contact are auto-saved
     #Verify user can able to edit the created "Individual Global Contact"
     When user navigate to "Global Contact"
     And user "Edit" global contact of "Individual Global Contact"
@@ -68,6 +68,8 @@ Feature: 6in1 Global Contacts Feature
     #Verify, entity contact page is opened in edit mode and all details are auto saved.
     And user switched to edit mode
     Then user fills Contact Person's Details and contact information
+    When user navigate to "Global Contact"
+    Then user verifies all details of Entity Global Contact are auto-saved
     And user clicks on Mange Address button
     And user fills Address information
     Then verify that city, state, and county are automatically fetched
