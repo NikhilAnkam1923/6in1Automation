@@ -68,7 +68,6 @@ public class EstateContactsSteps {
     @And("user verifies the contact is visible in the Global Contacts list")
     public void userVerifiesTheContactIsVisibleInTheGlobalContactsList() throws AutomationException, IOException {
         PageFactory.estateContactsPage().verifyContactInGlobalContactsList();
-        CommonSteps.logInfo("Verified that the contact is visible in the Global Contacts list.");
         CommonSteps.takeScreenshot();
     }
 
@@ -210,7 +209,6 @@ public class EstateContactsSteps {
     @Then("if the contact has multiple addresses, address selection page appear,user able to handle address selection task")
     public void ifTheContactHasMultipleAddressesAddressSelectionPageAppearHandleAddressSelectionTask() throws AutomationException {
         PageFactory.estateContactsPage().handleAddressSelection();
-        CommonSteps.logInfo("if the contact has multiple addresses, address selection page appear,user able to handle address selection task");
     }
 
     @And("user clicks on Save Button of error pop up")

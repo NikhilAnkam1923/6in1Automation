@@ -482,6 +482,8 @@ public class EstateContactsPage extends BasePage {
 
     public void verifyWithoutSelectingRoleContactSavedMsg() throws AutomationException {
         driverUtil.getWebElement(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles."));
+        CommonSteps.logInfo("Verified that contact can be saved without selecting any role.");
+        CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles.")));
     }
 }

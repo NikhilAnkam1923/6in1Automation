@@ -661,6 +661,7 @@ public class GlobalContactPage extends BasePage {
                 }
                 break;
             case "View Only":
+                WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
                 WebElement createButton = driverUtil.getWebElement(CREATE_BUTTON,2);
                 if (createButton!=null && createButton.isDisplayed()) {
                     throw new AutomationException("Create button should not be visible for View Only user.");

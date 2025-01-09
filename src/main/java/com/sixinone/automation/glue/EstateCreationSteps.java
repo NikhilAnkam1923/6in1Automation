@@ -70,8 +70,6 @@ public class EstateCreationSteps {
     @Then("the system calculate and displays correct Age at Death")
     public void theSystemCalculateAndDisplaysCorrectAgeAtDeath() throws AutomationException {
         PageFactory.estateCreationPage().calculateAgeAtDeath();
-        CommonSteps.logInfo("the system calculate and displays correct Age at Death");
-        CommonSteps.takeScreenshot();
     }
 
     @And("user selects Divorced in the Marital Status dropdown")
@@ -122,7 +120,6 @@ public class EstateCreationSteps {
     @Then("user verify validations for all the fields of Place of Death")
     public void userVerifyValidationsForAllTheFieldsOfPlaceOfDeath() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().verifyPlaceOfDeathFieldValidations();
-        CommonSteps.logInfo("User verified validations for all the fields of Place of Death.");
     }
 
     @When("user clicks on Estate tab")
@@ -190,20 +187,19 @@ public class EstateCreationSteps {
     @And("user verifies Estate archived successful message")
     public void userVerifiesEstateArchivedSuccessfulMessage() throws AutomationException {
         PageFactory.estateCreationPage().verifyEstateArchivedSuccessfully();
-        CommonSteps.logInfo("User verified the successful message for Estate archived.");
     }
 
     @When("user verifies validations for File Number Fields")
     public void userVerifiesFileNumberFieldValidations() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().verifyFileNumberFieldValidations();
-        CommonSteps.logInfo("User verified validations for File Number Fields.");
+        CommonSteps.logInfo("Verified validations for File Number fields.");
     }
 
     @Then("for different SSN number no validation should be thrown")
     public void forDifferentSSNNumberNoValidationShouldBeThrown() throws AutomationException, IOException, ParseException {
         PageFactory.estateCreationPage().validateSSNForSameName();
-        CommonSteps.logInfo("For different SSN number with same first and last name no validation should be thrown");
     }
+
     @And("user clicks on the codicil date fields date picker should open for these fields")
     public void userClicksOnTheCodicilDateFieldsDatePickerShouldOpenForTheseFields() throws AutomationException {
         PageFactory.estateCreationPage().clickOnCodicilDatesDatePickerOpen();
@@ -220,8 +216,7 @@ public class EstateCreationSteps {
     @Then("user verify values stored in correct date format")
     public void userVerifyValuesStoredInCorrectDateFormat() throws AutomationException {
             PageFactory.estateCreationPage().validateDateFormat();
-            CommonSteps.logInfo("user verify values stored in correct date format mm/dd/yyyy");
-        }
+    }
 
     @Then("an address should be selected by default")
     public void verifyAddressSelectedByDefault() throws AutomationException {
@@ -239,6 +234,7 @@ public class EstateCreationSteps {
     public void verifyOnlyAddressSelected(String address) throws AutomationException {
         PageFactory.estateCreationPage().verifyOnlyOneAddressSelected(address);
         CommonSteps.logInfo("Verified that only the " + address + " address is selected.");
+        CommonSteps.takeScreenshot();
     }
 
     @When("user fills Life Details and validate the fields")
