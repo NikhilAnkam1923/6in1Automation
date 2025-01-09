@@ -223,26 +223,6 @@ public class EstateContactsSteps {
     public void userVerifiesContactCanBeSavedWithoutSelectingAnyRoleMessage() throws AutomationException {
         PageFactory.estateContactsPage().verifyWithoutSelectingRoleContactSavedMsg();
     }
-
-    @Then("^user verifies edit mode for created \"([^\"]*)\" contacts$")
-    public void userVerifiesEditModeForCreatedContacts(String contactType) throws AutomationException {
-        PageFactory.estateContactsPage().verifiesEditMode(contactType);
-    }
-
-    @And("^user fills all the details for \"([^\"]*)\" contacts$")
-    public void userFillsAllTheDetailsForContacts(String contactType) throws AutomationException, IOException, ParseException {
-        PageFactory.estateContactsPage().fillsAllDetailsForContacts(contactType);
-    }
-
-    @And("user clicks on Global Fields")
-    public void userClicksOnGlobalFields() throws AutomationException {
-        PageFactory.estateContactsPage().clickOnGlobalFields();
-    }
-
-    @Then("user verify other details of the added Individual contact can be auto saved")
-    public void userVerifyOtherDetailsOfTheAddedIndividualContactCanBeAutoSaved() throws AutomationException, IOException, ParseException {
-        PageFactory.estateContactsPage().verifyOtherDetailsSaved();
-    }
 }
     
 

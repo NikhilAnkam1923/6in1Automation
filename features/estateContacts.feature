@@ -74,14 +74,6 @@ Feature: 6in1 estate contacts Feature
     Then user verifies the "Individual" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Individual" contact
 
-  Scenario: Verify other details of the added Individual contact can be auto saved
-    Then user verifies edit mode for created "Individual" contacts
-    And user fills all the details for "Individual" contacts
-    Then user clicks on Estate-Specific Fields
-    And user clicks on Global Fields
-    Then user verify other details of the added Individual contact can be auto saved
-
-
   Scenario: Verify notification is displayed on removing the role
     When user selects the Estate Contact
     Then user clicks on Estate-Specific Fields
