@@ -7,8 +7,11 @@ import org.testng.annotations.BeforeClass;
 import java.io.IOException;
 
 @CucumberOptions(
-        features = {"features/estateContacts.feature"},
-        glue = { "com.sixinone.automation.glue"},
+        features = {"features/estateContacts.feature",
+                "features/estateCreation.feature",
+                "features/globalContacts.feature"
+        },
+        glue = {"com.sixinone.automation.glue"},
         monochrome = true
 )
 public class LoginTestRunner extends BaseRunner {

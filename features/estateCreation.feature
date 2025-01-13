@@ -12,7 +12,7 @@ Feature: 6in1 estate creation Feature
       | nikhilankam+14@benchmarkit.solutions | Watch@22 |
 
 
-  Scenario: user verify after filling decedent information clicking on next button other details are opened
+  Scenario: User verify after filling decedent information clicking on next button other details are opened
     When user clicks on the Create button
     Then user fills the first name,last name and SSN details
     And user click on Proceed button
@@ -46,7 +46,7 @@ Feature: 6in1 estate creation Feature
     When user fills Place of Death details
     Then user verify validations for all the fields of Place of Death
 
-  Scenario: verify for Codicil Date picker open and values stored in correct format
+  Scenario: Verify for Codicil Date picker open and values stored in correct format
     When user clicks on Estate tab
     And user clicks on the codicil date fields date picker should open for these fields
     And user enters codicil dates
@@ -62,7 +62,7 @@ Feature: 6in1 estate creation Feature
     When I select "Fiduciary Address or Attny" address option
     Then only "Fiduciary Address or Attny" address should be selected
 
-  Scenario: Verify an estate is saved with all the fields
+  Scenario: Verify an estate is saved with all fields
     And user clicks on Estate tab
     And user fills Estate details
     # Verify validations for file number

@@ -83,7 +83,7 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void navigateToEstateContactsTab() throws AutomationException {
-        WebElement tempUser = driverUtil.getWebElement("//a[text()='Jonny Vasco']");
+        WebElement tempUser = driverUtil.getWebElement("//a[text()='Baby John']");
         tempUser.click();
         waitForInvisibleElement(By.xpath(SPINNER));
         waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
@@ -373,6 +373,7 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyGlobalContactCreated() throws AutomationException {
+        waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
         WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Contact created successfully."));
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
