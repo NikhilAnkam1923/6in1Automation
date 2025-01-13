@@ -95,6 +95,7 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForVisibleElement(By.xpath(LOGOUT_BTN));
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));

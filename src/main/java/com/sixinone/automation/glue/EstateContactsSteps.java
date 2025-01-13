@@ -68,7 +68,6 @@ public class EstateContactsSteps {
     @And("user verifies the contact is visible in the Global Contacts list")
     public void userVerifiesTheContactIsVisibleInTheGlobalContactsList() throws AutomationException, IOException {
         PageFactory.estateContactsPage().verifyContactInGlobalContactsList();
-        CommonSteps.logInfo("Verified that the contact is visible in the Global Contacts list.");
         CommonSteps.takeScreenshot();
     }
 
@@ -210,7 +209,6 @@ public class EstateContactsSteps {
     @Then("if the contact has multiple addresses, address selection page appear,user able to handle address selection task")
     public void ifTheContactHasMultipleAddressesAddressSelectionPageAppearHandleAddressSelectionTask() throws AutomationException {
         PageFactory.estateContactsPage().handleAddressSelection();
-        CommonSteps.logInfo("if the contact has multiple addresses, address selection page appear,user able to handle address selection task");
     }
 
     @And("user clicks on Save Button of error pop up")
@@ -222,6 +220,32 @@ public class EstateContactsSteps {
     @Then("user verifies contact can be saved without selecting any role message")
     public void userVerifiesContactCanBeSavedWithoutSelectingAnyRoleMessage() throws AutomationException {
         PageFactory.estateContactsPage().verifyWithoutSelectingRoleContactSavedMsg();
+    }
+
+    @And("user fills other Basic details, Birth details and Contact Information for Individual Contact")
+    public void userFillsOtherBasicDetailsBirthDetailsAndContactInformation() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("User fills other Basic details, Birth details and Contact Information for Individual Contact");
+        PageFactory.estateContactsPage().fillsOtherBasicDetailsBirthDetailsAndContactInformation();
+    }
+
+    @Then("user verifies all details of new Individual Global Contact are auto-saved")
+    public void userVerifiesAllDetailsOfNewIndividualGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyIndividualGlobalContactDetailsAutoSaved();
+        CommonSteps.logInfo("User verified that all details of newly added Individual global contact are auto-saved.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user fills other Basic details, Birth details and Contact Information for Entity Contact")
+    public void userFillsOtherBasicDetailsBirthDetailsAndContactInformationForEntityContact() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("User fills other Basic details, Birth details and Contact Information for Entity Contact");
+        PageFactory.estateContactsPage().fillsOtherBasicDetailsBirthDetailsAndContactInformationForEntity();
+    }
+
+    @Then("user verifies all details of new Entity Global Contact are auto-saved")
+    public void userVerifiesAllDetailsOfNewEntityGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyEntityGlobalContactDetailsAutoSaved();
+        CommonSteps.logInfo("User verified that all details of newly added Entity global contact are auto-saved.");
+        CommonSteps.takeScreenshot();
     }
 }
     

@@ -53,6 +53,9 @@ Feature: 6in1 estate contacts Feature
     And user selects the Role for Contact
     Then user verifies the "Entity" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Entity" contact
+    #Verify, other details of the added contact can be added and auto saved.
+    And user fills other Basic details, Birth details and Contact Information for Entity Contact
+    Then user verifies all details of new Entity Global Contact are auto-saved
 
   Scenario: Verify contact can be saved without selecting any role
     Then user clicks on the Add Contact button
@@ -73,6 +76,9 @@ Feature: 6in1 estate contacts Feature
     And user selects the Role for Contact
     Then user verifies the "Individual" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Individual" contact
+     #Verify, other details of the added contact can be added and auto saved.
+    And user fills other Basic details, Birth details and Contact Information for Individual Contact
+    Then user verifies all details of new Individual Global Contact are auto-saved
 
   Scenario: Verify notification is displayed on removing the role
     When user selects the Estate Contact

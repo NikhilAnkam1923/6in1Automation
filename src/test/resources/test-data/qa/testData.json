@@ -1,6 +1,6 @@
 {
   "Create": {
-    "firstName": "Richard",
+    "firstName": "Unique",
     "lastName": "Winter",
     "middleName": "John",
     "maidenName": "Jonny",
@@ -125,6 +125,7 @@
   "EstateContact": {
     "roleAccountant": "Accountant",
     "roleAttorney": "Attorney",
-    "roleBeneficiary": "Beneficiary"
+    "roleBeneficiary": "Beneficiary",
+    "placeOfBirth": "Denmark"
   }
 }

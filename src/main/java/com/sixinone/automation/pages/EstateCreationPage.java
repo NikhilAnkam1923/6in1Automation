@@ -606,8 +606,6 @@ public class EstateCreationPage extends BasePage {
         clearField(FILE_NUMBER_PART_3);
         fillField(FILE_NUMBER_PART_3, "EstateCreate.fileNumberPart3");
         selectDefaultAddressRadioButton("Accountant");
-
-        CommonSteps.logInfo("Verified validations for File Number fields.");
     }
 
     public void verifyDatePickerIsDisplay() throws AutomationException {
