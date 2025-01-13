@@ -308,6 +308,7 @@ public class EstateContactsPage extends BasePage {
         String displayName = contactType.equals("Individual") ? individualName : entityName;
 
         filterByContactName(displayName);
+        waitForVisibleElement(By.xpath(String.format(NAME_AND_ROLE_ROW, displayName, role)));
         WebElement nameAndRole = driverUtil.getWebElement(String.format(NAME_AND_ROLE_ROW, displayName, role));
         if (!nameAndRole.isDisplayed()) {
             throw new AutomationException("Role is not assigned to for the contact.");
