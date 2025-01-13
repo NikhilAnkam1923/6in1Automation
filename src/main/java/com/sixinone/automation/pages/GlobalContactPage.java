@@ -294,6 +294,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public String filterByContactType(String contactType) throws AutomationException {
+        waitForVisibleElement(By.xpath(CONTACT_TYPE_FILTER_INPUT));
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT).click();
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT).sendKeys(contactType);
         return contactType;
@@ -309,6 +310,7 @@ public class GlobalContactPage extends BasePage {
     public void globalContactEdit(String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         firstName = filterByName();
         filterByContactType(contactType.replace("Global Contact", "").trim());
+        waitForVisibleElement(By.xpath(ACTIONS_BUTTON));
         driverUtil.getWebElement(ACTIONS_BUTTON).click();
         clickButtonEdit();
         switch (contactType) {

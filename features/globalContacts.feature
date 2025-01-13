@@ -120,7 +120,7 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies "Create Entity Contact" button is available
     And user clicks on the Close button
 
-  Scenario Outline: verify user authorization for "View Only" user
+  Scenario Outline: Verify user authorization for "View Only" user
     When user logged out from the application
     And user go to application "https://delltab.benchmarkits.in"
     When user login using "<user-email>" and "<password>"

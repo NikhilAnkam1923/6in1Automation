@@ -518,7 +518,6 @@ public class EstateCreationPage extends BasePage {
         String actualFileNumberPart1 = getFieldValue(FILE_NUMBER_PART_1, "value");
         String actualFileNumberPart2 = getFieldValue(FILE_NUMBER_PART_2, "value");
         String actualFileNumberPart3 = getFieldValue(FILE_NUMBER_PART_3, "value");
-
         verifyField("Date of Will", expectedDateOfWill, actualDateOfWill);
         verifyField("Codicil Date 1", expectedCodicilDate1, actualCodicilDate1);
         verifyField("Codicil Date 2", expectedCodicilDate2, actualCodicilDate2);
@@ -685,16 +684,17 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void entersCodicilDates() throws AutomationException, IOException, ParseException {
+
         Actions actions = new Actions(DriverFactory.drivers.get());
         clearField(CODICILE_DATE_1);
-        fillField(CODICILE_DATE_1, "EstateCreate.codicilDate1", actions);
-        //actions.sendKeys(Keys.ENTER);
+        fillField(CODICILE_DATE_1, "EstateCreate.codicilDate1");
+        actions.sendKeys(Keys.ENTER);
         clearField(CODICILE_DATE_2);
-        fillField(CODICILE_DATE_2, "EstateCreate.codicilDate2", actions);
-        //actions.sendKeys(Keys.ENTER);
+        fillField(CODICILE_DATE_2, "EstateCreate.codicilDate2");
+        actions.sendKeys(Keys.ENTER);
         clearField(CODICILE_DATE_3);
-        fillField(CODICILE_DATE_3, "EstateCreate.codicilDate3", actions);
-        //actions.sendKeys(Keys.ENTER);
+        fillField(CODICILE_DATE_3, "EstateCreate.codicilDate3");
+        actions.sendKeys(Keys.ENTER);
     }
 
     public void validateDateFormat() throws AutomationException {
