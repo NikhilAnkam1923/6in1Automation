@@ -44,6 +44,7 @@ public class GlobalContactsSteps {
 
     @Then("user save the global contact")
     public void userSaveTheGlobalContact() throws AutomationException, IOException {
+        CommonSteps.logInfo("User save the global contact");
         PageFactory.globalContactPage().saveGlobalContact();
     }
 
@@ -63,6 +64,7 @@ public class GlobalContactsSteps {
     @And("user should see an error message for duplicate EIN")
     public void userShouldSeeAnErrorMessageForDuplicateEIN() throws Throwable {
         PageFactory.globalContactPage().verifyDuplicateEINError();
+        CommonSteps.takeScreenshot();
     }
 
     @And("user attempts to save the global contact without filling the required fields")
@@ -152,8 +154,8 @@ public class GlobalContactsSteps {
 
     @Then("^user verifies radio buttons are available for all the contacts$")
     public void userVerifiesRadioButtonsForAllContacts() throws AutomationException {
-        PageFactory.globalContactPage().verifyRadioButtonsForContacts();
         CommonSteps.logInfo("Verified that radio buttons are available for all the contacts.");
+        PageFactory.globalContactPage().verifyRadioButtonsForContacts();
         CommonSteps.takeScreenshot();
     }
 
@@ -178,27 +180,29 @@ public class GlobalContactsSteps {
 
     @And("^user verifies \"([^\"]*)\" button is available$")
     public void userVerifiesButtonIsAvailable(String button) throws AutomationException {
-        PageFactory.globalContactPage().isButtonAvailable(button);
         CommonSteps.logInfo("Verifies the " + button + " button availability");
+        PageFactory.globalContactPage().isButtonAvailable(button);
         CommonSteps.takeScreenshot();
     }
 
 
     @Then("Verify that the system validates the EIN and SSN formats correctly")
     public void verifyThatTheSystemValidatesTheEINAndSSNFormatsCorrectly() throws AutomationException {
-        PageFactory.globalContactPage().validateSSNAndEINFormat();
         CommonSteps.logInfo("Verifies the EIN and SSN formats");
+        PageFactory.globalContactPage().validateSSNAndEINFormat();
         CommonSteps.takeScreenshot();
 
     }
 
     @When("user clicks on the Create button")
     public void userClicksOnTheCreateButton() throws AutomationException {
+        CommonSteps.logInfo("User clicks on the Create button");
         PageFactory.globalContactPage().clickButtonCreate();
     }
 
     @And("user click on the Close button")
     public void userClickOnTheCloseButton() throws AutomationException {
+        CommonSteps.logInfo("User clicks on the Close button");
         PageFactory.globalContactPage().clickButtonClose();
     }
 
@@ -291,35 +295,35 @@ public class GlobalContactsSteps {
 
     @Then("user verifies multiple addresses can be added")
     public void userVerifiesMultipleAddressesCanBeAdded() throws AutomationException, IOException, ParseException {
-        PageFactory.globalContactPage().addMultipleAddresses();
         CommonSteps.logInfo("Verified that multiple addresses can be added");
+        PageFactory.globalContactPage().addMultipleAddresses();
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies address can be edited and reflected the changed address")
     public void userVerifiesAddressCanBeEditedAndReflectedTheChangedAddress() throws AutomationException, IOException, ParseException {
-        PageFactory.globalContactPage().editAddress();
         CommonSteps.logInfo("Verified that address can be edited and reflected the changed address");
+        PageFactory.globalContactPage().editAddress();
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies added addresses list displayed correctly")
     public void userVerifiesAddedAddressesListDisplayedCorrectly() throws AutomationException {
-        PageFactory.globalContactPage().verifyAddedAddressesListDisplayedCorrectly();
         CommonSteps.logInfo("Verified that added addresses list displayed correctly");
+        PageFactory.globalContactPage().verifyAddedAddressesListDisplayedCorrectly();
     }
 
     @Then("user verifies all details of Individual Global Contact are auto-saved")
     public void userVerifiesAllDetailsOfGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
-        PageFactory.globalContactPage().verifyIndividualGlobalContactDetailsAutoSaved();
         CommonSteps.logInfo("User verified that all details of global contact are auto-saved.");
+        PageFactory.globalContactPage().verifyIndividualGlobalContactDetailsAutoSaved();
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies all details of Entity Global Contact are auto-saved")
     public void userVerifiesAllDetailsOfEntityGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
-        PageFactory.globalContactPage().verifyEntityGlobalContactDetailsAutoSaved();
         CommonSteps.logInfo("User verified that all details of global contact are auto-saved.");
+        PageFactory.globalContactPage().verifyEntityGlobalContactDetailsAutoSaved();
         CommonSteps.takeScreenshot();
     }
 }
