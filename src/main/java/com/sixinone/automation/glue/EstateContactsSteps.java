@@ -221,6 +221,32 @@ public class EstateContactsSteps {
     public void userVerifiesContactCanBeSavedWithoutSelectingAnyRoleMessage() throws AutomationException {
         PageFactory.estateContactsPage().verifyWithoutSelectingRoleContactSavedMsg();
     }
+
+    @And("user fills other Basic details, Birth details and Contact Information for Individual Contact")
+    public void userFillsOtherBasicDetailsBirthDetailsAndContactInformation() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("User fills other Basic details, Birth details and Contact Information for Individual Contact");
+        PageFactory.estateContactsPage().fillsOtherBasicDetailsBirthDetailsAndContactInformation();
+    }
+
+    @Then("user verifies all details of new Individual Global Contact are auto-saved")
+    public void userVerifiesAllDetailsOfNewIndividualGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyIndividualGlobalContactDetailsAutoSaved();
+        CommonSteps.logInfo("User verified that all details of newly added Individual global contact are auto-saved.");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user fills other Basic details, Birth details and Contact Information for Entity Contact")
+    public void userFillsOtherBasicDetailsBirthDetailsAndContactInformationForEntityContact() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("User fills other Basic details, Birth details and Contact Information for Entity Contact");
+        PageFactory.estateContactsPage().fillsOtherBasicDetailsBirthDetailsAndContactInformationForEntity();
+    }
+
+    @Then("user verifies all details of new Entity Global Contact are auto-saved")
+    public void userVerifiesAllDetailsOfNewEntityGlobalContactAreAutoSaved() throws AutomationException, IOException, ParseException {
+        PageFactory.estateContactsPage().verifyEntityGlobalContactDetailsAutoSaved();
+        CommonSteps.logInfo("User verified that all details of newly added Entity global contact are auto-saved.");
+        CommonSteps.takeScreenshot();
+    }
 }
     
 

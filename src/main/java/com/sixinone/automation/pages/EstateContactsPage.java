@@ -11,6 +11,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.openqa.selenium.interactions.Actions;
+import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,8 +38,11 @@ public class EstateContactsPage extends BasePage {
     public static final String ENTITY_GLOBAL_CONTACT_CREATION_PAGE = "//div[text()='Entity Details']";
     private static final String FIRST_NAME_FIELD = "//input[contains(@name,'firstName')]";
     private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
+    private static final String CREATE_MAIDEN_NAME_FIELD = "//input[@name='maidenName']";
+    private static final String SELECTED_SUFFIX = "//label[text()='Suffix']/following-sibling::div/div/div/div[contains(@class,'select__single-value')]";
+    private static final String SELECTED_GENDER = "//label[text()='Gender']/following-sibling::div/div/div/div[contains(@class,'select__single-value')]";
     private static final String MIDDLE_NAME_FIELD = "//input[@name='contact.middleName']";
-    private static final String MAIDEN_NAME_FIELD = "//input[@id='contact.maidenName']";
+    private static final String MAIDEN_NAME_FIELD = "//input[@name='contact.maidenName']";
     private static final String ENTITY_NAME_FIELD = "//input[contains(@name,'entityName')]";
     private static final String EIN_FIELD = "//input[contains(translate(@name, 'EIN', 'ein'), 'ein')]";
     private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
@@ -73,10 +77,24 @@ public class EstateContactsPage extends BasePage {
     private static final String SET_ADDRESS_SUCCESSFUL_MSG = "//div[text()='Address successfully set for the Estate contact.']";
     private static final String ERROR_POPUP_SAVEBTN = "//button[@class='btn btn-danger']";
     public static final String CLOSE_BUTTON = "//button[text()='Close']";
-    public static final String GLOBAL_FIELD = "//a[text()='Global Fields']";
+    public static final String GLOBAL_FIELD = "//a[@role='tab' and text()='Global Fields']";
+    private static final String DATE_OF_BIRTH_FIELD = "//label[text()='Date of Birth']/following-sibling::div//div//input";
+    private static final String PLACE_OF_BIRTH = "//input[@name='contact.placeOfBirth']";
+    private static final String PHONE_NUMBER_FIELD = "//input[@name='contact.phoneNumber']";
+    private static final String WORK_NUMBER_FIELD = "//input[@name='contact.workPhone']";
+    private static final String EMAIL_ADDRESS_FIELD = "//input[@name='contact.emailAddress']";
+    private static final String FAX_FIELD = "//input[@name='contact.faxNumber']";
+    private static final String SSN_FIELD = "//input[@name='contact.SSN']";
 
+
+    public static String firstName;
+    public static String lastName;
     public static String individualContactName;
     public static String entityContactName;
+    static String enteredEIN;
+    static String enteredSSN;
+    static String enteredEntityEIN;
+    static String enteredEntitySSN;
 
     String getName() {
         return "";
@@ -149,6 +167,16 @@ public class EstateContactsPage extends BasePage {
                 .perform();
     }
 
+    private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
+        for (char c : value.toCharArray()) {
+            field.sendKeys(String.valueOf(c));
+        }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
+    }
+
     private void fillFieldWithRandom(String fieldLocator, String value, Actions actions) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
         actions.moveToElement(field)
@@ -186,14 +214,17 @@ public class EstateContactsPage extends BasePage {
                 fillField(MIDDLE_NAME_FIELD, "Create.middleName");
                 fillField(LAST_NAME_FIELD, "Create.lastName");
                 selectSuffixOption();
-                fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
-                individualContactName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value") + ", " + driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
+                fillField(CREATE_MAIDEN_NAME_FIELD, "Create.maidenName");
+                firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
+                lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value");
+                individualContactName = lastName + ", " + firstName;
                 break;
             case "New Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
                 fillField(ENTITY_NAME_FIELD, "Create.entityName");
                 fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
                 entityContactName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value");
+                enteredEntityEIN = driverUtil.getWebElement(EIN_FIELD).getAttribute("value");
                 break;
             default:
                 throw new AutomationException("Unknown contact type: " + contactType);
@@ -248,12 +279,14 @@ public class EstateContactsPage extends BasePage {
                 if (!individualContactNameInEstateList.isDisplayed()) {
                     throw new AutomationException("Individual Contact is not visible in the Estate Contacts list");
                 }
+                break;
             case "Entity":
                 filterByContactName(entityContactName);
                 WebElement entityContactNameInEstateList = driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, entityContactName));
                 if (!entityContactNameInEstateList.isDisplayed()) {
                     throw new AutomationException("Entity Contact is not visible in the Estate Contacts list");
                 }
+                break;
         }
     }
 
@@ -315,8 +348,6 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void selectEstateContact() throws AutomationException, IOException, ParseException {
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
         String lastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
         String firstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
         String individualName = lastName + ", " + firstName;
@@ -373,7 +404,6 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void verifyGlobalContactCreated() throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact created successfully.")));
         WebElement confirmationElement = driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Contact created successfully."));
         if (confirmationElement == null || !confirmationElement.isDisplayed()) {
             throw new AutomationException("Confirmation message not displayed");
@@ -486,6 +516,168 @@ public class EstateContactsPage extends BasePage {
         CommonSteps.logInfo("Verified that contact can be saved without selecting any role.");
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Contact has been successfully added to the estate without any roles.")));
+    }
+
+    public void fillsOtherBasicDetailsBirthDetailsAndContactInformation() throws AutomationException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
+        String randomEINSuffix = String.format("%07d", (int) (Math.random() * 10000000));
+        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
+        String randomEIN = String.format("%02d-%07d", (int) (Math.random() * 100), Integer.parseInt(randomEINSuffix));
+
+        WebDriverUtil.waitForAWhile();
+        fillFieldWithKeyStrokes(ENTITY_NAME_FIELD, "Create.entityName");
+        fillFieldWithRandom(EIN_FIELD, randomEIN, actions);
+        enteredEIN=driverUtil.getWebElement(EIN_FIELD).getAttribute("value");
+        selectGenderOption();
+        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
+        fillField(PLACE_OF_BIRTH,"EstateContact.placeOfBirth");
+        fillField(WORK_NUMBER_FIELD, "Create.workNumber",actions);
+        fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber",actions);
+        fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
+        fillField(FAX_FIELD, "Create.fax",actions);
+        fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+        enteredSSN=driverUtil.getWebElement(SSN_FIELD).getAttribute("value");
+    }
+
+    private static void verifyField(String fieldName, String expectedValue, String actualValue) throws AutomationException {
+        if (!expectedValue.equals(actualValue)) {
+            throw new AutomationException(fieldName + " is incorrect or not fetched correctly. Expected: " + expectedValue + ", but got: " + actualValue);
+        }
+    }
+
+    private static String getFieldValue(String locator, String attribute) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(locator, 5);
+        if (field != null) {
+            return attribute.equalsIgnoreCase("value") ? field.getAttribute("value") : field.getText().trim();
+        } else {
+            throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
+
+    public void verifyIndividualGlobalContactDetailsAutoSaved() throws IOException, ParseException, AutomationException {
+        String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
+        String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
+        String expectedMaidenName = CommonUtil.getJsonPath("Create").get("Create.maidenName").toString();
+        String expectedFirmName = CommonUtil.getJsonPath("Create").get("Create.entityName").toString();
+        String expectedGender = CommonUtil.getJsonPath("Create").get("Create.gender").toString();
+        String expectedDateOfBirth = CommonUtil.getJsonPath("Create").get("EstateCreate.dateOfBirth").toString();
+        String expectedPlaceOfBirth = CommonUtil.getJsonPath("Create").get("EstateContact.placeOfBirth").toString();
+        String expectedPhone = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
+        String expectedWorkPhone = CommonUtil.getJsonPath("Create").get("Create.workNumber").toString();
+        String expectedEmailAddress = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
+        String expectedFax = CommonUtil.getJsonPath("Create").get("Create.fax").toString();
+
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(GLOBAL_FIELD).click();
+
+        WebDriverUtil.waitForAWhile(1);
+        String actualFirstName = getFieldValue(FIRST_NAME_FIELD, "value");
+        String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
+        String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");
+        String actualSuffix = getFieldValue(SELECTED_SUFFIX, "text");
+        String actualMaidenName = getFieldValue(MAIDEN_NAME_FIELD, "value");
+        String actualFirmName = getFieldValue(ENTITY_NAME_FIELD, "value");
+        String actualGender = getFieldValue(SELECTED_GENDER,"text");
+        String actualDateOfBirth = getFieldValue(DATE_OF_BIRTH_FIELD,"value");
+        String actualPlaceOfBirth = getFieldValue(PLACE_OF_BIRTH,"value");
+        String actualEIN = getFieldValue(EIN_FIELD, "value");
+        String actualPhone = getFieldValue(PHONE_NUMBER_FIELD, "value");
+        String actualWorkPhone = getFieldValue(WORK_NUMBER_FIELD, "value");
+        String actualEmailAddress = getFieldValue(EMAIL_ADDRESS_FIELD, "value");
+        String actualFax = getFieldValue(FAX_FIELD, "value");
+        String actualSSN = getFieldValue(SSN_FIELD, "value");
+
+        verifyField("First Name", firstName, actualFirstName);
+        verifyField("Middle Name", expectedMiddleName, actualMiddleName);
+        verifyField("Last Name", lastName, actualLastName);
+        verifyField("Suffix", expectedSuffix, actualSuffix);
+        verifyField("Maiden Name",expectedMaidenName,actualMaidenName);
+        verifyField("Firm Name",expectedFirmName,actualFirmName);
+        verifyField("Gender",expectedGender,actualGender);
+        verifyField("Date of Birth",expectedDateOfBirth,actualDateOfBirth);
+        verifyField("Place of Birth",expectedPlaceOfBirth,actualPlaceOfBirth);
+        verifyField("EIN",enteredEIN,actualEIN);
+        verifyField("Phone",expectedPhone,actualPhone);
+        verifyField("Work Phone",expectedWorkPhone,actualWorkPhone);
+        verifyField("Email Address",expectedEmailAddress,actualEmailAddress);
+        verifyField("Fax",expectedFax,actualFax);
+        verifyField("SSN",enteredSSN,actualSSN);
+    }
+
+    public void fillsOtherBasicDetailsBirthDetailsAndContactInformationForEntity() throws AutomationException, IOException, ParseException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
+        String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
+
+        fillField(FIRST_NAME_FIELD, "Create.firstName");
+        fillField(LAST_NAME_FIELD, "Create.lastName");
+        fillField(MIDDLE_NAME_FIELD, "Create.middleName");
+        selectSuffixOption();
+        fillFieldWithKeyStrokes(MAIDEN_NAME_FIELD, "Create.maidenName");
+        fillFieldWithKeyStrokes(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
+        selectGenderOption();
+        fillField(PLACE_OF_BIRTH,"EstateContact.placeOfBirth");
+        fillField(WORK_NUMBER_FIELD, "Create.workNumber",actions);
+        fillField(PHONE_NUMBER_FIELD, "Create.phoneNumber",actions);
+        fillField(EMAIL_ADDRESS_FIELD, "Create.emailId");
+        fillField(FAX_FIELD, "Create.fax",actions);
+        fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
+        enteredEntitySSN=driverUtil.getWebElement(SSN_FIELD).getAttribute("value");
+    }
+
+    public void verifyEntityGlobalContactDetailsAutoSaved() throws AutomationException, IOException, ParseException {
+        String expectedFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
+        String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
+        String expectedLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
+        String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
+        String expectedMaidenName = CommonUtil.getJsonPath("Create").get("Create.maidenName").toString();
+        String expectedFirmName = CommonUtil.getJsonPath("Create").get("Create.entityName").toString();
+        String expectedGender = CommonUtil.getJsonPath("Create").get("Create.gender").toString();
+        String expectedDateOfBirth = CommonUtil.getJsonPath("Create").get("EstateCreate.dateOfBirth").toString();
+        String expectedPlaceOfBirth = CommonUtil.getJsonPath("Create").get("EstateContact.placeOfBirth").toString();
+        String expectedPhone = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
+        String expectedWorkPhone = CommonUtil.getJsonPath("Create").get("Create.workNumber").toString();
+        String expectedEmailAddress = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
+        String expectedFax = CommonUtil.getJsonPath("Create").get("Create.fax").toString();
+
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(GLOBAL_FIELD).click();
+
+        WebDriverUtil.waitForAWhile(1);
+        String actualFirstName = getFieldValue(FIRST_NAME_FIELD, "value");
+        String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
+        String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");
+        String actualSuffix = getFieldValue(SELECTED_SUFFIX, "text");
+        String actualMaidenName = getFieldValue(MAIDEN_NAME_FIELD, "value");
+        String actualFirmName = getFieldValue(ENTITY_NAME_FIELD, "value");
+        String actualGender = getFieldValue(SELECTED_GENDER,"text");
+        String actualDateOfBirth = getFieldValue(DATE_OF_BIRTH_FIELD,"value");
+        String actualPlaceOfBirth = getFieldValue(PLACE_OF_BIRTH,"value");
+        String actualEIN = getFieldValue(EIN_FIELD, "value");
+        String actualPhone = getFieldValue(PHONE_NUMBER_FIELD, "value");
+        String actualWorkPhone = getFieldValue(WORK_NUMBER_FIELD, "value");
+        String actualEmailAddress = getFieldValue(EMAIL_ADDRESS_FIELD, "value");
+        String actualFax = getFieldValue(FAX_FIELD, "value");
+        String actualSSN = getFieldValue(SSN_FIELD, "value");
+
+        verifyField("First Name", expectedFirstName, actualFirstName);
+        verifyField("Middle Name", expectedMiddleName, actualMiddleName);
+        verifyField("Last Name", expectedLastName, actualLastName);
+        verifyField("Suffix", expectedSuffix, actualSuffix);
+        verifyField("Maiden Name",expectedMaidenName,actualMaidenName);
+        verifyField("Firm Name",expectedFirmName,actualFirmName);
+        verifyField("Gender",expectedGender,actualGender);
+        verifyField("Date of Birth",expectedDateOfBirth,actualDateOfBirth);
+        verifyField("Place of Birth",expectedPlaceOfBirth,actualPlaceOfBirth);
+        verifyField("EIN",enteredEntityEIN,actualEIN);
+        verifyField("Phone",expectedPhone,actualPhone);
+        verifyField("Work Phone",expectedWorkPhone,actualWorkPhone);
+        verifyField("Email Address",expectedEmailAddress,actualEmailAddress);
+        verifyField("Fax",expectedFax,actualFax);
+        verifyField("SSN",enteredEntitySSN,actualSSN);
     }
 }
 

@@ -125,6 +125,7 @@
   "EstateContact": {
     "roleAccountant": "Accountant",
     "roleAttorney": "Attorney",
-    "roleBeneficiary": "Beneficiary"
+    "roleBeneficiary": "Beneficiary",
+    "placeOfBirth": "Denmark"
   }
 }
