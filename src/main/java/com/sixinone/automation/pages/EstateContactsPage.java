@@ -616,7 +616,7 @@ public class EstateContactsPage extends BasePage {
         fillField(LAST_NAME_FIELD, "Create.lastName");
         fillField(MIDDLE_NAME_FIELD, "Create.middleName");
         selectSuffixOption();
-        fillFieldWithKeyStrokes(MAIDEN_NAME_FIELD, "Create.maidenName");
+        fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
         fillFieldWithKeyStrokes(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
         selectGenderOption();
         fillField(PLACE_OF_BIRTH,"EstateContact.placeOfBirth");
