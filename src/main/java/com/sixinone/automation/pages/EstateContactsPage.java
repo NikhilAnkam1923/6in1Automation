@@ -611,11 +611,14 @@ public class EstateContactsPage extends BasePage {
         String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
         String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
 
-        fillField(FIRST_NAME_FIELD, "Create.firstName");
-        fillField(LAST_NAME_FIELD, "Create.lastName");
+        fillFieldWithKeyStrokes(FIRST_NAME_FIELD, "Create.firstName");
+        waitForInvisibleElement(By.xpath(SPINNER));
+        fillFieldWithKeyStrokes(LAST_NAME_FIELD, "Create.lastName");
+        waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         fillField(MIDDLE_NAME_FIELD, "Create.middleName");
+        fillField(MAIDEN_NAME_FIELD, "Create.maidenName");
         selectSuffixOption();
-        fillFieldWithKeyStrokes(MAIDEN_NAME_FIELD, "Create.maidenName");
         fillFieldWithKeyStrokes(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth");
         selectGenderOption();
         fillField(PLACE_OF_BIRTH,"EstateContact.placeOfBirth");

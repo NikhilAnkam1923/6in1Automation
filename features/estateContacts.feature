@@ -53,7 +53,7 @@ Feature: 6in1 estate contacts Feature
     And user selects the Role for Contact
     Then user verifies the "Entity" contact is visible in the Estate Contacts list
     And user verifies that the role is assigned successfully for "Entity" contact
-    #Verify, other details of the added contact can be added and auto saved.
+      #Verify, other details of the added contact can be added and auto saved.
     And user fills other Basic details, Birth details and Contact Information for Entity Contact
     Then user verifies all details of new Entity Global Contact are auto-saved
 
