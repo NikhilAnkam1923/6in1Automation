@@ -118,6 +118,7 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void clickAddContactButton() throws AutomationException {
+        waitForVisibleElement(By.xpath(ADD_CONTACT_BTN));
         driverUtil.getWebElement(ADD_CONTACT_BTN).click();
     }
 

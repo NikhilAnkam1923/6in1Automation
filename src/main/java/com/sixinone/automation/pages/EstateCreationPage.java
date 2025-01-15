@@ -88,6 +88,7 @@ public class EstateCreationPage extends BasePage {
     private static final String ACTIONS_OPTION_XPATH = "//div[@role='menu' and @class='slideright dropdown-menu show']/a[@role='menuitem' and text()='%s']";
     private static final String ARCHIVE_DESCRIPTION = "//textarea[@name='description']";
     private static final String ARCHIVE_BUTTON = "//button[text()='Archive']";
+    private static final String ARCHIVE_CONFIRMATIONBUTTON = "//h4[@class='text-start mb-0']//following-sibling::div[@class='footer-modal']//button[text()='Archive']";
     private static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
     private static final String FILE_NUMBER_1_ERR = "//div[@class='invalid-feedback' and contains(text(),'County Code must be a number between 1 and 99.')]";
     private static final String FILE_NUMBER_2_ERR = "//div[@class='invalid-feedback' and contains(text(),'Year must be exactly 2 digits.')]";
@@ -555,9 +556,10 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void clickOnArchiveBtn() throws AutomationException {
+        waitForVisibleElement(By.xpath(ARCHIVE_BUTTON));
         driverUtil.getWebElement(ARCHIVE_BUTTON).click();
-        WebDriverUtil.waitForAWhile(1);
-        driverUtil.getWebElement(ARCHIVE_BUTTON).click();
+        waitForVisibleElement(By.xpath(ARCHIVE_CONFIRMATIONBUTTON));
+        driverUtil.getWebElement(ARCHIVE_CONFIRMATIONBUTTON).click();
     }
 
     public void verifyEstateArchivedSuccessfully() throws AutomationException {

@@ -322,5 +322,6 @@ public class GlobalContactsSteps {
         CommonSteps.logInfo("User verified that all details of global contact are auto-saved.");
         CommonSteps.takeScreenshot();
     }
+
 }
 
