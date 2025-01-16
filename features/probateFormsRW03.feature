@@ -12,7 +12,15 @@ Feature: 6in1 probate form RW03 Feature
       | nikhilankam+14@benchmarkit.solutions | Watch@22 |
 
 Scenario: Verify county, estate and aka names are autopopulated on the form
-  When user navigates to the probate forms tab
+  When user select estate and retrieve the entered county, estate and aka names
+  Then user navigates to the probate forms tab
+  And user click on the RW03
+  Then user selects the aka checkbox
+  And user verifies the county, estate and aka names are autopopulated on the form
+
+
+
+
 
 
   @Setup

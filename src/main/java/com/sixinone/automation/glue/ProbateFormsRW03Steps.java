@@ -15,4 +15,11 @@ public class ProbateFormsRW03Steps {
         PageFactory.probateFormsRW03Page().navigateToEstateContactsTab();
     }
 
+    @Then("user click on the RW{int}")
+    public void userClickOnTheRW(int arg0) {
+    }
+
+    @When("user select estate and retrieve the entered county, estate and aka names")
+    public void userSelectEstateAndRetrieveTheEnteredCountyEstateAndAkaNames() {
+    }
 }
