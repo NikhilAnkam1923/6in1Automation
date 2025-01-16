@@ -83,7 +83,7 @@ Feature: 6in1 estate creation Feature
     And user clicks on Archive Button
     And user verifies Estate archived successful message
 
-  Scenario Outline: verify user authorization for "View Only" user
+  Scenario Outline: Verify user authorization for "View Only" user
     When user logged out from the application
     When user login using "<user-email>" and "<password>"
     Then user verifies authorization for "View Only"
