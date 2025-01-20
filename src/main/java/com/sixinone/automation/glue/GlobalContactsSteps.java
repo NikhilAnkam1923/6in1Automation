@@ -326,5 +326,6 @@ public class GlobalContactsSteps {
         PageFactory.globalContactPage().verifyEntityGlobalContactDetailsAutoSaved();
         CommonSteps.takeScreenshot();
     }
+
 }
 
