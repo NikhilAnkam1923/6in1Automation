@@ -127,5 +127,15 @@
     "roleAttorney": "Attorney",
     "roleBeneficiary": "Beneficiary",
     "placeOfBirth": "Denmark"
+  },
+  "RW03Form": {
+    "witness1name": "Harry",
+    "witness2name": "Steve",
+    "witness1signature": "Kris",
+    "witness2signature": "Leo",
+    "witness1streetAddress": "123 Elm Street",
+    "witness1CityStateZip": "Bethlehem, Kentucky, 40007",
+    "witness2streetAddress": "Les Main Street",
+    "witness2CityStateZip": "Cleveland, Virginia, 24225"
   }
 }

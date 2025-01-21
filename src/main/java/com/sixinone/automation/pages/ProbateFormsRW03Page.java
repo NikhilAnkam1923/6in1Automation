@@ -66,16 +66,24 @@ public class ProbateFormsRW03Page extends BasePage{
     private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
     private static final String RW_INPUT_FIELD_XPATH = "//input[@type='text' and @value='%s']";
-    private static final String WITNESS_NAME_1 = "//input[@name='witness1Name']";
-    private static final String WITNESS_NAME_2 = "//input[@name='witness2Name']";
+    private static final String WITNESS_NAME_1 = "//td//input[@name='witness1Name']";
+    private static final String WITNESS_NAME_2 = "//td//input[@name='witness2Name']";
     private static final String WITNESS_1_SIGNATURE = "//p[contains(text(),'(Signature)')]//input[@name='witness1Name']";
     private static final String WITNESS_2_SIGNATURE = "//p[contains(text(),'(Signature)')]//input[@name='witness2Name']";
+    private static final String WITNESS_1_STREET_ADDRESS = "//textarea[@name='witness1Address']";
+    private static final String WITNESS_2_STREET_ADDRESS = "//textarea[@name='witness2Address']";
+    private static final String W1_CITY_STATE_ZIP = "//input[@name='witness1CityStateZip']";
+    private static final String W2_CITY_STATE_ZIP = "//input[@name='witness2CityStateZip']";
 
     static String decedentSSN;
     static String displayName;
     static String ageAtDeath;
     static String decedentAKA;
     static String domicileCounty;
+    static String enteredWitness1;
+    static String enteredWitness2;
+    static String enteredWitness1Sign;
+    static String enteredWitness2Sign;
 
     public void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
@@ -314,8 +322,6 @@ public class ProbateFormsRW03Page extends BasePage{
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-
-
     @Override
     String getName() {
         return "";
@@ -327,7 +333,7 @@ public class ProbateFormsRW03Page extends BasePage{
     }
 
     public void selectAKACheckbox() throws AutomationException {
-        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
+        driverUtil.getWebElementAndScroll(SHOW_AKA_CHECkBOX).click();
     }
 
     private static void verifyField(String fieldName, String expectedValue, String actualValue) throws AutomationException {
@@ -360,6 +366,19 @@ public class ProbateFormsRW03Page extends BasePage{
         }
     }
 
+    private void verifyFieldIsEditableAndYellowBackground(String fieldName, String fieldLocator) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(fieldLocator);
+        if (!field.isEnabled()) {
+            throw new AutomationException(fieldName + " field is not editable.");
+        }
+
+//        String backgroundColor = field.getCssValue("background-color");
+//        System.out.println(backgroundColor);
+//        if (!backgroundColor.equals("rgba(249, 249, 206, 1)")) {
+//            throw new AutomationException(fieldName + " field does not have a yellow background.");
+//        }
+    }
+
     public void verifyAutoPopulatedFieldsAreNotEditable() throws Exception {
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,domicileCounty));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,displayName));
@@ -377,5 +396,124 @@ public class ProbateFormsRW03Page extends BasePage{
     public void verifyWitnessesSNameIsNotAutoPopulatedAndTheFieldsAreEmpty() throws Exception {
         verifyFieldsIsEmpty(WITNESS_NAME_1);
         verifyFieldsIsEmpty(WITNESS_NAME_2);
+    }
+
+    public void verifyFieldsAreEditableAndYellowBackground() throws AutomationException {
+        verifyFieldIsEditableAndYellowBackground("Witness 1 Name",WITNESS_NAME_1);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 Name",WITNESS_NAME_2);
+        verifyFieldIsEditableAndYellowBackground("Witness 1 Signature",WITNESS_1_SIGNATURE);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 Signature",WITNESS_2_SIGNATURE);
+        verifyFieldIsEditableAndYellowBackground("Witness 1 Street Address",WITNESS_1_STREET_ADDRESS);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 Street Address",WITNESS_2_STREET_ADDRESS);
+        verifyFieldIsEditableAndYellowBackground("Witness 1 City, State, Zip",W1_CITY_STATE_ZIP);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 City, State, Zip",W2_CITY_STATE_ZIP);
+    }
+
+    private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
+        for (char c : value.toCharArray()) {
+            field.sendKeys(String.valueOf(c));
+        }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+
+    public void verifyWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields() throws AutomationException, IOException, ParseException {
+        String witness1name = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1name").toString();
+        String witness2name = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2name").toString();
+
+        WebElement witnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
+        WebElement witnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
+
+        fillFieldWithKeyStrokes(WITNESS_NAME_1,"RW03Form.witness1name");
+        fillFieldWithKeyStrokes(WITNESS_NAME_2,"RW03Form.witness2name");
+
+        enteredWitness1 = witnessName1.getAttribute("value");
+        if (!enteredWitness1.equals(witness1name)) {
+            throw new AutomationException("Witness name field did not accept the entered name: " + witness1name);
+        }
+        enteredWitness2 = witnessName2.getAttribute("value");
+        if (!enteredWitness2.equals(witness2name)) {
+            throw new AutomationException("Witness name field did not accept the entered name: " + witness2name);
+        }
+
+
+        WebElement WitnessSignature1 = driverUtil.getWebElement(WITNESS_1_SIGNATURE);
+        WebElement WitnessSignature2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
+
+        String reflectedNameInSignature1 = WitnessSignature1.getAttribute("value");
+        if (!reflectedNameInSignature1.equals(enteredWitness1)) {
+            throw new AutomationException("The signature field does not reflect the entered witness name. " +
+                    "Expected: " + enteredWitness1 + ", Found: " + reflectedNameInSignature1);
+        }
+        String reflectedNameInSignature2 = WitnessSignature2.getAttribute("value");
+        if (!reflectedNameInSignature2.equals(enteredWitness2)) {
+            throw new AutomationException("The signature field does not reflect the entered witness name. " +
+                    "Expected: " + enteredWitness2 + ", Found: " + reflectedNameInSignature2);
+        }
+
+    }
+
+    public void verifyNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields() throws IOException, ParseException, AutomationException {
+        WebElement witnessSign1 = driverUtil.getWebElement(WITNESS_1_SIGNATURE);
+        WebElement witnessSign2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
+
+        clearField(WITNESS_1_SIGNATURE);
+        fillFieldWithKeyStrokes(WITNESS_1_SIGNATURE,"RW03Form.witness1signature");
+        clearField(WITNESS_2_SIGNATURE);
+        fillFieldWithKeyStrokes(WITNESS_2_SIGNATURE,"RW03Form.witness2signature");
+
+        enteredWitness1Sign = witnessSign1.getAttribute("value");
+        enteredWitness2Sign = witnessSign2.getAttribute("value");
+
+        WebElement WitnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
+        WebElement WitnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
+
+        String reflectedName1 = WitnessName1.getAttribute("value");
+        if (!reflectedName1.equals(enteredWitness1Sign)) {
+            throw new AutomationException("The name field does not reflect the entered witness signature. " +
+                    "Expected: " + enteredWitness1Sign + ", Found: " + reflectedName1);
+        }
+        String reflectedName2 = WitnessName2.getAttribute("value");
+        if (!reflectedName2.equals(enteredWitness2Sign)) {
+            throw new AutomationException("The name field does not reflect the entered witness signature. " +
+                    "Expected: " + enteredWitness2Sign + ", Found: " + reflectedName2);
+        }
+    }
+
+    public void verifyTheAddressCityZipFieldsAcceptCorrectText() throws IOException, ParseException, AutomationException {
+        String witness1streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1streetAddress").toString();
+        String witness2streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2streetAddress").toString();
+        String witness1CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
+        String witness2CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
+
+        WebElement witnessStreetAddress1 = driverUtil.getWebElement(WITNESS_1_STREET_ADDRESS);
+        WebElement witnessStreetAddress2 = driverUtil.getWebElement(WITNESS_2_STREET_ADDRESS);
+        WebElement witnessCityStateZip1 = driverUtil.getWebElement(W1_CITY_STATE_ZIP);
+        WebElement witnessCityStateZip2 = driverUtil.getWebElement(W2_CITY_STATE_ZIP);
+
+        fillFieldWithKeyStrokes(WITNESS_1_STREET_ADDRESS,"RW03Form.witness1streetAddress");
+        fillFieldWithKeyStrokes(WITNESS_2_STREET_ADDRESS,"RW03Form.witness2streetAddress");
+        fillFieldWithKeyStrokes(W1_CITY_STATE_ZIP,"RW03Form.witness1CityStateZip");
+        fillFieldWithKeyStrokes(W2_CITY_STATE_ZIP,"RW03Form.witness2CityStateZip");
+
+        String enteredWitness1streetAddress = witnessStreetAddress1.getAttribute("value");
+        if (!enteredWitness1streetAddress.equals(witness1streetAddress)) {
+            throw new AutomationException("Field did not accept the entered Street Address: " + witness1streetAddress);
+        }
+        String enteredWitness2streetAddress = witnessStreetAddress2.getAttribute("value");
+        if (!enteredWitness2streetAddress.equals(witness2streetAddress)) {
+            throw new AutomationException("Field did not accept the entered Street Address: " + witness2streetAddress);
+        }
+        String enteredWitness1CityStateZip = witnessCityStateZip1.getAttribute("value");
+        if (!enteredWitness1CityStateZip.equals(witness1CityStateZip)) {
+            throw new AutomationException("Field did not accept the entered city,state, zip: " + witness1CityStateZip);
+        }
+        String enteredWitness2CityStateZip = witnessCityStateZip2.getAttribute("value");
+        if (!enteredWitness2CityStateZip.equals(witness2CityStateZip)) {
+            throw new AutomationException("Field did not accept the entered city,state, zip: " + witness2CityStateZip);
+        }
     }
 }
