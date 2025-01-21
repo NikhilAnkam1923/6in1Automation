@@ -235,7 +235,7 @@ public class EstateCreationPage extends BasePage {
         String expectedCity = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODcity").toString();
         String expectedState = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODstate").toString();
         String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODcountry").toString();
-        WebDriverUtil.waitForAWhile(1);
+        WebDriverUtil.waitForAWhile(2);
         String actualCity = getFieldValue(PLACE_OF_DEATH_CITY, "value");
         String actualState = getFieldValue(PLACE_OF_DEATH_STATE, "text");
         String actualCounty = getFieldValue(PLACE_OF_DEATH_COUNTRY, "value");
@@ -444,7 +444,6 @@ public class EstateCreationPage extends BasePage {
         String expectedLastResidence = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.lastResidence").toString();
         String expectedDateOfBirth = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfBirth").toString();
         String expectedDateOfDeath = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfDeath").toString();
-        String expectedAltValDate = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.altValDate").toString();
         String expectedMaritalStatus = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.maritalStatusOthers").toString();
 
         WebDriverUtil.waitForAWhile(1);
@@ -469,7 +468,6 @@ public class EstateCreationPage extends BasePage {
         String actualDateOfBirth = getFieldValue(DATE_OF_BIRTH_FIELD, "value");
         String actualDateOfDeath = getFieldValue(DATE_OF_DEATH_FIELD, "value");
         String actualAgeAtDeath = getFieldValue(AGE_AT_DEATH_FIELD, "value");
-        String actualAltValDate = getFieldValue(ALT_VAL_DATE_FIELD, "value");
         String actualMaritalStatus = getFieldValue(SELECTED_MARITAL_STATUS, "text");
 
         verifyField("First Name", expectedFirstName, actualFirstName);
@@ -492,7 +490,6 @@ public class EstateCreationPage extends BasePage {
         verifyField("Date of Birth", expectedDateOfBirth, actualDateOfBirth);
         verifyField("Date of Death", expectedDateOfDeath, actualDateOfDeath);
         verifyField("Age at Death", ageAtDeath, actualAgeAtDeath);
-        verifyField("Alt Val Date", expectedAltValDate, actualAltValDate);
         verifyField("Marital Status", expectedMaritalStatus, actualMaritalStatus);
     }
 
@@ -785,11 +782,6 @@ public class EstateCreationPage extends BasePage {
         clearField(DATE_OF_DEATH_FIELD);
         verifyDatePickerIsDisplay();
         fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath");
-        actions.sendKeys(Keys.ENTER);
-
-        clearField(ALT_VAL_DATE_FIELD);
-        verifyDatePickerIsDisplay();
-        fillField(ALT_VAL_DATE_FIELD, "EstateCreate.altValDate");
         actions.sendKeys(Keys.ENTER);
 
         ageAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
