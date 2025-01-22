@@ -12,11 +12,17 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
+import static com.sixinone.automation.util.WebDriverUtil.waitForAWhile;
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
-public class ProbateFormsRW03Page extends BasePage{
+public class ProbateFormsRW03Page extends BasePage {
 
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
@@ -74,6 +80,8 @@ public class ProbateFormsRW03Page extends BasePage{
     private static final String WITNESS_2_STREET_ADDRESS = "//textarea[@name='witness2Address']";
     private static final String W1_CITY_STATE_ZIP = "//input[@name='witness1CityStateZip']";
     private static final String W2_CITY_STATE_ZIP = "//input[@name='witness2CityStateZip']";
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
+    private static final String TEMP = "//a[text()='Baby John']";
 
     static String decedentSSN;
     static String displayName;
@@ -515,5 +523,46 @@ public class ProbateFormsRW03Page extends BasePage{
         if (!enteredWitness2CityStateZip.equals(witness2CityStateZip)) {
             throw new AutomationException("Field did not accept the entered city,state, zip: " + witness2CityStateZip);
         }
+    }
+
+    public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
+        driverUtil.getWebElement(PRINTFORM_BUTTON).click();
+
+        // Use Robot to handle the Save As dialog
+        Robot robot = new Robot();
+        waitForAWhile(2); // Wait for the dialog to appear
+
+
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+
+    }
+
+    public void verifyFormPrintedInPDFForm(String formName) throws AutomationException {
+            String downloadPath = ((System.getProperty(OS)==null || System.getProperty(OS)==WINDOWS)?System.getProperty("user.dir"):System.getProperty("user.dir").replace("\\", "/"))+"/Downloads";
+            File pdfFile = new File(downloadPath, formName);
+
+            // Wait for the file to be created
+            int elapsedTime = 0;
+            while (!pdfFile.exists() && elapsedTime < 10) { // Wait up to 10 seconds
+               waitForAWhile(); // Wait for 1 second
+                elapsedTime++;
+            }
+
+            // Validate if the file exists
+            if (pdfFile.exists()) {
+                CommonSteps.logInfo("PDF downloaded successfully: " + pdfFile.getAbsolutePath());
+            } else {
+                throw new AutomationException("PDF download failed. File not found: " + formName);
+            }
+        }
+
+    public void verifyAllFieldsInDownloadedPDF() {
+
+    }
+
+    public void tempdelete() throws AutomationException, AWTException, InterruptedException {
+        driverUtil.getWebElement(TEMP).click();
+        navigateToEstateContactsTab();
     }
 }

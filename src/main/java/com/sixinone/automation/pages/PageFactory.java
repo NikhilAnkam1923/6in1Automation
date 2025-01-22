@@ -1,7 +1,5 @@
 package com.sixinone.automation.pages;
 
-import com.sixinone.automation.glue.EstateContactsSteps;
-
 import java.io.IOException;
 
 public class PageFactory {
@@ -11,6 +9,7 @@ public class PageFactory {
     public EstateCreationPage estateCreationPage;
     public EstateContactsPage estateContactsPage;
     public ProbateFormsRW03Page probateFormsRW03Page;
+    private ProbateFormsRW01Page probateFormsRW01Page;
 
     private PageFactory() throws IOException {
 
@@ -19,6 +18,7 @@ public class PageFactory {
         estateCreationPage = new EstateCreationPage();
         estateContactsPage = new EstateContactsPage();
         probateFormsRW03Page = new ProbateFormsRW03Page();
+        probateFormsRW01Page =new ProbateFormsRW01Page();
     }
 
     public static void init() throws IOException {
@@ -47,6 +47,12 @@ public class PageFactory {
     public static ProbateFormsRW03Page probateFormsRW03Page() {
         return factory.get().probateFormsRW03Page;
     }
+
+    public static ProbateFormsRW01Page probateFormsRW01Page() {
+        return factory.get().probateFormsRW01Page;
+    }
+
+
 
 
 }

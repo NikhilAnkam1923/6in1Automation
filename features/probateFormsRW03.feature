@@ -12,6 +12,7 @@ Feature: 6in1 probate form RW03 Feature
       | nikhilankam+14@benchmarkit.solutions | Watch@22 |
 
   Scenario: User Creates an Estate
+#    When Temperary
     When user clicks on Create button
     Then user fills first name,last name and SSN details
     And user clicks on Proceed button
@@ -43,6 +44,11 @@ Feature: 6in1 probate form RW03 Feature
      #Verify, text can be entered in address, city, zip fields.
     Then user verifies both the address, city, zip fields accept correct text
 
+
+#  Scenario: Verify form can be printed in pdf
+#    When user click on print form button
+#    Then verify form can be printed in pdf with name as 'Rw01'
+#    And verify all the fields entered are correctly reflected in the pdf
 
   @Setup
   Scenario:SETUP: Close Browser
