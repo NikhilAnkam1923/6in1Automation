@@ -43,6 +43,10 @@ Feature: 6in1 probate form RW03 Feature
     Then user verifies names updated in signature fields are reflected in the witness fields
      #Verify, text can be entered in address, city, zip fields.
     Then user verifies both the address, city, zip fields accept correct text
+     #Verify, form is auto saved.
+    And user click on the "RW 04" form
+    And user click on the "RW 03" form
+    Then user verifies all the input fields in the form are auto saved
 
 
 #  Scenario: Verify form can be printed in pdf

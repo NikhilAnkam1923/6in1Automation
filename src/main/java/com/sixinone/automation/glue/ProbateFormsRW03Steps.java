@@ -173,4 +173,10 @@ public class ProbateFormsRW03Steps {
     }
 
 
+    @Then("user verifies all the input fields in the form are auto saved")
+    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that all the input fields in the form are auto saved");
+        PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
 }

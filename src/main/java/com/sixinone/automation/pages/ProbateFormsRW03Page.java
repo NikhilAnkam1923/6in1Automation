@@ -489,6 +489,9 @@ public class ProbateFormsRW03Page extends BasePage {
             throw new AutomationException("The name field does not reflect the entered witness signature. " +
                     "Expected: " + enteredWitness2Sign + ", Found: " + reflectedName2);
         }
+
+        enteredWitness1 = WitnessName1.getAttribute("value");
+        enteredWitness2 = WitnessName2.getAttribute("value");
     }
 
     public void verifyTheAddressCityZipFieldsAcceptCorrectText() throws IOException, ParseException, AutomationException {
@@ -564,5 +567,32 @@ public class ProbateFormsRW03Page extends BasePage {
     public void tempdelete() throws AutomationException, AWTException, InterruptedException {
         driverUtil.getWebElement(TEMP).click();
         navigateToEstateContactsTab();
+    }
+
+    public void verifyAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+        String expectedW1streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1streetAddress").toString();
+        String expectedW2streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2streetAddress").toString();
+        String expectedW1cityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
+        String expectedW2cityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
+
+        WebDriverUtil.waitForAWhile(1);
+
+        String actualWitness1Name = getFieldValue(WITNESS_NAME_1, "value");
+        String actualWitness2Name = getFieldValue(WITNESS_NAME_2, "value");
+        String actualWitness1Sign = getFieldValue(WITNESS_1_SIGNATURE, "value");
+        String actualWitness2Sign = getFieldValue(WITNESS_2_SIGNATURE, "value");
+        String actualW1streetAddress = getFieldValue(WITNESS_1_STREET_ADDRESS, "value");
+        String actualW2streetAddress = getFieldValue(WITNESS_2_STREET_ADDRESS, "value");
+        String actualW1cityStateZip = getFieldValue(W1_CITY_STATE_ZIP, "value");
+        String actualW2cityStateZip = getFieldValue(W2_CITY_STATE_ZIP, "value");
+
+        verifyField("Witness Name 1", enteredWitness1, actualWitness1Name);
+        verifyField("Witness Name 2", enteredWitness2, actualWitness2Name);
+        verifyField("Witness Signature 1", enteredWitness1Sign, actualWitness1Sign);
+        verifyField("Witness Signature 2", enteredWitness2Sign, actualWitness2Sign);
+        verifyField("Witness Street Address 1", expectedW1streetAddress, actualW1streetAddress);
+        verifyField("Witness Street Address 2", expectedW2streetAddress, actualW2streetAddress);
+        verifyField("Witness City, State, Zip 1", expectedW1cityStateZip, actualW1cityStateZip);
+        verifyField("Witness City, State, Zip 2", expectedW2cityStateZip, actualW2cityStateZip);
     }
 }
