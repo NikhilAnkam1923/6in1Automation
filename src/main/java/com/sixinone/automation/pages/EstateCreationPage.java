@@ -222,7 +222,7 @@ public class EstateCreationPage extends BasePage {
         String expectedCity = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.city").toString();
         String expectedState = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.state").toString();
         String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.country").toString();
-        WebDriverUtil.waitForAWhile(1);
+        WebDriverUtil.waitForAWhile(2);
         String actualCity = getFieldValue(DOMICILE_CITY, "value");
         String actualState = getFieldValue(DOMICILE_STATE, "text");
         String actualCounty = getFieldValue(DOMICILE_COUNTRY, "value");

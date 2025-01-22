@@ -12,7 +12,8 @@ import java.util.logging.Logger;
 
 public class DriverFactory {
     private static final Logger LOGGER = Logger.getLogger(DriverFactory.class.getName());
-    public String downloadPath = ((System.getProperty(OS)==null || System.getProperty(OS)==WINDOWS)?System.getProperty("user.dir"):System.getProperty("user.dir").replace("\\", "/"))+"/downloads";
+//    public String downloadPath = "//Downloads";
+   public String downloadPath = ((System.getProperty(OS)==null || System.getProperty(OS)==WINDOWS)?System.getProperty("user.dir"):System.getProperty("user.dir").replace("\\", "/"))+"/Downloads";
     public static final String DEFAULT_BROWSER = "chrome";
     public static final String WINDOWS = "windows";
     public static final String LINUX = "linux";
@@ -68,6 +69,12 @@ public class DriverFactory {
         chromePrefs.put("profile.default_content_settings.popups", 0);
         chromePrefs.put( "profile.default_content_setting_values.automatic_downloads", 1 );
         chromePrefs.put("download.default_directory", downloadPath);
+
+        chromePrefs.put("download.prompt_for_download", false); // Disable Save As dialog
+        chromePrefs.put("download.directory_upgrade", true); // Automatically overwrite existing files
+        chromePrefs.put("safebrowsing.enabled", true); // Enable safe browsing
+        chromePrefs.put("plugins.always_open_pdf_externally", true); // Force PDF download instead of viewing
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-notifications");
         options.setExperimentalOption("prefs", chromePrefs);
