@@ -14,6 +14,7 @@
     "addressLine2": "Jack Market",
     "zip": "40007",
     "city": "Bethlehem",
+    "stateCode": "KY",
     "state":"Kentucky",
     "country": "Henry",
     "addressComments": "stayed here",
@@ -126,6 +127,15 @@
     "roleAccountant": "Accountant",
     "roleAttorney": "Attorney",
     "roleBeneficiary": "Beneficiary",
+    "roleCorrespondent": "Correspondent",
+    "roleFiduciary": "Fiduciary",
+    "roleJointOwners": "Joint Owners",
+    "rolePreparer": "Preparer",
+    "roleRenouncer": "Renouncer",
+    "roleSpouse": "Spouse",
+    "roleTransferee": "Transferee",
+    "roleTrustee": "Trustee",
+    "roleRule10.5": "Rule 10.5 (notices only)",
     "placeOfBirth": "Denmark"
   },
   "RW03Form": {

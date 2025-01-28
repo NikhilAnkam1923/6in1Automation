@@ -380,11 +380,10 @@ public class ProbateFormsRW03Page extends BasePage {
             throw new AutomationException(fieldName + " field is not editable.");
         }
 
-//        String backgroundColor = field.getCssValue("background-color");
-//        System.out.println(backgroundColor);
-//        if (!backgroundColor.equals("rgba(249, 249, 206, 1)")) {
-//            throw new AutomationException(fieldName + " field does not have a yellow background.");
-//        }
+        String backgroundColor = field.getCssValue("background-color");
+        if (!backgroundColor.equals("rgba(249, 249, 206, 1)")) {
+            throw new AutomationException(fieldName + " field does not have a yellow background.");
+        }
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws Exception {

@@ -35,7 +35,6 @@ Feature: 6in1 probate form RW03 Feature
      #Verify, witness's name is not auto populated and the fields are empty.
     Then user verifies witness's name is not auto populated and the fields are empty
      #Verify, witnesses  name, address and signature should be editable and in yellow background.
-#    /**background color part is pending due to UI issue**/
     Then user verifies witnesses name, address and signature fields are editable and in yellow background
      #Verify, names can be entered in witness fields.
     Then user verifies witness fields accept names and same names are reflected in signature fields
