@@ -82,8 +82,15 @@ public class CommonSteps {
         CURRENT_SCENARIO_MESSAGE.set(error);
     }
 
+//    public static void logInfo(String... data) {
+//        currentStep.set(data[0]);
+//    }
+
     public static void logInfo(String... data) {
-        currentStep.set(data[0]);
+        if (data.length > 0) {
+            currentStep.set(data[0]);
+            System.out.println("[INFO] " + data[0]); // Print the log to the console
+        }
     }
 
     public static void cleanUP() {

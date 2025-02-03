@@ -4,6 +4,7 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
@@ -12,15 +13,26 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+
+import java.io.File;
+import java.io.IOException;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
-import static com.sixinone.automation.util.WebDriverUtil.waitForAWhile;
-import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
+import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class ProbateFormsRW03Page extends BasePage {
 
@@ -84,6 +96,7 @@ public class ProbateFormsRW03Page extends BasePage {
     static String ageAtDeath;
     static String decedentAKA;
     static String domicileCounty;
+    static String DownloadedFileName;
 
     public void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
@@ -389,38 +402,118 @@ public class ProbateFormsRW03Page extends BasePage {
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
         driverUtil.getWebElement(PRINTFORM_BUTTON).click();
 
-        // Use Robot to handle the Save As dialog
         Robot robot = new Robot();
-        waitForAWhile(2); // Wait for the dialog to appear
-
-
+        Thread.sleep(2000);// Wait for the dialog to appear
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
 
     }
 
-    public void verifyFormPrintedInPDFForm(String formName) throws AutomationException {
-            String downloadPath = ((System.getProperty(OS)==null || System.getProperty(OS)==WINDOWS)?System.getProperty("user.dir"):System.getProperty("user.dir").replace("\\", "/"))+"/Downloads";
-            File pdfFile = new File(downloadPath, formName);
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
 
-            // Wait for the file to be created
-            int elapsedTime = 0;
-            while (!pdfFile.exists() && elapsedTime < 10) { // Wait up to 10 seconds
-               waitForAWhile(); // Wait for 1 second
-                elapsedTime++;
-            }
+                System.out.println("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        System.out.println(file.getName());
+                        DownloadedFileName = file.getName();
 
-            // Validate if the file exists
-            if (pdfFile.exists()) {
-                CommonSteps.logInfo("PDF downloaded successfully: " + pdfFile.getAbsolutePath());
-            } else {
-                throw new AutomationException("PDF download failed. File not found: " + formName);
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
 
     public void verifyAllFieldsInDownloadedPDF() {
+        String pdfPath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
 
+        Map<String, String> expectedData = new HashMap<>();
+//        expectedData.put("First Name", "Baby");
+//        expectedData.put("Last Name", "John");
+//        expectedData.put("Date of Birth", "01/15/1950");
+//        expectedData.put("Decedent’s Social Security Number", "778-45-8946");
+
+        expectedData.put("COUNTY", "Henry");
+        expectedData.put("Deceased", "Baby John");
+//        expectedData.put("Date of Birth", "01/15/1950");
+//        expectedData.put("Decedent’s Social Security Number", "778-45-8946");
+
+        try {
+            PDDocument document = PDDocument.load(new File(pdfPath));
+            PDFTextStripper stripper = new PDFTextStripper();
+            String fullText = stripper.getText(document);
+            String[] lines = fullText.split("\\r?\\n");
+
+            // Normalize lines for case-insensitive comparison
+            List<String> normalizedLines = new ArrayList<>();
+            for (String line : lines) {
+                normalizedLines.add(line.trim().toLowerCase());
+            }
+
+            for (Map.Entry<String, String> entry : expectedData.entrySet()) {
+                String field = entry.getKey().toLowerCase();
+                String value = entry.getValue().toLowerCase();
+                boolean foundField = false;
+                boolean foundValue = false;
+
+                for (int i = 0; i < normalizedLines.size(); i++) {
+                    String line = normalizedLines.get(i);
+
+                    // Check if the field exists in this line
+                    if (line.contains(field)) {
+                        foundField = true;
+
+                        // Check this line and subsequent lines for the value
+                        for (int j = i; j < normalizedLines.size(); j++) {
+                            if (normalizedLines.get(j).contains(value)) {
+                                foundValue = true;
+                                break;
+                            }
+                        }
+                        break; // Exit field search once found
+                    }
+                }
+
+                if (foundField && foundValue) {
+                    CommonSteps.logInfo("✅ Field: \"" + entry.getKey() + "\" and Value: \"" + entry.getValue() + "\" are found.");
+                } else if (foundField) {
+                    CommonSteps.logInfo("⚠️ Field: \"" + entry.getKey() + "\" found, but Value: \"" + entry.getValue() + "\" is missing.");
+                } else {
+                    CommonSteps.logInfo("❌ Field: \"" + entry.getKey() + "\" not found in the PDF.");
+                }
+            }
+
+            document.close();
+        } catch (IOException e) {
+            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+        }
     }
+
+
 
     public void tempdelete() throws AutomationException, AWTException, InterruptedException {
         driverUtil.getWebElement(TEMP).click();

@@ -35,10 +35,10 @@ Feature: 6in1 probate form RW03 Feature
      #Verify, witness's name is not auto populated and the fields are empty.
     Then user verifies witness's name is not auto populated and the fields are empty
 
-#  Scenario: Verify form can be printed in pdf
-#    When user click on print form button
-#    Then verify form can be printed in pdf with name as 'Rw01'
-#    And verify all the fields entered are correctly reflected in the pdf
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw03'
+    And verify all the fields entered are correctly reflected in the pdf
 
   @Setup
   Scenario:SETUP: Close Browser
