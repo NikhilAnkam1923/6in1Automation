@@ -11,78 +11,9 @@ Feature: 6in1 probate form RW01 Feature
       | user-email                           | password |
       | nikhilankam+14@benchmarkit.solutions | Watch@22 |
 
-  Scenario: User Creates an Estate
-#    When Temporary
-    When user click on Create button
-    Then user fill first name,last name and SSN details
-    And user clicks on Proceed Button
-    And user clicks on Create a new estate with the entered name button
-    Then user fill decedent basic information
-    And user clicks on Next Button
-    When user fills Last Address/Domicile Details
-    When user fill Life Details
-    When user fill the Place of Death details
-    And user click on Estate Tab
-    And user fill the Estate details
-
-  Scenario: User adds Estate Contacts
-    When user navigates to estate contacts tab
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Accountant Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Attorney Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Beneficiary Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Correspondent Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Fiduciary Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Fiduciary Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Fiduciary Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
-    When user click on the Create New Individual Contact button
-    And user fill the details for "New Individual Global Contact"
-    And user clicks on Next Button
-    Then user click on the Select Role button for Contact
-    And user selects the Fiduciary Role for Contact
-    And user fills other Basic details, Birth details and Contact Information
-    And user fills the Address information
+  Scenario: Open Estate
+    When user opens "William John" Estate
+    And user save entered Estate Information
 
   Scenario: Verify RW01 form
     When user navigates to the Probate forms tab
@@ -128,6 +59,9 @@ Feature: 6in1 probate form RW01 Feature
     Then user verifies on clicking section 5 an informative text box is displayed
      #Verify the selected contacts are displayed under executor, co executor and secondary co executor.
     Then user verifies the selected contacts are displayed under executor, co-executor and secondary co-executor
+
+  Scenario: Reset the RW01 form
+    When user reset the RW01 form
 
   @Setup
   Scenario:SETUP: Close Browser

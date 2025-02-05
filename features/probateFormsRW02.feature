@@ -38,6 +38,67 @@ Feature: 6in1 probate form RW02 Feature
      #Verify, amount can be entered in the input fields.
     Then user verifies Amount can be entered in all the fields
     Then user verifies Amount entered in all the fields are auto saved
+     #Verify, total estimated value should display total of 1st and last field only.
+    Then user verifies total estimated value is the total of first and last fields only
+     #Verify that checking the "Use Principal Residence" checkbox copies the address details from the "principal residence at" field to the "Real estate in Pennsylvania situated at" field.
+    And user checks 'Use Principal Residence' checkbox
+    Then user verifies The address from the 'principal residence at' field is copied to the 'Real estate in Pennsylvania situated at' field
+     #Verify that unchecking the checkbox does not clear the "Real estate in Pennsylvania situated at" field.
+    Then user verifies unchecking the checkbox does not clear the 'Real estate in Pennsylvania situated at' field
+     #Verify that the form auto-saves after the address is copied via the checkbox.
+    Then user verifies the copied address is retained and auto-saved
+     #Verify that the "Real estate in Pennsylvania situated at" field remains editable after copying the address.
+    Then user modifies the address in the 'Real estate in Pennsylvania situated at' field
+    Then user verifies the modifications are saved successfully
+     #Verify that selecting option A keeps it selected without affecting option B.
+    And user checks Option A checkbox
+    Then user verifies Option A remains selected, and option B is unaffected
+     #Verify, decedent died date is auto fetched.
+    Then user verifies decedent died date is auto fetched
+     #Verify, codicil dates are auto fetched and on updating it, updates the values in decedent tab.
+#    Then user verifies codicil date values are auto fetched
+    Then user updates the codicil dates
+    Then user verifies updated codicil dates in form are reflected in the codicil dates in decedent tab
+    When user navigate to the Probate forms tab
+    And user clicks on the "RW 02" Form
+     #Verify, text can be entered state relevant circumstances and exception on checking exceptions checkbox.
+    Then user verifies text can be entered in the state relevant circumstances text fields
+    And user checks exceptions checkbox from Option A
+    Then user verifies the text field is enabled and text can be entered
+     #Verify that selecting option B keeps it selected without affecting option A.
+     #Verify that both options A and B can be selected simultaneously.
+    And user checks Option B checkbox
+    Then user verifies Option B remains selected, and option A is unaffected
+     #Verify that selecting option B enables the beneficiaries' selection at the bottom of page 1.
+    Then user verifies the beneficiaries' selection field at the bottom of page 1 is enabled
+     #Verify, multiple beneficiaries can be selected.
+    Then user verifies multiple beneficiaries can be added
+    And user clicks on Accept Button
+     #Verify, bene contacts in the table.
+    Then user verifies correct beneficiary name, relationship and address is displayed in the table
+     #Verify, if the selected contacts are exceed count of 4 then, it should be transferred to attachment.
+    Then user verifies if the selected contacts are exceed count of 4 then it should be transferred to attachment
+     #Verify, on checking "Display all heirs on attachment".
+    And user checks 'Display ALL heirs on attachment' checkbox
+    Then user verifies all the contacts are transferred to attachment
+     #Verify that deselecting option B disables the beneficiaries' selection.
+    And user deselects Option B
+    Then user verifies the beneficiaries' selection field is disabled
+     #Verify, on page 2 petitioner's name are by default printed on the table.
+    Then user verifies on page 2 petitioner's name are by default printed on the table
+     #Verify fees section.
+    And user enters values in letters fields
+    And user enters data in Other field
+    And user adds amount in front of the respective fields
+    Then user verifies total is displayed correctly
+     #Verify, attorney can be selected.
+    Then user verifies only 1 contact can be selected from the list
+    Then user verifies selected attorney contact's information is displayed correctly
+     #Verify, information in decree of the register.
+    Then user verifies decree of the register information is displayed correctly
+
+  Scenario: Reset the RW02 form
+    When user resets the RW02 form
 
   @Setup
   Scenario:SETUP: Close Browser

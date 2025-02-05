@@ -11,19 +11,9 @@ Feature: 6in1 probate form RW03 Feature
       | user-email                           | password |
       | nikhilankam+14@benchmarkit.solutions | Watch@22 |
 
-  Scenario: User Creates an Estate
-#    When Temperary
-    When user clicks on Create button
-    Then user fills first name,last name and SSN details
-    And user clicks on Proceed button
-    And user click on Create a new estate with the entered name button
-    Then user fills decedent basic information
-    And user clicks on Next button
-    When user fills Last Address/Domicile details
-    When user fills Life Details
-    When user fills the Place of Death details
-    And user click on Estate tab
-    And user fills the Estate details
+  Scenario: Open Estate
+    When user opens "William John" Estate
+    And user save entered Estate information
 
   Scenario: Verify county, estate and aka names are auto-populated on the form
     When user navigates to the probate forms tab
@@ -53,8 +43,12 @@ Feature: 6in1 probate form RW03 Feature
 #    Then verify form can be printed in pdf with name as 'Rw01'
 #    And verify all the fields entered are correctly reflected in the pdf
 
-  @Setup
-  Scenario:SETUP: Close Browser
-    When user logged out from the application
-    Then User close browser
+
+  Scenario: Reset the RW03 form
+    When user resets the RW03 form
+
+#  @Setup
+#  Scenario:SETUP: Close Browser
+#    When user logged out from the application
+#    Then User close browser
 

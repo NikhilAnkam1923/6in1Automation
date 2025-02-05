@@ -7,75 +7,14 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.json.simple.parser.ParseException;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class probateFormsRW01Steps {
 
-    @When("user click on Create button")
-    public void userClicksOnTheCreateButton() throws AutomationException {
-        CommonSteps.logInfo("User clicks on the Create button");
-        PageFactory.probateFormsRW01Page().clickButtonCreate();
-    }
-
-    @Then("user fill first name,last name and SSN details")
-    public void userFillsTheFirstNameLastNameAndSSNDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled the first name, last name, and SSN details.");
-        PageFactory.probateFormsRW01Page().enterFirstAndLastNameAndSSN();
-    }
-
-    @And("user clicks on Proceed Button")
-    public void userClickOnProceedButton() throws AutomationException {
-        CommonSteps.logInfo("User clicked on the Proceed button.");
-        PageFactory.probateFormsRW01Page().clickOnProceedButton();
-    }
-
-    @And("^user clicks on Create a new estate with the entered name button$")
-    public void userClickCreateNewEstateButton() throws AutomationException {
-        CommonSteps.logInfo("User clicked on 'Create a new estate with the entered name' button for new user.");
-        PageFactory.probateFormsRW01Page().clickCreateNewEstateButton();
-    }
-
-    @Then("^user fill decedent basic information$")
-    public void userFillsDecedentBasicInformation() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled decedent basic information for new user.");
-        PageFactory.probateFormsRW01Page().fillDecedentBasicInformation();
-    }
-
-    @And("user clicks on Next Button")
-    public void userClickOnNextButton() throws AutomationException {
-        CommonSteps.logInfo("User clicked on the Next button.");
-        PageFactory.probateFormsRW01Page().clickOnNextButton();
-    }
-
-    @When("^user fills Last Address\\/Domicile Details$")
-    public void userFillLastAddressDomicileDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled Last Address/Domicile details.");
-        PageFactory.probateFormsRW01Page().fillLastAddressDomicileDetails();
-    }
-
-    @When("user fill Life Details")
-    public void userFillsLifeDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user fills Life Details and validate the fields");
-        PageFactory.probateFormsRW01Page().fillLifeDetails();
-    }
-
-    @When("user fill the Place of Death details")
-    public void userFillsPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled Place of Death details.");
-        PageFactory.probateFormsRW01Page().fillPlaceOfDeathDetails();
-    }
-
-    @When("user click on Estate Tab")
-    public void userClicksOnEstateTab() throws AutomationException {
-        CommonSteps.logInfo("User clicked on the Estate tab.");
-        PageFactory.probateFormsRW01Page().clickOnEstateTab();
-    }
-
-    @And("user fill the Estate details")
-    public void userFillsEstateDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled Estate details.");
-        PageFactory.probateFormsRW01Page().fillEstateDetails();
+    @And("user save entered Estate Information")
+    public void userSavesEstateInformation() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user saves Estate Information");
+        PageFactory.probateFormsRW01Page().userSavesEstateInfo();
     }
 
     @When("user verifies correct file number is displayed at the top of the form")
@@ -133,11 +72,6 @@ public class probateFormsRW01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("Temporary")
-    public void temporary() throws AutomationException, InterruptedException, AWTException {
-        PageFactory.probateFormsRW01Page().tempDelete();
-    }
-
     @Then("user verifies on clicking 'Other' checkbox, text area is enabled")
     public void userVerifiesOnClickingOtherCheckboxTextAreaIsEnabled() throws AutomationException {
         CommonSteps.logInfo("Verified that on clicking 'Other' checkbox, text area is enabled");
@@ -163,84 +97,6 @@ public class probateFormsRW01Steps {
         CommonSteps.logInfo("Verified that on clicking section 5 an informative text box is displayed");
         PageFactory.probateFormsRW01Page().verifySection5InformativeTextBoxIsDisplayed();
         CommonSteps.takeScreenshot();
-    }
-
-    @When("^user click on Add button for selected \"([^\"]*)\" contact$")
-    public void userClickOnAddButtonForSelectedContactWithABackground(String contactType) throws AutomationException {
-        CommonSteps.logInfo("User clicks on Add button for selected "+contactType+" contact");
-        PageFactory.probateFormsRW01Page().clickOnAddButtonForSpecificContactType(contactType);
-    }
-
-    @And("user selects the Accountant Role for Contact")
-    public void userSelectsTheRoleForContact1() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User selected the Role for Contact.");
-        PageFactory.probateFormsRW01Page().selectRoleAccountant();
-    }
-
-    @Then("user click on the Select Role button for Contact")
-    public void clickOnSelectRoleButton() throws AutomationException {
-        CommonSteps.logInfo("User clicks on Select Role button for Contact");
-        PageFactory.probateFormsRW01Page().selectRoleButton();
-    }
-
-    @And("user selects the Attorney Role for Contact")
-    public void userSelectsTheRoleForContact2() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User selected the Role for Contact.");
-        PageFactory.probateFormsRW01Page().selectRoleAttorney();
-    }
-
-    @And("user selects the Beneficiary Role for Contact")
-    public void userSelectsTheRoleForContact3() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User selected the Role for Contact.");
-        PageFactory.probateFormsRW01Page().selectRoleBeneficiary();
-    }
-
-    @And("user selects the Correspondent Role for Contact")
-    public void userSelectsTheRoleForContact4() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User selected the Role for Contact.");
-        PageFactory.probateFormsRW01Page().selectRoleCorrespondent();
-    }
-
-    @And("user selects the Fiduciary Role for Contact")
-    public void userSelectsTheRoleForContact() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User selected the Role for Contact.");
-        PageFactory.probateFormsRW01Page().selectRoleFiduciary();
-    }
-
-    @When("user navigates to estate contacts tab")
-    public void userNavigatesToTheEstateContactsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigates to the estate contacts tab");
-        PageFactory.probateFormsRW01Page().navigateToEstateContactsTab();
-    }
-
-    @When("user click on the Create New Individual Contact button")
-    public void userClicksOnTheCreateNewIndividualContactButton() throws AutomationException {
-        CommonSteps.logInfo("Clicked on the Create New Individual Contact button.");
-        PageFactory.probateFormsRW01Page().clickOnNewIndividualContactBtn();
-    }
-
-    @And("^user fill the details for \"([^\"]*)\"$")
-    public void userFillsAllTheDetailsForNewGlobalContact(String contactType) throws AutomationException, InterruptedException, IOException, ParseException {
-        CommonSteps.logInfo("User fills all the details for " + contactType);
-        PageFactory.probateFormsRW01Page().fillNewGlobalContactDetails(contactType);
-    }
-
-    @When("user click on the Add Contact button")
-    public void userClicksOnAddContactButton() throws AutomationException {
-        CommonSteps.logInfo("Clicked on the Add Contact button.");
-        PageFactory.probateFormsRW01Page().clickAddContactButton();
-    }
-
-    @And("user fills other Basic details, Birth details and Contact Information")
-    public void userFillsOtherBasicDetailsBirthDetailsAndContactInformation() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User fills other Basic details, Birth details and Contact Information for Individual Contact");
-        PageFactory.probateFormsRW01Page().fillsOtherBasicDetailsBirthDetailsAndContactInformation();
-    }
-
-    @And("user fills the Address information")
-    public void userFillsAddressInformation() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User fills Address information");
-        PageFactory.probateFormsRW01Page().fillAddressInfo();
     }
 
     @When("user navigates to the Probate forms tab")
@@ -320,4 +176,10 @@ public class probateFormsRW01Steps {
         PageFactory.probateFormsRW01Page().verifySelectedContactsAreDisplayedUnderExecutorCoExecutorAndSecondaryCoExecutor();
         CommonSteps.takeScreenshot();
     }
+    @When("user reset the RW01 form")
+    public void userResetsTheRWForm() throws AutomationException {
+        CommonSteps.logInfo("user resets the RW01 form");
+        PageFactory.probateFormsRW01Page().userResetsTheRWForm();
+    }
+
 }
