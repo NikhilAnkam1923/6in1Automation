@@ -15,9 +15,10 @@ Feature: 6in1 probate form RW03 Feature
     When user opens "William John" Estate
     And user save entered Estate information
 
-  Scenario: Verify county, estate and aka names are auto-populated on the form
+  Scenario: Verify RW03 form
     When user navigates to the probate forms tab
     And user click on the "RW 03" form
+     #Verify county, estate and aka names are auto-populated on the form
     Then user selects the aka checkbox
     And user verifies the county, estate and aka names are auto-populated on the form
      #Verify, the auto-populated fields are not editable.
@@ -47,8 +48,8 @@ Feature: 6in1 probate form RW03 Feature
   Scenario: Reset the RW03 form
     When user resets the RW03 form
 
-#  @Setup
-#  Scenario:SETUP: Close Browser
-#    When user logged out from the application
-#    Then User close browser
+  @Setup
+  Scenario:SETUP: Close Browser
+    When user logged out from the application
+    Then User close browser
 
