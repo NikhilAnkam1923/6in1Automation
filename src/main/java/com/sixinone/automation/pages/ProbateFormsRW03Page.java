@@ -13,8 +13,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -27,8 +26,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
@@ -88,6 +86,10 @@ public class ProbateFormsRW03Page extends BasePage {
     private static final String WITNESS_NAME_2 = "//input[@name='witness2Name']";
     private static final String WITNESS_1_SIGNATURE = "//p[contains(text(),'(Signature)')]//input[@name='witness1Name']";
     private static final String WITNESS_2_SIGNATURE = "//p[contains(text(),'(Signature)')]//input[@name='witness2Name']";
+    private static final String WITNESS_1_STREET_ADDRESS = "//textarea[@name='witness1Address']";
+    private static final String WITNESS_2_STREET_ADDRESS = "//textarea[@name='witness2Address']";
+    private static final String W1_CITY_STATE_ZIP = "//input[@name='witness1CityStateZip']";
+    private static final String W2_CITY_STATE_ZIP = "//input[@name='witness2CityStateZip']";
     private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
     private static final String TEMP = "//a[text()='Baby John']";
 
@@ -95,7 +97,17 @@ public class ProbateFormsRW03Page extends BasePage {
     static String displayName;
     static String ageAtDeath;
     static String decedentAKA;
+    static String expectedCounty;
     static String domicileCounty;
+    static String enteredWitness1;
+    static String enteredWitness2;
+    static String enteredWitness1Sign;
+    static String enteredWitness2Sign;
+    static String enteredWitness1StreetAddress;
+    static String enteredWitness2StreetAddress;
+    static String enteredWitness1CityStateZip;
+    static String enteredWitness2CityStateZip;
+
     static String DownloadedFileName;
 
     public void clearField(String fieldXpath) throws AutomationException {
@@ -150,15 +162,17 @@ public class ProbateFormsRW03Page extends BasePage {
 
     }
 
+
     public static void verifyAutoFetchedFieldsOfPlaceOfDeathAddress() throws AutomationException, IOException, ParseException {
         String expectedCity = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODcity").toString();
         String expectedState = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODstate").toString();
-        String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODcountry").toString();
+        String expectedPODCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.PODcountry").toString();
+        expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.county").toString();
         WebDriverUtil.waitForAWhile(2);
         String actualCity = getFieldValue(PLACE_OF_DEATH_CITY, "value");
         String actualState = getFieldValue(PLACE_OF_DEATH_STATE, "text");
         String actualCounty = getFieldValue(PLACE_OF_DEATH_COUNTRY, "value");
-        if (!expectedCity.equals(actualCity) || !expectedState.equals(actualState) || !expectedCounty.equals(actualCounty)) {
+        if (!expectedCity.equals(actualCity) || !expectedState.equals(actualState) || !expectedPODCounty.equals(actualCounty)) {
             throw new AutomationException("City, State, or County values are incorrect or not fetched automatically. ");
         }
     }
@@ -219,7 +233,7 @@ public class ProbateFormsRW03Page extends BasePage {
     public static void verifyAutoFetchedFieldsOfDomicileAddress() throws AutomationException, IOException, ParseException {
         String expectedCity = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.city").toString();
         String expectedState = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.state").toString();
-        String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.country").toString();
+        expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.county").toString();
         WebDriverUtil.waitForAWhile(2);
         String actualCity = getFieldValue(DOMICILE_CITY, "value");
         String actualState = getFieldValue(DOMICILE_STATE, "text");
@@ -278,6 +292,7 @@ public class ProbateFormsRW03Page extends BasePage {
         fillField(DECEDENT_ALSO_KNOWN_AS, "EstateCreate.alsoKnownAs");
         displayName = getFieldValue(DECEDENT_DISPLAY_NAME, "value");
         decedentAKA = getFieldValue(DECEDENT_ALSO_KNOWN_AS, "value");
+
     }
 
     public void clickButtonCreate() throws AutomationException {
@@ -380,6 +395,18 @@ public class ProbateFormsRW03Page extends BasePage {
         }
     }
 
+    private void verifyFieldIsEditableAndYellowBackground(String fieldName, String fieldLocator) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(fieldLocator);
+        if (!field.isEnabled()) {
+            throw new AutomationException(fieldName + " field is not editable.");
+        }
+
+        String backgroundColor = field.getCssValue("background-color");
+        if (!backgroundColor.equals("rgba(249, 249, 206, 1)")) {
+            throw new AutomationException(fieldName + " field does not have a yellow background.");
+        }
+    }
+
     public void verifyAutoPopulatedFieldsAreNotEditable() throws Exception {
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, domicileCounty));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, displayName));
@@ -399,11 +426,139 @@ public class ProbateFormsRW03Page extends BasePage {
         verifyFieldsIsEmpty(WITNESS_NAME_2);
     }
 
+    public void verifyFieldsAreEditableAndYellowBackground() throws AutomationException {
+        verifyFieldIsEditableAndYellowBackground("Witness 1 Name", WITNESS_NAME_1);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 Name", WITNESS_NAME_2);
+        verifyFieldIsEditableAndYellowBackground("Witness 1 Signature", WITNESS_1_SIGNATURE);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 Signature", WITNESS_2_SIGNATURE);
+        verifyFieldIsEditableAndYellowBackground("Witness 1 Street Address", WITNESS_1_STREET_ADDRESS);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 Street Address", WITNESS_2_STREET_ADDRESS);
+        verifyFieldIsEditableAndYellowBackground("Witness 1 City, State, Zip", W1_CITY_STATE_ZIP);
+        verifyFieldIsEditableAndYellowBackground("Witness 2 City, State, Zip", W2_CITY_STATE_ZIP);
+    }
+
+    private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
+        for (char c : value.toCharArray()) {
+            field.sendKeys(String.valueOf(c));
+        }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+
+    public void verifyWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields() throws AutomationException, IOException, ParseException {
+        String witness1name = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1name").toString();
+        String witness2name = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2name").toString();
+
+        WebElement witnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
+        WebElement witnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
+
+        fillFieldWithKeyStrokes(WITNESS_NAME_1, "RW03Form.witness1name");
+        fillFieldWithKeyStrokes(WITNESS_NAME_2, "RW03Form.witness2name");
+
+        enteredWitness1 = witnessName1.getAttribute("value");
+        if (!enteredWitness1.equals(witness1name)) {
+            throw new AutomationException("Witness name field did not accept the entered name: " + witness1name);
+        }
+        enteredWitness2 = witnessName2.getAttribute("value");
+        if (!enteredWitness2.equals(witness2name)) {
+            throw new AutomationException("Witness name field did not accept the entered name: " + witness2name);
+        }
+
+
+        WebElement WitnessSignature1 = driverUtil.getWebElement(WITNESS_1_SIGNATURE);
+        WebElement WitnessSignature2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
+
+        String reflectedNameInSignature1 = WitnessSignature1.getAttribute("value");
+        if (!reflectedNameInSignature1.equals(enteredWitness1)) {
+            throw new AutomationException("The signature field does not reflect the entered witness name. " +
+                    "Expected: " + enteredWitness1 + ", Found: " + reflectedNameInSignature1);
+        }
+        String reflectedNameInSignature2 = WitnessSignature2.getAttribute("value");
+        if (!reflectedNameInSignature2.equals(enteredWitness2)) {
+            throw new AutomationException("The signature field does not reflect the entered witness name. " +
+                    "Expected: " + enteredWitness2 + ", Found: " + reflectedNameInSignature2);
+        }
+
+    }
+
+    public void verifyNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields() throws IOException, ParseException, AutomationException {
+        WebElement witnessSign1 = driverUtil.getWebElement(WITNESS_1_SIGNATURE);
+        WebElement witnessSign2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
+
+        clearField(WITNESS_1_SIGNATURE);
+        fillFieldWithKeyStrokes(WITNESS_1_SIGNATURE, "RW03Form.witness1signature");
+        clearField(WITNESS_2_SIGNATURE);
+        fillFieldWithKeyStrokes(WITNESS_2_SIGNATURE, "RW03Form.witness2signature");
+
+        enteredWitness1Sign = witnessSign1.getAttribute("value");
+        enteredWitness2Sign = witnessSign2.getAttribute("value");
+
+        WebElement WitnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
+        WebElement WitnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
+
+        String reflectedName1 = WitnessName1.getAttribute("value");
+        if (!reflectedName1.equals(enteredWitness1Sign)) {
+            throw new AutomationException("The name field does not reflect the entered witness signature. " +
+                    "Expected: " + enteredWitness1Sign + ", Found: " + reflectedName1);
+        }
+        String reflectedName2 = WitnessName2.getAttribute("value");
+        if (!reflectedName2.equals(enteredWitness2Sign)) {
+            throw new AutomationException("The name field does not reflect the entered witness signature. " +
+                    "Expected: " + enteredWitness2Sign + ", Found: " + reflectedName2);
+        }
+
+        enteredWitness1 = WitnessName1.getAttribute("value");
+        enteredWitness2 = WitnessName2.getAttribute("value");
+    }
+
+    public void verifyTheAddressCityZipFieldsAcceptCorrectText() throws IOException, ParseException, AutomationException {
+        String witness1streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1streetAddress").toString();
+        String witness2streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2streetAddress").toString();
+        String witness1CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
+        String witness2CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
+
+        WebElement witnessStreetAddress1 = driverUtil.getWebElement(WITNESS_1_STREET_ADDRESS);
+        WebElement witnessStreetAddress2 = driverUtil.getWebElement(WITNESS_2_STREET_ADDRESS);
+        WebElement witnessCityStateZip1 = driverUtil.getWebElement(W1_CITY_STATE_ZIP);
+        WebElement witnessCityStateZip2 = driverUtil.getWebElement(W2_CITY_STATE_ZIP);
+
+        fillFieldWithKeyStrokes(WITNESS_1_STREET_ADDRESS, "RW03Form.witness1streetAddress");
+        fillFieldWithKeyStrokes(WITNESS_2_STREET_ADDRESS, "RW03Form.witness2streetAddress");
+        fillFieldWithKeyStrokes(W1_CITY_STATE_ZIP, "RW03Form.witness1CityStateZip");
+        fillFieldWithKeyStrokes(W2_CITY_STATE_ZIP, "RW03Form.witness2CityStateZip");
+
+        enteredWitness1StreetAddress = witnessStreetAddress1.getAttribute("value");
+        enteredWitness2StreetAddress = witnessStreetAddress2.getAttribute("value");
+        enteredWitness1CityStateZip = witnessCityStateZip1.getAttribute("Value");
+        enteredWitness2CityStateZip = witnessCityStateZip2.getAttribute("Value");
+
+
+        String enteredWitness1streetAddress = witnessStreetAddress1.getAttribute("value");
+        if (!enteredWitness1streetAddress.equals(witness1streetAddress)) {
+            throw new AutomationException("Field did not accept the entered Street Address: " + witness1streetAddress);
+        }
+        String enteredWitness2streetAddress = witnessStreetAddress2.getAttribute("value");
+        if (!enteredWitness2streetAddress.equals(witness2streetAddress)) {
+            throw new AutomationException("Field did not accept the entered Street Address: " + witness2streetAddress);
+        }
+        String enteredWitness1CityStateZip = witnessCityStateZip1.getAttribute("value");
+        if (!enteredWitness1CityStateZip.equals(witness1CityStateZip)) {
+            throw new AutomationException("Field did not accept the entered city,state, zip: " + witness1CityStateZip);
+        }
+        String enteredWitness2CityStateZip = witnessCityStateZip2.getAttribute("value");
+        if (!enteredWitness2CityStateZip.equals(witness2CityStateZip)) {
+            throw new AutomationException("Field did not accept the entered city,state, zip: " + witness2CityStateZip);
+        }
+    }
+
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
         driverUtil.getWebElement(PRINTFORM_BUTTON).click();
 
         Robot robot = new Robot();
-        Thread.sleep(2000);// Wait for the dialog to appear
+        waitForAWhile(2); // Wait for the dialog to appear
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
 
@@ -446,58 +601,119 @@ public class ProbateFormsRW03Page extends BasePage {
     }
 
 
-    public void verifyAllFieldsInDownloadedPDF() {
-        String pdfPath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
-
-        Map<String, String> expectedData = new HashMap<>();
-//        expectedData.put("First Name", "Baby");
-//        expectedData.put("Last Name", "John");
-//        expectedData.put("Date of Birth", "01/15/1950");
-//        expectedData.put("Decedent’s Social Security Number", "778-45-8946");
-
-        expectedData.put("COUNTY", "Henry");
-        expectedData.put("Deceased", "Baby John");
-//        expectedData.put("Date of Birth", "01/15/1950");
-//        expectedData.put("Decedent’s Social Security Number", "778-45-8946");
-
         try {
-            PDDocument document = PDDocument.load(new File(pdfPath));
-            PDFTextStripper stripper = new PDFTextStripper();
-            String fullText = stripper.getText(document);
-            String[] lines = fullText.split("\\r?\\n");
+            verifyPrintNames(pdfFilePath);
+            verifyCounty(pdfFilePath);
+            validateWitnessDetails(pdfFilePath);
 
-            // Normalize lines for case-insensitive comparison
-            List<String> normalizedLines = new ArrayList<>();
-            for (String line : lines) {
-                normalizedLines.add(line.trim().toLowerCase());
+        } catch (IOException e) {
+            System.err.println("Error reading PDF: " + e.getMessage());
+        }
+    }
+
+    public static void verifyPrintNames(String pdfFilePath) throws IOException {
+        String beforeLine = "Estate of Baby John  ,Deceased";
+        String afterLine = "(each) a subscribing witness to";
+
+        List<String> names = new ArrayList<>();
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Split the entire PDF content into lines
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+
+        // Log each line and find start/end indexes
+        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+
+            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                if (!allLines[i].isBlank()) {
+                    names.add(allLines[i].trim());
+                }
             }
 
-            for (Map.Entry<String, String> entry : expectedData.entrySet()) {
-                String field = entry.getKey().toLowerCase();
-                String value = entry.getValue().toLowerCase();
-                boolean foundField = false;
-                boolean foundValue = false;
+            CommonSteps.logInfo("\nPrint Names:");
+            names.forEach(CommonSteps::logInfo);
 
-                for (int i = 0; i < normalizedLines.size(); i++) {
-                    String line = normalizedLines.get(i);
+            if (names.isEmpty()) {
+                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
+            } else {
+                // Create a map of expected names
+                Map<String, String> expectedNames = new LinkedHashMap<>();
+                expectedNames.put("First Witness", enteredWitness1);
+                expectedNames.put("Second Witness", enteredWitness2);
 
-                    // Check if the field exists in this line
-                    if (line.contains(field)) {
-                        foundField = true;
+                boolean allMatch = true;
+                for (int i = 0; i < expectedNames.size(); i++) {
+                    String expectedValue = (i < expectedNames.size()) ? expectedNames.values().toArray(new String[0])[i] : "No Name";
+                    String actualValue = (i < names.size()) ? names.get(i) : "No Name";
 
-                        // Check this line and subsequent lines for the value
-                        for (int j = i; j < normalizedLines.size(); j++) {
-                            if (normalizedLines.get(j).contains(value)) {
-                                foundValue = true;
-                                break;
-                            }
-                        }
-                        break; // Exit field search once found
+                    if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                        allMatch = false;
+                        break;
                     }
                 }
 
+                if (allMatch) {
+                    CommonSteps.logInfo("✅ Validation Passed: Print names are " + String.join(" ", names) + " as expected.");
+                } else {
+                    CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+                }
+            }
+        } else {
+            CommonSteps.logInfo("❌ Before or after line not found!");
+        }
+    }
+
+
+    public void verifyCounty(String pdfFilePath) throws AutomationException {
+        Map<String, String> expectedData = new LinkedHashMap<>();
+        expectedData.put("COUNTY", expectedCounty);
+        expectedData.put("Deceased", displayName);
+
+        try {
+            PDDocument document = PDDocument.load(new File(pdfFilePath));
+            String fullText = new PDFTextStripper().getText(document);
+            document.close();
+
+            // Use the text as-is for case-sensitive comparison
+            String normalizedText = fullText.replaceAll("\\s+", " "); // Normalize space for clean matching
+
+            for (Map.Entry<String, String> entry : expectedData.entrySet()) {
+                String field = entry.getKey();  // No .toLowerCase() for case-sensitive comparison
+                String value = entry.getValue();  // No .toLowerCase() for case-sensitive comparison
+
+                boolean foundField = normalizedText.contains(field);
+                boolean foundValue = false;
+
+                if (foundField) {
+                    // Search for value in subsequent lines after field is found
+                    for (int i = 0; i < normalizedText.length(); i++) {
+                        if (normalizedText.substring(i).contains(value)) {
+                            foundValue = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Output based on findings
                 if (foundField && foundValue) {
                     CommonSteps.logInfo("✅ Field: \"" + entry.getKey() + "\" and Value: \"" + entry.getValue() + "\" are found.");
                 } else if (foundField) {
@@ -506,17 +722,101 @@ public class ProbateFormsRW03Page extends BasePage {
                     CommonSteps.logInfo("❌ Field: \"" + entry.getKey() + "\" not found in the PDF.");
                 }
             }
-
-            document.close();
         } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            throw new AutomationException("Error reading PDF: " + e.getMessage());
         }
     }
 
+    public void validateWitnessDetails(String pdfFilePath) throws IOException {
+        List<String> pdfLines = Arrays.asList(new PDFTextStripper().getText(PDDocument.load(new File(pdfFilePath))).split("\\r?\\n"));
+        Map<String, String> extractedWitnessDetails = new LinkedHashMap<>();
+
+        // Extract witness details using the correct index for City, State, Zip
+        for (int i = 0; i < pdfLines.size(); i++) {
+            if (pdfLines.get(i).contains("(Signature)")) {
+                String signature = pdfLines.get(i).replace("(Signature) ", "").trim();
+                String cityStateZip = "";
+
+                // Find the correct City, State, Zip after the signature
+                for (int j = i + 1; j < pdfLines.size(); j++) {
+                    if (pdfLines.get(j).matches(".*\\d{5}.*")) {  // Match line containing a ZIP code
+                        cityStateZip = pdfLines.get(j).trim();
+                        break;
+                    }
+                }
+
+                extractedWitnessDetails.put(signature, cityStateZip);
+
+                CommonSteps.logInfo("✅ Found Witness: " + signature + ", (City, State, Zip) - " + cityStateZip);
+            }
+        }
+
+        // Expected witness details stored in a list of maps for dynamic validation
+        List<Map<String, String>> expectedWitnesses = new ArrayList<>();
+        expectedWitnesses.add(Map.of("sign", enteredWitness1Sign, "cityStateZip", enteredWitness1CityStateZip));
+        expectedWitnesses.add(Map.of("sign", enteredWitness2Sign, "cityStateZip", enteredWitness2CityStateZip));
+
+        // Validate each expected witness
+        boolean allWitnessesValid = true;
+        for (int index = 0; index < expectedWitnesses.size(); index++) {
+            Map<String, String> expected = expectedWitnesses.get(index);
+            String witnessKey = expected.get("sign");
+            String expectedCityStateZip = expected.get("cityStateZip");
+
+            if (extractedWitnessDetails.containsKey(witnessKey)) {
+                String extractedCityStateZip = extractedWitnessDetails.get(witnessKey);
+                if (expectedCityStateZip.equals(extractedCityStateZip)) {
+                    CommonSteps.logInfo("✅ Witness " + (index + 1) + " (" + witnessKey + ") validated successfully. " +
+                            "Signature - " + witnessKey + ", (City, State, Zip) - " + expectedCityStateZip);
+                } else {
+                    CommonSteps.logInfo("❌ Witness " + (index + 1) + " (" + witnessKey + ") city/state/zip mismatch. " +
+                            "Expected: (City, State, Zip) - " + expectedCityStateZip +
+                            " | Extracted: " + extractedCityStateZip);
+                    allWitnessesValid = false;
+                }
+            } else {
+                CommonSteps.logInfo("❌ Witness " + (index + 1) + " (" + witnessKey + ") not found in the PDF.");
+                allWitnessesValid = false;
+            }
+        }
+
+        if (allWitnessesValid) {
+            CommonSteps.logInfo("✅ All witnesses validated successfully.");
+        } else {
+            CommonSteps.logInfo("❌ Witness validation failed.");
+        }
+    }
 
 
     public void tempdelete() throws AutomationException, AWTException, InterruptedException {
         driverUtil.getWebElement(TEMP).click();
         navigateToEstateContactsTab();
+    }
+
+    public void verifyAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+        String expectedW1streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1streetAddress").toString();
+        String expectedW2streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2streetAddress").toString();
+        String expectedW1cityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
+        String expectedW2cityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
+
+        WebDriverUtil.waitForAWhile(1);
+
+        String actualWitness1Name = getFieldValue(WITNESS_NAME_1, "value");
+        String actualWitness2Name = getFieldValue(WITNESS_NAME_2, "value");
+        String actualWitness1Sign = getFieldValue(WITNESS_1_SIGNATURE, "value");
+        String actualWitness2Sign = getFieldValue(WITNESS_2_SIGNATURE, "value");
+        String actualW1streetAddress = getFieldValue(WITNESS_1_STREET_ADDRESS, "value");
+        String actualW2streetAddress = getFieldValue(WITNESS_2_STREET_ADDRESS, "value");
+        String actualW1cityStateZip = getFieldValue(W1_CITY_STATE_ZIP, "value");
+        String actualW2cityStateZip = getFieldValue(W2_CITY_STATE_ZIP, "value");
+
+        verifyField("Witness Name 1", enteredWitness1, actualWitness1Name);
+        verifyField("Witness Name 2", enteredWitness2, actualWitness2Name);
+        verifyField("Witness Signature 1", enteredWitness1Sign, actualWitness1Sign);
+        verifyField("Witness Signature 2", enteredWitness2Sign, actualWitness2Sign);
+        verifyField("Witness Street Address 1", expectedW1streetAddress, actualW1streetAddress);
+        verifyField("Witness Street Address 2", expectedW2streetAddress, actualW2streetAddress);
+        verifyField("Witness City, State, Zip 1", expectedW1cityStateZip, actualW1cityStateZip);
+        verifyField("Witness City, State, Zip 2", expectedW2cityStateZip, actualW2cityStateZip);
     }
 }

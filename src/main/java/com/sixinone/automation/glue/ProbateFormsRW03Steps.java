@@ -6,14 +6,10 @@ import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import gherkin.lexer.Pa;
 import org.json.simple.parser.ParseException;
 
 import java.awt.*;
 import java.io.IOException;
-
-import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
-import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class ProbateFormsRW03Steps {
 
@@ -123,6 +119,34 @@ public class ProbateFormsRW03Steps {
         CommonSteps.takeScreenshot();
     }
 
+    @Then("user verifies witnesses name, address and signature fields are editable and in yellow background")
+    public void userVerifiesWitnessesNameAddressAndSignatureFieldsAreEditableAndInYellowBackground() throws AutomationException {
+        CommonSteps.logInfo("Verified that witnesses name, address and signature fields are editable and in yellow background");
+        PageFactory.probateFormsRW03Page().verifyFieldsAreEditableAndYellowBackground();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies witness fields accept names and same names are reflected in signature fields")
+    public void userVerifiesWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that witness fields accept names and same names are reflected in signature fields");
+        PageFactory.probateFormsRW03Page().verifyWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies names updated in signature fields are reflected in the witness fields")
+    public void userVerifiesNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that names updated in signature fields are reflected in the witness fields");
+        PageFactory.probateFormsRW03Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies both the address, city, zip fields accept correct text")
+    public void userVerifiesBothTheAddressCityZipFieldsAcceptCorrectText() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that both the address, city, zip fields accept correct text");
+        PageFactory.probateFormsRW03Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
+        CommonSteps.takeScreenshot();
+    }
+
     @When("user click on print form button")
     public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
         CommonSteps.logInfo("user click on print form button");
@@ -138,7 +162,7 @@ public class ProbateFormsRW03Steps {
 
 
     @And("verify all the fields entered are correctly reflected in the pdf")
-    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() {
+    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
         CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
         PageFactory.probateFormsRW03Page().verifyAllFieldsInDownloadedPDF();
     }
@@ -149,4 +173,10 @@ public class ProbateFormsRW03Steps {
     }
 
 
+    @Then("user verifies all the input fields in the form are auto saved")
+    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that all the input fields in the form are auto saved");
+        PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
 }

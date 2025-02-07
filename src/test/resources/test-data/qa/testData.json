@@ -14,6 +14,7 @@
     "addressLine2": "Jack Market",
     "zip": "40007",
     "city": "Bethlehem",
+    "stateCode": "KY",
     "state":"Kentucky",
     "country": "Henry",
     "addressComments": "stayed here",
@@ -85,7 +86,7 @@
   },
   "EstateCreate": {
     "firstName": "Baby",
-    "middleName": "A.",
+    "middleName": "Arik",
     "lastName": "John",
     "displayName": "Baby John",
     "alsoKnownAs": "Jonny",
@@ -96,7 +97,7 @@
     "zip": "40007",
     "city": "Bethlehem",
     "state":"Kentucky",
-    "country": "Henry",
+    "county": "Henry",
     "municipality": "Test Municipality",
     "PODaddressLine1": "Les Main Street",
     "PODaddressLine2": "Near Hotel Los",
@@ -126,6 +127,31 @@
     "roleAccountant": "Accountant",
     "roleAttorney": "Attorney",
     "roleBeneficiary": "Beneficiary",
+    "roleCorrespondent": "Correspondent",
+    "roleFiduciary": "Fiduciary",
+    "roleJointOwners": "Joint Owners",
+    "rolePreparer": "Preparer",
+    "roleRenouncer": "Renouncer",
+    "roleSpouse": "Spouse",
+    "roleTransferee": "Transferee",
+    "roleTrustee": "Trustee",
+    "roleRule10.5": "Rule 10.5 (notices only)",
     "placeOfBirth": "Denmark"
+  },
+  "RW03Form": {
+    "witness1name": "Harry",
+    "witness2name": "Steve",
+    "witness1signature": "Kris",
+    "witness2signature": "Leo",
+    "witness1streetAddress": "123 Elm Street",
+    "witness1CityStateZip": "Bethlehem, Kentucky, 40007",
+    "witness2streetAddress": "Les Main Street",
+    "witness2CityStateZip": "Cleveland, Virginia, 24225"
+  },
+  "RW02Form": {
+    "akaNameInitial": "Krish",
+    "akaName1": "Fanny,",
+    "akaName2": "Cris,",
+    "akaName3": "Grace,"
   }
 }
