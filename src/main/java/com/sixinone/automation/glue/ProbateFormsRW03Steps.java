@@ -1,6 +1,5 @@
 package com.sixinone.automation.glue;
 
-import com.github.dockerjava.api.command.CommitCmd;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
@@ -13,70 +12,10 @@ import java.io.IOException;
 
 public class ProbateFormsRW03Steps {
 
-    @When("user clicks on Create button")
-    public void userClicksOnTheCreateButton() throws AutomationException {
-        CommonSteps.logInfo("User clicks on the Create button");
-        PageFactory.probateFormsRW03Page().clickButtonCreate();
-    }
-
-    @Then("user fills first name,last name and SSN details")
-    public void userFillsTheFirstNameLastNameAndSSNDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled the first name, last name, and SSN details.");
-        PageFactory.probateFormsRW03Page().enterFirstAndLastNameAndSSN();
-    }
-
-    @And("user clicks on Proceed button")
-    public void userClickOnProceedButton() throws AutomationException {
-        CommonSteps.logInfo("User clicked on the Proceed button.");
-        PageFactory.probateFormsRW03Page().clickOnProceedButton();
-    }
-
-    @And("^user click on Create a new estate with the entered name button$")
-    public void userClickCreateNewEstateButton() throws AutomationException {
-        CommonSteps.logInfo("User clicked on 'Create a new estate with the entered name' button for new user.");
-        PageFactory.probateFormsRW03Page().clickCreateNewEstateButton();
-    }
-
-    @Then("^user fills decedent basic information$")
-    public void userFillsDecedentBasicInformation() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled decedent basic information for new user.");
-        PageFactory.probateFormsRW03Page().fillDecedentBasicInformation();
-    }
-
-    @And("user clicks on Next button")
-    public void userClickOnNextButton() throws AutomationException {
-        CommonSteps.logInfo("User clicked on the Next button.");
-        PageFactory.probateFormsRW03Page().clickOnNextButton();
-    }
-
-    @When("^user fills Last Address\\/Domicile details$")
-    public void userFillLastAddressDomicileDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled Last Address/Domicile details.");
-        PageFactory.probateFormsRW03Page().fillLastAddressDomicileDetails();
-    }
-
-    @When("user fills Life Details")
-    public void userFillsLifeDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user fills Life Details and validate the fields");
-        PageFactory.probateFormsRW03Page().fillLifeDetails();
-    }
-
-    @When("user fills the Place of Death details")
-    public void userFillsPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled Place of Death details.");
-        PageFactory.probateFormsRW03Page().fillPlaceOfDeathDetails();
-    }
-
-    @When("user click on Estate tab")
-    public void userClicksOnEstateTab() throws AutomationException {
-        CommonSteps.logInfo("User clicked on the Estate tab.");
-        PageFactory.probateFormsRW03Page().clickOnEstateTab();
-    }
-
-    @And("user fills the Estate details")
-    public void userFillsEstateDetails() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User filled Estate details.");
-        PageFactory.probateFormsRW03Page().fillEstateDetails();
+    @And("user save entered Estate information")
+    public void userSavesEstateInformation() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user saves Estate Information");
+        PageFactory.probateFormsRW03Page().userSavesEstateInfo();
     }
 
     @When("user navigates to the probate forms tab")
@@ -84,7 +23,6 @@ public class ProbateFormsRW03Steps {
         CommonSteps.logInfo("user navigates to the probate forms tab");
         PageFactory.probateFormsRW03Page().navigateToEstateContactsTab();
     }
-
 
     @Then("^user click on the \"([^\"]*)\" form$")
     public void userClickOnTheRW(String formToSelect) throws AutomationException {
@@ -167,16 +105,16 @@ public class ProbateFormsRW03Steps {
         PageFactory.probateFormsRW03Page().verifyAllFieldsInDownloadedPDF();
     }
 
-    @When("Temperary")
-    public void temperary() throws AutomationException, InterruptedException, AWTException {
-        PageFactory.probateFormsRW03Page().tempdelete();
-    }
-
-
     @Then("user verifies all the input fields in the form are auto saved")
     public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that all the input fields in the form are auto saved");
         PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
         CommonSteps.takeScreenshot();
+    }
+
+    @When("user resets the RW03 form")
+    public void userResetsTheRWForm() throws AutomationException {
+        CommonSteps.logInfo("user resets the RW03 form");
+        PageFactory.probateFormsRW03Page().userResetsTheRWForm();
     }
 }
