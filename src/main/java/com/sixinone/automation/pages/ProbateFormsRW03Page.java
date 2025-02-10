@@ -127,21 +127,6 @@ public class ProbateFormsRW03Page extends BasePage {
     static String enteredCityStateZip1Form;
     static String enteredCityStateZip2Form;
 
-    static String decedentSSN;
-    static String displayName;
-    static String ageAtDeath;
-    static String decedentAKA;
-    static String expectedCounty;
-    static String domicileCounty;
-    static String enteredWitness1;
-    static String enteredWitness2;
-    static String enteredWitness1Sign;
-    static String enteredWitness2Sign;
-    static String enteredWitness1StreetAddress;
-    static String enteredWitness2StreetAddress;
-    static String enteredWitness1CityStateZip;
-    static String enteredWitness2CityStateZip;
-
     static String DownloadedFileName;
 
 
@@ -268,9 +253,6 @@ public class ProbateFormsRW03Page extends BasePage {
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDomicileCountry));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, domicileCounty));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, displayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, decedentAKA));
     }
 
     public void verifyFieldsIsEmpty(String fieldLocator) throws Exception {
@@ -389,12 +371,6 @@ public class ProbateFormsRW03Page extends BasePage {
         fillFieldWithKeyStrokes(WITNESS_2_STREET_ADDRESS, "RW03Form.witness2streetAddress");
         fillFieldWithKeyStrokes(W1_CITY_STATE_ZIP, "RW03Form.witness1CityStateZip");
         fillFieldWithKeyStrokes(W2_CITY_STATE_ZIP, "RW03Form.witness2CityStateZip");
-
-        enteredWitness1StreetAddress = witnessStreetAddress1.getAttribute("value");
-        enteredWitness2StreetAddress = witnessStreetAddress2.getAttribute("value");
-        enteredWitness1CityStateZip = witnessCityStateZip1.getAttribute("Value");
-        enteredWitness2CityStateZip = witnessCityStateZip2.getAttribute("Value");
-
 
         String enteredWitness1streetAddress = witnessStreetAddress1.getAttribute("value");
         if (!enteredWitness1streetAddress.equals(witness1streetAddress)) {
@@ -523,8 +499,8 @@ public class ProbateFormsRW03Page extends BasePage {
             } else {
                 // Create a map of expected names
                 Map<String, String> expectedNames = new LinkedHashMap<>();
-                expectedNames.put("First Witness", enteredWitness1);
-                expectedNames.put("Second Witness", enteredWitness2);
+                expectedNames.put("First Witness", enteredWitness1Form);
+                expectedNames.put("Second Witness", enteredWitness2Form);
 
                 boolean allMatch = true;
                 for (int i = 0; i < expectedNames.size(); i++) {
@@ -551,8 +527,8 @@ public class ProbateFormsRW03Page extends BasePage {
 
     public void verifyCounty(String pdfFilePath) throws AutomationException {
         Map<String, String> expectedData = new LinkedHashMap<>();
-        expectedData.put("COUNTY", expectedCounty);
-        expectedData.put("Deceased", displayName);
+        expectedData.put("COUNTY", enteredDomicileCountry);
+        expectedData.put("Deceased", enteredDisplayName);
 
         try {
             PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -619,8 +595,8 @@ public class ProbateFormsRW03Page extends BasePage {
 
         // Expected witness details stored in a list of maps for dynamic validation
         List<Map<String, String>> expectedWitnesses = new ArrayList<>();
-        expectedWitnesses.add(Map.of("sign", enteredWitness1Sign, "cityStateZip", enteredWitness1CityStateZip));
-        expectedWitnesses.add(Map.of("sign", enteredWitness2Sign, "cityStateZip", enteredWitness2CityStateZip));
+        expectedWitnesses.add(Map.of("sign", enteredWitness1SignForm, "cityStateZip", enteredCityStateZip1Form));
+        expectedWitnesses.add(Map.of("sign", enteredWitness2SignForm, "cityStateZip", enteredCityStateZip2Form));
 
         // Validate each expected witness
         boolean allWitnessesValid = true;
@@ -681,6 +657,7 @@ public class ProbateFormsRW03Page extends BasePage {
     }
 
     public void userResetsTheRWForm() throws AutomationException {
+        driverUtil.getWebElement("//body").click();
         driverUtil.getWebElementAndScroll(SHOW_AKA_CHECkBOX).click();
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
