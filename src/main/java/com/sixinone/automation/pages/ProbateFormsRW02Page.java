@@ -4,6 +4,7 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
@@ -14,13 +15,16 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
-import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
+import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class ProbateFormsRW02Page extends BasePage{
     @Override
@@ -169,7 +173,7 @@ public class ProbateFormsRW02Page extends BasePage{
     private static final String ATTORNEY_SELECTION_FIELD = "//div//p[text()='Attorney Signature:']/following-sibling::p//input[@class='prn_bords']";
     private static final String ATTORNEY_ERROR_ALERT = "//div[text()='Only one Attorney contacts is allowed to be selected.']";
     private static final String ATTORNEY_FETCHED_FIELD = "//div//p[text()='Attorney Signature:']/following-sibling::p//input[contains(@value,'%s')]";
-
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
 
 
     HashMap<String, HashMap<String, String>> estateContact = new HashMap<>();
@@ -254,6 +258,7 @@ public class ProbateFormsRW02Page extends BasePage{
     static String modifiedEstateCityForm;
     static String modifiedEstateCountyForm;
 
+    static String DownloadedFileName;
 
     public static void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
@@ -1195,7 +1200,67 @@ public class ProbateFormsRW02Page extends BasePage{
         verifyFetchedAttorneyContact(attorneyFax);
     }
 
+    public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
+        driverUtil.getWebElement(PRINTFORM_BUTTON).click();
+
+        Robot robot = new Robot();
+        waitForAWhile(2); // Wait for the dialog to appear
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+
+    }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        DownloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+//    public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
+//        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+//                ? System.getProperty("user.dir") + "\\downloads\\"
+//                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+//
+//        verifyPrintNames(pdfFilePath);
+//
+//
+//    }
+
+
+
     public void userResetsTheRWForm() throws AutomationException {
+        waitForVisibleElement(By.xpath(ATTORNEY_SELECTION_FIELD),5);
         driverUtil.getWebElement(ATTORNEY_SELECTION_FIELD).click();
 
         driverUtil.getWebElement("//span[@class='cursor']").click();

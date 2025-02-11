@@ -44,7 +44,6 @@ Feature: 6in1 probate form RW03 Feature
     Then verify form can be printed in pdf with name as 'Rw03'
     And verify all the fields entered are correctly reflected in the pdf
 
-
   Scenario: Reset the RW03 form
     When user resets the RW03 form
 

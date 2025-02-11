@@ -7,13 +7,14 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.json.simple.parser.ParseException;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class ProbateFormsRW02Steps {
 
     @When("^user opens \"([^\"]*)\" Estate$")
     public void userOpensEstate(String estateName) throws AutomationException {
-        CommonSteps.logInfo("user opens "+estateName+" Estate");
+        CommonSteps.logInfo("user opens " + estateName + " Estate");
         PageFactory.probateFormsRW02Page().openEstate(estateName);
     }
 
@@ -25,7 +26,7 @@ public class ProbateFormsRW02Steps {
 
     @Then("^user clicks on the \"([^\"]*)\" Form$")
     public void userClickOnTheRW(String formToSelect) throws AutomationException {
-        CommonSteps.logInfo("user click on the "+formToSelect+" form");
+        CommonSteps.logInfo("user click on the " + formToSelect + " form");
         PageFactory.probateFormsRW02Page().clickOnRWForm(formToSelect);
     }
 
@@ -342,6 +343,26 @@ public class ProbateFormsRW02Steps {
         CommonSteps.logInfo("Verified that selected attorney contact's information is displayed correctly");
         CommonSteps.takeScreenshot();
     }
+
+
+//    @When("user click on print form button")
+//    public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
+//        CommonSteps.logInfo("user click on print form button");
+//        PageFactory.probateFormsRW02Page().clickOnPrintFormButton();
+//    }
+//
+//    @Then("verify form can be printed in pdf with name as {string}")
+//    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
+//        CommonSteps.logInfo("verify form can be printed in pdf");
+//        PageFactory.probateFormsRW02Page().verifyFormPrintedInPDFForm(formName);
+//    }
+
+//    @And("verify all the fields entered are correctly reflected in the pdf")
+//    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
+//        CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
+//        PageFactory.probateFormsRW02Page().verifyAllFieldsInDownloadedPDF();
+//    }
+
 
     @When("user resets the RW02 form")
     public void userResetsTheRWForm() throws AutomationException {

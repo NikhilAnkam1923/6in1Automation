@@ -470,6 +470,7 @@ public class ProbateFormsRW01Page extends BasePage {
     public void userResetsTheRWForm() throws AutomationException {
         driverUtil.getWebElement(FIRST_PAGE_BTN).click();
 
+        waitForVisibleElement(By.xpath(SECTION_5_LAST_NAME),5);
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
 
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();

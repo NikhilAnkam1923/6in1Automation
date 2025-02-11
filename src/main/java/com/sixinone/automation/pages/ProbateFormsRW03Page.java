@@ -416,10 +416,10 @@ public class ProbateFormsRW03Page extends BasePage {
                         ? System.getProperty("user.dir") + "\\downloads"
                         : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
 
-                System.out.println("Iterating over files");
+                CommonSteps.logInfo("Iterating over files");
                 for (File file : files) {
                     if (file.exists() && !file.isDirectory()) {
-                        System.out.println(file.getName());
+                        CommonSteps.logInfo(file.getName());
                         DownloadedFileName = file.getName();
 
                         // Check if file is a PDF
@@ -453,12 +453,12 @@ public class ProbateFormsRW03Page extends BasePage {
             validateWitnessDetails(pdfFilePath);
 
         } catch (IOException e) {
-            System.err.println("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
         }
     }
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException {
-        String beforeLine = "Estate of Baby John  ,Deceased";
+        String beforeLine = "Estate of William John  ,Deceased";
         String afterLine = "(each) a subscribing witness to";
 
         List<String> names = new ArrayList<>();
