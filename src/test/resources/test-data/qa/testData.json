@@ -161,5 +161,9 @@
     "witness2name": "Steve",
     "reason": "To ensure the affidavit is complete, legally compliant, and properly executed in accordance with Pennsylvania estate laws.",
     "reviewerSign": "Louis Pat"
+  },
+  "RW06Form": {
+    "date": "02/10/2025",
+    "letterIssuedTo": "Fanny Jordan"
   }
 }
