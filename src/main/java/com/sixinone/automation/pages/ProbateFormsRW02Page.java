@@ -123,7 +123,7 @@ public class ProbateFormsRW02Page extends BasePage{
     private static final String OPTION_A_CHECKBOX = "//input[@name='petitionForTestamentary']";
     private static final String OPTION_B_CHECKBOX = "//input[@name='petitionForAdministration']";
     private static final String A_NO_EXCEPTION = "//div[text()='NO EXCEPTIONS']//input[@name='isTestamentaryException']";
-    private static final String A_EXCEPTION = "//div[text()='EXCEPTIONS']//input[@name='isTestamentaryException']";
+    private static final String A_EXCEPTION = "//span[text()='EXCEPTIONS']//input[@name='isTestamentaryException']";
     private static final String B_NO_EXCEPTION = "//div[text()='NO EXCEPTIONS']//input[@name='isAdminException']";
     private static final String B_EXCEPTION = "//div[text()='EXCEPTIONS']//input[@name='isAdminException']";
     private static final String A_EXCEPTION_TEXT = "//input[@name='testamentaryExceptionText']";
@@ -1329,7 +1329,8 @@ public class ProbateFormsRW02Page extends BasePage{
 
 
     public void userResetsTheRWForm() throws AutomationException {
-        waitForVisibleElement(By.xpath(ATTORNEY_SELECTION_FIELD),5);
+        driverUtil.getWebElement("//body").click();
+
         driverUtil.getWebElement(ATTORNEY_SELECTION_FIELD).click();
 
         driverUtil.getWebElement("//span[@class='cursor']").click();

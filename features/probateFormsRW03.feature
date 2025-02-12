@@ -15,25 +15,31 @@ Feature: 6in1 probate form RW03 Feature
     When user opens "William John" Estate
     And user save entered Estate information
 
-  Scenario: Verify RW03 form
+  Scenario: Verify county, estate and aka names are auto-populated on the form
     When user navigates to the probate forms tab
     And user click on the "RW 03" form
-     #Verify county, estate and aka names are auto-populated on the form
     Then user selects the aka checkbox
     And user verifies the county, estate and aka names are auto-populated on the form
-     #Verify, the auto-populated fields are not editable.
+
+  Scenario: Verify, the auto-populated fields are not editable.
     Then user verifies the auto-populated fields are not editable
-     #Verify, witness's name is not auto populated and the fields are empty.
+
+  Scenario: Verify, witness's name is not auto populated and the fields are empty.
     Then user verifies witness's name is not auto populated and the fields are empty
-     #Verify, witnesses  name, address and signature should be editable and in yellow background.
+
+  Scenario: Verify, witnesses  name, address and signature should be editable and in yellow background.
     Then user verifies witnesses name, address and signature fields are editable and in yellow background
-     #Verify, names can be entered in witness fields.
+
+  Scenario: Verify, names can be entered in witness fields.
     Then user verifies witness fields accept names and same names are reflected in signature fields
-     #Verify, names updated from signature are reflected in witness names fields.
+
+  Scenario: Verify, names updated from signature are reflected in witness names fields.
     Then user verifies names updated in signature fields are reflected in the witness fields
-     #Verify, text can be entered in address, city, zip fields.
+
+  Scenario: Verify, text can be entered in address, city, zip fields.
     Then user verifies both the address, city, zip fields accept correct text
-     #Verify, form is auto saved.
+
+  Scenario: Verify, form is auto saved.
     And user click on the "RW 04" form
     And user click on the "RW 03" form
     Then user verifies all the input fields in the form are auto saved
