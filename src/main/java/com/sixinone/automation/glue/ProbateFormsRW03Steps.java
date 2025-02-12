@@ -30,6 +30,13 @@ public class ProbateFormsRW03Steps {
         PageFactory.probateFormsRW03Page().clickOnRWForm(formToSelect);
     }
 
+    @Then("user verifies all the input fields in the form are auto saved")
+    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that all the input fields in the form are auto saved");
+        PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
+
     @Then("user selects the aka checkbox")
     public void userSelectsTheAkaCheckbox() throws AutomationException {
         CommonSteps.logInfo("user selects the aka checkbox");
@@ -85,32 +92,32 @@ public class ProbateFormsRW03Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user click on print form button")
-    public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
-        CommonSteps.logInfo("user click on print form button");
-        PageFactory.probateFormsRW03Page().clickOnPrintFormButton();
+//    @When("user click on print form button")
+//    public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
+//        CommonSteps.logInfo("user click on print form button");
+//        PageFactory.probateFormsRW03Page().clickOnPrintFormButton();
+//
+//    }
 
-    }
-
-    @Then("verify form can be printed in pdf with name as {string}")
-    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
-        CommonSteps.logInfo("verify form can be printed in pdf");
-        PageFactory.probateFormsRW03Page().verifyFormPrintedInPDFForm(formName);
-    }
-
-
-    @And("verify all the fields entered are correctly reflected in the pdf")
-    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
-        CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
-        PageFactory.probateFormsRW03Page().verifyAllFieldsInDownloadedPDF();
-    }
-
-    @Then("user verifies all the input fields in the form are auto saved")
-    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that all the input fields in the form are auto saved");
-        PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
-        CommonSteps.takeScreenshot();
-    }
+//    @Then("verify form can be printed in pdf with name as {string}")
+//    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
+//        CommonSteps.logInfo("verify form can be printed in pdf");
+//        PageFactory.probateFormsRW03Page().verifyFormPrintedInPDFForm(formName);
+//    }
+//
+//
+//    @And("verify all the fields entered are correctly reflected in the pdf")
+//    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
+//        CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
+//        PageFactory.probateFormsRW03Page().verifyAllFieldsInDownloadedPDF();
+//    }
+//
+//    @Then("user verifies all the input fields in the form are auto saved")
+//    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+//        CommonSteps.logInfo("Verified that all the input fields in the form are auto saved");
+//        PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+//        CommonSteps.takeScreenshot();
+//    }
 
     @When("user resets the RW03 form")
     public void userResetsTheRWForm() throws AutomationException {

@@ -345,23 +345,25 @@ public class ProbateFormsRW02Steps {
     }
 
 
-//    @When("user click on print form button")
-//    public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
-//        CommonSteps.logInfo("user click on print form button");
-//        PageFactory.probateFormsRW02Page().clickOnPrintFormButton();
-//    }
-//
-//    @Then("verify form can be printed in pdf with name as {string}")
-//    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
-//        CommonSteps.logInfo("verify form can be printed in pdf");
-//        PageFactory.probateFormsRW02Page().verifyFormPrintedInPDFForm(formName);
-//    }
+    @When("user click on print form button")
+    public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
+        CommonSteps.logInfo("user click on print form button");
+        PageFactory.probateFormsRW02Page().clickOnPrintFormButton();
+    }
 
-//    @And("verify all the fields entered are correctly reflected in the pdf")
-//    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
-//        CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
-//        PageFactory.probateFormsRW02Page().verifyAllFieldsInDownloadedPDF();
-//    }
+    @Then("verify form can be printed in pdf with name as {string}")
+    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
+        CommonSteps.logInfo("verify form can be printed in pdf");
+        PageFactory.probateFormsRW02Page().verifyFormPrintedInPDFForm(formName);
+    }
+
+    @And("verify all the fields entered are correctly reflected in the pdf")
+    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
+        CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
+        PageFactory.probateFormsRW02Page().verifyAllFieldsInDownloadedPDF();
+    }
+
+
 
 
     @When("user resets the RW02 form")

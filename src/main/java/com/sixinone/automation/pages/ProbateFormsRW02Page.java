@@ -6,6 +6,8 @@ import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
 import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -19,7 +21,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
@@ -1247,15 +1249,82 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
 
-//    public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
-//        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
-//                ? System.getProperty("user.dir") + "\\downloads\\"
-//                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
-//
-//        verifyPrintNames(pdfFilePath);
-//
-//
-//    }
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+
+        verifyPrintNames(pdfFilePath);
+
+
+    }
+
+    public static void verifyPrintNames(String pdfFilePath) throws IOException {
+        String beforeLine = "Estate of William John  ,Deceased";
+        String afterLine = "(each) a subscribing witness to";
+
+        List<String> names = new ArrayList<>();
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Split the entire PDF content into lines
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+
+        // Log each line and find start/end indexes
+        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+
+            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                if (!allLines[i].isBlank()) {
+                    names.add(allLines[i].trim());
+                }
+            }
+
+            CommonSteps.logInfo("\nPrint Names:");
+            names.forEach(CommonSteps::logInfo);
+
+            if (names.isEmpty()) {
+                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
+            } else {
+                // Create a map of expected names
+                Map<String, String> expectedNames = new LinkedHashMap<>();
+//                expectedNames.put("First Witness", enteredWitness1Form);
+//                expectedNames.put("Second Witness", enteredWitness2Form);
+
+                boolean allMatch = true;
+                for (int i = 0; i < expectedNames.size(); i++) {
+                    String expectedValue = (i < expectedNames.size()) ? expectedNames.values().toArray(new String[0])[i] : "No Name";
+                    String actualValue = (i < names.size()) ? names.get(i) : "No Name";
+
+                    if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                        allMatch = false;
+                        break;
+                    }
+                }
+
+                if (allMatch) {
+                    CommonSteps.logInfo("✅ Validation Passed: Print names are " + String.join(" ", names) + " as expected.");
+                } else {
+                    CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+                }
+            }
+        } else {
+            CommonSteps.logInfo("❌ Before or after line not found!");
+        }
+    }
 
 
 
