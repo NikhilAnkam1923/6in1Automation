@@ -650,7 +650,6 @@ public class ProbateFormsRW03Page extends BasePage {
         DriverFactory.drivers.get().findElement(By.xpath(W1_CITY_STATE_ZIP)).clear();
         DriverFactory.drivers.get().findElement(By.xpath(W2_CITY_STATE_ZIP)).clear();
         driverUtil.getWebElement(W2_CITY_STATE_ZIP).sendKeys(Keys.ENTER);
-        driverUtil.getWebElementAndScroll(SHOW_AKA_CHECkBOX).click();
         WebDriverUtil.waitForAWhile();
     }
 }
