@@ -494,6 +494,7 @@ public class ProbateFormsRW01Page extends BasePage {
 
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
 
+        waitForVisibleElement(By.xpath(String.format(ROLE_RADIO_BTN_XPATH,"NONE")),5);
         driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH,"NONE")).click();
 
         driverUtil.getWebElement(CONTACT_RADIO_BTN_XPATH).click();

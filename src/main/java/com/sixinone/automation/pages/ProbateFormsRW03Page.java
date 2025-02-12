@@ -643,6 +643,7 @@ public class ProbateFormsRW03Page extends BasePage {
         Actions actions = new Actions(DriverFactory.drivers.get());
         actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
         WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+        waitForVisibleElement(By.xpath(SHOW_AKA_CHECkBOX),5);
         driverUtil.getWebElementAndScroll(SHOW_AKA_CHECkBOX).click();
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
