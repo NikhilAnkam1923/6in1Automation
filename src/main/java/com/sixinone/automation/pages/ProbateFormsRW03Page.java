@@ -8,7 +8,6 @@ import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -23,8 +22,6 @@ import java.io.IOException;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +80,7 @@ public class ProbateFormsRW03Page extends BasePage {
     private static final String SELECTED_SUFFIX = "//label[text()='Suffix']/following-sibling::div/div/div/div[contains(@class,'select__single-value')]";
     private static final String DECEDENT_SSN_FIELD = "//input[@name='decedentInfo.SSN']";
     private static final String SELECTED_MARITAL_STATUS = "//div[text()='Life Details']/following-sibling::div//input[@name='lifeDetails.ageAtDeath'] /ancestor::div[contains(@class, 'col-')]/following-sibling::div//label[contains(text(), 'Marital Status')] /following-sibling::div//div[contains(@class, 'select__single-value')]";
+    private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
 
     static String enteredFirstName;
     static String enteredMiddleName;
@@ -362,38 +360,27 @@ public class ProbateFormsRW03Page extends BasePage {
         String witness1CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
         String witness2CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
 
-        WebElement witnessStreetAddress1 = driverUtil.getWebElement(WITNESS_1_STREET_ADDRESS);
-        WebElement witnessStreetAddress2 = driverUtil.getWebElement(WITNESS_2_STREET_ADDRESS);
-        WebElement witnessCityStateZip1 = driverUtil.getWebElement(W1_CITY_STATE_ZIP);
-        WebElement witnessCityStateZip2 = driverUtil.getWebElement(W2_CITY_STATE_ZIP);
-
         fillFieldWithKeyStrokes(WITNESS_1_STREET_ADDRESS, "RW03Form.witness1streetAddress");
         fillFieldWithKeyStrokes(WITNESS_2_STREET_ADDRESS, "RW03Form.witness2streetAddress");
         fillFieldWithKeyStrokes(W1_CITY_STATE_ZIP, "RW03Form.witness1CityStateZip");
         fillFieldWithKeyStrokes(W2_CITY_STATE_ZIP, "RW03Form.witness2CityStateZip");
 
-        String enteredWitness1streetAddress = witnessStreetAddress1.getAttribute("value");
-        if (!enteredWitness1streetAddress.equals(witness1streetAddress)) {
+        enteredStreetAddress1Form = driverUtil.getWebElement(WITNESS_1_STREET_ADDRESS).getAttribute("value");
+        if (!enteredStreetAddress1Form.equals(witness1streetAddress)) {
             throw new AutomationException("Field did not accept the entered Street Address: " + witness1streetAddress);
         }
-        String enteredWitness2streetAddress = witnessStreetAddress2.getAttribute("value");
-        if (!enteredWitness2streetAddress.equals(witness2streetAddress)) {
+        enteredStreetAddress2Form = driverUtil.getWebElement(WITNESS_2_STREET_ADDRESS).getAttribute("value");
+        if (!enteredStreetAddress2Form.equals(witness2streetAddress)) {
             throw new AutomationException("Field did not accept the entered Street Address: " + witness2streetAddress);
         }
-        String enteredWitness1CityStateZip = witnessCityStateZip1.getAttribute("value");
-        if (!enteredWitness1CityStateZip.equals(witness1CityStateZip)) {
+        enteredCityStateZip1Form = driverUtil.getWebElement(W1_CITY_STATE_ZIP).getAttribute("value");
+        if (!enteredCityStateZip1Form.equals(witness1CityStateZip)) {
             throw new AutomationException("Field did not accept the entered city,state, zip: " + witness1CityStateZip);
         }
-        String enteredWitness2CityStateZip = witnessCityStateZip2.getAttribute("value");
-        if (!enteredWitness2CityStateZip.equals(witness2CityStateZip)) {
+        enteredCityStateZip2Form = driverUtil.getWebElement(W2_CITY_STATE_ZIP).getAttribute("value");
+        if (!enteredCityStateZip2Form.equals(witness2CityStateZip)) {
             throw new AutomationException("Field did not accept the entered city,state, zip: " + witness2CityStateZip);
         }
-
-        enteredStreetAddress1Form = driverUtil.getWebElement(WITNESS_1_STREET_ADDRESS).getAttribute("value");
-        enteredStreetAddress2Form = driverUtil.getWebElement(WITNESS_2_STREET_ADDRESS).getAttribute("value");
-        enteredCityStateZip1Form = driverUtil.getWebElement(W1_CITY_STATE_ZIP).getAttribute("value");
-        enteredCityStateZip2Form = driverUtil.getWebElement(W2_CITY_STATE_ZIP).getAttribute("value");
-
     }
 
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
@@ -629,12 +616,7 @@ public class ProbateFormsRW03Page extends BasePage {
         }
     }
 
-    public void verifyAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
-        String expectedW1streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1streetAddress").toString();
-        String expectedW2streetAddress = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2streetAddress").toString();
-        String expectedW1cityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
-        String expectedW2cityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
-
+    public void verifyAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException {
         WebDriverUtil.waitForAWhile(1);
 
         String actualWitness1Name = getFieldValue(WITNESS_NAME_1, "value");
@@ -650,14 +632,17 @@ public class ProbateFormsRW03Page extends BasePage {
         verifyField("Witness Name 2", enteredWitness2Form, actualWitness2Name);
         verifyField("Witness Signature 1", enteredWitness1SignForm, actualWitness1Sign);
         verifyField("Witness Signature 2", enteredWitness2SignForm, actualWitness2Sign);
-        verifyField("Witness Street Address 1", expectedW1streetAddress, actualW1streetAddress);
-        verifyField("Witness Street Address 2", expectedW2streetAddress, actualW2streetAddress);
-        verifyField("Witness City, State, Zip 1", expectedW1cityStateZip, actualW1cityStateZip);
-        verifyField("Witness City, State, Zip 2", expectedW2cityStateZip, actualW2cityStateZip);
+        verifyField("Witness Street Address 1", enteredStreetAddress1Form, actualW1streetAddress);
+        verifyField("Witness Street Address 2", enteredStreetAddress2Form, actualW2streetAddress);
+        verifyField("Witness City, State, Zip 1", enteredCityStateZip1Form, actualW1cityStateZip);
+        verifyField("Witness City, State, Zip 2", enteredCityStateZip2Form, actualW2cityStateZip);
     }
 
     public void userResetsTheRWForm() throws AutomationException {
-        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile(2);
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
         driverUtil.getWebElementAndScroll(SHOW_AKA_CHECkBOX).click();
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
@@ -666,5 +651,6 @@ public class ProbateFormsRW03Page extends BasePage {
         DriverFactory.drivers.get().findElement(By.xpath(W1_CITY_STATE_ZIP)).clear();
         DriverFactory.drivers.get().findElement(By.xpath(W2_CITY_STATE_ZIP)).clear();
         driverUtil.getWebElement(W2_CITY_STATE_ZIP).sendKeys(Keys.ENTER);
+        WebDriverUtil.waitForAWhile();
     }
 }
