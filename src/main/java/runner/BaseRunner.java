@@ -40,7 +40,8 @@ public class BaseRunner implements ITest {
 	}
 
 	@Test(priority = 1, description = "Runs Cucumber Feature", dataProvider = "features")
-	public void feature(CucumberFeature feature) {
+	public void
+	feature(CucumberFeature feature) {
 		try {
 			String uri = feature.getUri();
 			uri = uri.substring(uri.lastIndexOf("/")+1);
