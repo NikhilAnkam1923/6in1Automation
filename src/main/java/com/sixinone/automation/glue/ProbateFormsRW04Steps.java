@@ -63,4 +63,18 @@ public class ProbateFormsRW04Steps {
         PageFactory.probateFormsRW04Page().verifyFieldsAreEditableAndYellowInBackground();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies names can be entered in both the witness fields and reflected below in signature fields")
+    public void userVerifiesNamesCanBeEnteredInBothTheWitnessFieldsAndReflectedBelowInSignatureFields() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that names can be entered in both the witness fields and reflected below in signature fields");
+        PageFactory.probateFormsRW04Page().verifyNamesCanBeEnteredAndReflectedInSignatureFields();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies names updated in Signature fields are reflected in the Witness fields")
+    public void userVerifiesNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that names updated in Signature fields are reflected in the Witness fields");
+        PageFactory.probateFormsRW04Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInWitnessFields();
+        CommonSteps.takeScreenshot();
+    }
 }

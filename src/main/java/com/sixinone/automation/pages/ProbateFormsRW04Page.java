@@ -262,4 +262,86 @@ public class ProbateFormsRW04Page extends BasePage{
         verifyFieldIsEditableAndYellowBackground("Witness 1 City, State, Zip",W1_CITY_STATE_ZIP);
         verifyFieldIsEditableAndYellowBackground("Witness 2 City, State, Zip",W2_CITY_STATE_ZIP);
     }
+
+    public void verifyNamesCanBeEnteredAndReflectedInSignatureFields() throws AutomationException, IOException, ParseException {
+        String witness1name = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1name").toString();
+        String witness2name = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2name").toString();
+
+        WebElement witnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
+        WebElement witnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
+
+        fillFieldWithKeyStrokes(WITNESS_NAME_1,"RW03Form.witness1name");
+        fillFieldWithKeyStrokes(WITNESS_NAME_2,"RW03Form.witness2name");
+
+        enteredWitness1 = witnessName1.getAttribute("value");
+        if (!enteredWitness1.equals(witness1name)) {
+            throw new AutomationException("Witness name field did not accept the entered name: " + witness1name);
+        }
+        enteredWitness2 = witnessName2.getAttribute("value");
+        if (!enteredWitness2.equals(witness2name)) {
+            throw new AutomationException("Witness name field did not accept the entered name: " + witness2name);
+        }
+
+
+        WebElement WitnessSignature1 = driverUtil.getWebElement(WITNESS_1_SIGNATURE);
+        WebElement WitnessSignature2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
+
+        String reflectedNameInSignature1 = WitnessSignature1.getAttribute("value");
+        if (!reflectedNameInSignature1.equals(enteredWitness1)) {
+            throw new AutomationException("The signature field does not reflect the entered witness name. " +
+                    "Expected: " + enteredWitness1 + ", Found: " + reflectedNameInSignature1);
+        }
+        String reflectedNameInSignature2 = WitnessSignature2.getAttribute("value");
+        if (!reflectedNameInSignature2.equals(enteredWitness2)) {
+            throw new AutomationException("The signature field does not reflect the entered witness name. " +
+                    "Expected: " + enteredWitness2 + ", Found: " + reflectedNameInSignature2);
+        }
+    }
+
+    public void clearField(String fieldXpath) throws AutomationException {
+        WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
+        fieldElement.sendKeys(Keys.CONTROL + "a");
+        fieldElement.sendKeys(Keys.BACK_SPACE);
+    }
+
+    private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
+        for (char c : value.toCharArray()) {
+            field.sendKeys(String.valueOf(c));
+        }
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void verifyNamesUpdatedInSignatureFieldsAreReflectedInWitnessFields() throws AutomationException, IOException, ParseException {
+        WebElement witnessSign1 = driverUtil.getWebElement(WITNESS_1_SIGNATURE);
+        WebElement witnessSign2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
+
+        clearField(WITNESS_1_SIGNATURE);
+        fillFieldWithKeyStrokes(WITNESS_1_SIGNATURE,"RW03Form.witness1signature");
+        clearField(WITNESS_2_SIGNATURE);
+        fillFieldWithKeyStrokes(WITNESS_2_SIGNATURE,"RW03Form.witness2signature");
+
+        enteredWitness1Sign = witnessSign1.getAttribute("value");
+        enteredWitness2Sign = witnessSign2.getAttribute("value");
+
+        WebElement WitnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
+        WebElement WitnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
+
+        String reflectedName1 = WitnessName1.getAttribute("value");
+        if (!reflectedName1.equals(enteredWitness1Sign)) {
+            throw new AutomationException("The name field does not reflect the entered witness signature. " +
+                    "Expected: " + enteredWitness1Sign + ", Found: " + reflectedName1);
+        }
+        String reflectedName2 = WitnessName2.getAttribute("value");
+        if (!reflectedName2.equals(enteredWitness2Sign)) {
+            throw new AutomationException("The name field does not reflect the entered witness signature. " +
+                    "Expected: " + enteredWitness2Sign + ", Found: " + reflectedName2);
+        }
+
+        enteredWitness1 = WitnessName1.getAttribute("value");
+        enteredWitness2 = WitnessName2.getAttribute("value");
+    }
+
 }

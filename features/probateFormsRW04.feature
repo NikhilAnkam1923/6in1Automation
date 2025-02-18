@@ -4,12 +4,12 @@ Feature: 6in1 probate form RW04 Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "$6in1_url"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                           | password |
-      | nikhilankam+14@benchmarkit.solutions | Watch@22 |
+      | user-email                               | password  |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "William John" Estate
@@ -32,6 +32,13 @@ Feature: 6in1 probate form RW04 Feature
 
   Scenario: Verify, witnesses  name, address and signature should be editable and in yellow background.
     Then user verifies witnesses name, address and signature fields are Editable and in yellow background
+
+  Scenario: Verify, names can be entered in witness fields.
+    Then user verifies names can be entered in both the witness fields and reflected below in signature fields
+
+  Scenario: Verify, names updated from signature are reflected in witness names fields.
+    Then user verifies names updated in Signature fields are reflected in the Witness fields
+
 
   @Setup
   Scenario:SETUP: Close Browser
