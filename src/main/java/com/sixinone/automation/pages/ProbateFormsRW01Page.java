@@ -469,36 +469,23 @@ public class ProbateFormsRW01Page extends BasePage {
 
     public void userResetsTheRWForm() throws AutomationException {
         driverUtil.getWebElement("//body").click();
-
         driverUtil.getWebElement(FIRST_PAGE_BTN).click();
-
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
-
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
-
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement(ACCEPT_BTN).click();
-
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
-
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH,"NONE")).click();
-
         driverUtil.getWebElement(CONTACT_RADIO_BTN_XPATH).click();
-
         driverUtil.getWebElement(PROCEED_BTN).click();
-
         WebDriverUtil.waitForAWhile();
     }
 }

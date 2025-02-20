@@ -77,4 +77,24 @@ public class ProbateFormsRW04Steps {
         PageFactory.probateFormsRW04Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInWitnessFields();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies both The address, city, zip fields accept correct text")
+    public void userVerifiesBothTheAddressCityZipFieldsAcceptCorrectText() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that both The address, city, zip fields accept correct text");
+        PageFactory.probateFormsRW04Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies all the input fields in the Form are auto saved")
+    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that all the input fields in the Form are auto saved");
+        PageFactory.probateFormsRW04Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user reset the RW04 form")
+    public void userResetTheRWForm() throws AutomationException {
+        CommonSteps.logInfo("user reset the RW04 form");
+        PageFactory.probateFormsRW04Page().userResetTheRWForm();
+    }
 }

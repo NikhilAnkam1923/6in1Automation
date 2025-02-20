@@ -9,7 +9,7 @@ import java.io.IOException;
 @CucumberOptions(
 
 
-        features = {"features/globalContacts.feature"},
+        features = {"features"},
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )

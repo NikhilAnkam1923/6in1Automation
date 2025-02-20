@@ -39,6 +39,16 @@ Feature: 6in1 probate form RW04 Feature
   Scenario: Verify, names updated from signature are reflected in witness names fields.
     Then user verifies names updated in Signature fields are reflected in the Witness fields
 
+  Scenario: Verify, text can be entered in address, city, zip fields.
+    Then user verifies both The address, city, zip fields accept correct text
+
+  Scenario: Verify, form is auto saved.
+    And user click on the "RW 03" form
+    And user click on the "RW 04" form
+    Then user verifies all the input fields in the Form are auto saved
+
+  Scenario: Reset the RW04 form
+    When user reset the RW04 form
 
   @Setup
   Scenario:SETUP: Close Browser

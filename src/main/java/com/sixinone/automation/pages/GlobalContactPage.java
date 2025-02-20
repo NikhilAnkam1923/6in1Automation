@@ -103,6 +103,7 @@ public class GlobalContactPage extends BasePage {
 
 
     public static void tabNavigation(String tab) throws AutomationException, IOException {
+        scrollPageUp();
         driverUtil.getWebElement(String.format("//div[@class='nav']//div//*[contains(text(),'%s')]//parent::a", tab)).click();
     }
 
@@ -280,6 +281,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public static String filterByName() throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(NAME_FILTER_INPUT).click();
         clearField(NAME_FILTER_INPUT);
         driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(firstName);
@@ -287,6 +289,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public static String filterByEntity() throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(NAME_FILTER_INPUT).click();
         clearField(NAME_FILTER_INPUT);
         driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(entityName);
@@ -294,6 +297,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public String filterByContactType(String contactType) throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER));
         waitForVisibleElement(By.xpath(CONTACT_TYPE_FILTER_INPUT));
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT).click();
         driverUtil.getWebElement(CONTACT_TYPE_FILTER_INPUT).sendKeys(contactType);
@@ -310,6 +314,7 @@ public class GlobalContactPage extends BasePage {
     public void globalContactEdit(String contactType) throws AutomationException, IOException, ParseException, InterruptedException {
         firstName = filterByName();
         filterByContactType(contactType.replace("Global Contact", "").trim());
+        waitForInvisibleElement(By.xpath(SPINNER));
         waitForVisibleElement(By.xpath(ACTIONS_BUTTON));
         driverUtil.getWebElement(ACTIONS_BUTTON).click();
         clickButtonEdit();
@@ -981,6 +986,7 @@ public class GlobalContactPage extends BasePage {
         String expectedBarID = CommonUtil.getJsonPath("Create").get("Create.barId").toString();
         String expectedCAF = CommonUtil.getJsonPath("Create").get("Create.caf").toString();
 
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         filterByName();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         String contactName = lastName+", "+firstName;
