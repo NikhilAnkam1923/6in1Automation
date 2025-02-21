@@ -9,10 +9,10 @@ Feature: 6in1 probate form RW01 Feature
     Then user verifies the Home page
     Examples:
       | user-email                           | password |
-      | nikhilankam+14@benchmarkit.solutions | Watch@22 |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
-    When user opens "William John" Estate
+    When user opens "Devis Karl" Estate
     And user save entered Estate Information
 
   Scenario: Verify, file no. is displayed at the top of the form.
