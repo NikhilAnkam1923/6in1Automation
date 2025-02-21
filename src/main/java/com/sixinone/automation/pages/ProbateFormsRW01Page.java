@@ -69,7 +69,6 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String SECTION_4_LAST_NAME = "//div[@id='attorneySection']//input[@class='greyInput ']";
     private static final String SECTION_4_SIDE_BAR_TITLE = "//div[@class='modal-title h4' and text()='Select Attorney/Correspondent']";
     private static final String SECTION_5_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Select the fiduciary contact.']";
-    private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String ROLE_RADIO_BTN_XPATH = "//input[@id='%s']";
     private static final String CONTACT_RADIO_BTN_XPATH = "//input[@name='attorneyContact' and @type='radio']";
     private static final String PROCEED_BTN = "//button[text()='Proceed']";
@@ -321,11 +320,6 @@ public class ProbateFormsRW01Page extends BasePage {
     public void navigateToProbateFormsTab() throws AutomationException {
         waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
         driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
-    public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH,formToSelect)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 

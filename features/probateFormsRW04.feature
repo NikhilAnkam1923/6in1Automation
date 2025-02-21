@@ -13,11 +13,11 @@ Feature: 6in1 probate form RW04 Feature
 
   Scenario: Open Estate
     When user opens "William John" Estate
-    And user saves entered Estate information
+    And user saves entered Estate information for "RW04" form
 
   Scenario: Verify, correct title is displayed on the form's header.
-    When user navigate to the Probate forms Tab
-    And user click on the "RW 04" Form
+    When user navigates to the probate forms tab
+    And user click on the "RW 04" form
     And user selects the aka checkbox
     Then user verifies correct estate, county and AKA names are displayed under header
 
@@ -31,24 +31,24 @@ Feature: 6in1 probate form RW04 Feature
     Then user verifies decedent name on the form is auto populated from the estate
 
   Scenario: Verify, witnesses  name, address and signature should be editable and in yellow background.
-    Then user verifies witnesses name, address and signature fields are Editable and in yellow background
+    Then user verifies witnesses name, address and signature fields of "RW04" form are editable and in yellow background
 
   Scenario: Verify, names can be entered in witness fields.
     Then user verifies names can be entered in both the witness fields and reflected below in signature fields
 
   Scenario: Verify, names updated from signature are reflected in witness names fields.
-    Then user verifies names updated in Signature fields are reflected in the Witness fields
+    Then user verifies names updated in signature fields of "RW04" form are reflected in the witness fields
 
   Scenario: Verify, text can be entered in address, city, zip fields.
-    Then user verifies both The address, city, zip fields accept correct text
+    Then user verifies both the address, city, zip fields of "RW04" form accept correct text
 
   Scenario: Verify, form is auto saved.
     And user click on the "RW 03" form
     And user click on the "RW 04" form
-    Then user verifies all the input fields in the Form are auto saved
+    Then user verifies all the input fields in the "RW04" form are auto saved
 
   Scenario: Reset the RW04 form
-    When user reset the RW04 form
+    When user resets the "RW04" form
 
   @Setup
   Scenario:SETUP: Close Browser

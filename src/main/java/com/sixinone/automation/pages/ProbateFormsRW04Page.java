@@ -11,8 +11,6 @@ import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
-import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
-
 public class ProbateFormsRW04Page extends BasePage{
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
@@ -151,20 +149,9 @@ public class ProbateFormsRW04Page extends BasePage{
         enteredFileNumberPart3 = driverUtil.getWebElement(FILE_NUMBER_PART_3).getAttribute("value");
     }
 
-    public void navigateToProbateFormsTab() throws AutomationException {
-        waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
-        driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
     @Override
     String getName() {
         return "";
-    }
-
-    public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH,formToSelect)).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     public void verifyEstateCountyAKANameUnderHeader() throws AutomationException {

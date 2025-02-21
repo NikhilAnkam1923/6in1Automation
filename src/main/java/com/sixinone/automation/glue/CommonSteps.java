@@ -23,7 +23,9 @@ import cucumber.runtime.ScenarioImpl;
 import gherkin.events.PickleEvent;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.log4j.PropertyConfigurator;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.SkipException;
@@ -35,6 +37,9 @@ import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
+import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class CommonSteps {
 
@@ -51,6 +56,13 @@ public class CommonSteps {
     public static final String METHOD_NAME = "NAME";
     public static final String TAB_XPATH = "//div[@class='nav-item']//a//span[contains(text(),'%s')]";
     public static final String BTN_XPATH = "//button[contains(text(),'%s')]";
+    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
+    public static final String SPINNER = "//div[contains(@class,'spinner')]";
+    private static final String TEMP_ESTATE = "//a[text()='%s']";
+    public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
+    private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
+    private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
+    public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -129,11 +141,8 @@ public class CommonSteps {
     @Then("^user go to application \"([^\"]*)\"$")
     public void launch(String url) throws InterruptedException {
         if (url.startsWith("$")) {
-            System.out.println("URL: "+url);
             String env = PropertyReader.getEnv();
-            System.out.println("Env:"+env);
             url = System.getProperty(env + "." + url.substring(1, url.length()));
-            System.out.println("URL: "+url);
         }
         logInfo("User go to application " + url);
         launchApplication(url);
@@ -410,5 +419,189 @@ public class CommonSteps {
             driverUtil.waitForAWhile(5);
             btn.click();
         }
+    }
+
+    @When("^user opens \"([^\"]*)\" Estate$")
+    public void userOpensEstate(String estateName) throws AutomationException {
+        CommonSteps.logInfo("user opens "+estateName+" Estate");
+        driverUtil.getWebElement(NAME_FILTER_INPUT).click();
+        WebElement fieldElement = driverUtil.getWebElement(NAME_FILTER_INPUT);
+        fieldElement.sendKeys(Keys.CONTROL + "a");
+        fieldElement.sendKeys(Keys.BACK_SPACE);
+        driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(estateName);
+        driverUtil.getWebElement(String.format(TEMP_ESTATE,estateName)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    @And("^user saves entered Estate information for \"([^\"]*)\" form$")
+    public void userSavesEstateInformation(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user saves Estate Information for "+formName+" form");
+
+        switch (formName) {
+            case "RW01":
+                PageFactory.probateFormsRW01Page().userSavesEstateInfo();
+                break;
+            case "RW02":
+                PageFactory.probateFormsRW02Page().userSavesEstateInfo();
+                break;
+            case "RW03":
+                PageFactory.probateFormsRW03Page().userSavesEstateInfo();
+                break;
+            case "RW04":
+                PageFactory.probateFormsRW04Page().userSavesEstateInfo();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @When("user navigates to the probate forms tab")
+    public void userNavigatesToTheProbateFormsTab() throws AutomationException {
+        CommonSteps.logInfo("user navigates to the probate forms tab");
+        waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
+        driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    @Then("^user click on the \"([^\"]*)\" form$")
+    public void userClickOnTheRW(String formToSelect) throws AutomationException {
+        CommonSteps.logInfo("user click on the "+formToSelect+" form");
+        driverUtil.getWebElement(String.format(RW_FORM_XPATH, formToSelect)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    @Then("user selects the aka checkbox")
+    public void userSelectsTheAkaCheckbox() throws AutomationException {
+        CommonSteps.logInfo("user selects the aka checkbox");
+        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
+    }
+
+    @When("user navigates to Estate contacts tab")
+    public void userNavigatesToTheEstateContactsTab() throws AutomationException {
+        CommonSteps.logInfo("user navigates to the estate contacts tab");
+        waitForInvisibleElement(By.xpath(SPINNER));
+        waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
+        driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    @Then("^user saves entered Information of all the Estate Contacts for \"([^\"]*)\" form$")
+    public void userSavesEnteredInformationOfAllTheEstateContacts(String formName) throws AutomationException {
+        CommonSteps.logInfo("user saves entered Information of all the Estate Contacts");
+
+        switch (formName) {
+            case "RW02":
+                PageFactory.probateFormsRW02Page().userSavesEstateContactsInfo();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @When("^user resets the \"([^\"]*)\" form$")
+    public void userResetsTheRWForm(String formName) throws AutomationException {
+        CommonSteps.logInfo("user resets the "+formName+" form");
+
+        switch (formName) {
+            case "RW01":
+                PageFactory.probateFormsRW01Page().userResetsTheRWForm();
+                break;
+            case "RW02":
+                PageFactory.probateFormsRW02Page().userResetsTheRWForm();
+                break;
+            case "RW03":
+                PageFactory.probateFormsRW03Page().userResetsTheRWForm();
+                break;
+            case "RW04":
+                PageFactory.probateFormsRW04Page().userResetTheRWForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies the auto-populated fields of \"([^\"]*)\" form are not editable$")
+    public void userVerifiesTheAutoPopulatedFieldsAreNotEditable(String formName) throws Exception {
+        CommonSteps.logInfo("Verified that the auto-populated fields of "+formName+" are not editable");
+
+        switch (formName) {
+            case "RW02":
+                PageFactory.probateFormsRW02Page().verifyAutoPopulatedFieldsAreNotEditable();
+                break;
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyAutoPopulatedFieldsAreNotEditable();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies witnesses name, address and signature fields of \"([^\"]*)\" form are editable and in yellow background$")
+    public void userVerifiesWitnessesNameAddressAndSignatureFieldsAreEditableAndInYellowBackground(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that witnesses name, address and signature fields of "+formName+" form are editable and in yellow background");
+
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyFieldsAreEditableAndYellowBackground();
+                break;
+            case "RW04":
+                PageFactory.probateFormsRW04Page().verifyFieldsAreEditableAndYellowInBackground();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies names updated in signature fields of \"([^\"]*)\" form are reflected in the witness fields$")
+    public void userVerifiesNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that names updated in signature fields of "+formName+" form are reflected in the witness fields");
+
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields();
+                break;
+            case "RW04":
+                PageFactory.probateFormsRW04Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInWitnessFields();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies both the address, city, zip fields of \"([^\"]*)\" form accept correct text$")
+    public void userVerifiesBothTheAddressCityZipFieldsAcceptCorrectText(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that both the address, city, zip fields of "+formName+" form accept correct text");
+
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
+                break;
+            case "RW04":
+                PageFactory.probateFormsRW04Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies all the input fields in the \"([^\"]*)\" form are auto saved$")
+    public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that all the input fields in the "+formName+" form are auto saved");
+
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+                break;
+            case "RW04":
+                PageFactory.probateFormsRW04Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
     }
 }

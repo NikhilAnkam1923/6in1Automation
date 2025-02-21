@@ -13,11 +13,11 @@ Feature: 6in1 probate form RW01 Feature
 
   Scenario: Open Estate
     When user opens "William John" Estate
-    And user save entered Estate Information
+    And user saves entered Estate information for "RW01" form
 
   Scenario: Verify, file no. is displayed at the top of the form.
-    When user navigates to the Probate forms tab
-    And user clicks on the "RW 01" form
+    When user navigates to the probate forms tab
+    And user click on the "RW 01" form
     Then user verifies correct file number is displayed at the top of the form
 
   Scenario: Verify, decedent information is displayed in section1 of the form.
@@ -75,7 +75,7 @@ Feature: 6in1 probate form RW01 Feature
     Then user verifies the selected contacts are displayed under executor, co-executor and secondary co-executor
 
   Scenario: Reset the RW01 form
-    When user reset the RW01 form
+    When user resets the "RW01" form
 
   @Setup
   Scenario:SETUP: Close Browser

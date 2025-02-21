@@ -4,42 +4,11 @@ import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
 public class ProbateFormsRW02Steps {
-
-    @When("^user opens \"([^\"]*)\" Estate$")
-    public void userOpensEstate(String estateName) throws AutomationException {
-        CommonSteps.logInfo("user opens "+estateName+" Estate");
-        PageFactory.probateFormsRW02Page().openEstate(estateName);
-    }
-
-    @When("user navigate to the Probate forms tab")
-    public void userNavigateToTheProbateFormsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigate to the Probate forms tab");
-        PageFactory.probateFormsRW02Page().navigateToProbateFormsTab();
-    }
-
-    @Then("^user clicks on the \"([^\"]*)\" Form$")
-    public void userClickOnTheRW(String formToSelect) throws AutomationException {
-        CommonSteps.logInfo("user click on the "+formToSelect+" form");
-        PageFactory.probateFormsRW02Page().clickOnRWForm(formToSelect);
-    }
-
-    @When("user navigates to Estate contacts tab")
-    public void userNavigatesToTheEstateContactsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigates to the estate contacts tab");
-        PageFactory.probateFormsRW02Page().navigateToEstateContactsTab();
-    }
-
-    @And("user saves entered Estate Information")
-    public void userSavesEstateInformation() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user saves Estate Information");
-        PageFactory.probateFormsRW02Page().userSavesEstateInfo();
-    }
 
     @Then("user verifies correct county name is fetched from the decedent info")
     public void userVerifiesCorrectCountyNameIsFetchedFromTheDecedentInfo() throws AutomationException {
@@ -55,23 +24,10 @@ public class ProbateFormsRW02Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user verifies the auto-populated fields are not Editable")
-    public void userVerifiesTheAutoPopulatedFieldsAreNotEditable() throws Exception {
-        CommonSteps.logInfo("Verified that the auto-populated fields are not editable");
-        PageFactory.probateFormsRW02Page().verifyAutoPopulatedFieldsAreNotEditable();
-        CommonSteps.takeScreenshot();
-    }
-
     @Then("user verifies multiple aka names can be added separated by comma")
     public void userVerifiesMultipleAkaNamesCanBeAddedSeparatedByComma() throws IOException, ParseException, AutomationException {
         CommonSteps.logInfo("Verified that multiple aka names are added separated by comma");
         PageFactory.probateFormsRW02Page().verifyMultipleAkaNamesCanBeAddedSeparatedByComma();
-    }
-
-    @Then("user saves entered Information of all the Estate Contacts")
-    public void userSavesEnteredInformationOfAllTheEstateContacts() throws AutomationException {
-        CommonSteps.logInfo("user saves entered Information of all the Estate Contacts");
-        PageFactory.probateFormsRW02Page().userSavesEstateContactsInfo();
     }
 
     @Then("user verifies Fiduciary type of contacts are displayed at the top")
@@ -341,11 +297,5 @@ public class ProbateFormsRW02Steps {
         PageFactory.probateFormsRW02Page().verifyAttorneyContactSInformationIsDisplayedCorrectly();
         CommonSteps.logInfo("Verified that selected attorney contact's information is displayed correctly");
         CommonSteps.takeScreenshot();
-    }
-
-    @When("user resets the RW02 form")
-    public void userResetsTheRWForm() throws AutomationException {
-        CommonSteps.logInfo("user resets the RW02 form");
-        PageFactory.probateFormsRW02Page().userResetsTheRWForm();
     }
 }

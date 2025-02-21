@@ -27,9 +27,6 @@ public class ProbateFormsRW02Page extends BasePage{
     String getName() { return ""; }
 
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
-    public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
-    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
-    private static final String TEMP_ESTATE = "//a[text()='%s']";
     private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -72,7 +69,6 @@ public class ProbateFormsRW02Page extends BasePage{
     private static final String RW_AKA_FIELD1 = "//input[@name='alsoKnownAs1']";
     private static final String RW_AKA_FIELD2 = "//input[@name='alsoKnownAs2']";
     private static final String RW_AKA_FIELD3 = "//input[@name='alsoKnownAs3']";
-    public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static final String DECEDENT_TAB = "//span[text()='Decedent']";
     public static final String ESTATE_NAMES = "//tbody//td[@aria-colindex='1']";
     private static final String ESTATE_CONTACT_FIRST_NAME_FIELD = "//input[@name='contact.firstName']";
@@ -261,24 +257,6 @@ public class ProbateFormsRW02Page extends BasePage{
         fieldElement.sendKeys(Keys.BACK_SPACE);
     }
 
-    public static void filterByName(String name) throws AutomationException {
-        driverUtil.getWebElement(NAME_FILTER_INPUT).click();
-        clearField(NAME_FILTER_INPUT);
-        driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(name);
-    }
-
-    public void openEstate(String estateName) throws AutomationException {
-        filterByName(estateName);
-        driverUtil.getWebElement(String.format(TEMP_ESTATE,estateName)).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
-    public void navigateToProbateFormsTab() throws AutomationException {
-        waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
-        driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
     public void clickOnRWForm(String formToSelect) throws AutomationException {
         driverUtil.getWebElement(String.format(RW_FORM_XPATH,formToSelect)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
@@ -454,13 +432,6 @@ public class ProbateFormsRW02Page extends BasePage{
         DriverFactory.drivers.get().findElement(By.xpath(RW_AKA_FIELD3)).clear();
         driverUtil.getWebElement(RW_AKA_FIELD3).sendKeys(akaName3);
         CommonSteps.takeScreenshot();
-    }
-
-    public void navigateToEstateContactsTab() throws AutomationException {
-        waitForInvisibleElement(By.xpath(SPINNER));
-        waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
-        driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
-        waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     private boolean clickNextPage() throws AutomationException {

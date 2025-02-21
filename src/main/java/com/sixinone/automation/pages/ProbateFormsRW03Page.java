@@ -32,7 +32,6 @@ import static com.sixinone.automation.util.WebDriverUtil.*;
 public class ProbateFormsRW03Page extends BasePage {
 
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
-    public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
     private static final String DECEDENT_DISPLAY_NAME = "//input[@name='decedentInfo.displayNameAs']";
     private static final String DECEDENT_ALSO_KNOWN_AS = "//textarea[@name='decedentInfo.alsoKnownAs']";
@@ -63,8 +62,6 @@ public class ProbateFormsRW03Page extends BasePage {
     private static final String FILE_NUMBER_PART_1 = "//input[@name='fileNumberPart1']";
     private static final String FILE_NUMBER_PART_2 = "//input[@name='fileNumberPart2']";
     private static final String FILE_NUMBER_PART_3 = "//input[@name='fileNumberPart3']";
-    private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
-    private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
     private static final String RW_INPUT_FIELD_XPATH = "//input[@type='text' and @value='%s']";
     private static final String WITNESS_NAME_1 = "//input[@name='witness1Name']";
     private static final String WITNESS_NAME_2 = "//input[@name='witness2Name']";
@@ -184,25 +181,9 @@ public class ProbateFormsRW03Page extends BasePage {
         }
     }
 
-    public void navigateToEstateContactsTab() throws AutomationException {
-        waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
-        driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
-
     @Override
     String getName() {
         return "";
-    }
-
-    public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH, formToSelect)).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
-    public void selectAKACheckbox() throws AutomationException {
-        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
     }
 
     private static void verifyField(String fieldName, String expectedValue, String actualValue) throws AutomationException {
