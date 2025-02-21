@@ -4,12 +4,12 @@ Feature: 6in1 Global Contacts Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://pumashoes.benchmarkits.in"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                           | password |
-      | nikhilankam+11@benchmarkit.solutions | Watch@22 |
+      | user-email                               | password  |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: User verify user is on the Global Contact Creation page
     When user navigate to "Global Contact"

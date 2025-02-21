@@ -221,7 +221,7 @@ public class EstateCreationPage extends BasePage {
     public static void verifyAutoFetchedFieldsOfDomicileAddress() throws AutomationException, IOException, ParseException {
         String expectedCity = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.city").toString();
         String expectedState = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.state").toString();
-        String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.country").toString();
+        String expectedCounty = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.county").toString();
         WebDriverUtil.waitForAWhile(2);
         String actualCity = getFieldValue(DOMICILE_CITY, "value");
         String actualState = getFieldValue(DOMICILE_STATE, "text");
@@ -399,7 +399,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
-        selectCheckBox("Use model accounting");
+        selectCheckBox("Testate");
         clearField(DATE_OF_WILL);
         fillField(DATE_OF_WILL, "EstateCreate.dateOfWill");
 

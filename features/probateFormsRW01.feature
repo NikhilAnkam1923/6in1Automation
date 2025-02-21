@@ -4,7 +4,7 @@ Feature: 6in1 probate form RW01 Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "$6in1_url"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
@@ -12,7 +12,7 @@ Feature: 6in1 probate form RW01 Feature
       | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
-    When user opens "Devis Karl" Estate
+    When user opens "William John" Estate
     And user save entered Estate Information
 
   Scenario: Verify, file no. is displayed at the top of the form.
