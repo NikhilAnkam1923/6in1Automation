@@ -351,21 +351,6 @@ public class ProbateFormsRW02Steps {
         PageFactory.probateFormsRW02Page().clickOnPrintFormButton();
     }
 
-    @Then("verify form can be printed in pdf with name as {string}")
-    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
-        CommonSteps.logInfo("verify form can be printed in pdf");
-        PageFactory.probateFormsRW02Page().verifyFormPrintedInPDFForm(formName);
-    }
-
-    @And("verify all the fields entered are correctly reflected in the pdf")
-    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInThePdf() throws AutomationException, IOException {
-        CommonSteps.logInfo("verify all the fields entered are correctly reflected in the pdf");
-        PageFactory.probateFormsRW02Page().verifyAllFieldsInDownloadedPDF();
-    }
-
-
-
-
     @When("user resets the RW02 form")
     public void userResetsTheRWForm() throws AutomationException {
         CommonSteps.logInfo("user resets the RW02 form");

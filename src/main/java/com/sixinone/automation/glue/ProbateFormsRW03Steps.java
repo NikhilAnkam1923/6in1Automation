@@ -92,12 +92,6 @@ public class ProbateFormsRW03Steps {
         CommonSteps.takeScreenshot();
     }
 
-//    @When("user click on print form button")
-//    public void userClickOnPrintFormButton() throws AutomationException, InterruptedException, AWTException {
-//        CommonSteps.logInfo("user click on print form button");
-//        PageFactory.probateFormsRW03Page().clickOnPrintFormButton();
-//
-//    }
 
 //    @Then("verify form can be printed in pdf with name as {string}")
 //    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {

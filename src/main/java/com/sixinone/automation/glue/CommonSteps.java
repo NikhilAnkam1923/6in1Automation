@@ -129,11 +129,11 @@ public class CommonSteps {
     @Then("^user go to application \"([^\"]*)\"$")
     public void launch(String url) throws InterruptedException {
         if (url.startsWith("$")) {
-            System.out.println("URL: "+url);
+            System.out.println("URL: " + url);
             String env = PropertyReader.getEnv();
-            System.out.println("Env:"+env);
+            System.out.println("Env:" + env);
             url = System.getProperty(env + "." + url.substring(1, url.length()));
-            System.out.println("URL: "+url);
+            System.out.println("URL: " + url);
         }
         logInfo("User go to application " + url);
         launchApplication(url);
@@ -258,8 +258,8 @@ public class CommonSteps {
              * if scenario is not present in TestRail then we need to create test case for this scenario.
              * update test scenario result.
              */
-            if (!tags.contains("@Setup") && "true".equalsIgnoreCase(System.getProperty("TestRail"))){
-                if(testCaseMapping.get(scenario.getName()) == null) {
+            if (!tags.contains("@Setup") && "true".equalsIgnoreCase(System.getProperty("TestRail"))) {
+                if (testCaseMapping.get(scenario.getName()) == null) {
                     //Check test scenario in test trail if not present create one.
                     String uri = scenario.getUri();
                     String directoryPath = uri.substring(0, uri.lastIndexOf("/"));
@@ -391,7 +391,7 @@ public class CommonSteps {
         driverUtil.waitForElementClickable(By.xpath(String.format(TAB_XPATH, tabText)));
         try {
             driverUtil.clickUsingJavaScript(String.format(TAB_XPATH, tabText));
-        }catch(Exception e) {
+        } catch (Exception e) {
             driverUtil.waitForAWhile(5);
             tab.click();
         }
@@ -406,9 +406,53 @@ public class CommonSteps {
         driverUtil.waitForElementClickable(By.xpath(String.format(BTN_XPATH, btnext)));
         try {
             driverUtil.clickUsingJavaScript(String.format(BTN_XPATH, btnext));
-        }catch(Exception e) {
+        } catch (Exception e) {
             driverUtil.waitForAWhile(5);
             btn.click();
         }
     }
+
+    @Then("verify form can be printed in pdf with name as {string}")
+    public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verify form can be printed in PDF for form: " + formName);
+
+        switch (formName) {
+            case "Rw01":
+                PageFactory.probateFormsRW01Page().verifyFormPrintedInPDFForm(formName);
+                break;
+            case "Rw02":
+                PageFactory.probateFormsRW02Page().verifyFormPrintedInPDFForm(formName);
+                break;
+            case "Rw03":
+                PageFactory.probateFormsRW03Page().verifyFormPrintedInPDFForm(formName);
+                break;
+//            case "RW04":
+//                PageFactory.probateFormsRW04Page().verifyFormPrintedInPDFForm(formName);
+//                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+
+    @And("verify all the fields entered are correctly reflected in the {string} pdf")
+    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInTheRwPdf(String formName) throws AutomationException, IOException {
+        CommonSteps.logInfo("Verify form can be printed in PDF");
+
+        switch (formName) {
+            case "Rw01":
+                PageFactory.probateFormsRW01Page().verifyAllFieldsInDownloadedPDF();
+                break;
+
+            case "Rw02":
+                PageFactory.probateFormsRW02Page().verifyAllFieldsInDownloadedPDF();
+                break;
+            case "Rw03":
+                PageFactory.probateFormsRW03Page().verifyAllFieldsInDownloadedPDF();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
 }

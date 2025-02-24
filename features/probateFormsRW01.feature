@@ -8,7 +8,7 @@ Feature: 6in1 probate form RW01 Feature
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                           | password |
+      | user-email                               | password  |
       | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
@@ -73,6 +73,11 @@ Feature: 6in1 probate form RW01 Feature
 
   Scenario: Verify the selected contacts are displayed under executor, co executor and secondary co executor.
     Then user verifies the selected contacts are displayed under executor, co-executor and secondary co-executor
+
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw01'
+    And verify all the fields entered are correctly reflected in the 'Rw01' pdf
 
   Scenario: Reset the RW01 form
     When user reset the RW01 form

@@ -127,7 +127,7 @@ Feature: 6in1 probate form RW02 Feature
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'Rw02'
-#    And verify all the fields entered are correctly reflected in the pdf  // still working
+    And verify all the fields entered are correctly reflected in the 'Rw02' pdf
 
   Scenario: Reset the RW02 form
     When user resets the RW02 form
