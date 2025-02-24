@@ -76,7 +76,6 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String SECTION_4_LAST_NAME = "//div[@id='attorneySection']//input[@class='greyInput ']";
     private static final String SECTION_4_SIDE_BAR_TITLE = "//div[@class='modal-title h4' and text()='Select Attorney/Correspondent']";
     private static final String SECTION_5_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Select the fiduciary contact.']";
-    private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String ROLE_RADIO_BTN_XPATH = "//input[@id='%s']";
     private static final String CONTACT_RADIO_BTN_XPATH = "//input[@name='attorneyContact' and @type='radio']";
     private static final String PROCEED_BTN = "//button[text()='Proceed']";
@@ -309,7 +308,10 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void clickOnLastNameField() throws AutomationException {
-        driverUtil.getWebElementAndScroll(SECTION_4_LAST_NAME).click();
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.sendKeys(Keys.PAGE_DOWN).perform();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
     }
 
     public void verifySideBarIsDisplayed() throws AutomationException {
@@ -329,11 +331,6 @@ public class ProbateFormsRW01Page extends BasePage {
     public void navigateToProbateFormsTab() throws AutomationException {
         waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
         driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
-    public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH, formToSelect)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
@@ -481,6 +478,7 @@ public class ProbateFormsRW01Page extends BasePage {
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
@@ -533,59 +531,49 @@ public class ProbateFormsRW01Page extends BasePage {
             throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
     }
 
-    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
-        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
-                ? System.getProperty("user.dir") + "\\downloads\\"
-                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
 
-        verifyLastName(pdfFilePath);
-        verifyExecutorOrAdministratorLastName(pdfFilePath);
-        verifyCoExecutorOrAdministratorLastName(pdfFilePath);
-        verifySecondaryCoExecutorOrAdministratorLastName(pdfFilePath);
-    }
-
-    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
-        String targetLineIdentifier = "Last Name Suffix First Name MI"; // Identifier for the target line
-        String expectedLastName = "Winter"; // The expected last name for validation
-
-        PDDocument document = PDDocument.load(new File(pdfFilePath));
-        String pdfText = new PDFTextStripper().getText(document);
-        document.close();
-
-        // Split the entire PDF content into lines
-        String[] allLines = pdfText.split("\\r?\\n");
-
-        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
-        int lastTargetIndex = -1; // To track the last occurrence of the identifier
-
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
-            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
-
-            // Update the index if this is an occurrence of the target line
-            if (trimmedLine.contains(targetLineIdentifier)) {
-                lastTargetIndex = i;
-            }
-        }
-
-        // Process the last occurrence
-        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
-            String lastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the last occurrence
-            CommonSteps.logInfo("Extracted Last Name Line: " + lastNameLine);
-
-            // Extract last name (assuming it's the first word in the line)
-            String[] words = lastNameLine.split("\\s+"); // Split by spaces
-            String actualLastName = words.length > 0 ? words[0] : "No Name";
-
-            if (expectedLastName.equalsIgnoreCase(actualLastName)) {
-                CommonSteps.logInfo("✅ Validation Passed: Last Name is '" + actualLastName + "' as expected.");
-            } else {
-                throw new AutomationException("❌ Validation Failed: Expected '" + expectedLastName + "', but found '" + actualLastName + "'.");
-            }
-        } else {
-            throw new AutomationException("❌ Target line identifier not found in the PDF.");
-        }
-    }
+//    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Last Name Suffix First Name MI"; // Identifier for the target line
+//        String expectedLastName = "Winter"; // The expected last name for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+//
+//            // Update the index if this is an occurrence of the target line
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i;
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String lastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the last occurrence
+//            CommonSteps.logInfo("Extracted Last Name Line: " + lastNameLine);
+//
+//            // Extract last name (assuming it's the first word in the line)
+//            String[] words = lastNameLine.split("\\s+"); // Split by spaces
+//            String actualLastName = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedLastName.equalsIgnoreCase(actualLastName)) {
+//                CommonSteps.logInfo("✅ Validation Passed: Last Name is '" + actualLastName + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedLastName + "', but found '" + actualLastName + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
 
 //    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
 //        String targetLineIdentifier = "Last Name Suffix First Name MI"; // Identifier for the target line
@@ -639,128 +627,202 @@ public class ProbateFormsRW01Page extends BasePage {
 //        }
 //    }
 
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+
+        verifyLastName(pdfFilePath);
+        verifyExecutorOrAdministratorLastName(pdfFilePath);
+        verifyCoExecutorOrAdministratorLastName(pdfFilePath);
+        verifySecondaryCoExecutorOrAdministratorLastName(pdfFilePath);
+    }
+
+    public static void verifyFields(String pdfFilePath, String targetLineIdentifier, String fieldName, String expectedValue)
+            throws IOException, AutomationException {
+        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
+            String pdfText = new PDFTextStripper().getText(document);
+            document.close();
+            // Split the PDF text into lines
+            String[] allLines = pdfText.split("\\r?\\n");
+
+            CommonSteps.logInfo("Scanning PDF for: " + targetLineIdentifier);
+            int lastTargetIndex = -1; // Track last occurrence of the identifier
+
+            for (int i = 0; i < allLines.length; i++) {
+                String trimmedLine = allLines[i].trim();
+                //             CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+
+                if (trimmedLine.contains(targetLineIdentifier)) {
+                    lastTargetIndex = i; // Store last occurrence index
+                }
+            }
+
+            if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+                String extractedLine = allLines[lastTargetIndex + 1].trim(); // Next line after identifier
+                CommonSteps.logInfo("Extracted [" + fieldName + "] Line: " + extractedLine);
+
+                // Extract first word as the field value
+                String actualValue = extractedLine.split("\\s+")[0].trim();
+                actualValue = actualValue.isEmpty() ? "No Data Found" : actualValue; // Handle empty extraction
+
+                CommonSteps.logInfo("✅ Extracted [" + fieldName + "]: " + actualValue);
+
+                if (expectedValue.equalsIgnoreCase(actualValue)) {
+                    CommonSteps.logInfo("✅ Validation Passed: [" + fieldName + "] is '" + actualValue + "' as expected.");
+                } else {
+                    throw new AutomationException("❌ Validation Failed: Expected [" + fieldName + "] = '" + expectedValue + "', but found '" + actualValue + "'.");
+                }
+            } else {
+                throw new AutomationException("❌ Target identifier [" + targetLineIdentifier + "] not found in the PDF.");
+            }
+        } catch (IOException e) {
+            throw new IOException("❌ Error reading PDF file: " + e.getMessage(), e);
+        }
+    }
+
+    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
+        verifyFields(pdfFilePath, "Last Name Suffix First Name MI", "Last Name", "Winter");
+    }
 
     public static void verifyExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
-        String targetLineIdentifier = "Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
-        String expectedExecutorOrAdministratorLastNameLine = "Winter"; // The expected ExecutorOrAdministratorLastName for validation
-
-        PDDocument document = PDDocument.load(new File(pdfFilePath));
-        String pdfText = new PDFTextStripper().getText(document);
-        document.close();
-
-        // Split the entire PDF content into lines
-        String[] allLines = pdfText.split("\\r?\\n");
-
-        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
-        int lastTargetIndex = -1; // To track the last occurrence of the identifier
-
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
-
-            // Update the index if this is an occurrence of the target line
-            if (trimmedLine.contains(targetLineIdentifier)) {
-                lastTargetIndex = i;
-            }
-        }
-
-        // Process the last occurrence
-        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
-            String executorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the last occurrence
-            CommonSteps.logInfo("Extracted Last Name Line: " + executorOrAdministratorLastNameLine);
-
-            // Extract last name (assuming it's the first word in the line)
-            String[] words = executorOrAdministratorLastNameLine.split("\\s+"); // Split by spaces
-            String actualexecutorOrAdministratorLastName = words.length > 0 ? words[0] : "No Name";
-
-            if (expectedExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualexecutorOrAdministratorLastName)) {
-                CommonSteps.logInfo("✅ Validation Passed: ExecutorOrAdministratorLastName is '" + actualexecutorOrAdministratorLastName + "' as expected.");
-            } else {
-                throw new AutomationException("❌ Validation Failed: Expected '" + expectedExecutorOrAdministratorLastNameLine + "', but found '" + actualexecutorOrAdministratorLastName + "'.");
-            }
-        } else {
-            throw new AutomationException("❌ Target line identifier not found in the PDF.");
-        }
+        verifyFields(pdfFilePath, "Executor/Administrator Last Name (if necessary) Suffix First Name MI",
+                "Executor/Administrator Last Name", "Winter");
     }
 
     public static void verifyCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
-        String targetLineIdentifier = "Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
-        String expectedCoExecutorOrAdministratorLastNameLine = "Winter"; // Expected Last Name for validation
-
-        PDDocument document = PDDocument.load(new File(pdfFilePath));
-        String pdfText = new PDFTextStripper().getText(document);
-        document.close();
-
-        // Split the entire PDF content into lines
-        String[] allLines = pdfText.split("\\r?\\n");
-
-        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
-        int lastTargetIndex = -1; // To track the last occurrence of the identifier
-
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
-
-            if (trimmedLine.contains(targetLineIdentifier)) {
-                lastTargetIndex = i; // Store the last occurrence
-            }
-        }
-
-        // Process the last occurrence
-        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
-            String extractedCoExecutorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // Next line after the identifier
-            CommonSteps.logInfo("Extracted Last Name Line: " + extractedCoExecutorOrAdministratorLastNameLine);
-
-            // Extract last name (assuming it's the first word)
-            String[] words = extractedCoExecutorOrAdministratorLastNameLine.split("\\s+");
-            String actualCoExecutorOrAdministratorLastNameLine = words.length > 0 ? words[0] : "No Name";
-
-            if (expectedCoExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualCoExecutorOrAdministratorLastNameLine)) {
-                CommonSteps.logInfo("✅ Validation Passed: Co-Executor Or Administrator Last Name is '" + actualCoExecutorOrAdministratorLastNameLine + "' as expected.");
-            } else {
-                throw new AutomationException("❌ Validation Failed: Expected '" + expectedCoExecutorOrAdministratorLastNameLine + "', but found '" + actualCoExecutorOrAdministratorLastNameLine + "'.");
-            }
-        } else {
-            throw new AutomationException("❌ Target line identifier not found in the PDF.");
-        }
+        verifyFields(pdfFilePath, "Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI",
+                "Co-Executor/Administrator Last Name", "Winter");
     }
 
     public static void verifySecondaryCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
-        String targetLineIdentifier = "Secondary Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
-        String expectedSecondaryCoExecutorOrAdministratorLastNameLine = "Winter"; // Expected Last Name for validation
-
-        PDDocument document = PDDocument.load(new File(pdfFilePath));
-        String pdfText = new PDFTextStripper().getText(document);
-        document.close();
-
-        // Split the entire PDF content into lines
-        String[] allLines = pdfText.split("\\r?\\n");
-
-        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
-        int lastTargetIndex = -1; // To track the last occurrence of the identifier
-
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
-
-            if (trimmedLine.contains(targetLineIdentifier)) {
-                lastTargetIndex = i; // Store the last occurrence
-            }
-        }
-
-        // Process the last occurrence
-        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
-            String extractedSecondaryCoExecutorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // Next line after the identifier
-            CommonSteps.logInfo("Extracted Last Name Line: " + extractedSecondaryCoExecutorOrAdministratorLastNameLine);
-
-            // Extract last name (assuming it's the first word)
-            String[] words = extractedSecondaryCoExecutorOrAdministratorLastNameLine.split("\\s+");
-            String actualSecondaryCoExecutorOrAdministratorLastNameLine = words.length > 0 ? words[0] : "No Name";
-
-            if (expectedSecondaryCoExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualSecondaryCoExecutorOrAdministratorLastNameLine)) {
-                CommonSteps.logInfo("✅ Validation Passed: Secondary Co-Executor Or Administrator Last Name is '" + actualSecondaryCoExecutorOrAdministratorLastNameLine + "' as expected.");
-            } else {
-                throw new AutomationException("❌ Validation Failed: Expected '" + expectedSecondaryCoExecutorOrAdministratorLastNameLine + "', but found '" + actualSecondaryCoExecutorOrAdministratorLastNameLine + "'.");
-            }
-        } else {
-            throw new AutomationException("❌ Target line identifier not found in the PDF.");
-        }
+        verifyFields(pdfFilePath, "Secondary Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI",
+                "Secondary Co-Executor/Administrator Last Name", "Winter");
     }
 }
+
+
+//    public static void verifyExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
+//        String expectedExecutorOrAdministratorLastNameLine = "Winter"; // The expected ExecutorOrAdministratorLastName for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//
+//            // Update the index if this is an occurrence of the target line
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i;
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String executorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the last occurrence
+//            CommonSteps.logInfo("Extracted Last Name Line: " + executorOrAdministratorLastNameLine);
+//
+//            // Extract last name (assuming it's the first word in the line)
+//            String[] words = executorOrAdministratorLastNameLine.split("\\s+"); // Split by spaces
+//            String actualexecutorOrAdministratorLastName = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualexecutorOrAdministratorLastName)) {
+//                CommonSteps.logInfo("✅ Validation Passed: ExecutorOrAdministratorLastName is '" + actualexecutorOrAdministratorLastName + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedExecutorOrAdministratorLastNameLine + "', but found '" + actualexecutorOrAdministratorLastName + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+//
+//    public static void verifyCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
+//        String expectedCoExecutorOrAdministratorLastNameLine = "Winter"; // Expected Last Name for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i; // Store the last occurrence
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String extractedCoExecutorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // Next line after the identifier
+//            CommonSteps.logInfo("Extracted Last Name Line: " + extractedCoExecutorOrAdministratorLastNameLine);
+//
+//            // Extract last name (assuming it's the first word)
+//            String[] words = extractedCoExecutorOrAdministratorLastNameLine.split("\\s+");
+//            String actualCoExecutorOrAdministratorLastNameLine = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedCoExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualCoExecutorOrAdministratorLastNameLine)) {
+//                CommonSteps.logInfo("✅ Validation Passed: Co-Executor Or Administrator Last Name is '" + actualCoExecutorOrAdministratorLastNameLine + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedCoExecutorOrAdministratorLastNameLine + "', but found '" + actualCoExecutorOrAdministratorLastNameLine + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+//
+//    public static void verifySecondaryCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Secondary Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
+//        String expectedSecondaryCoExecutorOrAdministratorLastNameLine = "Winter"; // Expected Last Name for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i; // Store the last occurrence
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String extractedSecondaryCoExecutorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // Next line after the identifier
+//            CommonSteps.logInfo("Extracted Last Name Line: " + extractedSecondaryCoExecutorOrAdministratorLastNameLine);
+//
+//            // Extract last name (assuming it's the first word)
+//            String[] words = extractedSecondaryCoExecutorOrAdministratorLastNameLine.split("\\s+");
+//            String actualSecondaryCoExecutorOrAdministratorLastNameLine = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedSecondaryCoExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualSecondaryCoExecutorOrAdministratorLastNameLine)) {
+//                CommonSteps.logInfo("✅ Validation Passed: Secondary Co-Executor Or Administrator Last Name is '" + actualSecondaryCoExecutorOrAdministratorLastNameLine + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedSecondaryCoExecutorOrAdministratorLastNameLine + "', but found '" + actualSecondaryCoExecutorOrAdministratorLastNameLine + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+

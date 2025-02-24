@@ -341,12 +341,7 @@ public class EstateContactsPage extends BasePage {
     public void verifyRoleAssignedSuccessfully(String contactType) throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles assigned successfully.")));
-//        String lastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-//        String firstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-//        String individualName = lastName + ", " + firstName;
-//        String entityName = CommonUtil.getJsonPath("Create").get("Create.entityName").toString();
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAccountant").toString();
-//        String displayName = contactType.equals("Individual") ? individualName : entityName;
 
         filterByContactName(addedContactName);
         waitForVisibleElement(By.xpath(String.format(NAME_AND_ROLE_ROW, addedContactName, role)));

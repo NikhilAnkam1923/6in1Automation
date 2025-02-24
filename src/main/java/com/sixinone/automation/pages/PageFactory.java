@@ -20,9 +20,9 @@ public class PageFactory {
         estateCreationPage = new EstateCreationPage();
         estateContactsPage = new EstateContactsPage();
         probateFormsRW03Page = new ProbateFormsRW03Page();
-        probateFormsRW01Page =new ProbateFormsRW01Page();
-        probateFormsRW02Page =new ProbateFormsRW02Page();
-        probateFormsRW04Page =new ProbateFormsRW04Page();
+        probateFormsRW01Page = new ProbateFormsRW01Page();
+        probateFormsRW02Page = new ProbateFormsRW02Page();
+        probateFormsRW04Page = new ProbateFormsRW04Page();
     }
 
     public static void init() throws IOException {
