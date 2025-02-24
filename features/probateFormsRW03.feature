@@ -19,19 +19,19 @@ Feature: 6in1 probate form RW03 Feature
     When user navigates to the probate forms tab
     And user click on the "RW 03" form
     Then user selects the aka checkbox
-    And user verifies the county, estate and aka names are auto-populated on the form
+    And user verifies the county, estate and aka names are auto-populated on the "RW03" form
 
   Scenario: Verify, the auto-populated fields are not editable.
     Then user verifies the auto-populated fields of "RW03" form are not editable
 
   Scenario: Verify, witness's name is not auto populated and the fields are empty.
-    Then user verifies witness's name is not auto populated and the fields are empty
+    Then user verifies witness's name is not auto populated and the fields of "RW03" form are empty
 
   Scenario: Verify, witnesses  name, address and signature should be editable and in yellow background.
     Then user verifies witnesses name, address and signature fields of "RW03" form are editable and in yellow background
 
   Scenario: Verify, names can be entered in witness fields.
-    Then user verifies witness fields accept names and same names are reflected in signature fields
+    Then user verifies witness fields of "RW03" form accept names and same names are reflected in signature fields
 
   Scenario: Verify, names updated from signature are reflected in witness names fields.
     Then user verifies names updated in signature fields of "RW03" form are reflected in the witness fields
