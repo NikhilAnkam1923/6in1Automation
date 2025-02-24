@@ -424,6 +424,7 @@ public class CommonSteps {
     @When("^user opens \"([^\"]*)\" Estate$")
     public void userOpensEstate(String estateName) throws AutomationException {
         CommonSteps.logInfo("user opens "+estateName+" Estate");
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(NAME_FILTER_INPUT).click();
         WebElement fieldElement = driverUtil.getWebElement(NAME_FILTER_INPUT);
         fieldElement.sendKeys(Keys.CONTROL + "a");
@@ -449,6 +450,9 @@ public class CommonSteps {
                 break;
             case "RW04":
                 PageFactory.probateFormsRW04Page().userSavesEstateInfo();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().userSavesEstateInfo();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -488,7 +492,6 @@ public class CommonSteps {
     @Then("^user saves entered Information of all the Estate Contacts for \"([^\"]*)\" form$")
     public void userSavesEnteredInformationOfAllTheEstateContacts(String formName) throws AutomationException {
         CommonSteps.logInfo("user saves entered Information of all the Estate Contacts");
-
         switch (formName) {
             case "RW02":
                 PageFactory.probateFormsRW02Page().userSavesEstateContactsInfo();
@@ -501,7 +504,6 @@ public class CommonSteps {
     @When("^user resets the \"([^\"]*)\" form$")
     public void userResetsTheRWForm(String formName) throws AutomationException {
         CommonSteps.logInfo("user resets the "+formName+" form");
-
         switch (formName) {
             case "RW01":
                 PageFactory.probateFormsRW01Page().userResetsTheRWForm();
@@ -515,6 +517,9 @@ public class CommonSteps {
             case "RW04":
                 PageFactory.probateFormsRW04Page().userResetTheRWForm();
                 break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().userResetsTheRWForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -523,13 +528,15 @@ public class CommonSteps {
     @Then("^user verifies the auto-populated fields of \"([^\"]*)\" form are not editable$")
     public void userVerifiesTheAutoPopulatedFieldsAreNotEditable(String formName) throws Exception {
         CommonSteps.logInfo("Verified that the auto-populated fields of "+formName+" are not editable");
-
         switch (formName) {
             case "RW02":
                 PageFactory.probateFormsRW02Page().verifyAutoPopulatedFieldsAreNotEditable();
                 break;
             case "RW03":
                 PageFactory.probateFormsRW03Page().verifyAutoPopulatedFieldsAreNotEditable();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyAutoPopulatedFieldsAreNotEditable();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -540,13 +547,15 @@ public class CommonSteps {
     @Then("^user verifies witnesses name, address and signature fields of \"([^\"]*)\" form are editable and in yellow background$")
     public void userVerifiesWitnessesNameAddressAndSignatureFieldsAreEditableAndInYellowBackground(String formName) throws AutomationException {
         CommonSteps.logInfo("Verified that witnesses name, address and signature fields of "+formName+" form are editable and in yellow background");
-
         switch (formName) {
             case "RW03":
                 PageFactory.probateFormsRW03Page().verifyFieldsAreEditableAndYellowBackground();
                 break;
             case "RW04":
                 PageFactory.probateFormsRW04Page().verifyFieldsAreEditableAndYellowInBackground();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyFieldsAreEditableAndYellowBackground();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -557,13 +566,15 @@ public class CommonSteps {
     @Then("^user verifies names updated in signature fields of \"([^\"]*)\" form are reflected in the witness fields$")
     public void userVerifiesNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields(String formName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that names updated in signature fields of "+formName+" form are reflected in the witness fields");
-
         switch (formName) {
             case "RW03":
                 PageFactory.probateFormsRW03Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields();
                 break;
             case "RW04":
                 PageFactory.probateFormsRW04Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInWitnessFields();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyNamesUpdatedInSignatureFieldsAreReflectedInTheWitnessFields();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -574,13 +585,15 @@ public class CommonSteps {
     @Then("^user verifies both the address, city, zip fields of \"([^\"]*)\" form accept correct text$")
     public void userVerifiesBothTheAddressCityZipFieldsAcceptCorrectText(String formName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that both the address, city, zip fields of "+formName+" form accept correct text");
-
         switch (formName) {
             case "RW03":
                 PageFactory.probateFormsRW03Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
                 break;
             case "RW04":
                 PageFactory.probateFormsRW04Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyTheAddressCityZipFieldsAcceptCorrectText();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -591,13 +604,63 @@ public class CommonSteps {
     @Then("^user verifies all the input fields in the \"([^\"]*)\" form are auto saved$")
     public void userVerifiesAllTheInputFieldsInTheFormAreAutoSaved(String formName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that all the input fields in the "+formName+" form are auto saved");
-
         switch (formName) {
             case "RW03":
                 PageFactory.probateFormsRW03Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
                 break;
             case "RW04":
                 PageFactory.probateFormsRW04Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyAllTheInputFieldsInTheFormAreAutoSaved();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user verifies the county, estate and aka names are auto-populated on the \"([^\"]*)\" form$")
+    public void userVerifiesTheCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm(String formName) throws AutomationException {
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.logInfo("Verified that the county, estate and aka names are auto-populated on the "+formName+" form");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies witness's name is not auto populated and the fields of \"([^\"]*)\" form are empty$")
+    public void userVerifiesWitnessesSNameIsNotAutoPopulatedAndTheFieldsAreEmpty(String formName) throws Exception {
+        CommonSteps.logInfo("Verified that witness's name is not auto populated and the fields are empty");
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyWitnessesSNameIsNotAutoPopulatedAndTheFieldsAreEmpty();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyWitnessesSNameIsNotAutoPopulatedAndTheFieldsAreEmpty();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies witness fields of \"([^\"]*)\" form accept names and same names are reflected in signature fields$")
+    public void userVerifiesWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that witness fields accept names and same names are reflected in signature fields");
+        switch (formName) {
+            case "RW03":
+                PageFactory.probateFormsRW03Page().verifyWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields();
+                break;
+            case "RW05":
+                PageFactory.probateFormsRW05Page().verifyWitnessFieldsAcceptNamesAndSameNamesAreReflectedInSignatureFields();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

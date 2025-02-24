@@ -59,7 +59,10 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String RW_INPUT_FIELD_XPATH = "//input[@type='text' and @value='%s']";
     private static final String RW1_SECTION4_INPUT_FIELD_XPATH = "//div[@id='attorneySection']//input[@type='text' and @value='%s']";
     private static final String RW1_SECTION5_INPUT_FIELD_XPATH = "//div[@id='executorSection']//input[@type='text' and @value='%s']";
+    private static final String EXECUTOR_LAST_NAME_FIELD = "//div[@id='executorSection']//td[contains(@class,'tr17 td48 mr-left')]//input[@type='text']";
     private static final String RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH = "//p[contains(text(),'Secondary Co-Executor')]/ancestor::td/ancestor::tr/following-sibling::tr//input[@type='text' and @value='%s']";
+    private static final String CO_EXECUTOR_LAST_NAME_FIELD = "//p[text()='Co-Executor/Administrator Last Name (if necessary)']/ancestor::td/ancestor::tr/following-sibling::tr//td[@class='tr17 mr-left']//input[@type='text' ]";
+    private static final String SECONDARY_C0_EXECUTOR_LAST_NAME = "//p[text()='Secondary Co-Executor/Administrator Last Name (if necessary)']/ancestor::td/ancestor::tr/following-sibling::tr//td[@class='tr17 mr-left']//input[@type='text' ]";
     private static final String SECTION_XPATH = "//span[text()='%s']";
     private static final String SECTION_2_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Click a box']";
     private static final String CHECKBOX_XPATH_DYNAMIC = "//p[text()='%s']//input[@type='checkbox']";
@@ -117,8 +120,13 @@ public class ProbateFormsRW01Page extends BasePage {
     static String enteredFileNumberPart1;
     static String enteredFileNumberPart2;
     static String enteredFileNumberPart3;
+    static String attorneyLastNameForm;
+    static String executorLastNameForm;
+    static String coExecutorLastNameForm;
+    static String secondaryCoExecutorLastNameForm;
 
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
+        WebDriverUtil.waitForAWhile();
         enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
         enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
         enteredLastName = driverUtil.getWebElement(DECEDENT_LAST_NAME_FIELD).getAttribute("value");
@@ -293,6 +301,7 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifyOtherCheckboxTextAreaIsEnabled() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement otherTextArea = driverUtil.getWebElement(OTHER_TEXT_AREA);
         if (!otherTextArea.isEnabled()) {
             throw new AutomationException("Other Text Area is not enabled.");
@@ -300,6 +309,9 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void clickOnLastNameField() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.sendKeys(Keys.PAGE_DOWN).perform();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
     }
 
@@ -414,6 +426,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection4(enteredCity);
         verifyFetchedInputFieldOfSection4(enteredState);
         verifyFetchedInputFieldOfSection4(enteredZip);
+
+        attorneyLastNameForm = driverUtil.getWebElement(SECTION_4_LAST_NAME).getAttribute("value");
     }
 
     public void verifySelectedContactsAreDisplayedUnderExecutorCoExecutorAndSecondaryCoExecutor() throws AutomationException, IOException, ParseException {
@@ -437,6 +451,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection5(enteredState);
         verifyFetchedInputFieldOfSection5(enteredZip);
 
+        executorLastNameForm = driverUtil.getWebElement(EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
+
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
@@ -450,6 +466,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection5(enteredState);
         verifyFetchedInputFieldOfSection5(enteredZip);
 
+        coExecutorLastNameForm = driverUtil.getWebElement(CO_EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
+
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredLastName);
         verifyFetchedInputFieldOfSecondaryCoExecutive(selectedSuffix);
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredFirstName);
@@ -459,6 +477,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredCity);
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredState);
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredZip);
+
+        secondaryCoExecutorLastNameForm = driverUtil.getWebElement(SECONDARY_C0_EXECUTOR_LAST_NAME).getAttribute("value");
     }
 
     public void userResetsTheRWForm() throws AutomationException {
