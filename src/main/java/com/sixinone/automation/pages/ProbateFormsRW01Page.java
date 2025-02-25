@@ -403,17 +403,17 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifyContactItsInformationIsDisplayedInSection4() throws IOException, ParseException, AutomationException {
-        String enteredLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-        String selectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-        String enteredFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-        String enteredMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
-        String enteredTelephoneNum = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
-        String enteredEmail = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
-        String enteredAddressLine1 = CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString();
-        String enteredAddressLine2 = CommonUtil.getJsonPath("Create").get("Create.addressLine2").toString();
-        String enteredCity = CommonUtil.getJsonPath("Create").get("Create.city").toString();
-        String enteredState = CommonUtil.getJsonPath("Create").get("Create.stateCode").toString();
-        String enteredZip = CommonUtil.getJsonPath("Create").get("Create.zip").toString();
+        String enteredLastName = CommonUtil.getJsonPath("attorney1").get("attorney1.lastName").toString();
+        String selectedSuffix = CommonUtil.getJsonPath("attorney1").get("attorney1.suffix").toString();
+        String enteredFirstName = CommonUtil.getJsonPath("attorney1").get("attorney1.firstName").toString();
+        String enteredMiddleName = CommonUtil.getJsonPath("attorney1").get("attorney1.middleName").toString();
+        String enteredTelephoneNum = CommonUtil.getJsonPath("attorney1").get("attorney1.phoneNumber").toString();
+        String enteredEmail = CommonUtil.getJsonPath("attorney1").get("attorney1.emailId").toString();
+        String enteredAddressLine1 = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine1").toString();
+        String enteredAddressLine2 = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine2").toString();
+        String enteredCity = CommonUtil.getJsonPath("attorney1").get("attorney1.city").toString();
+        String enteredState = CommonUtil.getJsonPath("attorney1").get("attorney1.stateCode").toString();
+        String enteredZip = CommonUtil.getJsonPath("attorney1").get("attorney1.zip").toString();
 
         verifyFetchedInputFieldOfSection4(enteredLastName);
         verifyFetchedInputFieldOfSection4(selectedSuffix);
@@ -431,52 +431,72 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySelectedContactsAreDisplayedUnderExecutorCoExecutorAndSecondaryCoExecutor() throws AutomationException, IOException, ParseException {
-        String enteredLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-        String selectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-        String enteredFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-        String enteredMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
-        String enteredAddressLine1 = CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString();
-        String enteredAddressLine2 = CommonUtil.getJsonPath("Create").get("Create.addressLine2").toString();
-        String enteredCity = CommonUtil.getJsonPath("Create").get("Create.city").toString();
-        String enteredState = CommonUtil.getJsonPath("Create").get("Create.stateCode").toString();
-        String enteredZip = CommonUtil.getJsonPath("Create").get("Create.zip").toString();
+        String enteredLastNameFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.lastName").toString();
+        String selectedSuffixFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.suffix").toString();
+        String enteredFirstNameFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.firstName").toString();
+        String enteredMiddleNameFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.middleName").toString();
+        String enteredAddressLine1Fiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine1").toString();
+        String enteredAddressLine2Fiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine2").toString();
+        String enteredCityFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.city").toString();
+        String enteredStateFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.stateCode").toString();
+        String enteredZipFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.zip").toString();
 
-        verifyFetchedInputFieldOfSection5(enteredLastName);
-        verifyFetchedInputFieldOfSection5(selectedSuffix);
-        verifyFetchedInputFieldOfSection5(enteredFirstName);
-        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleName.charAt(0)));
-        verifyFetchedInputFieldOfSection5(enteredAddressLine1);
-        verifyFetchedInputFieldOfSection5(enteredAddressLine2);
-        verifyFetchedInputFieldOfSection5(enteredCity);
-        verifyFetchedInputFieldOfSection5(enteredState);
-        verifyFetchedInputFieldOfSection5(enteredZip);
+        verifyFetchedInputFieldOfSection5(enteredLastNameFiduciary1);
+        verifyFetchedInputFieldOfSection5(selectedSuffixFiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredFirstNameFiduciary1);
+        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleNameFiduciary1.charAt(0)));
+        verifyFetchedInputFieldOfSection5(enteredAddressLine1Fiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredAddressLine2Fiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredCityFiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredStateFiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredZipFiduciary1);
 
         executorLastNameForm = driverUtil.getWebElement(EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
 
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
-        verifyFetchedInputFieldOfSection5(enteredLastName);
-        verifyFetchedInputFieldOfSection5(selectedSuffix);
-        verifyFetchedInputFieldOfSection5(enteredFirstName);
-        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleName.charAt(0)));
-        verifyFetchedInputFieldOfSection5(enteredAddressLine1);
-        verifyFetchedInputFieldOfSection5(enteredAddressLine2);
-        verifyFetchedInputFieldOfSection5(enteredCity);
-        verifyFetchedInputFieldOfSection5(enteredState);
-        verifyFetchedInputFieldOfSection5(enteredZip);
+        String enteredLastNameFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString();
+        String selectedSuffixFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String enteredFirstNameFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
+        String enteredMiddleNameFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
+        String enteredAddressLine1Fiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.addressLine1").toString();
+        String enteredAddressLine2Fiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.addressLine2").toString();
+        String enteredCityFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.city").toString();
+        String enteredStateFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.stateCode").toString();
+        String enteredZipFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.zip").toString();
+
+        verifyFetchedInputFieldOfSection5(enteredLastNameFiduciary2);
+        verifyFetchedInputFieldOfSection5(selectedSuffixFiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredFirstNameFiduciary2);
+        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleNameFiduciary2.charAt(0)));
+        verifyFetchedInputFieldOfSection5(enteredAddressLine1Fiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredAddressLine2Fiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredCityFiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredStateFiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredZipFiduciary2);
 
         coExecutorLastNameForm = driverUtil.getWebElement(CO_EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
 
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredLastName);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(selectedSuffix);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredFirstName);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(String.valueOf(enteredMiddleName.charAt(0)));
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine1);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine2);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredCity);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredState);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredZip);
+        String enteredLastNameFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString();
+        String selectedSuffixFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
+        String enteredFirstNameFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
+        String enteredMiddleNameFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
+        String enteredAddressLine1Fiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine1").toString();
+        String enteredAddressLine2Fiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine2").toString();
+        String enteredCityFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.city").toString();
+        String enteredStateFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.stateCode").toString();
+        String enteredZipFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.zip").toString();
+
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredLastNameFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(selectedSuffixFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredFirstNameFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(String.valueOf(enteredMiddleNameFiduciary3.charAt(0)));
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine1Fiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine2Fiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredCityFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredStateFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredZipFiduciary3);
 
         secondaryCoExecutorLastNameForm = driverUtil.getWebElement(SECONDARY_C0_EXECUTOR_LAST_NAME).getAttribute("value");
     }

@@ -140,6 +140,7 @@ public class EstateContactsPage extends BasePage {
         waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForAWhile(2);
         do {
+            waitForInvisibleElement(By.xpath(SPINNER));
             List<WebElement> addButtons = driverUtil.getWebElements(ADD_BUTTON);
             List<WebElement> rows = driverUtil.getWebElements(ALL_MODAL_ROWS_XPATH);
             if (addButtons.size() != rows.size()) {
@@ -379,6 +380,7 @@ public class EstateContactsPage extends BasePage {
 
     public void clickOnAddButtonForSpecificContactType(String contactType) throws AutomationException {
         waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile(2);
         driverUtil.getWebElement(ADDCONTACT_CONTACT_TYPE_FILTER_INPUT).click();
         driverUtil.getWebElement(ADDCONTACT_CONTACT_TYPE_FILTER_INPUT).sendKeys(contactType);
         waitForInvisibleElement(By.xpath(SPINNER));
