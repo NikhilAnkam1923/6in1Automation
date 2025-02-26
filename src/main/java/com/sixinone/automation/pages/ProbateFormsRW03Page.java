@@ -122,7 +122,7 @@ public class ProbateFormsRW03Page extends BasePage {
     static String enteredCityStateZip1Form;
     static String enteredCityStateZip2Form;
 
-    static String DownloadedFileName;
+    static String downloadedFileName;
 
 
     public void clearField(String fieldXpath) throws AutomationException {
@@ -390,7 +390,7 @@ public class ProbateFormsRW03Page extends BasePage {
                 for (File file : files) {
                     if (file.exists() && !file.isDirectory()) {
                         CommonSteps.logInfo(file.getName());
-                        DownloadedFileName = file.getName();
+                        downloadedFileName = file.getName();
 
                         // Check if file is a PDF
                         if (file.getName().toLowerCase().endsWith(".pdf")) {
@@ -416,7 +416,7 @@ public class ProbateFormsRW03Page extends BasePage {
     public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
-                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
             verifyPrintNames(pdfFilePath);
             verifyCounty(pdfFilePath);
