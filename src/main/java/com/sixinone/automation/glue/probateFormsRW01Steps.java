@@ -11,12 +11,6 @@ import java.io.IOException;
 
 public class probateFormsRW01Steps {
 
-    @And("user save entered Estate Information")
-    public void userSavesEstateInformation() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user saves Estate Information");
-        PageFactory.probateFormsRW01Page().userSavesEstateInfo();
-    }
-
     @When("user verifies correct file number is displayed at the top of the form")
     public void userVerifyCorrectFileNumber() throws AutomationException {
         CommonSteps.logInfo("Verified that correct file number is displayed at the top of the form");
@@ -105,12 +99,6 @@ public class probateFormsRW01Steps {
         PageFactory.probateFormsRW01Page().navigateToProbateFormsTab();
     }
 
-    @Then("^user clicks on the \"([^\"]*)\" form$")
-    public void userClickOnTheRW(String formToSelect) throws AutomationException {
-        CommonSteps.logInfo("user click on the "+formToSelect+" form");
-        PageFactory.probateFormsRW01Page().clickOnRWForm(formToSelect);
-    }
-
     @And("^user selects Role as \"([^\"]*)\"$")
     public void userSelectsRoleAs(String role) throws AutomationException {
         CommonSteps.logInfo("User selects Role as "+role);
@@ -175,11 +163,6 @@ public class probateFormsRW01Steps {
         CommonSteps.logInfo("Verified that the selected contacts are displayed under executor, co-executor and secondary co-executor");
         PageFactory.probateFormsRW01Page().verifySelectedContactsAreDisplayedUnderExecutorCoExecutorAndSecondaryCoExecutor();
         CommonSteps.takeScreenshot();
-    }
-    @When("user reset the RW01 form")
-    public void userResetsTheRWForm() throws AutomationException {
-        CommonSteps.logInfo("user resets the RW01 form");
-        PageFactory.probateFormsRW01Page().userResetsTheRWForm();
     }
 
 }

@@ -4,22 +4,22 @@ Feature: 6in1 probate form RW02 Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "$6in1_url"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                           | password |
-      | nikhilankam+14@benchmarkit.solutions | Watch@22 |
+      | user-email                               | password  |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "Kris Warner" Estate
-    And user saves entered Estate Information
+    And user saves entered Estate information for "RW02" form
     When user navigates to Estate contacts tab
-    Then user saves entered Information of all the Estate Contacts
+    Then user saves entered Information of all the Estate Contacts for "RW02" form
 
   Scenario: Verify, correct county name is auto fetched.
-    When user navigate to the Probate forms tab
-    And user clicks on the "RW 02" Form
+    When user navigates to the probate forms tab
+    And user click on the "RW 02" form
     Then user verifies correct county name is fetched from the decedent info
 
   Scenario: Verify, names of fiduciary type of contact is displayed at the top.
@@ -32,7 +32,7 @@ Feature: 6in1 probate form RW02 Feature
     Then user verifies decedent information is auto populated on the form
 
   Scenario: Verify, the auto populated fields are not editable.
-    Then user verifies the auto-populated fields are not Editable
+    Then user verifies the auto-populated fields of "RW02" form are not editable
 
   Scenario: Verify, names can be added in aka fields.
     Then user verifies multiple aka names can be added separated by comma
@@ -76,8 +76,8 @@ Feature: 6in1 probate form RW02 Feature
     Then user verifies updated codicil dates in form are reflected in the codicil dates in decedent tab
 
   Scenario: Verify, text can be entered state relevant circumstances and exception on checking exceptions checkbox.
-    When user navigate to the Probate forms tab
-    And user clicks on the "RW 02" Form
+    When user navigates to the probate forms tab
+    And user click on the "RW 02" form
     Then user verifies text can be entered in the state relevant circumstances text fields
     And user checks exceptions checkbox from Option A
     Then user verifies the text field is enabled and text can be entered
@@ -127,10 +127,10 @@ Feature: 6in1 probate form RW02 Feature
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'Rw02'
-#    And verify all the fields entered are correctly reflected in the pdf
+    And verify all the fields entered are correctly reflected in the 'Rw02' pdf
 
   Scenario: Reset the RW02 form
-    When user resets the RW02 form
+    When user resets the "RW02" form
 
   @Setup
   Scenario:SETUP: Close Browser

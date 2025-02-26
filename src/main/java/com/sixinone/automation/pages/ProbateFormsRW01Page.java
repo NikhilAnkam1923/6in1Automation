@@ -2,15 +2,22 @@ package com.sixinone.automation.pages;
 
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
-import java.util.List;
+import java.io.File;
+import java.util.*;
 import java.io.IOException;
 
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class ProbateFormsRW01Page extends BasePage {
@@ -59,7 +66,10 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String RW_INPUT_FIELD_XPATH = "//input[@type='text' and @value='%s']";
     private static final String RW1_SECTION4_INPUT_FIELD_XPATH = "//div[@id='attorneySection']//input[@type='text' and @value='%s']";
     private static final String RW1_SECTION5_INPUT_FIELD_XPATH = "//div[@id='executorSection']//input[@type='text' and @value='%s']";
+    private static final String EXECUTOR_LAST_NAME_FIELD = "//div[@id='executorSection']//td[contains(@class,'tr17 td48 mr-left')]//input[@type='text']";
     private static final String RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH = "//p[contains(text(),'Secondary Co-Executor')]/ancestor::td/ancestor::tr/following-sibling::tr//input[@type='text' and @value='%s']";
+    private static final String CO_EXECUTOR_LAST_NAME_FIELD = "//p[text()='Co-Executor/Administrator Last Name (if necessary)']/ancestor::td/ancestor::tr/following-sibling::tr//td[@class='tr17 mr-left']//input[@type='text' ]";
+    private static final String SECONDARY_C0_EXECUTOR_LAST_NAME = "//p[text()='Secondary Co-Executor/Administrator Last Name (if necessary)']/ancestor::td/ancestor::tr/following-sibling::tr//td[@class='tr17 mr-left']//input[@type='text' ]";
     private static final String SECTION_XPATH = "//span[text()='%s']";
     private static final String SECTION_2_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Click a box']";
     private static final String CHECKBOX_XPATH_DYNAMIC = "//p[text()='%s']//input[@type='checkbox']";
@@ -69,7 +79,6 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String SECTION_4_LAST_NAME = "//div[@id='attorneySection']//input[@class='greyInput ']";
     private static final String SECTION_4_SIDE_BAR_TITLE = "//div[@class='modal-title h4' and text()='Select Attorney/Correspondent']";
     private static final String SECTION_5_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Select the fiduciary contact.']";
-    private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String ROLE_RADIO_BTN_XPATH = "//input[@id='%s']";
     private static final String CONTACT_RADIO_BTN_XPATH = "//input[@name='attorneyContact' and @type='radio']";
     private static final String PROCEED_BTN = "//button[text()='Proceed']";
@@ -83,6 +92,7 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String FIRST_PAGE_BTN = "//div[@class='nav-item']//a[text()='1']";
     private static final String MODAL_CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
 
+    static String DownloadedFileName;
 
     static String enteredFirstName;
     static String enteredMiddleName;
@@ -118,8 +128,13 @@ public class ProbateFormsRW01Page extends BasePage {
     static String enteredFileNumberPart1;
     static String enteredFileNumberPart2;
     static String enteredFileNumberPart3;
+    static String attorneyLastNameForm;
+    static String executorLastNameForm;
+    static String coExecutorLastNameForm;
+    static String secondaryCoExecutorLastNameForm;
 
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
+        WebDriverUtil.waitForAWhile();
         enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
         enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
         enteredLastName = driverUtil.getWebElement(DECEDENT_LAST_NAME_FIELD).getAttribute("value");
@@ -161,33 +176,33 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifyFetchedInputField(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
 
     public void verifyFetchedInputFieldOfSection4(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW1_SECTION4_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW1_SECTION4_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW1_SECTION4_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW1_SECTION4_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
 
     public void verifyFetchedInputFieldOfSection5(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW1_SECTION5_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW1_SECTION5_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW1_SECTION5_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW1_SECTION5_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
 
     public void verifyFetchedInputFieldOfSecondaryCoExecutive(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
@@ -207,12 +222,12 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void clickOnSection(String section) throws AutomationException {
-        driverUtil.getWebElement(String.format(SECTION_XPATH,section)).click();
+        driverUtil.getWebElement(String.format(SECTION_XPATH, section)).click();
     }
 
     public void verifySection2InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section2InformativeTextBox =driverUtil.getWebElement(SECTION_2_INFORMATIVE_TEXTBOX);
-        if(!section2InformativeTextBox.isDisplayed()){
+        WebElement section2InformativeTextBox = driverUtil.getWebElement(SECTION_2_INFORMATIVE_TEXTBOX);
+        if (!section2InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 2 an informative text box is not displayed.");
         }
     }
@@ -249,17 +264,17 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySection3InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section3InformativeTextBox =driverUtil.getWebElement(SECTION_3_INFORMATIVE_TEXTBOX);
-        if(!section3InformativeTextBox.isDisplayed()){
+        WebElement section3InformativeTextBox = driverUtil.getWebElement(SECTION_3_INFORMATIVE_TEXTBOX);
+        if (!section3InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 3 an informative text box is not displayed.");
         }
     }
 
     public void verifyInSection3OnlyOneCheckboxShouldBeAbleToBeChecked() throws AutomationException {
-        WebElement checkbox1 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"Testamentary")));
-        WebElement checkbox2 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"Administration")));
-        WebElement checkbox3 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"No Letters")));
-        WebElement checkbox4 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"Other (Please Explain)")));
+        WebElement checkbox1 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Testamentary")));
+        WebElement checkbox2 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Administration")));
+        WebElement checkbox3 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "No Letters")));
+        WebElement checkbox4 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Other (Please Explain)")));
 
         checkbox1.click();
         WebDriverUtil.waitForAWhile();
@@ -287,13 +302,14 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySection4InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section4InformativeTextBox =driverUtil.getWebElement(SECTION_4_INFORMATIVE_TEXTBOX);
-        if(!section4InformativeTextBox.isDisplayed()){
+        WebElement section4InformativeTextBox = driverUtil.getWebElement(SECTION_4_INFORMATIVE_TEXTBOX);
+        if (!section4InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 4 an informative text box is not displayed.");
         }
     }
 
     public void verifyOtherCheckboxTextAreaIsEnabled() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement otherTextArea = driverUtil.getWebElement(OTHER_TEXT_AREA);
         if (!otherTextArea.isEnabled()) {
             throw new AutomationException("Other Text Area is not enabled.");
@@ -301,6 +317,9 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void clickOnLastNameField() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.sendKeys(Keys.PAGE_DOWN).perform();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
     }
 
@@ -312,8 +331,8 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySection5InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section5InformativeTextBox =driverUtil.getWebElement(SECTION_5_INFORMATIVE_TEXTBOX);
-        if(!section5InformativeTextBox.isDisplayed()){
+        WebElement section5InformativeTextBox = driverUtil.getWebElement(SECTION_5_INFORMATIVE_TEXTBOX);
+        if (!section5InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 5 an informative text box is not displayed.");
         }
     }
@@ -324,13 +343,8 @@ public class ProbateFormsRW01Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH,formToSelect)).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
     public void selectRoleForAttorney(String role) throws AutomationException {
-        driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH,role)).click();
+        driverUtil.getWebElementAndScroll(String.format(ROLE_RADIO_BTN_XPATH, role)).click();
     }
 
     public void verifyOnlyContactIsAbleToBeSelected() throws AutomationException {
@@ -368,11 +382,11 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySelectionTypesAreDisplayed() throws AutomationException {
-        WebElement executor = driverUtil.getWebElement(String.format(SELECTION_TYPE,"Executor"));
-        WebElement coExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE,"Co-Executor"));
-        WebElement secondaryCoExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE,"Secondary Co-Executor"));
+        WebElement executor = driverUtil.getWebElement(String.format(SELECTION_TYPE, "Executor"));
+        WebElement coExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE, "Co-Executor"));
+        WebElement secondaryCoExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE, "Secondary Co-Executor"));
 
-        if(!executor.isDisplayed() || !coExecutor.isDisplayed() || !secondaryCoExecutor.isDisplayed()){
+        if (!executor.isDisplayed() || !coExecutor.isDisplayed() || !secondaryCoExecutor.isDisplayed()) {
             throw new AutomationException("All 3 selection types are not displayed");
         }
     }
@@ -380,9 +394,9 @@ public class ProbateFormsRW01Page extends BasePage {
     public void dragAndDropContactsIntoSelectionTypes() throws AutomationException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
-        WebElement executorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH,"Executor"));
-        WebElement coExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH,"Co-Executor"));
-        WebElement secondaryCoExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH,"Secondary Co-Executor"));
+        WebElement executorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH, "Executor"));
+        WebElement coExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH, "Co-Executor"));
+        WebElement secondaryCoExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH, "Secondary Co-Executor"));
 
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT), executorDrop).perform();
         WebDriverUtil.waitForAWhile();
@@ -393,7 +407,7 @@ public class ProbateFormsRW01Page extends BasePage {
 
     public void clicksOnAcceptButton() throws AutomationException {
         driverUtil.getWebElement(ACCEPT_BTN).click();
-        driverUtil.getWebElement(String.format(SECTION_XPATH,"Section V")).click();
+        driverUtil.getWebElement(String.format(SECTION_XPATH, "Section V")).click();
     }
 
     public void verifyContactItsInformationIsDisplayedInSection4() throws IOException, ParseException, AutomationException {
@@ -420,6 +434,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection4(enteredCity);
         verifyFetchedInputFieldOfSection4(enteredState);
         verifyFetchedInputFieldOfSection4(enteredZip);
+
+        attorneyLastNameForm = driverUtil.getWebElement(SECTION_4_LAST_NAME).getAttribute("value");
     }
 
     public void verifySelectedContactsAreDisplayedUnderExecutorCoExecutorAndSecondaryCoExecutor() throws AutomationException, IOException, ParseException {
@@ -443,6 +459,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection5(enteredState);
         verifyFetchedInputFieldOfSection5(enteredZip);
 
+        executorLastNameForm = driverUtil.getWebElement(EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
+
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
@@ -456,6 +474,8 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection5(enteredState);
         verifyFetchedInputFieldOfSection5(enteredZip);
 
+        coExecutorLastNameForm = driverUtil.getWebElement(CO_EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
+
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredLastName);
         verifyFetchedInputFieldOfSecondaryCoExecutive(selectedSuffix);
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredFirstName);
@@ -465,42 +485,361 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredCity);
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredState);
         verifyFetchedInputFieldOfSecondaryCoExecutive(enteredZip);
+
+        secondaryCoExecutorLastNameForm = driverUtil.getWebElement(SECONDARY_C0_EXECUTOR_LAST_NAME).getAttribute("value");
     }
 
     public void userResetsTheRWForm() throws AutomationException {
         driverUtil.getWebElement("//body").click();
-
         driverUtil.getWebElement(FIRST_PAGE_BTN).click();
-
-        waitForVisibleElement(By.xpath(SECTION_5_LAST_NAME),5);
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
-
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
-
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
-
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement(ACCEPT_BTN).click();
-
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
-
-        waitForVisibleElement(By.xpath(String.format(ROLE_RADIO_BTN_XPATH,"NONE")),5);
-        driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH,"NONE")).click();
-
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH, "NONE")).click();
         driverUtil.getWebElement(CONTACT_RADIO_BTN_XPATH).click();
-
         driverUtil.getWebElement(PROCEED_BTN).click();
-
         WebDriverUtil.waitForAWhile();
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        DownloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+//    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Last Name Suffix First Name MI"; // Identifier for the target line
+//        String expectedLastName = "Winter"; // The expected last name for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+//
+//            // Update the index if this is an occurrence of the target line
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i;
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String lastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the last occurrence
+//            CommonSteps.logInfo("Extracted Last Name Line: " + lastNameLine);
+//
+//            // Extract last name (assuming it's the first word in the line)
+//            String[] words = lastNameLine.split("\\s+"); // Split by spaces
+//            String actualLastName = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedLastName.equalsIgnoreCase(actualLastName)) {
+//                CommonSteps.logInfo("✅ Validation Passed: Last Name is '" + actualLastName + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedLastName + "', but found '" + actualLastName + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+
+//    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Last Name Suffix First Name MI"; // Identifier for the target line
+//        String expectedLastName = "Winter"; // Expected last name
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // Track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+//
+//            // If this line contains the identifier, store its index
+//            if (trimmedLine.equalsIgnoreCase(targetLineIdentifier)) {
+//                lastTargetIndex = i;
+//            }
+//        }
+//
+//        // Process the last occurrence of the identifier
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String lastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the identifier
+//            CommonSteps.logInfo("Extracted Line: " + lastNameLine);
+//
+//            // Split the extracted line into words (assuming space-separated values)
+//            String[] values = lastNameLine.split("\\s+");
+//
+//            // Ensure the extracted line has at least one value (Last Name should be first)
+//            if (values.length > 0) {
+//                Map<String, String> extractedData = new HashMap<>();
+//                extractedData.put("Last Name", values[0]); // Store first word as Last Name
+//
+//                String actualLastName = extractedData.get("Last Name");
+//
+//                if (expectedLastName.equalsIgnoreCase(actualLastName)) {
+//                    CommonSteps.logInfo("✅ Validation Passed: Last Name is '" + actualLastName + "' as expected.");
+//                } else {
+//                    throw new AutomationException("❌ Validation Failed: Expected 'Last Name = " + expectedLastName + "', but found 'Last Name = " + actualLastName + "'.");
+//                }
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: No last name found in the extracted line.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+
+        verifyLastName(pdfFilePath);
+        verifyExecutorOrAdministratorLastName(pdfFilePath);
+        verifyCoExecutorOrAdministratorLastName(pdfFilePath);
+        verifySecondaryCoExecutorOrAdministratorLastName(pdfFilePath);
+    }
+
+    public static void verifyFields(String pdfFilePath, String targetLineIdentifier, String fieldName, String expectedValue)
+            throws IOException, AutomationException {
+        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
+            String pdfText = new PDFTextStripper().getText(document);
+            document.close();
+            // Split the PDF text into lines
+            String[] allLines = pdfText.split("\\r?\\n");
+
+            CommonSteps.logInfo("Scanning PDF for: " + targetLineIdentifier);
+            int lastTargetIndex = -1; // Track last occurrence of the identifier
+
+            for (int i = 0; i < allLines.length; i++) {
+                String trimmedLine = allLines[i].trim();
+                //             CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+
+                if (trimmedLine.contains(targetLineIdentifier)) {
+                    lastTargetIndex = i; // Store last occurrence index
+                }
+            }
+
+            if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+                String extractedLine = allLines[lastTargetIndex + 1].trim(); // Next line after identifier
+                CommonSteps.logInfo("Extracted [" + fieldName + "] Line: " + extractedLine);
+
+                // Extract first word as the field value
+                String actualValue = extractedLine.split("\\s+")[0].trim();
+                actualValue = actualValue.isEmpty() ? "No Data Found" : actualValue; // Handle empty extraction
+
+                CommonSteps.logInfo("✅ Extracted [" + fieldName + "]: " + actualValue);
+
+                if (expectedValue.equalsIgnoreCase(actualValue)) {
+                    CommonSteps.logInfo("✅ Validation Passed: [" + fieldName + "] is '" + actualValue + "' as expected.");
+                } else {
+                    throw new AutomationException("❌ Validation Failed: Expected [" + fieldName + "] = '" + expectedValue + "', but found '" + actualValue + "'.");
+                }
+            } else {
+                throw new AutomationException("❌ Target identifier [" + targetLineIdentifier + "] not found in the PDF.");
+            }
+        } catch (IOException e) {
+            throw new IOException("❌ Error reading PDF file: " + e.getMessage(), e);
+        }
+    }
+
+    public static void verifyLastName(String pdfFilePath) throws IOException, AutomationException {
+        verifyFields(pdfFilePath, "Last Name Suffix First Name MI", "Last Name", "Winter");
+    }
+
+    public static void verifyExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+        verifyFields(pdfFilePath, "Executor/Administrator Last Name (if necessary) Suffix First Name MI",
+                "Executor/Administrator Last Name", "Winter");
+    }
+
+    public static void verifyCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+        verifyFields(pdfFilePath, "Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI",
+                "Co-Executor/Administrator Last Name", "Winter");
+    }
+
+    public static void verifySecondaryCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+        verifyFields(pdfFilePath, "Secondary Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI",
+                "Secondary Co-Executor/Administrator Last Name", "Winter");
+    }
 }
+
+
+//    public static void verifyExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
+//        String expectedExecutorOrAdministratorLastNameLine = "Winter"; // The expected ExecutorOrAdministratorLastName for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//
+//            // Update the index if this is an occurrence of the target line
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i;
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String executorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // The next line after the last occurrence
+//            CommonSteps.logInfo("Extracted Last Name Line: " + executorOrAdministratorLastNameLine);
+//
+//            // Extract last name (assuming it's the first word in the line)
+//            String[] words = executorOrAdministratorLastNameLine.split("\\s+"); // Split by spaces
+//            String actualexecutorOrAdministratorLastName = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualexecutorOrAdministratorLastName)) {
+//                CommonSteps.logInfo("✅ Validation Passed: ExecutorOrAdministratorLastName is '" + actualexecutorOrAdministratorLastName + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedExecutorOrAdministratorLastNameLine + "', but found '" + actualexecutorOrAdministratorLastName + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+//
+//    public static void verifyCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
+//        String expectedCoExecutorOrAdministratorLastNameLine = "Winter"; // Expected Last Name for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i; // Store the last occurrence
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String extractedCoExecutorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // Next line after the identifier
+//            CommonSteps.logInfo("Extracted Last Name Line: " + extractedCoExecutorOrAdministratorLastNameLine);
+//
+//            // Extract last name (assuming it's the first word)
+//            String[] words = extractedCoExecutorOrAdministratorLastNameLine.split("\\s+");
+//            String actualCoExecutorOrAdministratorLastNameLine = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedCoExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualCoExecutorOrAdministratorLastNameLine)) {
+//                CommonSteps.logInfo("✅ Validation Passed: Co-Executor Or Administrator Last Name is '" + actualCoExecutorOrAdministratorLastNameLine + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedCoExecutorOrAdministratorLastNameLine + "', but found '" + actualCoExecutorOrAdministratorLastNameLine + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+//
+//    public static void verifySecondaryCoExecutorOrAdministratorLastName(String pdfFilePath) throws IOException, AutomationException {
+//        String targetLineIdentifier = "Secondary Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI"; // Identifier for the target line
+//        String expectedSecondaryCoExecutorOrAdministratorLastNameLine = "Winter"; // Expected Last Name for validation
+//
+//        PDDocument document = PDDocument.load(new File(pdfFilePath));
+//        String pdfText = new PDFTextStripper().getText(document);
+//        document.close();
+//
+//        // Split the entire PDF content into lines
+//        String[] allLines = pdfText.split("\\r?\\n");
+//
+//        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+//        int lastTargetIndex = -1; // To track the last occurrence of the identifier
+//
+//        for (int i = 0; i < allLines.length; i++) {
+//            String trimmedLine = allLines[i].trim();
+//
+//            if (trimmedLine.contains(targetLineIdentifier)) {
+//                lastTargetIndex = i; // Store the last occurrence
+//            }
+//        }
+//
+//        // Process the last occurrence
+//        if (lastTargetIndex != -1 && lastTargetIndex + 1 < allLines.length) {
+//            String extractedSecondaryCoExecutorOrAdministratorLastNameLine = allLines[lastTargetIndex + 1].trim(); // Next line after the identifier
+//            CommonSteps.logInfo("Extracted Last Name Line: " + extractedSecondaryCoExecutorOrAdministratorLastNameLine);
+//
+//            // Extract last name (assuming it's the first word)
+//            String[] words = extractedSecondaryCoExecutorOrAdministratorLastNameLine.split("\\s+");
+//            String actualSecondaryCoExecutorOrAdministratorLastNameLine = words.length > 0 ? words[0] : "No Name";
+//
+//            if (expectedSecondaryCoExecutorOrAdministratorLastNameLine.equalsIgnoreCase(actualSecondaryCoExecutorOrAdministratorLastNameLine)) {
+//                CommonSteps.logInfo("✅ Validation Passed: Secondary Co-Executor Or Administrator Last Name is '" + actualSecondaryCoExecutorOrAdministratorLastNameLine + "' as expected.");
+//            } else {
+//                throw new AutomationException("❌ Validation Failed: Expected '" + expectedSecondaryCoExecutorOrAdministratorLastNameLine + "', but found '" + actualSecondaryCoExecutorOrAdministratorLastNameLine + "'.");
+//            }
+//        } else {
+//            throw new AutomationException("❌ Target line identifier not found in the PDF.");
+//        }
+//    }
+
