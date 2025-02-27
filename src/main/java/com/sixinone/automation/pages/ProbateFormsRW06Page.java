@@ -500,8 +500,8 @@ public class ProbateFormsRW06Page extends BasePage{
         Actions actions = new Actions(DriverFactory.drivers.get());
 
         for (int i = 0; i < 10; i++) {
-            WebElement dateField = driverUtil.getWebElement(String.format(DATE_FIELD,i));
-            WebElement reasonField = driverUtil.getWebElement(String.format(LETTERS_ISSUED_TO_FIELD,i));
+            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i)));
+            WebElement reasonField = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i)));
 
             dateField.clear();
             Toolkit.getDefaultToolkit()
@@ -516,14 +516,14 @@ public class ProbateFormsRW06Page extends BasePage{
                     .build()
                     .perform();
 
-            String actualDate = driverUtil.getWebElement(String.format(DATE_FIELD,i)).getAttribute("value");
+            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i))).getAttribute("value");
 
             reasonField.clear();
             reasonField.sendKeys(reasonDataForm.get(i));
 
             driverUtil.getWebElement("//body").click();
 
-            String actualReason = driverUtil.getWebElement(String.format(LETTERS_ISSUED_TO_FIELD,i)).getAttribute("value");
+            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i))).getAttribute("value");
 
             WebDriverUtil.waitForAWhile();
 
