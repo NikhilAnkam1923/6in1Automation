@@ -694,7 +694,7 @@ public class CommonSteps {
             case "Rw03":
                 PageFactory.probateFormsRW03Page().verifyFormPrintedInPDFForm(formName);
                 break;
-            case "RW04":
+            case "Rw04":
                 PageFactory.probateFormsRW04Page().verifyFormPrintedInPDFForm(formName);
                 break;
             default:
