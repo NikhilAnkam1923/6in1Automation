@@ -4,20 +4,20 @@ Feature: 6in1 probate form RW01 Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "$6in1_url"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                           | password |
-      | nikhilankam+14@benchmarkit.solutions | Watch@22 |
+      | user-email                               | password  |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "William John" Estate
-    And user save entered Estate Information
+    And user saves entered Estate information for "RW01" form
 
   Scenario: Verify, file no. is displayed at the top of the form.
-    When user navigates to the Probate forms tab
-    And user clicks on the "RW 01" form
+    When user navigates to the probate forms tab
+    And user click on the "RW 01" form
     Then user verifies correct file number is displayed at the top of the form
 
   Scenario: Verify, decedent information is displayed in section1 of the form.
@@ -49,7 +49,7 @@ Feature: 6in1 probate form RW01 Feature
     Then user verifies a side bar with title 'Select Attorney/Correspondent' is displayed
 
   Scenario: Verify, only 1 contact can be selected.
-    And user selects Role as "Fiduciary"
+    And user selects Role as "Attorney"
     Then user verifies out of the available roles and contact name, only 1 contact is able to be selected
 
   Scenario: Verify, on selecting the contact its information is displayed in section 4.
@@ -74,8 +74,13 @@ Feature: 6in1 probate form RW01 Feature
   Scenario: Verify the selected contacts are displayed under executor, co executor and secondary co executor.
     Then user verifies the selected contacts are displayed under executor, co-executor and secondary co-executor
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw01'
+    And verify all the fields entered are correctly reflected in the 'Rw01' pdf
+
   Scenario: Reset the RW01 form
-    When user reset the RW01 form
+    When user resets the "RW01" form
 
   @Setup
   Scenario:SETUP: Close Browser

@@ -2,15 +2,22 @@ package com.sixinone.automation.pages;
 
 import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
-import java.util.List;
+import java.io.File;
+import java.util.*;
 import java.io.IOException;
 
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class ProbateFormsRW01Page extends BasePage {
@@ -59,7 +66,10 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String RW_INPUT_FIELD_XPATH = "//input[@type='text' and @value='%s']";
     private static final String RW1_SECTION4_INPUT_FIELD_XPATH = "//div[@id='attorneySection']//input[@type='text' and @value='%s']";
     private static final String RW1_SECTION5_INPUT_FIELD_XPATH = "//div[@id='executorSection']//input[@type='text' and @value='%s']";
+    private static final String EXECUTOR_LAST_NAME_FIELD = "//div[@id='executorSection']//td[contains(@class,'tr17 td48 mr-left')]//input[@type='text']";
     private static final String RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH = "//p[contains(text(),'Secondary Co-Executor')]/ancestor::td/ancestor::tr/following-sibling::tr//input[@type='text' and @value='%s']";
+    private static final String CO_EXECUTOR_LAST_NAME_FIELD = "//p[text()='Co-Executor/Administrator Last Name (if necessary)']/ancestor::td/ancestor::tr/following-sibling::tr//td[@class='tr17 mr-left']//input[@type='text' ]";
+    private static final String SECONDARY_C0_EXECUTOR_LAST_NAME = "//p[text()='Secondary Co-Executor/Administrator Last Name (if necessary)']/ancestor::td/ancestor::tr/following-sibling::tr//td[@class='tr17 mr-left']//input[@type='text' ]";
     private static final String SECTION_XPATH = "//span[text()='%s']";
     private static final String SECTION_2_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Click a box']";
     private static final String CHECKBOX_XPATH_DYNAMIC = "//p[text()='%s']//input[@type='checkbox']";
@@ -69,7 +79,6 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String SECTION_4_LAST_NAME = "//div[@id='attorneySection']//input[@class='greyInput ']";
     private static final String SECTION_4_SIDE_BAR_TITLE = "//div[@class='modal-title h4' and text()='Select Attorney/Correspondent']";
     private static final String SECTION_5_INFORMATIVE_TEXTBOX = "//div[@class='white-bg' and text()='Select the fiduciary contact.']";
-    private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String ROLE_RADIO_BTN_XPATH = "//input[@id='%s']";
     private static final String CONTACT_RADIO_BTN_XPATH = "//input[@name='attorneyContact' and @type='radio']";
     private static final String PROCEED_BTN = "//button[text()='Proceed']";
@@ -83,6 +92,7 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String FIRST_PAGE_BTN = "//div[@class='nav-item']//a[text()='1']";
     private static final String MODAL_CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
 
+    static String DownloadedFileName;
 
     static String enteredFirstName;
     static String enteredMiddleName;
@@ -118,8 +128,13 @@ public class ProbateFormsRW01Page extends BasePage {
     static String enteredFileNumberPart1;
     static String enteredFileNumberPart2;
     static String enteredFileNumberPart3;
+    static String attorneyLastNameForm;
+    static String executorLastNameForm;
+    static String coExecutorLastNameForm;
+    static String secondaryCoExecutorLastNameForm;
 
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
+        WebDriverUtil.waitForAWhile();
         enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
         enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
         enteredLastName = driverUtil.getWebElement(DECEDENT_LAST_NAME_FIELD).getAttribute("value");
@@ -161,33 +176,33 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifyFetchedInputField(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
 
     public void verifyFetchedInputFieldOfSection4(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW1_SECTION4_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW1_SECTION4_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW1_SECTION4_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW1_SECTION4_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
 
     public void verifyFetchedInputFieldOfSection5(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW1_SECTION5_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW1_SECTION5_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW1_SECTION5_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW1_SECTION5_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
 
     public void verifyFetchedInputFieldOfSecondaryCoExecutive(String value) throws AutomationException {
-        waitForVisibleElement(By.xpath(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH,value)));
-        WebElement field = driverUtil.findElement(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH,value));
-        if(!field.isDisplayed()){
+        waitForVisibleElement(By.xpath(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH, value)));
+        WebElement field = driverUtil.findElement(String.format(RW1_SECONDARY_CO_EXECUTIVE_INPUT_FIELD_XPATH, value));
+        if (!field.isDisplayed()) {
             throw new AutomationException("Field value is not displayed correctly or not fetched.");
         }
     }
@@ -207,12 +222,12 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void clickOnSection(String section) throws AutomationException {
-        driverUtil.getWebElement(String.format(SECTION_XPATH,section)).click();
+        driverUtil.getWebElement(String.format(SECTION_XPATH, section)).click();
     }
 
     public void verifySection2InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section2InformativeTextBox =driverUtil.getWebElement(SECTION_2_INFORMATIVE_TEXTBOX);
-        if(!section2InformativeTextBox.isDisplayed()){
+        WebElement section2InformativeTextBox = driverUtil.getWebElement(SECTION_2_INFORMATIVE_TEXTBOX);
+        if (!section2InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 2 an informative text box is not displayed.");
         }
     }
@@ -249,17 +264,17 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySection3InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section3InformativeTextBox =driverUtil.getWebElement(SECTION_3_INFORMATIVE_TEXTBOX);
-        if(!section3InformativeTextBox.isDisplayed()){
+        WebElement section3InformativeTextBox = driverUtil.getWebElement(SECTION_3_INFORMATIVE_TEXTBOX);
+        if (!section3InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 3 an informative text box is not displayed.");
         }
     }
 
     public void verifyInSection3OnlyOneCheckboxShouldBeAbleToBeChecked() throws AutomationException {
-        WebElement checkbox1 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"Testamentary")));
-        WebElement checkbox2 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"Administration")));
-        WebElement checkbox3 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"No Letters")));
-        WebElement checkbox4 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC,"Other (Please Explain)")));
+        WebElement checkbox1 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Testamentary")));
+        WebElement checkbox2 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Administration")));
+        WebElement checkbox3 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "No Letters")));
+        WebElement checkbox4 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Other (Please Explain)")));
 
         checkbox1.click();
         WebDriverUtil.waitForAWhile();
@@ -287,13 +302,14 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySection4InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section4InformativeTextBox =driverUtil.getWebElement(SECTION_4_INFORMATIVE_TEXTBOX);
-        if(!section4InformativeTextBox.isDisplayed()){
+        WebElement section4InformativeTextBox = driverUtil.getWebElement(SECTION_4_INFORMATIVE_TEXTBOX);
+        if (!section4InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 4 an informative text box is not displayed.");
         }
     }
 
     public void verifyOtherCheckboxTextAreaIsEnabled() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement otherTextArea = driverUtil.getWebElement(OTHER_TEXT_AREA);
         if (!otherTextArea.isEnabled()) {
             throw new AutomationException("Other Text Area is not enabled.");
@@ -301,6 +317,9 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void clickOnLastNameField() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.sendKeys(Keys.PAGE_DOWN).perform();
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
     }
 
@@ -312,8 +331,8 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySection5InformativeTextBoxIsDisplayed() throws AutomationException {
-        WebElement section5InformativeTextBox =driverUtil.getWebElement(SECTION_5_INFORMATIVE_TEXTBOX);
-        if(!section5InformativeTextBox.isDisplayed()){
+        WebElement section5InformativeTextBox = driverUtil.getWebElement(SECTION_5_INFORMATIVE_TEXTBOX);
+        if (!section5InformativeTextBox.isDisplayed()) {
             throw new AutomationException("On clicking section 5 an informative text box is not displayed.");
         }
     }
@@ -324,13 +343,8 @@ public class ProbateFormsRW01Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH,formToSelect)).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
     public void selectRoleForAttorney(String role) throws AutomationException {
-        driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH,role)).click();
+        driverUtil.getWebElementAndScroll(String.format(ROLE_RADIO_BTN_XPATH, role)).click();
     }
 
     public void verifyOnlyContactIsAbleToBeSelected() throws AutomationException {
@@ -368,11 +382,11 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifySelectionTypesAreDisplayed() throws AutomationException {
-        WebElement executor = driverUtil.getWebElement(String.format(SELECTION_TYPE,"Executor"));
-        WebElement coExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE,"Co-Executor"));
-        WebElement secondaryCoExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE,"Secondary Co-Executor"));
+        WebElement executor = driverUtil.getWebElement(String.format(SELECTION_TYPE, "Executor"));
+        WebElement coExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE, "Co-Executor"));
+        WebElement secondaryCoExecutor = driverUtil.getWebElement(String.format(SELECTION_TYPE, "Secondary Co-Executor"));
 
-        if(!executor.isDisplayed() || !coExecutor.isDisplayed() || !secondaryCoExecutor.isDisplayed()){
+        if (!executor.isDisplayed() || !coExecutor.isDisplayed() || !secondaryCoExecutor.isDisplayed()) {
             throw new AutomationException("All 3 selection types are not displayed");
         }
     }
@@ -380,9 +394,9 @@ public class ProbateFormsRW01Page extends BasePage {
     public void dragAndDropContactsIntoSelectionTypes() throws AutomationException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
-        WebElement executorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH,"Executor"));
-        WebElement coExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH,"Co-Executor"));
-        WebElement secondaryCoExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH,"Secondary Co-Executor"));
+        WebElement executorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH, "Executor"));
+        WebElement coExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH, "Co-Executor"));
+        WebElement secondaryCoExecutorDrop = driverUtil.getWebElement(String.format(DROP_CONTACT_XPATH, "Secondary Co-Executor"));
 
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT), executorDrop).perform();
         WebDriverUtil.waitForAWhile();
@@ -393,21 +407,21 @@ public class ProbateFormsRW01Page extends BasePage {
 
     public void clicksOnAcceptButton() throws AutomationException {
         driverUtil.getWebElement(ACCEPT_BTN).click();
-        driverUtil.getWebElement(String.format(SECTION_XPATH,"Section V")).click();
+        driverUtil.getWebElement(String.format(SECTION_XPATH, "Section V")).click();
     }
 
     public void verifyContactItsInformationIsDisplayedInSection4() throws IOException, ParseException, AutomationException {
-        String enteredLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-        String selectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-        String enteredFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-        String enteredMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
-        String enteredTelephoneNum = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
-        String enteredEmail = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
-        String enteredAddressLine1 = CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString();
-        String enteredAddressLine2 = CommonUtil.getJsonPath("Create").get("Create.addressLine2").toString();
-        String enteredCity = CommonUtil.getJsonPath("Create").get("Create.city").toString();
-        String enteredState = CommonUtil.getJsonPath("Create").get("Create.stateCode").toString();
-        String enteredZip = CommonUtil.getJsonPath("Create").get("Create.zip").toString();
+        String enteredLastName = CommonUtil.getJsonPath("attorney1").get("attorney1.lastName").toString();
+        String selectedSuffix = CommonUtil.getJsonPath("attorney1").get("attorney1.suffix").toString();
+        String enteredFirstName = CommonUtil.getJsonPath("attorney1").get("attorney1.firstName").toString();
+        String enteredMiddleName = CommonUtil.getJsonPath("attorney1").get("attorney1.middleName").toString();
+        String enteredTelephoneNum = CommonUtil.getJsonPath("attorney1").get("attorney1.phoneNumber").toString();
+        String enteredEmail = CommonUtil.getJsonPath("attorney1").get("attorney1.emailId").toString();
+        String enteredAddressLine1 = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine1").toString();
+        String enteredAddressLine2 = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine2").toString();
+        String enteredCity = CommonUtil.getJsonPath("attorney1").get("attorney1.city").toString();
+        String enteredState = CommonUtil.getJsonPath("attorney1").get("attorney1.stateCode").toString();
+        String enteredZip = CommonUtil.getJsonPath("attorney1").get("attorney1.zip").toString();
 
         verifyFetchedInputFieldOfSection4(enteredLastName);
         verifyFetchedInputFieldOfSection4(selectedSuffix);
@@ -420,87 +434,269 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputFieldOfSection4(enteredCity);
         verifyFetchedInputFieldOfSection4(enteredState);
         verifyFetchedInputFieldOfSection4(enteredZip);
+
+        attorneyLastNameForm = driverUtil.getWebElement(SECTION_4_LAST_NAME).getAttribute("value");
     }
 
     public void verifySelectedContactsAreDisplayedUnderExecutorCoExecutorAndSecondaryCoExecutor() throws AutomationException, IOException, ParseException {
-        String enteredLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-        String selectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-        String enteredFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
-        String enteredMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
-        String enteredAddressLine1 = CommonUtil.getJsonPath("Create").get("Create.addressLine1").toString();
-        String enteredAddressLine2 = CommonUtil.getJsonPath("Create").get("Create.addressLine2").toString();
-        String enteredCity = CommonUtil.getJsonPath("Create").get("Create.city").toString();
-        String enteredState = CommonUtil.getJsonPath("Create").get("Create.stateCode").toString();
-        String enteredZip = CommonUtil.getJsonPath("Create").get("Create.zip").toString();
+        String enteredLastNameFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.lastName").toString();
+        String selectedSuffixFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.suffix").toString();
+        String enteredFirstNameFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.firstName").toString();
+        String enteredMiddleNameFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.middleName").toString();
+        String enteredAddressLine1Fiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine1").toString();
+        String enteredAddressLine2Fiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine2").toString();
+        String enteredCityFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.city").toString();
+        String enteredStateFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.stateCode").toString();
+        String enteredZipFiduciary1 = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.zip").toString();
 
-        verifyFetchedInputFieldOfSection5(enteredLastName);
-        verifyFetchedInputFieldOfSection5(selectedSuffix);
-        verifyFetchedInputFieldOfSection5(enteredFirstName);
-        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleName.charAt(0)));
-        verifyFetchedInputFieldOfSection5(enteredAddressLine1);
-        verifyFetchedInputFieldOfSection5(enteredAddressLine2);
-        verifyFetchedInputFieldOfSection5(enteredCity);
-        verifyFetchedInputFieldOfSection5(enteredState);
-        verifyFetchedInputFieldOfSection5(enteredZip);
+        verifyFetchedInputFieldOfSection5(enteredLastNameFiduciary1);
+        verifyFetchedInputFieldOfSection5(selectedSuffixFiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredFirstNameFiduciary1);
+        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleNameFiduciary1.charAt(0)));
+        verifyFetchedInputFieldOfSection5(enteredAddressLine1Fiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredAddressLine2Fiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredCityFiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredStateFiduciary1);
+        verifyFetchedInputFieldOfSection5(enteredZipFiduciary1);
+
+        executorLastNameForm = driverUtil.getWebElement(EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
 
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
-        verifyFetchedInputFieldOfSection5(enteredLastName);
-        verifyFetchedInputFieldOfSection5(selectedSuffix);
-        verifyFetchedInputFieldOfSection5(enteredFirstName);
-        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleName.charAt(0)));
-        verifyFetchedInputFieldOfSection5(enteredAddressLine1);
-        verifyFetchedInputFieldOfSection5(enteredAddressLine2);
-        verifyFetchedInputFieldOfSection5(enteredCity);
-        verifyFetchedInputFieldOfSection5(enteredState);
-        verifyFetchedInputFieldOfSection5(enteredZip);
+        String enteredLastNameFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString();
+        String selectedSuffixFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String enteredFirstNameFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
+        String enteredMiddleNameFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
+        String enteredAddressLine1Fiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.addressLine1").toString();
+        String enteredAddressLine2Fiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.addressLine2").toString();
+        String enteredCityFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.city").toString();
+        String enteredStateFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.stateCode").toString();
+        String enteredZipFiduciary2 = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.zip").toString();
 
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredLastName);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(selectedSuffix);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredFirstName);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(String.valueOf(enteredMiddleName.charAt(0)));
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine1);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine2);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredCity);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredState);
-        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredZip);
+        verifyFetchedInputFieldOfSection5(enteredLastNameFiduciary2);
+        verifyFetchedInputFieldOfSection5(selectedSuffixFiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredFirstNameFiduciary2);
+        verifyFetchedInputFieldOfSection5(String.valueOf(enteredMiddleNameFiduciary2.charAt(0)));
+        verifyFetchedInputFieldOfSection5(enteredAddressLine1Fiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredAddressLine2Fiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredCityFiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredStateFiduciary2);
+        verifyFetchedInputFieldOfSection5(enteredZipFiduciary2);
+
+        coExecutorLastNameForm = driverUtil.getWebElement(CO_EXECUTOR_LAST_NAME_FIELD).getAttribute("value");
+
+        String enteredLastNameFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString();
+        String selectedSuffixFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
+        String enteredFirstNameFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
+        String enteredMiddleNameFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
+        String enteredAddressLine1Fiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine1").toString();
+        String enteredAddressLine2Fiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine2").toString();
+        String enteredCityFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.city").toString();
+        String enteredStateFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.stateCode").toString();
+        String enteredZipFiduciary3 = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.zip").toString();
+
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredLastNameFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(selectedSuffixFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredFirstNameFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(String.valueOf(enteredMiddleNameFiduciary3.charAt(0)));
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine1Fiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredAddressLine2Fiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredCityFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredStateFiduciary3);
+        verifyFetchedInputFieldOfSecondaryCoExecutive(enteredZipFiduciary3);
+
+        secondaryCoExecutorLastNameForm = driverUtil.getWebElement(SECONDARY_C0_EXECUTOR_LAST_NAME).getAttribute("value");
     }
 
     public void userResetsTheRWForm() throws AutomationException {
         driverUtil.getWebElement("//body").click();
-
         driverUtil.getWebElement(FIRST_PAGE_BTN).click();
-
-        waitForVisibleElement(By.xpath(SECTION_5_LAST_NAME),5);
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
-
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
-
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
-
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement(ACCEPT_BTN).click();
-
         WebDriverUtil.waitForAWhile();
-
         driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
-
-        waitForVisibleElement(By.xpath(String.format(ROLE_RADIO_BTN_XPATH,"NONE")),5);
-        driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH,"NONE")).click();
-
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH, "NONE")).click();
         driverUtil.getWebElement(CONTACT_RADIO_BTN_XPATH).click();
-
         driverUtil.getWebElement(PROCEED_BTN).click();
-
         WebDriverUtil.waitForAWhile();
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        DownloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+    private static final Map<String, String> expectedValues = new HashMap<>();
+
+    static {
+        expectedValues.put("Last Name", "Walker");
+        expectedValues.put("ExecutorOrAdministratorLastName", "Smith");
+        expectedValues.put("CoExecutorOrAdministratorLastName", "Brown");
+        expectedValues.put("SecondaryCoExecutorOrAdministratorLastName", "Clark");
+    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+
+        Map<String, String> extractedData = extractDataFromPDF(pdfFilePath);
+        verifyFields(extractedData);
+    }
+
+
+    private Map<String, String> extractDataFromPDF(String filePath) throws IOException {
+        Map<String, String> extractedData = new HashMap<>();
+
+        // Load the PDF file
+        File file = new File(filePath);
+        PDDocument document = PDDocument.load(file);
+
+        // Extract text from PDF
+        PDFTextStripper pdfStripper = new PDFTextStripper();
+        String pdfText = pdfStripper.getText(document);
+        document.close();
+
+
+        // Split text into lines
+        String[] lines = pdfText.split("\\r?\\n");
+
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Last Name", "Last Name Suffix First Name MI");
+        headers.put("ExecutorOrAdministratorLastName", "Executor/Administrator Last Name Suffix First Name MI");
+        headers.put("CoExecutorOrAdministratorLastName", "Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI");
+        headers.put("SecondaryCoExecutorOrAdministratorLastName", "Secondary Co-Executor/Administrator Last Name (if necessary) Suffix First Name MI");
+
+        Map<String, String> stops = new HashMap<>();
+        stops.put("Last Name", "Supreme Court I.D.# Telephone Number Attorney / Correspondent’s e-mail address:");
+        stops.put("ExecutorOrAdministratorLastName", "First line of address");
+        stops.put("CoExecutorOrAdministratorLastName", "First line of address Full name");
+        stops.put("SecondaryCoExecutorOrAdministratorLastName", "First line of address Full name");
+
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            String start = entry.getValue();
+            String stop = stops.get(key);
+
+            boolean capture = false;
+            int occurrenceCount = 0; // Track occurrences
+
+            for (String line : lines) {
+                if (line.contains(start)) {
+                    capture = true;
+                    occurrenceCount++;
+                    continue;
+                }
+
+                if (capture && !line.trim().isEmpty()) {
+                    if (key.equals("Last Name")) {
+                        // Extract second occurrence of Last Name
+                        extractedData.put(key, extractSecondLastName(lines, start));
+                        break;
+                    } else {
+                        // Extract other fields normally
+                        extractedData.put(key, extractLastName(line.trim()));
+                        break;
+                    }
+                }
+
+                if (line.contains(stop)) {
+                    capture = false;
+                }
+            }
+        }
+        return extractedData;
+    }
+
+    private String extractSecondLastName(String[] lines, String startKeyword) {
+        boolean capture = false;
+        int occurrenceCount = 0;
+        String lastName = "";
+
+        for (String line : lines) {
+            if (line.contains(startKeyword)) {
+                capture = true;
+                occurrenceCount++;
+                continue;
+            }
+
+            if (capture && !line.trim().isEmpty()) {
+                if (occurrenceCount == 2) { // Capture the second occurrence only
+                    lastName = extractLastName(line.trim());
+                    break;
+                }
+            }
+        }
+        return lastName;
+    }
+
+    private void verifyFields(Map<String, String> extractedData) {
+        extractedData.forEach((key, actual) -> {
+            String expected = expectedValues.get(key);
+            if (expected != null) {
+                try {
+                    validateField(key, actual, expected);
+                } catch (AutomationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
+    private void validateField(String fieldName, String actual, String expected) throws AutomationException {
+        if (actual != null && actual.equals(expected)) {
+            CommonSteps.logError("✅"+fieldName + " validation passed: " + actual);
+        } else {
+            throw new AutomationException("❌"+fieldName + " validation failed! Expected: " + expected + ", Found: " + actual);
+        }
+    }
+
+    private String extractLastName(String fullText) {
+        // Extract only the first word (which should be the last name)
+        String[] words = fullText.split("\\s+");
+        return words.length > 0 ? words[0] : fullText;
+    }
 }
+

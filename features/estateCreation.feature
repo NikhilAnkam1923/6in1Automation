@@ -4,12 +4,12 @@ Feature: 6in1 estate creation Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "$6in1_url"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                           | password |
-      | nikhilankam+14@benchmarkit.solutions | Watch@22 |
+      | user-email                               | password  |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
 
   Scenario: User verify after filling decedent information clicking on next button other details are opened
@@ -89,7 +89,7 @@ Feature: 6in1 estate creation Feature
     Then user verifies authorization for "View Only"
     Examples:
       | user-email                           | password |
-      | nikhilankam+15@benchmarkit.solutions | Watch@22 |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   @Setup
   Scenario:SETUP: Close Browser
