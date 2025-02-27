@@ -49,7 +49,7 @@ Feature: 6in1 probate form RW01 Feature
     Then user verifies a side bar with title 'Select Attorney/Correspondent' is displayed
 
   Scenario: Verify, only 1 contact can be selected.
-    And user selects Role as "Fiduciary"
+    And user selects Role as "Attorney"
     Then user verifies out of the available roles and contact name, only 1 contact is able to be selected
 
   Scenario: Verify, on selecting the contact its information is displayed in section 4.

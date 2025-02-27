@@ -122,13 +122,13 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario Outline: Verify user authorization for "View Only" user
     When user logged out from the application
-    And user go to application "https://delltab.benchmarkits.in"
+    And user go to application "https://benchmark1.benchmarkits.in/"
     When user login using "<user-email>" and "<password>"
     When user navigate to "Global Contact"
     Then user verifies authorization for "View Only"
     Examples:
-      | user-email                           | password |
-      | nikhilankam+13@benchmarkit.solutions | Watch@22 |
+      | user-email                               | password  |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   @Setup
   Scenario:SETUP: Close Browser

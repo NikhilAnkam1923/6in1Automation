@@ -384,7 +384,7 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     public void verifyNotaryBlockIsDisplayed() throws AutomationException {
-        WebElement notaryBlock = driverUtil.getWebElement(NOTARY_BLOCK_XPATH);
+        WebElement notaryBlock = driverUtil.getWebElementAndScroll(NOTARY_BLOCK_XPATH);
         if(!notaryBlock.isDisplayed()){
             throw new AutomationException("Notary Block is not displayed");
         }

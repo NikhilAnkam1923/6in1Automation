@@ -89,7 +89,7 @@ Feature: 6in1 estate creation Feature
     Then user verifies authorization for "View Only"
     Examples:
       | user-email                           | password |
-      | nikhilankam+15@benchmarkit.solutions | Watch@22 |
+      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   @Setup
   Scenario:SETUP: Close Browser
