@@ -500,7 +500,8 @@ public class ProbateFormsRW06Page extends BasePage{
         Actions actions = new Actions(DriverFactory.drivers.get());
 
         for (int i = 0; i < 10; i++) {
-            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i)));
+            WebDriverUtil.waitForAWhile();
+            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i)));
             WebElement reasonField = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i)));
 
             dateField.clear();
