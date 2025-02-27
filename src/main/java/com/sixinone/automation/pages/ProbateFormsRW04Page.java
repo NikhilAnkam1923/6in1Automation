@@ -162,10 +162,10 @@ public class ProbateFormsRW04Page extends BasePage{
             throw new AutomationException("County is incorrect or not fetched correctly. Expected: " + enteredDomicileCountry + ", but got: " + countyName);
         }
 
-        String EstateName = enteredFirstName+" "+enteredMiddleName+" "+enteredLastName+" "+selectedSuffix;
+//        String EstateName = enteredFirstName+" "+enteredMiddleName+" "+enteredLastName+" "+selectedSuffix;
         String estateName = driverUtil.getWebElement(ESTATE_OF_NAME).getAttribute("value");
-        if (!EstateName.equals(estateName)) {
-            throw new AutomationException("Estate name is incorrect or not fetched correctly. Expected: " + EstateName + ", but got: " + estateName);
+        if (!enteredDisplayName.equals(estateName)) {
+            throw new AutomationException("Estate name is incorrect or not fetched correctly. Expected: " + enteredDisplayName + ", but got: " + estateName);
         }
 
         String AKAName = driverUtil.getWebElement(AKA_NAME_FIELD).getAttribute("value");
@@ -209,8 +209,8 @@ public class ProbateFormsRW04Page extends BasePage{
         String EstateName = enteredFirstName+" "+enteredMiddleName+" "+enteredLastName+" "+selectedSuffix;
 
         WebElement estateHeaderName = driverUtil.getWebElement(ESTATE_OF_NAME);
-        if (!estateHeaderName.getAttribute("value").equals(EstateName)) {
-            throw new AutomationException("Value is not auto-populated correctly. Expected: " + EstateName);
+        if (!estateHeaderName.getAttribute("value").equals(enteredDisplayName)) {
+            throw new AutomationException("Value is not auto-populated correctly. Expected: " + enteredDisplayName +" but found: "+estateHeaderName);
         }
 
         WebElement acquaintedEstateName = driverUtil.getWebElement(ESTATE_ACQUAINTED_WITH_NAME);

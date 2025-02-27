@@ -494,7 +494,7 @@ public class ProbateFormsRW06Page extends BasePage{
         }
     }
 
-    public void userEntersRelationshipDateAndReasonDetailsOnEachForm() throws AutomationException {
+    public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
         Actions actions = new Actions(DriverFactory.drivers.get());
@@ -516,14 +516,14 @@ public class ProbateFormsRW06Page extends BasePage{
                     .build()
                     .perform();
 
-            String actualDate = dateField.getAttribute("value");
+            String actualDate = driverUtil.getWebElement(String.format(DATE_FIELD,i)).getAttribute("value");
 
             reasonField.clear();
             reasonField.sendKeys(reasonDataForm.get(i));
 
             driverUtil.getWebElement("//body").click();
 
-            String actualReason = reasonField.getAttribute("value");
+            String actualReason = driverUtil.getWebElement(String.format(LETTERS_ISSUED_TO_FIELD,i)).getAttribute("value");
 
             WebDriverUtil.waitForAWhile();
 
