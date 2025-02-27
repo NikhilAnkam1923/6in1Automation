@@ -454,9 +454,9 @@ public class CommonSteps {
             case "RW05":
                 PageFactory.probateFormsRW05Page().userSavesEstateInfo();
                 break;
-//            case "RW06":
-//                PageFactory.probateFormsRW06Page().userSavesEstateInfo();
-//                break;
+            case "RW06":
+                PageFactory.probateFormsRW06Page().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -499,9 +499,6 @@ public class CommonSteps {
             case "RW02":
                 PageFactory.probateFormsRW02Page().userSavesEstateContactsInfo();
                 break;
-//            case "RW06":
-//                PageFactory.probateFormsRW06Page().userSavesEstateContactsInfo();
-//                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -526,9 +523,9 @@ public class CommonSteps {
             case "RW05":
                 PageFactory.probateFormsRW05Page().userResetsTheRWForm();
                 break;
-//            case "RW06":
-//                PageFactory.probateFormsRW06Page().userResetsTheRWForm();
-//                break;
+            case "RW06":
+                PageFactory.probateFormsRW06Page().userResetsTheRWForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -547,9 +544,9 @@ public class CommonSteps {
             case "RW05":
                 PageFactory.probateFormsRW05Page().verifyAutoPopulatedFieldsAreNotEditable();
                 break;
-//            case "RW06":
-//                PageFactory.probateFormsRW06Page().verifyAutoPopulatedFieldsAreNotEditable();
-//                break;
+            case "RW06":
+                PageFactory.probateFormsRW06Page().verifyAutoPopulatedFieldsAreNotEditable();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -641,9 +638,9 @@ public class CommonSteps {
             case "RW05":
                 PageFactory.probateFormsRW05Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
                 break;
-//            case "RW06":
-//                PageFactory.probateFormsRW06Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
-//                break;
+            case "RW06":
+                PageFactory.probateFormsRW06Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
