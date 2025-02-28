@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -1174,7 +1175,8 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
-        driverUtil.getWebElement(PRINTFORM_BUTTON).click();
+        waitForVisibleElement(By.xpath(PRINTFORM_BUTTON));
+        driverUtil.getWebElementAndScroll(PRINTFORM_BUTTON).click();
 
         Robot robot = new Robot();
         waitForAWhile(2); // Wait for the dialog to appear

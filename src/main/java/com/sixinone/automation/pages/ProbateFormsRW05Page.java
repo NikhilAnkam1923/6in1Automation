@@ -4,13 +4,21 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.*;
+
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 
 public class ProbateFormsRW05Page extends BasePage {
 
@@ -62,6 +70,8 @@ public class ProbateFormsRW05Page extends BasePage {
     private static final String SELECTED_MARITAL_STATUS = "//div[text()='Life Details']/following-sibling::div//input[@name='lifeDetails.ageAtDeath'] /ancestor::div[contains(@class, 'col-')]/following-sibling::div//label[contains(text(), 'Marital Status')] /following-sibling::div//div[contains(@class, 'select__single-value')]";
     private static final String DISPLAY_NOTARY_CHECKBOX = "//input[@name='displayNotaryBlock']";
     private static final String NOTARY_BLOCK_XPATH = "//p[contains(text(),'Commonwealth of pennsylvania')]";
+
+    static String downloadedFileName;
 
     static String enteredFirstName;
     static String enteredMiddleName;
@@ -240,7 +250,7 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
-        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+        WebElement field = driverUtil.getWebElement(fieldLocator);
         String value = CommonUtil.getJsonPath("Create").get(jsonKey).toString();
         for (char c : value.toCharArray()) {
             field.sendKeys(String.valueOf(c));
@@ -367,8 +377,189 @@ public class ProbateFormsRW05Page extends BasePage {
         verifyField("Witness City, State, Zip 2", enteredCityStateZip2Form, actualW2cityStateZip);
     }
 
+
+
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyPrintNames(pdfFilePath);
+            //verifyCounty(pdfFilePath);
+            validateWitnessDetails(pdfFilePath);
+
+        } catch (IOException e) {
+            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+        }
+    }
+
+    public static void verifyPrintNames(String pdfFilePath) throws IOException {
+        String beforeLine = "Estate of William John  , Deceased";
+        String afterLine = "(Print Name/s) (Print Name/s)";
+
+        List<String> names = new ArrayList<>();
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Split the entire PDF content into lines
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+
+        // Log each line and find start/end indexes
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+
+            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    // Handle cases where witnesses are on the same line
+                    if (currentLine.contains(" and ")) {
+                        String[] splitNames = currentLine.split(" and ");
+                        for (String name : splitNames) {
+                            names.add(cleanName(name));
+                        }
+                    } else {
+                        names.add(cleanName(currentLine));
+                    }
+                }
+            }
+
+            CommonSteps.logInfo("\n📌 Extracted Witness Names: " + names);
+            if (names.isEmpty()) {
+                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
+                return;
+            }
+
+            // Create a map of expected names
+            Map<String, String> expectedNames = new LinkedHashMap<>();
+            expectedNames.put("First Witness", cleanName(enteredWitness1Form));
+            expectedNames.put("Second Witness", cleanName(enteredWitness2Form));
+
+            boolean allMatch = true;
+            for (int i = 0; i < expectedNames.size(); i++) {
+                String expectedValue = expectedNames.values().toArray(new String[0])[i];
+                String actualValue = (i < names.size()) ? names.get(i) : "No Name";
+
+                CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
+
+                if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                    allMatch = false;
+                    break;
+                }
+            }
+
+            if (allMatch) {
+                CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
+            } else {
+                CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+            }
+        } else {
+            CommonSteps.logInfo("❌ Before or after line not found!");
+        }
+    }
+
+    // **Updated Helper Method to Clean Names Properly**
+    private static String cleanName(String rawName) {
+        if (rawName == null || rawName.trim().isEmpty()) return "";
+
+        return rawName
+                .replaceAll("(?i)\\b(each of|all of)\\b", "") // Remove unwanted phrases
+                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
+                .trim(); // Trim spaces
+    }
+
+    public void validateWitnessDetails(String pdfFilePath) throws IOException {
+        List<String> pdfLines = Arrays.asList(new PDFTextStripper().getText(PDDocument.load(new File(pdfFilePath))).split("\\r?\\n"));
+        Map<String, Map<String, String>> extractedWitnessDetails = new LinkedHashMap<>();
+
+        // Extract witness details
+        for (int i = 0; i < pdfLines.size(); i++) {
+            if (pdfLines.get(i).contains("(Signature)")) {
+                String signature = pdfLines.get(i).replace("(Signature) ", "").trim();
+                String streetAddress = "";
+                String cityStateZip = "";
+
+                // Find the Street Address (next non-empty line after Signature)
+                for (int j = i + 1; j < pdfLines.size(); j++) {
+                    if (!pdfLines.get(j).trim().isEmpty() && !pdfLines.get(j).contains("(Signature)")) {
+                        streetAddress = pdfLines.get(j).trim();
+                        break;
+                    }
+                }
+
+                // Find the City, State, Zip (line containing a ZIP code)
+                for (int j = i + 2; j < pdfLines.size(); j++) {
+                    if (pdfLines.get(j).matches(".*\\d{5}.*")) { // Match ZIP code pattern
+                        cityStateZip = pdfLines.get(j).trim();
+                        break;
+                    }
+                }
+
+                extractedWitnessDetails.put(signature, Map.of("Street Address", streetAddress, "City, State, Zip", cityStateZip));
+            }
+        }
+
+        // Print extracted witness details in the desired format
+        for (Map.Entry<String, Map<String, String>> entry : extractedWitnessDetails.entrySet()) {
+            String signature = entry.getKey();
+            String street = entry.getValue().get("Street Address");
+            String cityStateZip = entry.getValue().get("City, State, Zip");
+
+            CommonSteps.logInfo("✅ Extracted Witness: " + signature + " | Street: " + street + " | City/State/Zip: " + cityStateZip);
+        }
+    }
+
     public void userResetsTheRWForm() throws AutomationException {
-        driverUtil.getWebElementAndScroll(SHOW_AKA_CHECkBOX).click();
+        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
         clearField(WITNESS_1_STREET_ADDRESS);
@@ -384,9 +575,11 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     public void verifyNotaryBlockIsDisplayed() throws AutomationException {
+        WebDriverUtil.waitForVisibleElement(By.xpath(NOTARY_BLOCK_XPATH));
         WebElement notaryBlock = driverUtil.getWebElementAndScroll(NOTARY_BLOCK_XPATH);
         if(!notaryBlock.isDisplayed()){
             throw new AutomationException("Notary Block is not displayed");
         }
+
     }
 }

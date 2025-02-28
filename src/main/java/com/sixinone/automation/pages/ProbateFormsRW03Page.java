@@ -423,13 +423,13 @@ public class ProbateFormsRW03Page extends BasePage {
             validateWitnessDetails(pdfFilePath);
 
         } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            throw new AutomationException("Error reading PDF: " + e.getMessage());
         }
     }
 
-    public static void verifyPrintNames(String pdfFilePath) throws IOException {
-        String beforeLine = "Estate of William John  ,Deceased";
-        String afterLine = "(each) a subscribing witness to";
+    public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "Estate of William John  , Deceased";
+        String afterLine = "(Print Name/s) (Print Name/s)";
 
         List<String> names = new ArrayList<>();
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -486,11 +486,11 @@ public class ProbateFormsRW03Page extends BasePage {
                 if (allMatch) {
                     CommonSteps.logInfo("✅ Validation Passed: Print names are " + String.join(" ", names) + " as expected.");
                 } else {
-                    CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+                    throw new AutomationException("❌ Validation Failed: Print names do not match the expected values.");
                 }
             }
         } else {
-            CommonSteps.logInfo("❌ Before or after line not found!");
+            throw new AutomationException("❌ Before or after line not found!");
         }
     }
 
@@ -529,9 +529,9 @@ public class ProbateFormsRW03Page extends BasePage {
                 if (foundField && foundValue) {
                     CommonSteps.logInfo("✅ Field: \"" + entry.getKey() + "\" and Value: \"" + entry.getValue() + "\" are found.");
                 } else if (foundField) {
-                    CommonSteps.logInfo("⚠️ Field: \"" + entry.getKey() + "\" found, but Value: \"" + entry.getValue() + "\" is missing.");
+                    throw new AutomationException("⚠️ Field: \"" + entry.getKey() + "\" found, but Value: \"" + entry.getValue() + "\" is missing.");
                 } else {
-                    CommonSteps.logInfo("❌ Field: \"" + entry.getKey() + "\" not found in the PDF.");
+                    throw new AutomationException("❌ Field: \"" + entry.getKey() + "\" not found in the PDF.");
                 }
             }
         } catch (IOException e) {
@@ -539,7 +539,7 @@ public class ProbateFormsRW03Page extends BasePage {
         }
     }
 
-    public void validateWitnessDetails(String pdfFilePath) throws IOException {
+    public void validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
         List<String> pdfLines = Arrays.asList(new PDFTextStripper().getText(PDDocument.load(new File(pdfFilePath))).split("\\r?\\n"));
         Map<String, String> extractedWitnessDetails = new LinkedHashMap<>();
 
@@ -595,7 +595,7 @@ public class ProbateFormsRW03Page extends BasePage {
         if (allWitnessesValid) {
             CommonSteps.logInfo("✅ All witnesses validated successfully.");
         } else {
-            CommonSteps.logInfo("❌ Witness validation failed.");
+            throw new AutomationException("❌ Witness validation failed.");
         }
     }
 
