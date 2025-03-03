@@ -456,6 +456,9 @@ public class CommonSteps {
             case "RW06":
                 PageFactory.probateFormsRW06Page().userSavesEstateInfo();
                 break;
+            case "RWxx":
+                PageFactory.probateFormsRWxxPage().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -525,13 +528,16 @@ public class CommonSteps {
             case "RW06":
                 PageFactory.probateFormsRW06Page().userResetsTheRWForm();
                 break;
+            case "RWxx":
+                PageFactory.probateFormsRWxxPage().userResetsTheRWForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
     }
 
     @Then("^user verifies the auto-populated fields of \"([^\"]*)\" form are not editable$")
-    public void userVerifiesTheAutoPopulatedFieldsAreNotEditable(String formName) throws Exception {
+    public void userVerifiesTheAutoPopulatedFieldsAreNotEditable(String formName) throws AutomationException {
         CommonSteps.logInfo("Verified that the auto-populated fields of "+formName+" are not editable");
         switch (formName) {
             case "RW02":
@@ -639,6 +645,9 @@ public class CommonSteps {
                 break;
             case "RW06":
                 PageFactory.probateFormsRW06Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
+                break;
+            case "RWxx":
+                PageFactory.probateFormsRWxxPage().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
