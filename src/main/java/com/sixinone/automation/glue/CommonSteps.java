@@ -430,7 +430,10 @@ public class CommonSteps {
         fieldElement.sendKeys(Keys.CONTROL + "a");
         fieldElement.sendKeys(Keys.BACK_SPACE);
         driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(estateName);
-        driverUtil.getWebElement(String.format(TEMP_ESTATE, estateName)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebElement tempUser = driverUtil.getWebElementAndScroll(String.format(TEMP_ESTATE, estateName));
+        waitForVisibleElement(tempUser);
+        tempUser.click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
@@ -700,6 +703,9 @@ public class CommonSteps {
             case "Rw05":
                 PageFactory.probateFormsRW05Page().verifyFormPrintedInPDFForm(formName);
                 break;
+            case "Rw06":
+                PageFactory.probateFormsRW06Page().verifyFormPrintedInPDFForm(formName);
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -724,6 +730,9 @@ public class CommonSteps {
                 break;
             case "Rw05":
                 PageFactory.probateFormsRW05Page().verifyAllFieldsInDownloadedPDF();
+                break;
+            case "Rw06":
+                PageFactory.probateFormsRW06Page().verifyAllFieldsInDownloadedPDF();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

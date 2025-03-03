@@ -4,7 +4,10 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -14,11 +17,15 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
-public class ProbateFormsRW06Page extends BasePage{
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
+
+public class ProbateFormsRW06Page extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -86,6 +93,8 @@ public class ProbateFormsRW06Page extends BasePage{
             "Medical Emergency", "Legal Requirement", "Financial Support", "Personal Request", "Work Requirement",
             "Travel Authorization", "Educational Purpose", "Banking Documentation", "Family Consent", "Government Processing"
     );
+
+    static String downloadedFileName;
 
     static String enteredFirstName;
     static String enteredMiddleName;
@@ -213,8 +222,8 @@ public class ProbateFormsRW06Page extends BasePage{
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws Exception {
         WebDriverUtil.waitForAWhile();
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredDisplayName));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredAlsoKnownAs));
     }
 
     private void scrollToElementAndClick(String elementLocator) throws AutomationException {
@@ -274,11 +283,11 @@ public class ProbateFormsRW06Page extends BasePage{
             String actualCorporateFiduciarySign = CorporateFiduciarySignFields.get(i).getAttribute("value").trim();
 
             if (!actualCorporateName.equals(expectedName)) {
-                throw new AutomationException("Corporate name is not reflected, Expected: "+expectedName+" ,Found: "+actualCorporateName);
+                throw new AutomationException("Corporate name is not reflected, Expected: " + expectedName + " ,Found: " + actualCorporateName);
             }
 
             if (!actualCorporateFiduciarySign.equals(expectedName)) {
-                throw new AutomationException("Corporate Fiduciary Sign is not reflected, Expected: "+expectedName+" ,Found: "+actualCorporateFiduciarySign);
+                throw new AutomationException("Corporate Fiduciary Sign is not reflected, Expected: " + expectedName + " ,Found: " + actualCorporateFiduciarySign);
             }
         }
     }
@@ -296,7 +305,7 @@ public class ProbateFormsRW06Page extends BasePage{
         List<WebElement> CorporateFiduciarySignFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
 
         if (CorporateFiduciarySignFields.size() != expectedNames.size()) {
-            throw new AutomationException("Mismatch: Selected " + expectedNames.size() + " Contacts, but found " + CorporateFiduciarySignFields.size()+" forms");
+            throw new AutomationException("Mismatch: Selected " + expectedNames.size() + " Contacts, but found " + CorporateFiduciarySignFields.size() + " forms");
         }
     }
 
@@ -350,7 +359,7 @@ public class ProbateFormsRW06Page extends BasePage{
             String expectedLastName = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".lastName").toString();
             String expectedSuffix = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".suffix").toString();
             String expectedCity = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".city").toString();
-            String expectedState= CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".stateCode").toString();
+            String expectedState = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".stateCode").toString();
             String expectedZip = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".zip").toString();
             String expectedAddressLine1 = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".addressLine1").toString();
             String expectedTelephone = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".workNumber").toString();
@@ -358,7 +367,7 @@ public class ProbateFormsRW06Page extends BasePage{
 
 
             String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + " " + expectedSuffix;
-            String expectedCityStateZip = expectedCity+", "+ expectedState +" "+expectedZip;
+            String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
             String actualName = nameFields.get(i).getAttribute("value");
@@ -434,7 +443,7 @@ public class ProbateFormsRW06Page extends BasePage{
         List<WebElement> BeneficiarySignFields = driverUtil.getWebElements(SIGN_OF_BENEFICIARY);
 
         if (BeneficiarySignFields.size() != expectedNames.size()) {
-            throw new AutomationException("Mismatch: Selected " + expectedNames.size() + " Contacts, but found " + BeneficiarySignFields.size()+" forms");
+            throw new AutomationException("Mismatch: Selected " + expectedNames.size() + " Contacts, but found " + BeneficiarySignFields.size() + " forms");
         }
     }
 
@@ -454,14 +463,14 @@ public class ProbateFormsRW06Page extends BasePage{
             String beneficiaryKey = "beneficiary" + beneficiaryIndex;
 
             String expectedCity = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".city").toString();
-            String expectedState= CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
+            String expectedState = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
             String expectedZip = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".zip").toString();
             String expectedAddressLine1 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString();
             String expectedTelephone = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".workNumber").toString();
             String expectedEmail = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".emailId").toString();
 
             String expectedName = expectedNames.get(i).trim();
-            String expectedCityStateZip = expectedCity+", "+ expectedState +" "+expectedZip;
+            String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_BENEFICIARY);
             String actualName = nameFields.get(i).getAttribute("value");
@@ -502,7 +511,7 @@ public class ProbateFormsRW06Page extends BasePage{
         for (int i = 0; i < 10; i++) {
             WebDriverUtil.waitForAWhile();
             WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i)));
-            WebElement reasonField = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i)));
+            WebElement reasonField = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i)));
 
             dateField.clear();
             Toolkit.getDefaultToolkit()
@@ -517,14 +526,14 @@ public class ProbateFormsRW06Page extends BasePage{
                     .build()
                     .perform();
 
-            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i))).getAttribute("value");
+            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i))).getAttribute("value");
 
             reasonField.clear();
             reasonField.sendKeys(reasonDataForm.get(i));
 
             driverUtil.getWebElement("//body").click();
 
-            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i))).getAttribute("value");
+            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
 
             WebDriverUtil.waitForAWhile();
 
@@ -537,4 +546,143 @@ public class ProbateFormsRW06Page extends BasePage{
             }
         }
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyNameOrCorporateName(pdfFilePath);
+            //verifyCounty(pdfFilePath);
+            //validateWitnessDetails(pdfFilePath);
+
+        } catch (IOException e) {
+            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+        }
+    }
+
+    public void verifyNameOrCorporateName(String pdfFilePath) throws IOException {
+        String beforeLine = "Estate of Kris Warner , Deceased";
+        String afterLine = "(Name or Corporate Name)";
+
+        List<String> names = new ArrayList<>();
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Split the entire PDF content into lines
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+
+        // Log each line and find start/end indexes
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+
+            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    // Handle cases where witnesses are on the same line
+                    if (currentLine.contains(" and ")) {
+                        String[] splitNames = currentLine.split(" and ");
+                        for (String name : splitNames) {
+                            names.add(cleanName(name));
+                        }
+                    } else {
+                        names.add(cleanName(currentLine));
+                    }
+                }
+            }
+
+            CommonSteps.logInfo("\n📌 Extracted Witness Names: " + names);
+            if (names.isEmpty()) {
+                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
+                return;
+            }
+
+            // Create a map of expected names
+            Map<String, String> expectedNames = new LinkedHashMap<>();
+            expectedNames.put("First Witness", cleanName(CorporateFiduciary1Form));
+
+            boolean allMatch = true;
+            for (int i = 0; i < expectedNames.size(); i++) {
+                String expectedValue = expectedNames.values().toArray(new String[0])[i];
+                String actualValue = (i < names.size()) ? names.get(i) : "No Name";
+
+                CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
+
+                if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                    allMatch = false;
+                    break;
+                }
+            }
+
+            if (allMatch) {
+                CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
+            } else {
+                CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+            }
+        } else {
+            CommonSteps.logInfo("❌ Before or after line not found!");
+        }
+    }
+
+    // **Updated Helper Method to Clean Names Properly**
+    private static String cleanName(String rawName) {
+        if (rawName == null || rawName.trim().isEmpty()) return "";
+
+        return rawName
+                .replaceAll("(?i)\\b(The undersigned,  )\\b", "")
+                .replaceAll("(?i)\\b(, in my capacity/relationship as)\\b", "")
+
+                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
+                .trim(); // Trim spaces
+    }
 }
+

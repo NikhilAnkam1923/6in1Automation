@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +71,8 @@ public class ProbateFormsRW05Page extends BasePage {
     private static final String SELECTED_MARITAL_STATUS = "//div[text()='Life Details']/following-sibling::div//input[@name='lifeDetails.ageAtDeath'] /ancestor::div[contains(@class, 'col-')]/following-sibling::div//label[contains(text(), 'Marital Status')] /following-sibling::div//div[contains(@class, 'select__single-value')]";
     private static final String DISPLAY_NOTARY_CHECKBOX = "//input[@name='displayNotaryBlock']";
     private static final String NOTARY_BLOCK_XPATH = "//p[contains(text(),'Commonwealth of pennsylvania')]";
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
+    private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
 
     static String downloadedFileName;
 
@@ -559,15 +562,18 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     public void userResetsTheRWForm() throws AutomationException {
-        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
+        WebDriverUtil.waitForAWhile(2);
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), 50, 50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
-        clearField(WITNESS_1_STREET_ADDRESS);
-        clearField(WITNESS_2_STREET_ADDRESS);
-        clearField(W1_CITY_STATE_ZIP);
+        DriverFactory.drivers.get().findElement(By.xpath(WITNESS_1_STREET_ADDRESS)).clear();
+        DriverFactory.drivers.get().findElement(By.xpath(WITNESS_2_STREET_ADDRESS)).clear();
+        DriverFactory.drivers.get().findElement(By.xpath(W1_CITY_STATE_ZIP)).clear();
         DriverFactory.drivers.get().findElement(By.xpath(W2_CITY_STATE_ZIP)).clear();
         driverUtil.getWebElement(W2_CITY_STATE_ZIP).sendKeys(Keys.ENTER);
-        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_NOTARY_CHECKBOX)).click();
+        WebDriverUtil.waitForAWhile();
     }
 
     public void userCheckTheNotaryCheckbox() {

@@ -415,7 +415,7 @@ public class ProbateFormsRW04Page extends BasePage {
     public void userResetTheRWForm() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         Actions actions = new Actions(DriverFactory.drivers.get());
-        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), 50, 50).perform();
         WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
@@ -646,7 +646,10 @@ public class ProbateFormsRW04Page extends BasePage {
             String street = entry.getValue().get("Street Address");
             String cityStateZip = entry.getValue().get("City, State, Zip");
 
-            CommonSteps.logInfo("✅ Extracted Witness: " + signature + " | Street: " + street + " | City/State/Zip: " + cityStateZip);
+
+            CommonSteps.logInfo("✅ " +
+                    "" +
+                    "Extracted Witness: " + signature + " | Street: " + street + " | City/State/Zip: " + cityStateZip);
         }
     }
 }

@@ -1175,6 +1175,7 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
+        scrollPageUp();
         waitForVisibleElement(By.xpath(PRINTFORM_BUTTON));
         driverUtil.getWebElementAndScroll(PRINTFORM_BUTTON).click();
 
