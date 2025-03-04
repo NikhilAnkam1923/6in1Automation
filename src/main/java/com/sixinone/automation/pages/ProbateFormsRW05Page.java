@@ -433,7 +433,7 @@ public class ProbateFormsRW05Page extends BasePage {
         }
     }
 
-    public static void verifyPrintNames(String pdfFilePath) throws IOException {
+    public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "Estate of William John  , Deceased";
         String afterLine = "(Print Name/s) (Print Name/s)";
 
@@ -503,10 +503,10 @@ public class ProbateFormsRW05Page extends BasePage {
             if (allMatch) {
                 CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
             } else {
-                CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+                throw new AutomationException("❌ Validation Failed: Print names do not match the expected values.");
             }
         } else {
-            CommonSteps.logInfo("❌ Before or after line not found!");
+            throw new AutomationException("❌ Before or after line not found!");
         }
     }
 

@@ -597,7 +597,7 @@ public class ProbateFormsRW06Page extends BasePage {
         }
     }
 
-    public void verifyNameOrCorporateName(String pdfFilePath) throws IOException {
+    public void verifyNameOrCorporateName(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "Estate of Kris Warner , Deceased";
         String afterLine = "(Name or Corporate Name)";
 
@@ -669,7 +669,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
             }
         } else {
-            CommonSteps.logInfo("❌ Before or after line not found!");
+            throw new AutomationException("❌ Before or after line not found!");
         }
     }
 

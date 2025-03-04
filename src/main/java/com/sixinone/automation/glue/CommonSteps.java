@@ -161,6 +161,9 @@ public class CommonSteps {
         }
     }
 
+
+
+
     @Before
     public void beforeScenario(Scenario scenario) throws AutomationException {
         REPORT_LOGGER.log(ExtentTestManager.featureFileName.get() + " => " + scenario.getName());

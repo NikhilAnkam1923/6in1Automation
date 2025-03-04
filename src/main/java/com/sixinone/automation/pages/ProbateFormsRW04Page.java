@@ -477,7 +477,7 @@ public class ProbateFormsRW04Page extends BasePage {
         }
     }
 
-    public static void verifyPrintNames(String pdfFilePath) throws IOException {
+    public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "Estate of William Arik John Jr. , Deceased";
         String afterLine = "(Print Name/s) (Print Name/s)";
 
@@ -547,10 +547,10 @@ public class ProbateFormsRW04Page extends BasePage {
             if (allMatch) {
                 CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
             } else {
-                CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+                throw new AutomationException("❌ Validation Failed: Print names do not match the expected values.");
             }
         } else {
-            CommonSteps.logInfo("❌ Before or after line not found!");
+            throw new AutomationException("❌ Before or after line not found!");
         }
     }
 
@@ -647,9 +647,7 @@ public class ProbateFormsRW04Page extends BasePage {
             String cityStateZip = entry.getValue().get("City, State, Zip");
 
 
-            CommonSteps.logInfo("✅ " +
-                    "" +
-                    "Extracted Witness: " + signature + " | Street: " + street + " | City/State/Zip: " + cityStateZip);
+            CommonSteps.logInfo("✅ Extracted Witness: " + signature + " | Street: " + street + " | City/State/Zip: " + cityStateZip);
         }
     }
 }
