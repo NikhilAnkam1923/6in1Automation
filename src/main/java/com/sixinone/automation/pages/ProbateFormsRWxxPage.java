@@ -1,5 +1,6 @@
 package com.sixinone.automation.pages;
 
+import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
@@ -204,7 +205,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         clearField(REVIEWER_DESIGNATION);
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
-        clearField(REASON);
+        DriverFactory.drivers.get().findElement(By.xpath(REASON)).clear();
         driverUtil.getWebElement(REASON).sendKeys(Keys.ENTER);
     }
 

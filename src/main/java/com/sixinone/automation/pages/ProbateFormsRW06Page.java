@@ -212,7 +212,7 @@ public class ProbateFormsRW06Page extends BasePage{
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
     }
@@ -494,6 +494,18 @@ public class ProbateFormsRW06Page extends BasePage{
         }
     }
 
+    private void fillFieldWithFieldActivation(String fieldLocator, String data) throws AutomationException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+
+        field.sendKeys(Keys.SPACE);
+        field.sendKeys(Keys.BACK_SPACE);
+        field.sendKeys(data);
+
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+
     public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
@@ -502,8 +514,8 @@ public class ProbateFormsRW06Page extends BasePage{
         for (int i = 0; i < 10; i++) {
             WebDriverUtil.waitForAWhile();
             WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i)));
-            WebElement reasonField = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i)));
 
+            scrollToElementAndClick(String.format(DATE_FIELD, i));
             dateField.clear();
             Toolkit.getDefaultToolkit()
                     .getSystemClipboard()
@@ -517,16 +529,15 @@ public class ProbateFormsRW06Page extends BasePage{
                     .build()
                     .perform();
 
-            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i))).getAttribute("value");
-
-            reasonField.clear();
-            reasonField.sendKeys(reasonDataForm.get(i));
-
             driverUtil.getWebElement("//body").click();
 
+            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i))).getAttribute("value");
+
+            fillFieldWithFieldActivation(String.format(LETTERS_ISSUED_TO_FIELD,i),reasonDataForm.get(i));
+
+            WebDriverUtil.waitForAWhile(2);
             String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i))).getAttribute("value");
 
-            WebDriverUtil.waitForAWhile();
 
             if (!actualDate.equals(dateDataForm.get(i))) {
                 throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
