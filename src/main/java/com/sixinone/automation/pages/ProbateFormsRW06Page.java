@@ -212,7 +212,7 @@ public class ProbateFormsRW06Page extends BasePage{
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        WebDriverUtil.waitForAWhile(2);
+        WebDriverUtil.waitForAWhile(4);
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
     }
@@ -293,6 +293,11 @@ public class ProbateFormsRW06Page extends BasePage{
                 CorporateFiduciary2Form
         );
 
+        System.out.println("Fiduciary Contact Details (First Form):");
+        for (int row = 0; row < 5; row++) {
+            System.out.println("Row " + (row + 1) + " -> Name: " + expectedNames.get(row));
+        }
+
         List<WebElement> CorporateFiduciarySignFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
 
         if (CorporateFiduciarySignFields.size() != expectedNames.size()) {
@@ -339,7 +344,7 @@ public class ProbateFormsRW06Page extends BasePage{
     }
 
     public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
-        List<Integer> corporateFiduciaryNum = Arrays.asList(4, 5, 3, 2, 1);
+        List<Integer> corporateFiduciaryNum = Arrays.asList(3, 5, 2, 4, 1);
 
         for (int i = 0; i < corporateFiduciaryNum.size(); i++) {
             int fiduciaryIndex = corporateFiduciaryNum.get(i);
@@ -378,16 +383,32 @@ public class ProbateFormsRW06Page extends BasePage{
                 throw new AutomationException("City, State, Zip not populated for " + expectedFullName);
             }
 
+
             WebElement telephoneElement = driverUtil.getWebElement(String.format(CORPORATE_FIDUCIARY_TELEPHONE, expectedTelephone));
             if (!telephoneElement.getAttribute("value").equals(expectedTelephone)) {
                 throw new AutomationException("Telephone mismatch for " + expectedFullName);
             }
+
 
             List<WebElement> emailElement = driverUtil.getWebElements(CORPORATE_FIDUCIARY_EMAIL);
             String actualEmail = emailElement.get(i).getAttribute("value");
             if (!actualEmail.equals(expectedEmail)) {
                 throw new AutomationException("Email not populated for " + expectedFullName);
             }
+
+            System.out.println("\nExpected Fiduciary Contact details");
+            System.out.println(expectedFullName);
+            System.out.println(expectedAddressLine1);
+            System.out.println(expectedCityStateZip);
+            System.out.println(expectedTelephone);
+            System.out.println(expectedEmail);
+
+            System.out.println("\nActual Fiduciary Contact details");
+            System.out.println(actualName);
+            System.out.println(addressElement.getText());
+            System.out.println(actualCityStateZip);
+            System.out.println(telephoneElement.getAttribute("value"));
+            System.out.println(actualEmail);
         }
     }
 
@@ -447,7 +468,12 @@ public class ProbateFormsRW06Page extends BasePage{
                 Beneficiary2Form
         );
 
-        List<Integer> beneficiaryNum = Arrays.asList(1, 4, 3, 2, 5);
+        System.out.println("Beneficiary Contact Details (First Form):");
+        for (int row = 0; row < 5; row++) {
+            System.out.println("Row " + (row + 1) + " -> Name: " + expectedNames.get(row));
+        }
+
+        List<Integer> beneficiaryNum = Arrays.asList(1, 5, 4, 2, 3);
 
         for (int i = 0; i < beneficiaryNum.size(); i++) {
             int beneficiaryIndex = beneficiaryNum.get(i);
@@ -491,6 +517,20 @@ public class ProbateFormsRW06Page extends BasePage{
             if (!actualEmail.equals(expectedEmail)) {
                 throw new AutomationException("Email not populated for " + expectedName);
             }
+
+            System.out.println("\nExpected Beneficiary Contact details");
+            System.out.println(expectedName);
+            System.out.println(expectedAddressLine1);
+            System.out.println(expectedCityStateZip);
+            System.out.println(expectedTelephone);
+            System.out.println(expectedEmail);
+
+            System.out.println("\nActual Beneficiary Contact details");
+            System.out.println(actualName);
+            System.out.println(addressElement.getText());
+            System.out.println(actualCityStateZip);
+            System.out.println(telephoneElement.getAttribute("value"));
+            System.out.println(actualEmail);
         }
     }
 
