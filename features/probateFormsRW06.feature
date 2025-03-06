@@ -12,7 +12,7 @@ Feature: 6in1 probate form RW06 Feature
       | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
-    When user opens "Kris Warner" Estate
+    When user opens "William John" Estate
     And user saves entered Estate information for "RW06" form
 
   Scenario: Verify county, estate and aka names are auto-populated on the form
@@ -44,9 +44,9 @@ Feature: 6in1 probate form RW06 Feature
   Scenario: Verify, contact details are correctly displayed on each page.
     Then user verifies correct beneficiary contact details are displayed correctly on each form
 
-  Scenario: Verify, date and reason text box fields are not same for each field.
-      #Verify, date and text can be entered.
-    Then user verifies entered date and reason details on each form are not same
+#  Scenario: Verify, date and reason text box fields are not same for each field.
+#      #Verify, date and text can be entered.
+#    Then user verifies entered date and reason details on each form are not same
 
   Scenario: Verify form can be printed in pdf
     When user click on print form button

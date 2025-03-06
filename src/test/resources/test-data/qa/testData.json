@@ -391,6 +391,44 @@
       "addressLine2": "Unit 7F",
       "zip": "80202"
     },
+  "beneficiary6": {
+    "firstName": "Alexander",
+    "middleName": "James",
+    "lastName": "Henderson",
+    "suffix": "Sr.",
+    "maidenName": "Alley",
+    "entityName": "OmegaCorp",
+    "dateOfBirth": "07/12/1975",
+    "placeOfBirth": "Seattle",
+    "city": "Seattle",
+    "stateCode": "WA",
+    "workNumber": "(206) 456-7890",
+    "phoneNumber": "(206) 987-1234",
+    "emailId": "alex.henderson@omegacorp.com",
+    "fax": "(206) 654-3210",
+    "addressLine1": "Pine Street",
+    "addressLine2": "Suite 12A",
+    "zip": "98101"
+  },
+  "beneficiary7": {
+    "firstName": "Sophia",
+    "middleName": "Marie",
+    "lastName": "Thompson",
+    "suffix": "Jr.",
+    "maidenName": "Anderson",
+    "entityName": "Phoenix Industries",
+    "dateOfBirth": "11/30/1985",
+    "placeOfBirth": "Chicago",
+    "city": "Chicago",
+    "stateCode": "IL",
+    "workNumber": "(312) 555-6789",
+    "phoneNumber": "(312) 987-4321",
+    "emailId": "sophia.thompson@phoenixind.com",
+    "fax": "(312) 765-4321",
+    "addressLine1": "Lake Shore Drive",
+    "addressLine2": "Apt 21B",
+    "zip": "60611"
+  },
   "attorney1": {
     "firstName": "Ethan",
     "middleName": "Benjamin",
@@ -529,5 +567,11 @@
     "stateCode": "PA",
     "zip": "15701",
     "phone": "724/465-3860"
+  },
+  "RW08Form": {
+    "willNumber": "W123456",
+    "dateLetterGranted": "02/15/2025",
+    "signedDate": "02/20/2025",
+    "servedDate": "02/25/2025"
   }
 }
