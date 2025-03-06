@@ -202,11 +202,11 @@ public class ProbateFormsRW05Page extends BasePage {
         verifyAutoPopulatedValue(enteredAlsoKnownAs);
     }
 
-    public void verifyFieldIsNotEditable(String fieldLocator) throws Exception {
+    public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
 
         if (field.isEnabled()) {
-            throw new Exception("Field is editable");
+            throw new AutomationException("Field is editable");
         }
     }
 
@@ -222,7 +222,7 @@ public class ProbateFormsRW05Page extends BasePage {
         }
     }
 
-    public void verifyAutoPopulatedFieldsAreNotEditable() throws Exception {
+    public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDomicileCountry));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));

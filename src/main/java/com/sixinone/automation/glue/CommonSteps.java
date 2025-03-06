@@ -434,16 +434,13 @@ public class CommonSteps {
         fieldElement.sendKeys(Keys.BACK_SPACE);
         driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(estateName);
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebElement tempUser = driverUtil.getWebElementAndScroll(String.format(TEMP_ESTATE, estateName));
-        waitForVisibleElement(tempUser);
-        tempUser.click();
+        driverUtil.getWebElementAndScroll(String.format(TEMP_ESTATE, estateName)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     @And("^user saves entered Estate information for \"([^\"]*)\" form$")
     public void userSavesEstateInformation(String formName) throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user saves Estate Information for " + formName + " form");
-
+        CommonSteps.logInfo("user saves Estate Information for "+formName+" form");
         switch (formName) {
             case "RW01":
                 PageFactory.probateFormsRW01Page().userSavesEstateInfo();
@@ -462,6 +459,9 @@ public class CommonSteps {
                 break;
             case "RW06":
                 PageFactory.probateFormsRW06Page().userSavesEstateInfo();
+                break;
+            case "RWxx":
+                PageFactory.probateFormsRWxxPage().userSavesEstateInfo();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -531,6 +531,9 @@ public class CommonSteps {
                 break;
             case "RW06":
                 PageFactory.probateFormsRW06Page().userResetsTheRWForm();
+                break;
+            case "RWxx":
+                PageFactory.probateFormsRWxxPage().userResetsTheRWForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -646,6 +649,9 @@ public class CommonSteps {
                 break;
             case "RW06":
                 PageFactory.probateFormsRW06Page().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
+                break;
+            case "RWxx":
+                PageFactory.probateFormsRWxxPage().verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

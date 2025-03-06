@@ -213,17 +213,17 @@ public class ProbateFormsRW06Page extends BasePage {
         verifyAutoPopulatedValue(enteredAlsoKnownAs);
     }
 
-    public void verifyFieldIsNotEditable(String fieldLocator) throws Exception {
+    public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
         if (field.isEnabled()) {
-            throw new Exception("Field is editable");
+            throw new AutomationException("Field is editable");
         }
     }
 
-    public void verifyAutoPopulatedFieldsAreNotEditable() throws Exception {
-        WebDriverUtil.waitForAWhile();
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredDisplayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredAlsoKnownAs));
+    public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
+        WebDriverUtil.waitForAWhile(2);
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
     }
 
     private void scrollToElementAndClick(String elementLocator) throws AutomationException {
@@ -503,6 +503,18 @@ public class ProbateFormsRW06Page extends BasePage {
         }
     }
 
+    private void fillFieldWithFieldActivation(String fieldLocator, String data) throws AutomationException {
+        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
+
+        field.sendKeys(Keys.SPACE);
+        field.sendKeys(Keys.BACK_SPACE);
+        field.sendKeys(data);
+
+        driverUtil.getWebElement("//body").click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+
     public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
@@ -511,8 +523,8 @@ public class ProbateFormsRW06Page extends BasePage {
         for (int i = 0; i < 10; i++) {
             WebDriverUtil.waitForAWhile();
             WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i)));
-            WebElement reasonField = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i)));
 
+            scrollToElementAndClick(String.format(DATE_FIELD, i));
             dateField.clear();
             Toolkit.getDefaultToolkit()
                     .getSystemClipboard()
@@ -526,16 +538,15 @@ public class ProbateFormsRW06Page extends BasePage {
                     .build()
                     .perform();
 
-            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i))).getAttribute("value");
-
-            reasonField.clear();
-            reasonField.sendKeys(reasonDataForm.get(i));
-
             driverUtil.getWebElement("//body").click();
 
-            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
+            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i))).getAttribute("value");
 
-            WebDriverUtil.waitForAWhile();
+            fillFieldWithFieldActivation(String.format(LETTERS_ISSUED_TO_FIELD,i),reasonDataForm.get(i));
+
+            WebDriverUtil.waitForAWhile(2);
+            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i))).getAttribute("value");
+
 
             if (!actualDate.equals(dateDataForm.get(i))) {
                 throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);

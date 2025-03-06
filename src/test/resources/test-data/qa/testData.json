@@ -521,5 +521,13 @@
     "addressLine1": "Highland Park Road",
     "addressLine2": "Penthouse 1",
     "zip": "48201"
+  },
+  "RW07Form":{
+    "RegisterOfWills": "Register of Wills",
+    "street": "825 Philadelphia Street",
+    "city": "Indiana",
+    "stateCode": "PA",
+    "zip": "15701",
+    "phone": "724/465-3860"
   }
 }
