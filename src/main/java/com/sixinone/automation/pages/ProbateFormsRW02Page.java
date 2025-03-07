@@ -1175,9 +1175,12 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
-        scrollPageUp();
+
+        WebElement printButton = driverUtil.getWebElementAndScroll(PRINTFORM_BUTTON);
+        ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript("arguments[0].scrollIntoView({block: 'center'});", printButton);
+
         waitForVisibleElement(By.xpath(PRINTFORM_BUTTON));
-        driverUtil.getWebElementAndScroll(PRINTFORM_BUTTON).click();
+        printButton.click();
 
         Robot robot = new Robot();
         waitForAWhile(2); // Wait for the dialog to appear

@@ -30,6 +30,11 @@ Feature: 6in1 probate form RWxx Feature
   Scenario: Verify that changes in the witness name field are reflected under the signature line and vice-versa.
     Then user verifies name updated in signature field is reflected in the reviewer name Field
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rwxx'
+    And verify all the fields entered are correctly reflected in the 'Rwxx' pdf
+
   Scenario: Reset the RWxx form
     When user resets the "RWxx" form
 
