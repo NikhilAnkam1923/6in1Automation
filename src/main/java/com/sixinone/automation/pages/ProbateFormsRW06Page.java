@@ -215,13 +215,13 @@ public class ProbateFormsRW06Page extends BasePage {
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.isEnabled()) {
+        if (field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
             throw new AutomationException("Field is editable");
         }
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        WebDriverUtil.waitForAWhile(4);
+        WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
         verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
     }

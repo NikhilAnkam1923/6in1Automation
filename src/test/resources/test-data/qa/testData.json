@@ -573,5 +573,10 @@
     "dateLetterGranted": "02/15/2025",
     "signedDate": "02/20/2025",
     "servedDate": "02/25/2025"
+  },
+  "RW10Form": {
+    "title": "Pa. O.C. Rule 10.6 STATUS REPORT",
+    "reasonForIncompleteAdministration": "The estate is still undergoing probate proceedings, and pending creditor claims need to be resolved. Additionally, final tax filings are expected to be completed by September 2025.",
+    "orphansCourtNumber": "OC-2025-0478"
   }
 }

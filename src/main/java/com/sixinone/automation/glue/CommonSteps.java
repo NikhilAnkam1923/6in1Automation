@@ -24,10 +24,7 @@ import gherkin.events.PickleEvent;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.json.simple.parser.ParseException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.testng.SkipException;
 import runner.BaseRunner;
 
@@ -63,6 +60,11 @@ public class CommonSteps {
     private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
+    private static final String CAPACITY_REPRESENTATIVE = "//input[@name='capacity' and @value='1']";
+    private static final String CAPACITY_COUNSEL = "//input[@name='capacity' and @value='2']";
+    private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
+    private static final String PERSON_CLEAR_SELECTION_BTN = "//p[contains(text(),'Capacity')]/following-sibling::div//button[text()='Clear Selection']";
+    private static final String CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN = "//p[contains(text(),'Corporate Fiduciary (if applicable)')]//button[text()='Clear Selection']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -392,6 +394,17 @@ public class CommonSteps {
             testRailUtility.updateTestResultsToTestRun(projectID, testRunID, suiteID, "Automated Test Run", testResultMapping);
     }
 
+    private void scrollToElementAndClick(String elementLocator) throws AutomationException {
+        WebElement element = driverUtil.getWebElement(elementLocator);
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+
+        element.click();
+    }
+
     @When("^user click on tab: \"([^\"]*)\"$")
     public void userClickOnTab(String tabText) throws AutomationException {
         WebElement tab = driverUtil.getWebElementAndScroll(String.format(TAB_XPATH, tabText));
@@ -431,7 +444,8 @@ public class CommonSteps {
         fieldElement.sendKeys(Keys.BACK_SPACE);
         driverUtil.getWebElement(NAME_FILTER_INPUT).sendKeys(estateName);
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        driverUtil.getWebElementAndScroll(String.format(TEMP_ESTATE, estateName)).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(String.format(TEMP_ESTATE,estateName)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
@@ -459,6 +473,12 @@ public class CommonSteps {
                 break;
             case "RWxx":
                 PageFactory.probateFormsRWxxPage().userSavesEstateInfo();
+                break;
+            case "RW07":
+                PageFactory.probateFormsRW07Page().userSavesEstateInfo();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().userSavesEstateInfo();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -532,6 +552,12 @@ public class CommonSteps {
             case "RWxx":
                 PageFactory.probateFormsRWxxPage().userResetsTheRWForm();
                 break;
+            case "RW07":
+                PageFactory.probateFormsRW07Page().userResetsTheRWForm();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().userResetsTheRWForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -552,6 +578,12 @@ public class CommonSteps {
                 break;
             case "RW06":
                 PageFactory.probateFormsRW06Page().verifyAutoPopulatedFieldsAreNotEditable();
+                break;
+            case "RW07":
+                PageFactory.probateFormsRW07Page().verifyAutoPopulatedFieldsAreNotEditable();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().verifyAutoPopulatedFieldsAreNotEditable();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -689,6 +721,113 @@ public class CommonSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @Then("^user verifies the county, estate, file number and aka names are auto-populated on the \"([^\"]*)\" form$")
+    public void userVerifiesTheCountyEstateFileNumberAndAkaNamesAreAutoPopulatedOnTheForm(String formName) throws AutomationException {
+        switch (formName) {
+            case "RW07":
+                PageFactory.probateFormsRW07Page().verifyCountyEstateFileNumberAkaNamesAreAutoPopulatedOnTheForm();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().verifyCountyEstateFileNumberAkaNamesAreAutoPopulatedOnTheForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.logInfo("Verified that the county, estate, file number and aka names are auto-populated on the "+formName+" form");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies any one of the corporate fiduciary contacts can be selected for \"([^\"]*)\" form$")
+    public void userVerifiesAnyOneOfTheFiduciaryContactsCanBeSelected(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that any one of the corporate fiduciary contacts can be selected for "+formName+" form");
+        switch (formName) {
+            case "RW07":
+                PageFactory.probateFormsRW07Page().verifyAnyOneOfTheFiduciaryContactsCanBeSelected();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().verifyAnyOneOfTheFiduciaryContactsCanBeSelected();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @When("^user selects capacity as \"([^\"]*)\"$")
+    public void userSelectsCapacityAs(String capacity) throws AutomationException {
+        CommonSteps.logInfo("user selects capacity as "+capacity);
+        switch (capacity){
+            case "Personal Representative":
+                DriverFactory.drivers.get().findElement(By.xpath(CAPACITY_REPRESENTATIVE)).click();
+                break;
+            case "Counsel":
+                DriverFactory.drivers.get().findElement(By.xpath(CAPACITY_COUNSEL)).click();
+                break;
+            default:
+                throw new AutomationException("Unsupported capacity : " + capacity);
+        }
+    }
+
+    @And("user clicks on name of person field")
+    public void userClicksOnNameOfPersonField() throws AutomationException {
+        CommonSteps.logInfo("user clicks on name of person field");
+        WebDriverUtil.waitForAWhile();
+        scrollToElementAndClick(PERSON_NAME_FIELD);
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form fiduciary type of contacts are displayed in the list and can be selected$")
+    public void userVerifiesFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that for "+formName+" form fiduciary type of contacts are displayed in the list and can be selected");
+        switch (formName) {
+            case "RW07":
+                PageFactory.probateFormsRW07Page().verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form attorney type of contacts are displayed in the list and can be selected$")
+    public void userVerifiesAttorneyTypeOfContactsAreDisplayedInTheListAndCanBeSelected(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that for "+formName+" form attorney type of contacts are displayed in the list and can be selected");
+        switch (formName) {
+            case "RW07":
+                PageFactory.probateFormsRW07Page().verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @When("user clicks on Clear Selection buttons")
+    public void userClicksOnClearSelectionButton() throws AutomationException {
+        CommonSteps.logInfo("user clicks on Clear Selection buttons");
+        driverUtil.getWebElement(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN).click();
+        WebDriverUtil.waitForAWhile(2);
+        driverUtil.getWebElement(PERSON_CLEAR_SELECTION_BTN).click();
+        WebDriverUtil.waitForAWhile(2);
+    }
+
+    @Then("^user verifies selected contacts on \"([^\"]*)\" form are cleared$")
+    public void userVerifiesSelectedContactsAreCleared(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that selected contacts on "+formName+" form are cleared");
+        switch (formName) {
+            case "RW07":
+                PageFactory.probateFormsRW07Page().verifySelectedContactsAreCleared();
+                break;
+            case "RW08":
+                PageFactory.probateFormsRW08Page().verifySelectedContactsAreCleared();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
     @Then("verify form can be printed in pdf with name as {string}")
     public void verifyFormCanBePrintedInPdfWithNameAsRW(String formName) throws AutomationException {
         CommonSteps.logInfo("Verify form can be printed in PDF for form: " + formName);
