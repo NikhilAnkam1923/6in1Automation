@@ -12,10 +12,8 @@ Feature: 6in1 probate form RW02 Feature
       | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
-    When user opens "Kris Warner" Estate
+    When user opens "William John" Estate
     And user saves entered Estate information for "RW02" form
-    When user navigates to Estate contacts tab
-    Then user saves entered Information of all the Estate Contacts for "RW02" form
 
   Scenario: Verify, correct county name is auto fetched.
     When user navigates to the probate forms tab
@@ -70,8 +68,7 @@ Feature: 6in1 probate form RW02 Feature
     Then user verifies decedent died date is auto fetched
 
   Scenario: Verify, codicil dates are auto fetched and on updating it, updates the values in decedent tab.
-#/** TC is commented cause its getting failed due to system issue**/
-#    Then user verifies codicil date values are auto fetched
+    Then user verifies codicil date values are auto fetched
     Then user updates the codicil dates
     Then user verifies updated codicil dates in form are reflected in the codicil dates in decedent tab
 

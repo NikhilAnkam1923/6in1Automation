@@ -31,14 +31,14 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies Fiduciary type of contacts are displayed at the top")
-    public void userVerifiesFiduciaryTypeOfContactsAreDisplayedAtTheTop() throws AutomationException {
+    public void userVerifiesFiduciaryTypeOfContactsAreDisplayedAtTheTop() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyFiduciaryTypeOfContactsAreDisplayed();
         CommonSteps.logInfo("Verified that Fiduciary type of contacts are displayed at the top");
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies when names exceed the line, the contacts are displayed in the attachment")
-    public void userVerifiesWhenNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException {
+    public void userVerifiesWhenNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment();
         CommonSteps.logInfo("Verified that when names exceed the line, the contacts are displayed in the attachment");
     }
@@ -210,14 +210,14 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies correct beneficiary name, relationship and address is displayed in the table")
-    public void userVerifiesCorrectBeneficiaryNameRelationshipAndAddressIsDisplayedInTheTable() throws AutomationException {
+    public void userVerifiesCorrectBeneficiaryNameRelationshipAndAddressIsDisplayedInTheTable() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyCorrectBeneficiaryNameRelationshipAndAddressIsDisplayed();
         CommonSteps.logInfo("Verified that correct beneficiary name, relationship and address is displayed in the table");
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies if the selected contacts are exceed count of 4 then it should be transferred to attachment")
-    public void userVerifiesIfTheSelectedContactsAreExceedCountOfThenItShouldBeTransferredToAttachment() throws AutomationException {
+    public void userVerifiesIfTheSelectedContactsAreExceedCountOfThenItShouldBeTransferredToAttachment() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyContactsAreTransferredToAttachment();
         CommonSteps.logInfo("Verified that when the selected contacts are exceed count of 4 then it gets transferred to attachment");
     }
@@ -229,7 +229,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies all the contacts are transferred to attachment")
-    public void userVerifiesAllTheContactsAreTransferredToAttachment() throws AutomationException {
+    public void userVerifiesAllTheContactsAreTransferredToAttachment() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyAllTheContactsAreTransferredToAttachment();
         CommonSteps.logInfo("Verified that all the contacts are transferred to attachment");
     }
@@ -248,14 +248,14 @@ public class ProbateFormsRW02Steps {
     }
 
     @And("user verifies on page 2 petitioner's name are by default printed on the table")
-    public void userVerifiesOnPagePetitionerSNameAreByDefaultPrintedOnTheTable() throws AutomationException {
+    public void userVerifiesOnPagePetitionerSNameAreByDefaultPrintedOnTheTable() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyPetitionerSNameAreByDefaultPrintedOnTheTable();
         CommonSteps.logInfo("Verified that on page 2 petitioner's name are by default printed on the table");
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies decree of the register information is displayed correctly")
-    public void userVerifiesEstateSNameAkaNameFileNoFiduciaryNamesAndCodicilDatesAreDisplayedCorrectly() throws AutomationException {
+    public void userVerifiesEstateSNameAkaNameFileNoFiduciaryNamesAndCodicilDatesAreDisplayedCorrectly() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyDecreeOfRegisterInformationDisplayedCorrectly();
         CommonSteps.logInfo("Verified that decree of the register information is displayed correctly");
         CommonSteps.takeScreenshot();
@@ -293,7 +293,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies selected attorney contact's information is displayed correctly")
-    public void userVerifiesSelectedContactSInformationIsDisplayedCorrectly() throws AutomationException {
+    public void userVerifiesSelectedContactSInformationIsDisplayedCorrectly() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyAttorneyContactSInformationIsDisplayedCorrectly();
         CommonSteps.logInfo("Verified that selected attorney contact's information is displayed correctly");
         CommonSteps.takeScreenshot();
