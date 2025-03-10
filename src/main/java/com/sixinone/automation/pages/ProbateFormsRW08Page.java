@@ -4,19 +4,25 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
-public class ProbateFormsRW08Page extends BasePage{
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
+
+public class ProbateFormsRW08Page extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -78,6 +84,7 @@ public class ProbateFormsRW08Page extends BasePage{
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
     private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
 
+    static String downloadedFileName;
 
     static String enteredFirstName;
     static String enteredMiddleName;
@@ -192,23 +199,23 @@ public class ProbateFormsRW08Page extends BasePage{
         verifyAutoPopulatedValue(enteredDomicileCountry);
         verifyAutoPopulatedValue(enteredDisplayName);
         verifyAutoPopulatedValue(enteredAlsoKnownAs);
-        verifyAutoPopulatedValue(enteredFileNumberPart1+"-"+enteredFileNumberPart2+"-"+enteredFileNumberPart3);
+        verifyAutoPopulatedValue(enteredFileNumberPart1 + "-" + enteredFileNumberPart2 + "-" + enteredFileNumberPart3);
 
         initialFileNumberForm = driverUtil.getWebElement(FILE_NUMBER_FIELD).getAttribute("value");
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
+        if (field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable");
         }
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
         WebDriverUtil.waitForAWhile(4);
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDomicileCountry));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredDomicileCountry));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredDisplayName));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredAlsoKnownAs));
     }
 
     private void scrollToElementAndClick(String elementLocator) throws AutomationException {
@@ -222,7 +229,7 @@ public class ProbateFormsRW08Page extends BasePage{
         element.click();
     }
 
-    private void fillFieldWithKeystrokes(WebElement field,String data) throws AutomationException {
+    private void fillFieldWithKeystrokes(WebElement field, String data) throws AutomationException {
         for (char c : data.toCharArray()) {
             field.sendKeys(String.valueOf(c));
         }
@@ -244,16 +251,16 @@ public class ProbateFormsRW08Page extends BasePage{
         WebElement servedDateField = driverUtil.getWebElement(SERVED_DATE);
 
         scrollToElementAndClick(WILL_NUMBER_FIELD);
-        fillFieldWithKeystrokes(willNumberField,willNumber);
+        fillFieldWithKeystrokes(willNumberField, willNumber);
 
         scrollToElementAndClick(DATE_LETTER_GRANTED);
-        fillFieldWithKeystrokes(dateLetterGrantedField,dateLetterGranted);
+        fillFieldWithKeystrokes(dateLetterGrantedField, dateLetterGranted);
 
         scrollToElementAndClick(SIGNED_DATE);
-        fillFieldWithKeystrokes(signedDateField,signedDate);
+        fillFieldWithKeystrokes(signedDateField, signedDate);
 
         scrollToElementAndClick(SERVED_DATE);
-        fillFieldWithKeystrokes(servedDateField,servedDate);
+        fillFieldWithKeystrokes(servedDateField, servedDate);
 
 
         WebDriverUtil.waitForAWhile();
@@ -262,8 +269,8 @@ public class ProbateFormsRW08Page extends BasePage{
         signedDateForm = driverUtil.getWebElement(SIGNED_DATE).getAttribute("value");
         servedDateForm = driverUtil.getWebElement(SERVED_DATE).getAttribute("value");
 
-        if(!willNumberForm.equals(willNumber)){
-            throw new AutomationException("Will number is not entered correctly. Expected: "+willNumber+" ,Found: "+willNumberForm);
+        if (!willNumberForm.equals(willNumber)) {
+            throw new AutomationException("Will number is not entered correctly. Expected: " + willNumber + " ,Found: " + willNumberForm);
         }
 
         if (!pattern.matcher(dateLetterGrantedForm).matches()) {
@@ -280,7 +287,7 @@ public class ProbateFormsRW08Page extends BasePage{
     }
 
     public void userCheckTheCheckbox(String checkboxToSelect) throws AutomationException {
-        switch (checkboxToSelect){
+        switch (checkboxToSelect) {
             case "Use Will Number":
                 DriverFactory.drivers.get().findElement(By.xpath(USE_WILL_NUM_CHECKBOX)).click();
                 break;
@@ -311,7 +318,7 @@ public class ProbateFormsRW08Page extends BasePage{
     }
 
     public void verifyDisplayedFileNumber(String displayedFileNumber) throws AutomationException {
-        switch (displayedFileNumber){
+        switch (displayedFileNumber) {
             case "will number":
                 verifyWillNumber();
                 break;
@@ -417,7 +424,7 @@ public class ProbateFormsRW08Page extends BasePage{
         int actualMainCount = Integer.parseInt(mainCountElement.getText().trim());
         int actualAttachmentCount = Integer.parseInt(attachmentCountElement.getText().split(":")[1].trim());
 
-       if (actualMainCount != expectedMainCountForm) {
+        if (actualMainCount != expectedMainCountForm) {
             throw new AutomationException("Mismatch in Main Count. Expected: " + expectedMainCountForm + ", Found: " + actualMainCount);
         }
         if (actualAttachmentCount != expectedAttachmentCountForm) {
@@ -469,11 +476,11 @@ public class ProbateFormsRW08Page extends BasePage{
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
-        WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH,corporateFiduciaryFirm));
+        WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
         corporateFiduciaryToSelect.click();
 
-        if(!corporateFiduciaryToSelect.isSelected()){
+        if (!corporateFiduciaryToSelect.isSelected()) {
             throw new AutomationException("Unable to select the corporate fiduciary contact.");
         }
 
@@ -494,18 +501,18 @@ public class ProbateFormsRW08Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
-        if(!modalHeader.getText().contains("Fiduciary")){
+        if (!modalHeader.getText().contains("Fiduciary")) {
             throw new AutomationException("Fiduciary type of contacts are not displayed.");
         }
 
-        String fiduciaryContactToSelect = fiduciaryFirstName+" "+fiduciaryMiddleName+" "+fiduciaryLastName+" "+fiduciarySuffix;
+        String fiduciaryContactToSelect = fiduciaryFirstName + " " + fiduciaryMiddleName + " " + fiduciaryLastName + " " + fiduciarySuffix;
 
-        WebElement fiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH,fiduciaryContactToSelect));
+        WebElement fiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, fiduciaryContactToSelect));
 
         WebDriverUtil.waitForAWhile();
         fiduciaryToSelect.click();
 
-        if(!fiduciaryToSelect.isSelected()){
+        if (!fiduciaryToSelect.isSelected()) {
             throw new AutomationException("Unable to select the fiduciary contact.");
         }
 
@@ -524,18 +531,18 @@ public class ProbateFormsRW08Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
-        if(!modalHeader.getText().contains("Attorney")){
+        if (!modalHeader.getText().contains("Attorney")) {
             throw new AutomationException("Attorney type of contacts are not displayed.");
         }
 
-        String attorneyContactToSelect = attorneyFirstName+" "+attorneyMiddleName+" "+attorneyLastName+" "+attorneySuffix;
+        String attorneyContactToSelect = attorneyFirstName + " " + attorneyMiddleName + " " + attorneyLastName + " " + attorneySuffix;
 
-        WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH,attorneyContactToSelect));
+        WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, attorneyContactToSelect));
 
         WebDriverUtil.waitForAWhile();
         attorneyToSelect.click();
 
-        if(!attorneyToSelect.isSelected()){
+        if (!attorneyToSelect.isSelected()) {
             throw new AutomationException("Unable to select the attorney contact.");
         }
 
@@ -567,15 +574,162 @@ public class ProbateFormsRW08Page extends BasePage{
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
         String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
 
-        if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)){
-            throw new AutomationException("Changes made in Corporate Fiduciary section on RW07 are not reflected on RW08. Expected Name: "+selectedNameOfCorporateFiduciary+" ,Found: "+corporateFiduciaryName);
+        if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
+            throw new AutomationException("Changes made in Corporate Fiduciary section on RW07 are not reflected on RW08. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
         }
 
-        if (!nameOfPerson.equals(selectedNameOfPerson)){
-            throw new AutomationException("Changes made in Person section on RW07 are not reflected on RW08. Expected Name: "+selectedNameOfPerson+" ,Found: "+nameOfPerson);
+        if (!nameOfPerson.equals(selectedNameOfPerson)) {
+            throw new AutomationException("Changes made in Person section on RW07 are not reflected on RW08. Expected Name: " + selectedNameOfPerson + " ,Found: " + nameOfPerson);
         }
 
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+
+        verifyNameOfDecedent(pdfFilePath);
+        verifyDateOfDeath(pdfFilePath);
+        verifyDateLettersGranted(pdfFilePath);
+        verifyFileNumber(pdfFilePath);
+    }
+
+
+    public void verifyNameOfDecedent(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "Name of Decedent:";
+        String afterLine = "Date of Death:";
+
+        String extractedName = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
+
+        String expectedName = "Kris Warner"; // Update as needed
+        validateExtractedValue(expectedName, extractedName, "Decedent Name");
+    }
+
+    public void verifyDateOfDeath(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "Date of Death:";
+        String afterLine = "Date Letters Granted:";
+
+        String extractedDateOfDeath = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
+
+        String expectedDateOfDeath = "12/05/2023"; // Update as needed
+        validateExtractedValue(expectedDateOfDeath, extractedDateOfDeath, "Date of Death");
+    }
+
+    public void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "Date Letters Granted:";
+        String afterLine = "File Number:";
+
+        String extractedDateLetters = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
+
+        String expectedDateLetters = "02/15/2025"; // Update as needed
+        validateExtractedValue(expectedDateLetters, extractedDateLetters, "Date Letters Granted");
+    }
+
+
+    public void verifyFileNumber(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "File Number:";
+        String afterLine = "Some other reference"; // Adjust if there's a specific end marker
+
+        String extractedFileNumber = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
+
+        String expectedFileNumber = "22-2023-1234"; // Update as needed
+        validateExtractedValue(expectedFileNumber, extractedFileNumber, "File Number");
+    }
+
+    private String extractValueBetweenLines(String pdfFilePath, String beforeLine, String afterLine) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        CommonSteps.logInfo("📄 **Full PDF Content (All Lines):**");
+        for (int i = 0; i < allLines.length; i++) {
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
+        }
+
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
+
+        // Find start and end lines
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+
+            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
+            if (trimmedLine.contains(afterLine) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = currentLine; // Store the first valid line
+                    break;
+                }
+            }
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No value found between '" + beforeLine + "' and '" + afterLine + "'.");
+            }
+        } else {
+            throw new AutomationException("❌ Before or after line not found in PDF!");
+        }
+
+        return extractedValue;
+    }
+
+
+    private void validateExtractedValue(String expectedValue, String extractedValue, String fieldName) throws AutomationException {
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+        if (expectedValue.equalsIgnoreCase(extractedValue)) {
+            CommonSteps.logInfo("✅ Validation Passed: " + fieldName + " matches expected.");
+        } else {
+            throw new AutomationException("❌ Validation Failed: " + fieldName + " does not match expected value.");
+        }
+    }
+
 
     public void userResetsTheRWForm() throws AutomationException {
         scrollToElementAndClick(WILL_NUMBER_FIELD);

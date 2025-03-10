@@ -215,15 +215,15 @@ public class ProbateFormsRW06Page extends BasePage {
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
+        if (field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable");
         }
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredAlsoKnownAs));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredDisplayName));
+        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredAlsoKnownAs));
     }
 
     private void scrollToElementAndClick(String elementLocator) throws AutomationException {
@@ -580,12 +580,12 @@ public class ProbateFormsRW06Page extends BasePage {
 
             driverUtil.getWebElement("//body").click();
 
-            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD,i))).getAttribute("value");
+            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i))).getAttribute("value");
 
-            fillFieldWithFieldActivation(String.format(LETTERS_ISSUED_TO_FIELD,i),reasonDataForm.get(i));
+            fillFieldWithFieldActivation(String.format(LETTERS_ISSUED_TO_FIELD, i), reasonDataForm.get(i));
 
             WebDriverUtil.waitForAWhile(2);
-            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD,i))).getAttribute("value");
+            String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
 
 
             if (!actualDate.equals(dateDataForm.get(i))) {
@@ -639,7 +639,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyNameOrCorporateName(pdfFilePath);
+            verifyEntityName(pdfFilePath);
             //verifyCounty(pdfFilePath);
             //validateWitnessDetails(pdfFilePath);
 
@@ -648,11 +648,10 @@ public class ProbateFormsRW06Page extends BasePage {
         }
     }
 
-    public void verifyNameOrCorporateName(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "Estate of Kris Warner , Deceased";
-        String afterLine = "(Name or Corporate Name)";
+    public void verifyEntityName(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "(Date)";
+        String afterLine = "Name or Corporate Fiduciary (if applicable)";
 
-        List<String> names = new ArrayList<>();
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -660,16 +659,20 @@ public class ProbateFormsRW06Page extends BasePage {
         // Split the entire PDF content into lines
         String[] allLines = pdfText.split("\\r?\\n");
 
-        int startIndex = -1, endIndex = -1;
+        CommonSteps.logInfo("📄 **Full PDF Content (All Lines):**");
+        for (int i = 0; i < allLines.length; i++) {
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
+        }
 
-        // Log each line and find start/end indexes
-        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        int startIndex = -1, endIndex = -1;
+        String extractedReviewerSign = "";
+
+        // Find start and end lines
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
-            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
 
-            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
-            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
+            if (trimmedLine.contains(afterLine) && startIndex != -1) {
                 endIndex = i;
                 break;
             }
@@ -679,61 +682,29 @@ public class ProbateFormsRW06Page extends BasePage {
             for (int i = startIndex + 1; i < endIndex; i++) {
                 String currentLine = allLines[i].trim();
                 if (!currentLine.isBlank()) {
-                    // Handle cases where witnesses are on the same line
-                    if (currentLine.contains(" and ")) {
-                        String[] splitNames = currentLine.split(" and ");
-                        for (String name : splitNames) {
-                            names.add(cleanName(name));
-                        }
-                    } else {
-                        names.add(cleanName(currentLine));
-                    }
+                    extractedReviewerSign = currentLine; // Directly store the name
+                    break; // Stop after extracting the first valid name
                 }
             }
 
-            CommonSteps.logInfo("\n📌 Extracted Witness Names: " + names);
-            if (names.isEmpty()) {
-                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
-                return;
+            if (extractedReviewerSign.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No reviewer Signature found between specified lines.");
             }
 
-            // Create a map of expected names
-            Map<String, String> expectedNames = new LinkedHashMap<>();
-            expectedNames.put("First Witness", cleanName(CorporateFiduciary1Form));
+            // Validate extracted name
+            String expectedReviewerSign = CorporateFiduciary1Form.trim();
+            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedReviewerSign + "', Extracted: '" + extractedReviewerSign
+                    + "'");
 
-            boolean allMatch = true;
-            for (int i = 0; i < expectedNames.size(); i++) {
-                String expectedValue = expectedNames.values().toArray(new String[0])[i];
-                String actualValue = (i < names.size()) ? names.get(i) : "No Name";
-
-                CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
-
-                if (!expectedValue.equalsIgnoreCase(actualValue)) {
-                    allMatch = false;
-                    break;
-                }
-            }
-
-            if (allMatch) {
-                CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
+            if (expectedReviewerSign.equalsIgnoreCase(extractedReviewerSign)) {
+                CommonSteps.logInfo("✅ Validation Passed: Reviewer Signature matches expected.");
             } else {
-                CommonSteps.logInfo("❌ Validation Failed: Print names do not match the expected values.");
+                throw new AutomationException("❌ Validation Failed: Reviewer Signature does not match expected value.");
             }
         } else {
             throw new AutomationException("❌ Before or after line not found!");
         }
     }
-
-    // **Updated Helper Method to Clean Names Properly**
-    private static String cleanName(String rawName) {
-        if (rawName == null || rawName.trim().isEmpty()) return "";
-
-        return rawName
-                .replaceAll("(?i)\\b(The undersigned,  )\\b", "")
-                .replaceAll("(?i)\\b(, in my capacity/relationship as)\\b", "")
-
-                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
-                .trim(); // Trim spaces
-    }
 }
+
 

@@ -66,7 +66,10 @@ Feature: 6in1 probate form RW08 Feature
     And user clicks on Clear Selection buttons
     Then user verifies selected contacts on "RW08" form are cleared
 
-
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw08'
+    And verify all the fields entered are correctly reflected in the 'Rw08' pdf
 
   Scenario: Reset the RW08 form
     When user resets the "RW08" form
