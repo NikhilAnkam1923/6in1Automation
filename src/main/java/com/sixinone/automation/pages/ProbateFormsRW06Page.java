@@ -302,11 +302,6 @@ public class ProbateFormsRW06Page extends BasePage {
                 CorporateFiduciary2Form
         );
 
-        System.out.println("Fiduciary Contact Details (First Form):");
-        for (int row = 0; row < 5; row++) {
-            System.out.println("Row " + (row + 1) + " -> Name: " + expectedNames.get(row));
-        }
-
         List<WebElement> CorporateFiduciarySignFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
 
         if (CorporateFiduciarySignFields.size() != expectedNames.size()) {
@@ -404,20 +399,6 @@ public class ProbateFormsRW06Page extends BasePage {
             if (!actualEmail.equals(expectedEmail)) {
                 throw new AutomationException("Email not populated for " + expectedFullName);
             }
-
-            System.out.println("\nExpected Fiduciary Contact details");
-            System.out.println(expectedFullName);
-            System.out.println(expectedAddressLine1);
-            System.out.println(expectedCityStateZip);
-            System.out.println(expectedTelephone);
-            System.out.println(expectedEmail);
-
-            System.out.println("\nActual Fiduciary Contact details");
-            System.out.println(actualName);
-            System.out.println(addressElement.getText());
-            System.out.println(actualCityStateZip);
-            System.out.println(telephoneElement.getAttribute("value"));
-            System.out.println(actualEmail);
         }
     }
 
@@ -477,11 +458,6 @@ public class ProbateFormsRW06Page extends BasePage {
                 Beneficiary2Form
         );
 
-        System.out.println("Beneficiary Contact Details (First Form):");
-        for (int row = 0; row < 5; row++) {
-            System.out.println("Row " + (row + 1) + " -> Name: " + expectedNames.get(row));
-        }
-
         List<Integer> beneficiaryNum = Arrays.asList(1, 5, 4, 2, 3);
 
         for (int i = 0; i < beneficiaryNum.size(); i++) {
@@ -526,20 +502,6 @@ public class ProbateFormsRW06Page extends BasePage {
             if (!actualEmail.equals(expectedEmail)) {
                 throw new AutomationException("Email not populated for " + expectedName);
             }
-
-            System.out.println("\nExpected Beneficiary Contact details");
-            System.out.println(expectedName);
-            System.out.println(expectedAddressLine1);
-            System.out.println(expectedCityStateZip);
-            System.out.println(expectedTelephone);
-            System.out.println(expectedEmail);
-
-            System.out.println("\nActual Beneficiary Contact details");
-            System.out.println(actualName);
-            System.out.println(addressElement.getText());
-            System.out.println(actualCityStateZip);
-            System.out.println(telephoneElement.getAttribute("value"));
-            System.out.println(actualEmail);
         }
     }
 

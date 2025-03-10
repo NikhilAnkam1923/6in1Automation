@@ -506,27 +506,6 @@ public class CommonSteps {
         driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
     }
 
-    @When("user navigates to Estate contacts tab")
-    public void userNavigatesToTheEstateContactsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigates to the estate contacts tab");
-        waitForInvisibleElement(By.xpath(SPINNER));
-        waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
-        driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
-        waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
-    @Then("^user saves entered Information of all the Estate Contacts for \"([^\"]*)\" form$")
-    public void userSavesEnteredInformationOfAllTheEstateContacts(String formName) throws AutomationException {
-        CommonSteps.logInfo("user saves entered Information of all the Estate Contacts");
-        switch (formName) {
-            case "RW02":
-                PageFactory.probateFormsRW02Page().userSavesEstateContactsInfo();
-                break;
-            default:
-                throw new AutomationException("Unsupported form name: " + formName);
-        }
-    }
-
     @When("^user resets the \"([^\"]*)\" form$")
     public void userResetsTheRWForm(String formName) throws AutomationException {
         CommonSteps.logInfo("user resets the "+formName+" form");
