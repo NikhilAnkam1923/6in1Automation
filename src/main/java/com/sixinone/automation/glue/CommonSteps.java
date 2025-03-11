@@ -480,6 +480,9 @@ public class CommonSteps {
             case "RW08":
                 PageFactory.probateFormsRW08Page().userSavesEstateInfo();
                 break;
+            case "RW10":
+                PageFactory.probateFormsRW10Page().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -503,7 +506,7 @@ public class CommonSteps {
     @Then("user selects the aka checkbox")
     public void userSelectsTheAkaCheckbox() throws AutomationException {
         CommonSteps.logInfo("user selects the aka checkbox");
-        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
+        DriverFactory.drivers.get().findElement(By.xpath(SHOW_AKA_CHECkBOX)).click();
     }
 
     @When("^user resets the \"([^\"]*)\" form$")
@@ -536,6 +539,9 @@ public class CommonSteps {
                 break;
             case "RW08":
                 PageFactory.probateFormsRW08Page().userResetsTheRWForm();
+                break;
+            case "RW10":
+                PageFactory.probateFormsRW10Page().userResetsTheRWForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -726,6 +732,9 @@ public class CommonSteps {
             case "RW08":
                 PageFactory.probateFormsRW08Page().verifyAnyOneOfTheFiduciaryContactsCanBeSelected();
                 break;
+            case "RW10":
+                PageFactory.probateFormsRW10Page().verifyAnyOneOfTheFiduciaryContactsCanBeSelected();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -763,6 +772,9 @@ public class CommonSteps {
             case "RW08":
                 PageFactory.probateFormsRW08Page().verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected();
                 break;
+            case "RW10":
+                PageFactory.probateFormsRW10Page().verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -777,6 +789,9 @@ public class CommonSteps {
                 break;
             case "RW08":
                 PageFactory.probateFormsRW08Page().verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            case "RW10":
+                PageFactory.probateFormsRW10Page().verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -801,6 +816,9 @@ public class CommonSteps {
                 break;
             case "RW08":
                 PageFactory.probateFormsRW08Page().verifySelectedContactsAreCleared();
+                break;
+            case "RW10":
+                PageFactory.probateFormsRW10Page().verifySelectedContactsAreCleared();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

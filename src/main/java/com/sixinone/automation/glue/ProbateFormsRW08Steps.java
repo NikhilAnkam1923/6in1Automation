@@ -64,7 +64,7 @@ public class ProbateFormsRW08Steps {
 
     @Then("user verifies Corporate Fiduciary and Person sections information is common for RW07 and RW08")
     public void userVerifiesCorporateFiduciaryAndPersonSectionsInformationIsCommonForRWAndRW() throws AutomationException {
-        CommonSteps.logInfo("Verified that all the beneficiaries are transferred to attachment and count is reflected accordingly");
+        CommonSteps.logInfo("Verified that Corporate Fiduciary and Person sections information is common for RW07 and RW08");
         PageFactory.probateFormsRW08Page().verifyCorporateFiduciaryAndPersonSectionsInformationIsCommon();
         CommonSteps.takeScreenshot();
     }
