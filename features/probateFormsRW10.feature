@@ -38,27 +38,25 @@ Feature: 6in1 probate form RW10 Feature
   Scenario: Verify, if "No" is checked in point 1, then text box in point 2 is enabled.
     Then user verifies when 'No' option is selected in point 1, then the text box in point 2 is enabled and editable
 
-#  /** TCs commented due to bug **/
-#  Scenario: Verify, reason for to be mentioned, if no is ticked.
-#      #Verify, all the other input boxes are editable.
-#      #Verify, the in fields marked as yellow in background are only editable.
-#    Then user verifies reason text box field is able to accept the text
-#
-#  Scenario: Verify, if "Yes" is ticked, point 2 is disabled and text entered disappear.
-#    Then user verifies when Yes is ticked in point 1, then Text entered in point 2 gets disappear
-#
-#  Scenario: Verify, if "Yes" option is selected in point 1, then point 3 is enabled
-#    Then user verifies when Yes is ticked in point 1, then text field in point 3 is enabled and editable
+  Scenario: Verify, reason for to be mentioned, if no is ticked.
+      #Verify, all the other input boxes are editable.
+      #Verify, the in fields marked as yellow in background are only editable.
+    Then user verifies reason text box field is able to accept the text
+
+  Scenario: Verify, if "Yes" is ticked, point 2 is disabled and text entered disappear.
+    Then user verifies when Yes is ticked in point 1, then Text entered in point 2 gets disappear
+
+  Scenario: Verify, if "Yes" option is selected in point 1, then point 3 is enabled
+    Then user verifies when Yes is ticked in point 1, then text field in point 3 is enabled and editable
 
   Scenario: Verify, if "No" is checked in point 1, then point 3 is disabled.
     Then user verifies when No is ticked in point 1, then text field in point 3 is disabled
 
-#  Scenario: Verify, if "NO" is clicked text box in point 2 is enabled and empty.
-#    Then user verifies when No is ticked in point 1, then text box in point 2 is editable, enabled and empty
-#
-#  Scenario: Verify, if No is checked, point 3 is disabled and text entered disappear.
-#    Then user verifies when No is ticked in point 1, then point 3 is disabled and text entered in it gets disappear
+  Scenario: Verify, if "NO" is clicked text box in point 2 is enabled and empty.
+    Then user verifies when No is ticked in point 1, then text box in point 2 is editable, enabled and empty
 
+  Scenario: Verify, if No is checked, point 3 is disabled and text entered disappear.
+    Then user verifies when No is ticked in point 1, then point 3 is disabled and text entered in it gets disappear
 
   Scenario: Verify, date field follows correct format.
     When user enters date in date field
