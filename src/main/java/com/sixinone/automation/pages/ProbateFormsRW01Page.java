@@ -134,6 +134,7 @@ public class ProbateFormsRW01Page extends BasePage {
     static String secondaryCoExecutorLastNameForm;
 
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForAWhile();
         enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
         enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
@@ -221,8 +222,19 @@ public class ProbateFormsRW01Page extends BasePage {
         verifyFetchedInputField(enteredDateOfDeath);
     }
 
+    private void scrollToElementAndClick(String elementLocator) throws AutomationException {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(elementLocator));
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+
+        element.click();
+    }
+
     public void clickOnSection(String section) throws AutomationException {
-        driverUtil.getWebElement(String.format(SECTION_XPATH, section)).click();
+        scrollToElementAndClick(String.format(SECTION_XPATH, section));
     }
 
     public void verifySection2InformativeTextBoxIsDisplayed() throws AutomationException {
@@ -277,25 +289,25 @@ public class ProbateFormsRW01Page extends BasePage {
         WebElement checkbox4 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Other (Please Explain)")));
 
         checkbox1.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (!checkbox1.isSelected() || checkbox2.isSelected() || checkbox3.isSelected() || checkbox4.isSelected()) {
             throw new AutomationException("Only the first checkbox should be selected.");
         }
 
         checkbox2.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (checkbox1.isSelected() || !checkbox2.isSelected() || checkbox3.isSelected() || checkbox4.isSelected()) {
             throw new AutomationException("Only the second checkbox should be selected.");
         }
 
         checkbox3.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (checkbox1.isSelected() || checkbox2.isSelected() || !checkbox3.isSelected() || checkbox4.isSelected()) {
             throw new AutomationException("Only the third checkbox should be selected.");
         }
 
         checkbox4.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (checkbox1.isSelected() || checkbox2.isSelected() || checkbox3.isSelected() || !checkbox4.isSelected()) {
             throw new AutomationException("Only the fourth checkbox should be selected.");
         }
@@ -512,6 +524,7 @@ public class ProbateFormsRW01Page extends BasePage {
     public void userResetsTheRWForm() throws AutomationException {
         driverUtil.getWebElement("//body").click();
         driverUtil.getWebElement(FIRST_PAGE_BTN).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
         driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
