@@ -342,6 +342,7 @@ public class ProbateFormsRW02Page extends BasePage{
         if (field != null && field.getAttribute("value").contains(expectedValue)) {
             CommonSteps.logInfo("Value is displayed correctly: " + expectedValue);
         } else {
+
             throw new AutomationException("Value is not displayed in table. Expected: " + expectedValue);
         }
     }
