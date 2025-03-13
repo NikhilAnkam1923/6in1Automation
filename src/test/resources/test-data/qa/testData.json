@@ -203,7 +203,27 @@
   },
   "RW06Form": {
     "date": "02/10/2025",
-    "letterIssuedTo": "Financial Support"
+    "letterIssuedTo": "Financial Support",
+    "dateDataForm1": "02/11/2025",
+    "dateDataForm2": "02/12/2025",
+    "dateDataForm3": "02/13/2025",
+    "dateDataForm4": "02/14/2025",
+    "dateDataForm5": "02/15/2025",
+    "dateDataForm6": "02/16/2025",
+    "dateDataForm7": "02/17/2025",
+    "dateDataForm8": "02/18/2025",
+    "dateDataForm9": "02/19/2025",
+    "dateDataForm10": "02/20/2025",
+    "reasonDataForm1": "Medical Emergency",
+    "reasonDataForm2": "Legal Requirement",
+    "reasonDataForm3": "Financial Support",
+    "reasonDataForm4": "Personal Request",
+    "reasonDataForm5": "Work Requirement",
+    "reasonDataForm6": "Travel Authorization",
+    "reasonDataForm7": "Educational Purpose",
+    "reasonDataForm8": "Banking Documentation",
+    "reasonDataForm9": "Family Consent",
+    "reasonDataForm10": "Government Processing"
   },
   "fiduciary1": {
     "firstName": "Michael",
