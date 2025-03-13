@@ -73,6 +73,7 @@ public class ProbateFormsRW07Page extends BasePage{
     private static final String CONTACT_RADIO_BTN_DYNAMIC_XPATH = "//label[text()='%s']/preceding-sibling::input[@type='radio']";
     private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
+    private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -89,6 +90,11 @@ public class ProbateFormsRW07Page extends BasePage{
     static String Fiduciary4Form;
     static String Fiduciary5Form;
     static String enteredDateForm;
+    static String beneficiary1NameAddressForm;
+    static String beneficiary2NameAddressForm;
+    static String beneficiary3NameAddressForm;
+    static String beneficiary4NameAddressForm;
+    static String beneficiary5NameAddressForm;
 
 
     private static String getFieldValue(String locator) throws AutomationException {
@@ -269,7 +275,6 @@ public class ProbateFormsRW07Page extends BasePage{
 
     public void verifyNameAndAddressOfTheBeneficiaryCorrectlyDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
         List<WebElement> BeneficiaryAddressFields = driverUtil.getWebElements(BENE_ADDRESS_FIELD);
-
         List<Integer> beneficiaryNum = Arrays.asList(1, 4, 3, 5, 2);
 
         for (int i = 0; i < BeneficiaryAddressFields.size(); i++) {
@@ -279,21 +284,42 @@ public class ProbateFormsRW07Page extends BasePage{
             String expectedLastName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".lastName").toString();
             String expectedMiddleName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".middleName").toString();
             String expectedFirstName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".firstName").toString();
-            String expectedCity = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".city").toString()+",";
-            String expectedState= CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
+            String expectedCity = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".city").toString() + ",";
+            String expectedState = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
             String expectedZip = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".zip").toString();
-            String expectedAddressLine1 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString()+",";
-            String expectedAddressLine2 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine2").toString()+",";
+            String expectedAddressLine1 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString() + ",";
+            String expectedAddressLine2 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine2").toString() + ",";
 
-            String expectedName = expectedFirstName+" "+ expectedMiddleName +" "+expectedLastName + " ";
-            String expectedStateCodeZip = expectedState +" "+expectedZip;
-
+            String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + " ";
+            String expectedStateCodeZip = expectedState + " " + expectedZip;
             String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + "\n" + expectedStateCodeZip;
+
 
             String actualNameAndAddress = BeneficiaryAddressFields.get(i).getAttribute("value");
 
+
+            switch (beneficiaryIndex) {
+                case 1:
+                    beneficiary1NameAddressForm = actualNameAndAddress;
+                    break;
+                case 4:
+                    beneficiary2NameAddressForm = actualNameAndAddress;
+                    break;
+                case 3:
+                    beneficiary3NameAddressForm = actualNameAndAddress;
+                    break;
+                case 5:
+                    beneficiary4NameAddressForm = actualNameAndAddress;
+                    break;
+                case 2:
+                    beneficiary5NameAddressForm = actualNameAndAddress;
+                    break;
+            }
+
+
             if (!actualNameAndAddress.equals(expectedNameAndAddress)) {
-                throw new AutomationException("Mismatch in Beneficiary Name and Address" + ". Expected: \n" + expectedNameAndAddress + "\n, Found: \n" + actualNameAndAddress);
+                throw new AutomationException("Mismatch in Beneficiary Name and Address" +
+                        ". Expected: \n" + expectedNameAndAddress + "\n, Found: \n" + actualNameAndAddress);
             }
         }
     }
@@ -421,6 +447,9 @@ public class ProbateFormsRW07Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "contacts updated successfully.")));
+
+        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+        WebDriverUtil.waitForAWhile();
     }
 
     public void verifyDateIsEnteredInCorrectFormat() throws AutomationException {
