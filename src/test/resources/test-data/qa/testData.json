@@ -457,6 +457,8 @@
     "entityName": "ultraConsulting",
     "dateOfBirth": "02/25/1980",
     "placeOfBirth": "Kansas City",
+    "city": "Kansas City",
+    "stateCode": "MO",
     "workNumber": "(816) 777-9876",
     "phoneNumber": "(816) 555-4321",
     "emailId": "rihan.miles@business.com",

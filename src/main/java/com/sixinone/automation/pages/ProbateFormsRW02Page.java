@@ -244,6 +244,8 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
         enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
         enteredLastName = driverUtil.getWebElement(DECEDENT_LAST_NAME_FIELD).getAttribute("value");
@@ -1127,14 +1129,14 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyAttorneyContactSInformationIsDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        String attorneyFirmName = CommonUtil.getJsonPath("attorney1").get("attorney1.entityName").toString();
-        String attorneyAddressLine1 = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine1").toString();
-        String attorneyAddressLine2 = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine2").toString();
-        String attorneyCity = CommonUtil.getJsonPath("attorney1").get("attorney1.city").toString();
-        String attorneyStateCode = CommonUtil.getJsonPath("attorney1").get("attorney1.stateCode").toString();
-        String attorneyZip = CommonUtil.getJsonPath("attorney1").get("attorney1.zip").toString();
-        String attorneyPhone = CommonUtil.getJsonPath("attorney1").get("attorney1.phoneNumber").toString();
-        String attorneyFax = CommonUtil.getJsonPath("attorney1").get("attorney1.fax").toString();
+        String attorneyFirmName = CommonUtil.getJsonPath("attorney2").get("attorney2.entityName").toString();
+        String attorneyAddressLine1 = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        String attorneyAddressLine2 = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine2").toString();
+        String attorneyCity = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
+        String attorneyStateCode = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
+        String attorneyZip = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
+        String attorneyPhone = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
+        String attorneyFax = CommonUtil.getJsonPath("attorney2").get("attorney2.fax").toString();
 
         String attorneyCityStateZip = attorneyCity+", "+attorneyStateCode+", "+attorneyZip;
 

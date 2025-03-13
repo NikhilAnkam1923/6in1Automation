@@ -13,6 +13,7 @@ public class ProbateFormsRW05Steps {
         PageFactory.probateFormsRW05Page().userCheckTheNotaryCheckbox();
     }
 
+
     @Then("user verifies notary block is displayed")
     public void userVerifiesNotaryBlockIsDisplayed() throws AutomationException {
         CommonSteps.logInfo("Verified that notary block is displayed");

@@ -602,7 +602,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
             verifyEntityName(pdfFilePath);
-            //verifyCounty(pdfFilePath);
+            verifyIssueTo(pdfFilePath);
             //validateWitnessDetails(pdfFilePath);
 
         } catch (IOException e) {
@@ -667,6 +667,75 @@ public class ProbateFormsRW06Page extends BasePage {
             throw new AutomationException("❌ Before or after line not found!");
         }
     }
+
+    public static void verifyIssueTo(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = ". the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155,";
+        String afterLine = "Signature of Officer/";
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Split the entire PDF content into lines
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+        String extractedIssueTo = "";
+
+        // Log each line and find start/end indexes
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedIssueTo = cleanName(currentLine);
+                    break; // Assuming Issue To has only one name
+                }
+            }
+
+            CommonSteps.logInfo("📌 Extracted Issued To: " + extractedIssueTo);
+
+            if (extractedIssueTo.isEmpty()) {
+                CommonSteps.logInfo("❌ Validation Failed: No 'Issued To' name found between the specified lines.");
+                throw new AutomationException("Validation Failed: 'Issued To' name is missing!");
+            }
+
+            // Expected Issued To name
+            String expectedIssueTo = cleanName("respectfully request that Letters be issued to Medical Emergency");
+            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedIssueTo + "', Extracted: '" + extractedIssueTo + "'");
+
+            if (!expectedIssueTo.equals(extractedIssueTo)) {
+                throw new AutomationException("❌ Validation Failed: 'Issued To' name does not match the expected value.");
+            }
+            CommonSteps.logInfo("✅ Validation Passed: 'Issued To' name matches as expected.");
+        } else {
+            throw new AutomationException("❌ Before or after line not found!");
+        }
+    }
+
+    // **Updated Helper Method to Clean Names Properly**
+    private static String cleanName(String rawName) {
+        if (rawName == null || rawName.trim().isEmpty()) return "";
+
+        return rawName
+                .replaceAll("(?i)\\b(respectfully request that Letters be issued to )\\b", "") // Remove unwanted phrases
+                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
+                .trim(); // Trim spaces
+    }
 }
+
+
 
 
