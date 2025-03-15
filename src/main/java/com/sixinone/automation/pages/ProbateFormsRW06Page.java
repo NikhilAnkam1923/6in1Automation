@@ -119,6 +119,57 @@ public class ProbateFormsRW06Page extends BasePage {
     static String reasonDataForm8;
     static String reasonDataForm9;
     static String reasonDataForm10;
+    static String corporateFiduciary1NameForm;
+    static String corporateFiduciary1AddressForm;
+    static String corporateFiduciary1CityStateZipForm;
+    static String corporateFiduciary1TelephoneForm;
+    static String corporateFiduciary1EmailForm;
+    static String corporateFiduciary2NameForm;
+    static String corporateFiduciary2AddressForm;
+    static String corporateFiduciary2CityStateZipForm;
+    static String corporateFiduciary2TelephoneForm;
+    static String corporateFiduciary2EmailForm;
+    static String corporateFiduciary3NameForm;
+    static String corporateFiduciary3AddressForm;
+    static String corporateFiduciary3CityStateZipForm;
+    static String corporateFiduciary3TelephoneForm;
+    static String corporateFiduciary3EmailForm;
+    static String corporateFiduciary4NameForm;
+    static String corporateFiduciary4AddressForm;
+    static String corporateFiduciary4CityStateZipForm;
+    static String corporateFiduciary4TelephoneForm;
+    static String corporateFiduciary4EmailForm;
+    static String corporateFiduciary5NameForm;
+    static String corporateFiduciary5AddressForm;
+    static String corporateFiduciary5CityStateZipForm;
+    static String corporateFiduciary5TelephoneForm;
+    static String corporateFiduciary5EmailForm;
+    static String beneficiary1NameForm;
+    static String beneficiary1AddressForm;
+    static String beneficiary1CityStateZipForm;
+    static String beneficiary1TelephoneForm;
+    static String beneficiary1EmailForm;
+    static String beneficiary2NameForm;
+    static String beneficiary2AddressForm;
+    static String beneficiary2CityStateZipForm;
+    static String beneficiary2TelephoneForm;
+    static String beneficiary2EmailForm;
+    static String beneficiary3NameForm;
+    static String beneficiary3AddressForm;
+    static String beneficiary3CityStateZipForm;
+    static String beneficiary3TelephoneForm;
+    static String beneficiary3EmailForm;
+    static String beneficiary4NameForm;
+    static String beneficiary4AddressForm;
+    static String beneficiary4CityStateZipForm;
+    static String beneficiary4TelephoneForm;
+    static String beneficiary4EmailForm;
+    static String beneficiary5NameForm;
+    static String beneficiary5AddressForm;
+    static String beneficiary5CityStateZipForm;
+    static String beneficiary5TelephoneForm;
+    static String beneficiary5EmailForm;
+
 
 
     @Override
@@ -375,39 +426,80 @@ public class ProbateFormsRW06Page extends BasePage {
             String expectedTelephone = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".workNumber").toString();
             String expectedEmail = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".emailId").toString();
 
-
             String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + " " + expectedSuffix;
             String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
             String actualName = nameFields.get(i).getAttribute("value");
 
-            if (!actualName.equals(expectedFullName)) {
-                throw new AutomationException("Mismatch in Corporate Fiduciary Name" + ". Expected: " + expectedFullName + ", Found: " + actualName);
-            }
-
             WebElement addressElement = driverUtil.getWebElement(String.format(CORPORATE_FIDUCIARY_ADDRESS, expectedAddressLine1));
-            if (!addressElement.getText().equals(expectedAddressLine1)) {
-                throw new AutomationException("Address mismatch for " + expectedFullName);
-            }
+            String actualAddress = addressElement.getText();
 
             List<WebElement> cityStateZipElement = driverUtil.getWebElements(CORPORATE_FIDUCIARY_CITY_STATE_ZIP);
             String actualCityStateZip = cityStateZipElement.get(i).getAttribute("value");
-            if (!actualCityStateZip.equals(expectedCityStateZip)) {
-                throw new AutomationException("City, State, Zip not populated for " + expectedFullName);
-            }
-
 
             WebElement telephoneElement = driverUtil.getWebElement(String.format(CORPORATE_FIDUCIARY_TELEPHONE, expectedTelephone));
-            if (!telephoneElement.getAttribute("value").equals(expectedTelephone)) {
-                throw new AutomationException("Telephone mismatch for " + expectedFullName);
-            }
-
+            String actualTelephone = telephoneElement.getAttribute("value");
 
             List<WebElement> emailElement = driverUtil.getWebElements(CORPORATE_FIDUCIARY_EMAIL);
             String actualEmail = emailElement.get(i).getAttribute("value");
+
+            switch (fiduciaryIndex) {
+                case 3:
+                    corporateFiduciary1NameForm = actualName;
+                    corporateFiduciary1AddressForm = actualAddress;
+                    corporateFiduciary1CityStateZipForm = actualCityStateZip;
+                    corporateFiduciary1TelephoneForm = actualTelephone;
+                    corporateFiduciary1EmailForm = actualEmail;
+                    break;
+                case 5:
+                    corporateFiduciary2NameForm = actualName;
+                    corporateFiduciary2AddressForm = actualAddress;
+                    corporateFiduciary2CityStateZipForm = actualCityStateZip;
+                    corporateFiduciary2TelephoneForm = actualTelephone;
+                    corporateFiduciary2EmailForm = actualEmail;
+                    break;
+                case 2:
+                    corporateFiduciary3NameForm = actualName;
+                    corporateFiduciary3AddressForm = actualAddress;
+                    corporateFiduciary3CityStateZipForm = actualCityStateZip;
+                    corporateFiduciary3TelephoneForm = actualTelephone;
+                    corporateFiduciary3EmailForm = actualEmail;
+                    break;
+                case 4:
+                    corporateFiduciary4NameForm = actualName;
+                    corporateFiduciary4AddressForm = actualAddress;
+                    corporateFiduciary4CityStateZipForm = actualCityStateZip;
+                    corporateFiduciary4TelephoneForm = actualTelephone;
+                    corporateFiduciary4EmailForm = actualEmail;
+                    break;
+                case 1:
+                    corporateFiduciary5NameForm = actualName;
+                    corporateFiduciary5AddressForm = actualAddress;
+                    corporateFiduciary5CityStateZipForm = actualCityStateZip;
+                    corporateFiduciary5TelephoneForm = actualTelephone;
+                    corporateFiduciary5EmailForm = actualEmail;
+                    break;
+            }
+
+            if (!actualName.equals(expectedFullName)) {
+                throw new AutomationException("Mismatch in Corporate Fiduciary Name. Expected: " + expectedFullName + ", Found: " + actualName);
+            }
+
+            if (!actualAddress.equals(expectedAddressLine1)) {
+                throw new AutomationException("Address mismatch for " + expectedFullName);
+            }
+
+            if (!actualCityStateZip.equals(expectedCityStateZip)) {
+                throw new AutomationException("City, State, Zip not populated correctly for " + expectedFullName);
+            }
+
+            if (!actualTelephone.equals(expectedTelephone)) {
+                throw new AutomationException("Telephone mismatch for " + expectedFullName);
+            }
+
             if (!actualEmail.equals(expectedEmail)) {
-                throw new AutomationException("Email not populated for " + expectedFullName);
+                throw new AutomationException("Email mismatch for " + expectedFullName);
             }
         }
     }
@@ -487,30 +579,74 @@ public class ProbateFormsRW06Page extends BasePage {
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_BENEFICIARY);
             String actualName = nameFields.get(i).getAttribute("value");
 
-            if (!actualName.equals(expectedName)) {
-                throw new AutomationException("Mismatch in Beneficiary Name" + ". Expected: " + expectedName + ", Found: " + actualName);
-            }
-
             WebElement addressElement = driverUtil.getWebElement(String.format(BENEFICIARY_ADDRESS, expectedAddressLine1));
-            if (!addressElement.getText().equals(expectedAddressLine1)) {
-                throw new AutomationException("Address mismatch for " + expectedName);
-            }
+            String actualAddress = addressElement.getText();
 
             List<WebElement> cityStateZipElement = driverUtil.getWebElements(BENEFICIARY_CITY_STATE_ZIP);
             String actualCityStateZip = cityStateZipElement.get(i).getAttribute("value");
-            if (!actualCityStateZip.equals(expectedCityStateZip)) {
-                throw new AutomationException("City, State, Zip not populated for " + expectedName);
-            }
 
             WebElement telephoneElement = driverUtil.getWebElement(String.format(BENEFICIARY_TELEPHONE, expectedTelephone));
-            if (!telephoneElement.getAttribute("value").equals(expectedTelephone)) {
-                throw new AutomationException("Telephone mismatch for " + expectedName);
-            }
+            String actualTelephone = telephoneElement.getAttribute("value");
 
             List<WebElement> emailElement = driverUtil.getWebElements(BENEFICIARY_EMAIL);
             String actualEmail = emailElement.get(i).getAttribute("value");
+
+            switch (beneficiaryIndex) {
+                case 1:
+                    beneficiary1NameForm = actualName;
+                    beneficiary1AddressForm = actualAddress;
+                    beneficiary1CityStateZipForm = actualCityStateZip;
+                    beneficiary1TelephoneForm = actualTelephone;
+                    beneficiary1EmailForm = actualEmail;
+                    break;
+                case 5:
+                    beneficiary2NameForm = actualName;
+                    beneficiary2AddressForm = actualAddress;
+                    beneficiary2CityStateZipForm = actualCityStateZip;
+                    beneficiary2TelephoneForm = actualTelephone;
+                    beneficiary2EmailForm = actualEmail;
+                    break;
+                case 4:
+                    beneficiary3NameForm = actualName;
+                    beneficiary3AddressForm = actualAddress;
+                    beneficiary3CityStateZipForm = actualCityStateZip;
+                    beneficiary3TelephoneForm = actualTelephone;
+                    beneficiary3EmailForm = actualEmail;
+                    break;
+                case 2:
+                    beneficiary4NameForm = actualName;
+                    beneficiary4AddressForm = actualAddress;
+                    beneficiary4CityStateZipForm = actualCityStateZip;
+                    beneficiary4TelephoneForm = actualTelephone;
+                    beneficiary4EmailForm = actualEmail;
+                    break;
+                case 3:
+                    beneficiary5NameForm = actualName;
+                    beneficiary5AddressForm = actualAddress;
+                    beneficiary5CityStateZipForm = actualCityStateZip;
+                    beneficiary5TelephoneForm = actualTelephone;
+                    beneficiary5EmailForm = actualEmail;
+                    break;
+            }
+
+            if (!actualName.equals(expectedName)) {
+                throw new AutomationException("Mismatch in Beneficiary Name. Expected: " + expectedName + ", Found: " + actualName);
+            }
+
+            if (!actualAddress.equals(expectedAddressLine1)) {
+                throw new AutomationException("Address mismatch for " + expectedName);
+            }
+
+            if (!actualCityStateZip.equals(expectedCityStateZip)) {
+                throw new AutomationException("City, State, Zip not populated correctly for " + expectedName);
+            }
+
+            if (!actualTelephone.equals(expectedTelephone)) {
+                throw new AutomationException("Telephone mismatch for " + expectedName);
+            }
+
             if (!actualEmail.equals(expectedEmail)) {
-                throw new AutomationException("Email not populated for " + expectedName);
+                throw new AutomationException("Email mismatch for " + expectedName);
             }
         }
     }
@@ -525,7 +661,6 @@ public class ProbateFormsRW06Page extends BasePage {
         driverUtil.getWebElement("//body").click();
         WebDriverUtil.waitForAWhile();
     }
-
 
     public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
