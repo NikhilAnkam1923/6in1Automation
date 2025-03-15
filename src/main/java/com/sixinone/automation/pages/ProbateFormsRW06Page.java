@@ -83,53 +83,12 @@ public class ProbateFormsRW06Page extends BasePage {
     private static final String BENEFICIARY_CITY_STATE_ZIP = "//div[@id='id_2_2']//p[text()='City, State, Zip']/preceding-sibling::p//span//input[@disabled and not(@value='')]";
     private static final String BENEFICIARY_TELEPHONE = "//div[@id='id_2_2']//p[text()='City, State, Zip']/following-sibling::p//span/input[@disabled and @value='%s']";
     private static final String BENEFICIARY_EMAIL = "//div[@id='id_2_2']//p[text()='Telephone']/following-sibling::p//span/input[@disabled and not(@value='')]";
+    private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
 
-    static List<String> dateDataForm = Arrays.asList(
-            "02/11/2025", "02/12/2025", "02/13/2025", "02/14/2025", "02/15/2025",
-            "02/16/2025", "02/17/2025", "02/18/2025", "02/19/2025", "02/20/2025"
-    );
-
-    static List<String> reasonDataForm = Arrays.asList(
-            "Medical Emergency", "Legal Requirement", "Financial Support", "Personal Request", "Work Requirement",
-            "Travel Authorization", "Educational Purpose", "Banking Documentation", "Family Consent", "Government Processing"
-    );
+    private final Map<String, String> estateInfo = new HashMap<>();
 
     static String downloadedFileName;
 
-    static String enteredFirstName;
-    static String enteredMiddleName;
-    static String enteredLastName;
-    static String enteredDisplayName;
-    static String selectedSuffix;
-    static String enteredSSN;
-    static String enteredAlsoKnownAs;
-    static String enteredDomicileAddressLine1;
-    static String enteredDomicileAddressLine2;
-    static String enteredDomicileZip;
-    static String enteredDomicileCity;
-    static String selectedDomicileState;
-    static String enteredDomicileCountry;
-    static String enteredDomicileMunicipality;
-    static String enteredLastResidence;
-    static String enteredDateOfBirth;
-    static String enteredDateOfDeath;
-    static String enteredAgeAtDeath;
-    static String selectedMaritalStatus;
-    static String enteredPlaceOfDeathAddressLine1;
-    static String enteredPlaceOfDeathAddressLine2;
-    static String enteredPlaceOfDeathZip;
-    static String enteredPlaceOfDeathCity;
-    static String selectedPlaceOfDeathState;
-    static String enteredPlaceOfDeathCountry;
-    static String enteredDateOfWill;
-    static String enteredCodicilDate1;
-    static String enteredCodicilDate2;
-    static String enteredCodicilDate3;
-    static String enteredProbateCourtName;
-    static String enteredProbateCourtLocation;
-    static String enteredFileNumberPart1;
-    static String enteredFileNumberPart2;
-    static String enteredFileNumberPart3;
     static String CorporateFiduciary1Form;
     static String CorporateFiduciary2Form;
     static String CorporateFiduciary3Form;
@@ -140,51 +99,89 @@ public class ProbateFormsRW06Page extends BasePage {
     static String Beneficiary3Form;
     static String Beneficiary4Form;
     static String Beneficiary5Form;
+    static String dateDataForm1;
+    static String dateDataForm2;
+    static String dateDataForm3;
+    static String dateDataForm4;
+    static String dateDataForm5;
+    static String dateDataForm6;
+    static String dateDataForm7;
+    static String dateDataForm8;
+    static String dateDataForm9;
+    static String dateDataForm10;
+    static String reasonDataForm1;
+    static String reasonDataForm2;
+    static String reasonDataForm3;
+    static String reasonDataForm4;
+    static String reasonDataForm5;
+    static String reasonDataForm6;
+    static String reasonDataForm7;
+    static String reasonDataForm8;
+    static String reasonDataForm9;
+    static String reasonDataForm10;
+
 
     @Override
     String getName() {
         return "";
     }
 
+    private static String getFieldValue(String locator) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(locator, 5);
+        if (field != null) {
+            String value = field.getAttribute("value");
+            return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
+        } else {
+            throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
+
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
-        enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
-        enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
-        enteredLastName = driverUtil.getWebElement(DECEDENT_LAST_NAME_FIELD).getAttribute("value");
-        enteredDisplayName = driverUtil.getWebElement(DECEDENT_DISPLAY_NAME).getAttribute("value");
-        selectedSuffix = driverUtil.getWebElement(SELECTED_SUFFIX).getText();
-        enteredSSN = driverUtil.getWebElement(DECEDENT_SSN_FIELD).getAttribute("value");
-        enteredAlsoKnownAs = driverUtil.getWebElement(DECEDENT_ALSO_KNOWN_AS).getAttribute("value");
-        enteredDomicileAddressLine1 = driverUtil.getWebElement(DOMICILE_ADDRESS_LINE1).getAttribute("value");
-        enteredDomicileAddressLine2 = driverUtil.getWebElement(DOMICILE_ADDRESS_LINE2).getAttribute("value");
-        enteredDomicileZip = driverUtil.getWebElement(DOMICILE_ZIP).getAttribute("value");
-        enteredDomicileCity = driverUtil.getWebElement(DOMICILE_CITY).getAttribute("value");
-        selectedDomicileState = driverUtil.getWebElement(DOMICILE_STATE).getText();
-        enteredDomicileCountry = driverUtil.getWebElement(DOMICILE_COUNTRY).getAttribute("value");
-        enteredDomicileMunicipality = driverUtil.getWebElement(DOMICILE_MUNICIPALITY).getAttribute("value");
-        enteredLastResidence = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
-        enteredDateOfBirth = driverUtil.getWebElement(DATE_OF_BIRTH_FIELD).getAttribute("value");
-        enteredDateOfDeath = driverUtil.getWebElement(DATE_OF_DEATH_FIELD).getAttribute("value");
-        enteredAgeAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
-        selectedMaritalStatus = driverUtil.getWebElement(SELECTED_MARITAL_STATUS).getText();
-        enteredPlaceOfDeathAddressLine1 = driverUtil.getWebElement(PLACE_OF_DEATH_ADDRESS_LINE1).getAttribute("value");
-        enteredPlaceOfDeathAddressLine2 = driverUtil.getWebElement(PLACE_OF_DEATH_ADDRESS_LINE2).getAttribute("value");
-        enteredPlaceOfDeathZip = driverUtil.getWebElement(PLACE_OF_DEATH_ZIP).getAttribute("value");
-        enteredPlaceOfDeathCity = driverUtil.getWebElement(PLACE_OF_DEATH_CITY).getAttribute("value");
-        selectedPlaceOfDeathState = driverUtil.getWebElement(PLACE_OF_DEATH_STATE).getText();
-        enteredPlaceOfDeathCountry = driverUtil.getWebElement(PLACE_OF_DEATH_COUNTRY).getAttribute("value");
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
+
+        estateInfo.put("FirstName", getFieldValue(DECEDENT_FIRST_NAME_FIELD));
+        estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
+        estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
+        estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
+        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
+        estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
+        estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
+        estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
+        estateInfo.put("DomicileAddressLine2", getFieldValue(DOMICILE_ADDRESS_LINE2));
+        estateInfo.put("DomicileZip", getFieldValue(DOMICILE_ZIP));
+        estateInfo.put("DomicileCity", getFieldValue(DOMICILE_CITY));
+        estateInfo.put("DomicileState", getFieldValue(DOMICILE_STATE));
+        estateInfo.put("DomicileCountry", getFieldValue(DOMICILE_COUNTRY));
+        estateInfo.put("DomicileMunicipality", getFieldValue(DOMICILE_MUNICIPALITY));
+        estateInfo.put("LastResidence", getFieldValue(LAST_RESIDENCE_FIELD));
+        estateInfo.put("DateOfBirth", getFieldValue(DATE_OF_BIRTH_FIELD));
+        estateInfo.put("DateOfDeath", getFieldValue(DATE_OF_DEATH_FIELD));
+        estateInfo.put("AgeAtDeath", getFieldValue(AGE_AT_DEATH_FIELD));
+        estateInfo.put("MaritalStatus", getFieldValue(SELECTED_MARITAL_STATUS));
+        estateInfo.put("PlaceOfDeathAddressLine1", getFieldValue(PLACE_OF_DEATH_ADDRESS_LINE1));
+        estateInfo.put("PlaceOfDeathAddressLine2", getFieldValue(PLACE_OF_DEATH_ADDRESS_LINE2));
+        estateInfo.put("PlaceOfDeathZip", getFieldValue(PLACE_OF_DEATH_ZIP));
+        estateInfo.put("PlaceOfDeathCity", getFieldValue(PLACE_OF_DEATH_CITY));
+        estateInfo.put("PlaceOfDeathState", getFieldValue(PLACE_OF_DEATH_STATE));
+        estateInfo.put("PlaceOfDeathCountry", getFieldValue(PLACE_OF_DEATH_COUNTRY));
 
         driverUtil.getWebElement(ESTATE_TAB).click();
         WebDriverUtil.waitForAWhile();
 
-        enteredDateOfWill = driverUtil.getWebElement(DATE_OF_WILL).getAttribute("value");
-        enteredCodicilDate1 = driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value");
-        enteredCodicilDate2 = driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value");
-        enteredCodicilDate3 = driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value");
-        enteredProbateCourtName = driverUtil.getWebElement(PROBATE_COURT_NAME).getAttribute("value");
-        enteredProbateCourtLocation = driverUtil.getWebElement(PROBATE_COURT_LOCATION).getAttribute("value");
-        enteredFileNumberPart1 = driverUtil.getWebElement(FILE_NUMBER_PART_1).getAttribute("value");
-        enteredFileNumberPart2 = driverUtil.getWebElement(FILE_NUMBER_PART_2).getAttribute("value");
-        enteredFileNumberPart3 = driverUtil.getWebElement(FILE_NUMBER_PART_3).getAttribute("value");
+        estateInfo.put("DateOfWill", getFieldValue(DATE_OF_WILL));
+        estateInfo.put("CodicilDate1", getFieldValue(CODICILE_DATE_1));
+        estateInfo.put("CodicilDate2", getFieldValue(CODICILE_DATE_2));
+        estateInfo.put("CodicilDate3", getFieldValue(CODICILE_DATE_3));
+        estateInfo.put("ProbateCourtName", getFieldValue(PROBATE_COURT_NAME));
+        estateInfo.put("ProbateCourtLocation", getFieldValue(PROBATE_COURT_LOCATION));
+        estateInfo.put("FileNumberPart1", getFieldValue(FILE_NUMBER_PART_1));
+        estateInfo.put("FileNumberPart2", getFieldValue(FILE_NUMBER_PART_2));
+        estateInfo.put("FileNumberPart3", getFieldValue(FILE_NUMBER_PART_3));
+    }
+
+    private String getEstateValue(String key) {
+        return estateInfo.getOrDefault(key, "");
     }
 
     public void verifyAutoPopulatedValue(String expectedValue) throws AutomationException {
@@ -208,9 +205,13 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm() throws AutomationException {
-        verifyCountyInHeader(enteredDomicileCountry);
-        verifyAutoPopulatedValue(enteredDisplayName);
-        verifyAutoPopulatedValue(enteredAlsoKnownAs);
+        String domicileCountry = getEstateValue("DomicileCountry");
+        String displayName = getEstateValue("DisplayName");
+        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+
+        verifyCountyInHeader(domicileCountry);
+        verifyAutoPopulatedValue(displayName);
+        verifyAutoPopulatedValue(alsoKnownAs);
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
@@ -221,9 +222,15 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
+        String displayName = getEstateValue("DisplayName");
+        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
+        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAs);
+
         WebDriverUtil.waitForAWhile(2);
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredDisplayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH, enteredAlsoKnownAs));
+        verifyFieldIsNotEditable(displayNameField);
+        verifyFieldIsNotEditable(alsoKnownAsField);
     }
 
     private void scrollToElementAndClick(String elementLocator) throws AutomationException {
@@ -345,6 +352,9 @@ public class ProbateFormsRW06Page extends BasePage {
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
+
+        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+        WebDriverUtil.waitForAWhile();
     }
 
     public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
@@ -517,8 +527,39 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
 
-    public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException {
+    public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
+
+        dateDataForm1 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm1").toString();
+        dateDataForm2 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm2").toString();
+        dateDataForm3 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm3").toString();
+        dateDataForm4 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm4").toString();
+        dateDataForm5 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm5").toString();
+        dateDataForm6 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm6").toString();
+        dateDataForm7 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm7").toString();
+        dateDataForm8 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm8").toString();
+        dateDataForm9 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm9").toString();
+        dateDataForm10 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm10").toString();
+        reasonDataForm1 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm1").toString();
+        reasonDataForm2 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm2").toString();
+        reasonDataForm3 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm3").toString();
+        reasonDataForm4 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm4").toString();
+        reasonDataForm5 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm5").toString();
+        reasonDataForm6 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm6").toString();
+        reasonDataForm7 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm7").toString();
+        reasonDataForm8 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm8").toString();
+        reasonDataForm9 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm9").toString();
+        reasonDataForm10 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm10").toString();
+
+        List<String> dateDataForm = Arrays.asList(
+                dateDataForm1,dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,
+                dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10
+        );
+
+        List<String> reasonDataForm = Arrays.asList(
+                reasonDataForm1, reasonDataForm2, reasonDataForm3, reasonDataForm4, reasonDataForm5,
+                reasonDataForm6, reasonDataForm7, reasonDataForm8, reasonDataForm9, reasonDataForm10
+        );
 
         Actions actions = new Actions(DriverFactory.drivers.get());
 

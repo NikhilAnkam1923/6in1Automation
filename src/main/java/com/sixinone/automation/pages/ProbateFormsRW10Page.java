@@ -12,7 +12,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ProbateFormsRW10Page extends BasePage{
@@ -73,40 +75,8 @@ public class ProbateFormsRW10Page extends BasePage{
     private static final String SAVE_BTN = "//button[text()='Save']";
     public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
 
-    static String enteredFirstName;
-    static String enteredMiddleName;
-    static String enteredLastName;
-    static String enteredDisplayName;
-    static String selectedSuffix;
-    static String enteredSSN;
-    static String enteredAlsoKnownAs;
-    static String enteredDomicileAddressLine1;
-    static String enteredDomicileAddressLine2;
-    static String enteredDomicileZip;
-    static String enteredDomicileCity;
-    static String selectedDomicileState;
-    static String enteredDomicileCountry;
-    static String enteredDomicileMunicipality;
-    static String enteredLastResidence;
-    static String enteredDateOfBirth;
-    static String enteredDateOfDeath;
-    static String enteredAgeAtDeath;
-    static String selectedMaritalStatus;
-    static String enteredPlaceOfDeathAddressLine1;
-    static String enteredPlaceOfDeathAddressLine2;
-    static String enteredPlaceOfDeathZip;
-    static String enteredPlaceOfDeathCity;
-    static String selectedPlaceOfDeathState;
-    static String enteredPlaceOfDeathCountry;
-    static String enteredDateOfWill;
-    static String enteredCodicilDate1;
-    static String enteredCodicilDate2;
-    static String enteredCodicilDate3;
-    static String enteredProbateCourtName;
-    static String enteredProbateCourtLocation;
-    static String enteredFileNumberPart1;
-    static String enteredFileNumberPart2;
-    static String enteredFileNumberPart3;
+    private final Map<String, String> estateInfo = new HashMap<>();
+
     static String enteredReasonForm;
     static String enteredDateForm;
     static String selectedNameOfCorporateFiduciary;
@@ -118,45 +88,62 @@ public class ProbateFormsRW10Page extends BasePage{
         return "";
     }
 
+    private static String getFieldValue(String locator) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(locator, 5);
+        if (field != null) {
+            String value = field.getAttribute("value");
+            return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
+        } else {
+            throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
+
     public void userSavesEstateInfo() throws AutomationException, IOException, ParseException {
-        enteredFirstName = driverUtil.getWebElement(DECEDENT_FIRST_NAME_FIELD).getAttribute("value");
-        enteredMiddleName = driverUtil.getWebElement(DECEDENT_MIDDLE_NAME).getAttribute("value");
-        enteredLastName = driverUtil.getWebElement(DECEDENT_LAST_NAME_FIELD).getAttribute("value");
-        enteredDisplayName = driverUtil.getWebElement(DECEDENT_DISPLAY_NAME).getAttribute("value");
-        selectedSuffix = driverUtil.getWebElement(SELECTED_SUFFIX).getText();
-        enteredSSN = driverUtil.getWebElement(DECEDENT_SSN_FIELD).getAttribute("value");
-        enteredAlsoKnownAs = driverUtil.getWebElement(DECEDENT_ALSO_KNOWN_AS).getAttribute("value");
-        enteredDomicileAddressLine1 = driverUtil.getWebElement(DOMICILE_ADDRESS_LINE1).getAttribute("value");
-        enteredDomicileAddressLine2 = driverUtil.getWebElement(DOMICILE_ADDRESS_LINE2).getAttribute("value");
-        enteredDomicileZip = driverUtil.getWebElement(DOMICILE_ZIP).getAttribute("value");
-        enteredDomicileCity = driverUtil.getWebElement(DOMICILE_CITY).getAttribute("value");
-        selectedDomicileState = driverUtil.getWebElement(DOMICILE_STATE).getText();
-        enteredDomicileCountry = driverUtil.getWebElement(DOMICILE_COUNTRY).getAttribute("value");
-        enteredDomicileMunicipality = driverUtil.getWebElement(DOMICILE_MUNICIPALITY).getAttribute("value");
-        enteredLastResidence = driverUtil.getWebElement(LAST_RESIDENCE_FIELD).getAttribute("value");
-        enteredDateOfBirth = driverUtil.getWebElement(DATE_OF_BIRTH_FIELD).getAttribute("value");
-        enteredDateOfDeath = driverUtil.getWebElement(DATE_OF_DEATH_FIELD).getAttribute("value");
-        enteredAgeAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
-        selectedMaritalStatus = driverUtil.getWebElement(SELECTED_MARITAL_STATUS).getText();
-        enteredPlaceOfDeathAddressLine1 = driverUtil.getWebElement(PLACE_OF_DEATH_ADDRESS_LINE1).getAttribute("value");
-        enteredPlaceOfDeathAddressLine2 = driverUtil.getWebElement(PLACE_OF_DEATH_ADDRESS_LINE2).getAttribute("value");
-        enteredPlaceOfDeathZip = driverUtil.getWebElement(PLACE_OF_DEATH_ZIP).getAttribute("value");
-        enteredPlaceOfDeathCity = driverUtil.getWebElement(PLACE_OF_DEATH_CITY).getAttribute("value");
-        selectedPlaceOfDeathState = driverUtil.getWebElement(PLACE_OF_DEATH_STATE).getText();
-        enteredPlaceOfDeathCountry = driverUtil.getWebElement(PLACE_OF_DEATH_COUNTRY).getAttribute("value");
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
+
+        estateInfo.put("FirstName", getFieldValue(DECEDENT_FIRST_NAME_FIELD));
+        estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
+        estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
+        estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
+        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
+        estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
+        estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
+        estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
+        estateInfo.put("DomicileAddressLine2", getFieldValue(DOMICILE_ADDRESS_LINE2));
+        estateInfo.put("DomicileZip", getFieldValue(DOMICILE_ZIP));
+        estateInfo.put("DomicileCity", getFieldValue(DOMICILE_CITY));
+        estateInfo.put("DomicileState", getFieldValue(DOMICILE_STATE));
+        estateInfo.put("DomicileCountry", getFieldValue(DOMICILE_COUNTRY));
+        estateInfo.put("DomicileMunicipality", getFieldValue(DOMICILE_MUNICIPALITY));
+        estateInfo.put("LastResidence", getFieldValue(LAST_RESIDENCE_FIELD));
+        estateInfo.put("DateOfBirth", getFieldValue(DATE_OF_BIRTH_FIELD));
+        estateInfo.put("DateOfDeath", getFieldValue(DATE_OF_DEATH_FIELD));
+        estateInfo.put("AgeAtDeath", getFieldValue(AGE_AT_DEATH_FIELD));
+        estateInfo.put("MaritalStatus", getFieldValue(SELECTED_MARITAL_STATUS));
+        estateInfo.put("PlaceOfDeathAddressLine1", getFieldValue(PLACE_OF_DEATH_ADDRESS_LINE1));
+        estateInfo.put("PlaceOfDeathAddressLine2", getFieldValue(PLACE_OF_DEATH_ADDRESS_LINE2));
+        estateInfo.put("PlaceOfDeathZip", getFieldValue(PLACE_OF_DEATH_ZIP));
+        estateInfo.put("PlaceOfDeathCity", getFieldValue(PLACE_OF_DEATH_CITY));
+        estateInfo.put("PlaceOfDeathState", getFieldValue(PLACE_OF_DEATH_STATE));
+        estateInfo.put("PlaceOfDeathCountry", getFieldValue(PLACE_OF_DEATH_COUNTRY));
 
         driverUtil.getWebElement(ESTATE_TAB).click();
         WebDriverUtil.waitForAWhile();
 
-        enteredDateOfWill = driverUtil.getWebElement(DATE_OF_WILL).getAttribute("value");
-        enteredCodicilDate1 = driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value");
-        enteredCodicilDate2 = driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value");
-        enteredCodicilDate3 = driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value");
-        enteredProbateCourtName = driverUtil.getWebElement(PROBATE_COURT_NAME).getAttribute("value");
-        enteredProbateCourtLocation = driverUtil.getWebElement(PROBATE_COURT_LOCATION).getAttribute("value");
-        enteredFileNumberPart1 = driverUtil.getWebElement(FILE_NUMBER_PART_1).getAttribute("value");
-        enteredFileNumberPart2 = driverUtil.getWebElement(FILE_NUMBER_PART_2).getAttribute("value");
-        enteredFileNumberPart3 = driverUtil.getWebElement(FILE_NUMBER_PART_3).getAttribute("value");
+        estateInfo.put("DateOfWill", getFieldValue(DATE_OF_WILL));
+        estateInfo.put("CodicilDate1", getFieldValue(CODICILE_DATE_1));
+        estateInfo.put("CodicilDate2", getFieldValue(CODICILE_DATE_2));
+        estateInfo.put("CodicilDate3", getFieldValue(CODICILE_DATE_3));
+        estateInfo.put("ProbateCourtName", getFieldValue(PROBATE_COURT_NAME));
+        estateInfo.put("ProbateCourtLocation", getFieldValue(PROBATE_COURT_LOCATION));
+        estateInfo.put("FileNumberPart1", getFieldValue(FILE_NUMBER_PART_1));
+        estateInfo.put("FileNumberPart2", getFieldValue(FILE_NUMBER_PART_2));
+        estateInfo.put("FileNumberPart3", getFieldValue(FILE_NUMBER_PART_3));
+    }
+
+    private String getEstateValue(String key) {
+        return estateInfo.getOrDefault(key, "");
     }
 
     public void verifyAutoPopulatedValue(String expectedValue) throws AutomationException {
@@ -171,8 +158,9 @@ public class ProbateFormsRW10Page extends BasePage{
 
     public void verifyTitleOfTheFormIsCorrectlyDisplayedAndCountyIsFetchedFromDecedentInfo() throws AutomationException, IOException, ParseException {
         String expectedTitle = CommonUtil.getJsonPath("RW10Form").get("RW10Form.title").toString();
+        String domicileCountry = getEstateValue("DomicileCountry");
 
-        verifyAutoPopulatedValue(enteredDomicileCountry);
+        verifyAutoPopulatedValue(domicileCountry);
 
         String actualTitle = driverUtil.getWebElement(FORM_TITLE).getText();
 
@@ -182,9 +170,13 @@ public class ProbateFormsRW10Page extends BasePage{
     }
 
     public void verifyNameOfDecedentDateOfDeathFileNumberIsFetchedFromTheDecedentInfo() throws AutomationException {
-        verifyAutoPopulatedValue(enteredDisplayName);
-        verifyAutoPopulatedValue(enteredDateOfDeath);
-        verifyAutoPopulatedValue(enteredFileNumberPart1+"-"+enteredFileNumberPart2+"-"+enteredFileNumberPart3);
+        String displayName = getEstateValue("DisplayName");
+        String dateOfDeath = getEstateValue("DateOfDeath");
+        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
+
+        verifyAutoPopulatedValue(displayName);
+        verifyAutoPopulatedValue(dateOfDeath);
+        verifyAutoPopulatedValue(fileNumber);
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
@@ -195,11 +187,18 @@ public class ProbateFormsRW10Page extends BasePage{
     }
 
     public void verifyNameDateOfDeathAndFileNumberFieldsAreNotEditable() throws AutomationException {
-        WebDriverUtil.waitForAWhile(4);
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDisplayName));
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,enteredDateOfDeath));
-        String fileNumber = enteredFileNumberPart1+"-"+enteredFileNumberPart2+"-"+enteredFileNumberPart3;
-        verifyFieldIsNotEditable(String.format(RW_INPUT_FIELD_XPATH,fileNumber));
+        String displayName = getEstateValue("DisplayName");
+        String dateOfDeath = getEstateValue("DateOfDeath");
+        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
+
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
+        String dateOfDeathField = String.format(RW_INPUT_FIELD_XPATH, dateOfDeath);
+        String fileNumberField = String.format(RW_INPUT_FIELD_XPATH,fileNumber);
+
+        WebDriverUtil.waitForAWhile(2);
+        verifyFieldIsNotEditable(displayNameField);
+        verifyFieldIsNotEditable(dateOfDeathField);
+        verifyFieldIsNotEditable(fileNumberField);
     }
 
     public void verifyAllTheQuestionnaireIsProperlyDisplayedWithOptionsYesOrNo() throws AutomationException {
@@ -299,6 +298,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
         scrollToElementAndClick(Q3_TEXT_FIELD);
         point3TextField.sendKeys(orphansCourtNumber);
+        driverUtil.getWebElement("//body").click();
 
         WebDriverUtil.waitForAWhile();
         enteredOrphanCourtNumberForm = point3TextField.getAttribute("value");
@@ -489,6 +489,7 @@ public class ProbateFormsRW10Page extends BasePage{
     }
 
     public void verifyWhenNoIsTickedInPointThenPointIsDisabledAndTextEnteredInItGetsDisappear() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement point3TextField = driverUtil.getWebElement(Q3_TEXT_FIELD);
 
         if(!point3TextField.getAttribute("value").isEmpty() && point3TextField.getAttribute("value").contains(enteredOrphanCourtNumberForm)){

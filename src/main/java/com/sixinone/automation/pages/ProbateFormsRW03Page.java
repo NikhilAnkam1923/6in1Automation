@@ -219,6 +219,7 @@ public class ProbateFormsRW03Page extends BasePage {
         String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
         String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAs);
 
+        WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(domicileCountryField);
         verifyFieldIsNotEditable(displayNameField);
         verifyFieldIsNotEditable(alsoKnownAsField);
