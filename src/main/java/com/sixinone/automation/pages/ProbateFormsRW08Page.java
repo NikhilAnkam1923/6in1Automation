@@ -148,6 +148,7 @@ public class ProbateFormsRW08Page extends BasePage {
         estateInfo.put("PlaceOfDeathState", getFieldValue(PLACE_OF_DEATH_STATE));
         estateInfo.put("PlaceOfDeathCountry", getFieldValue(PLACE_OF_DEATH_COUNTRY));
 
+
         driverUtil.getWebElement(ESTATE_TAB).click();
         WebDriverUtil.waitForAWhile();
 
@@ -625,55 +626,58 @@ public class ProbateFormsRW08Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
 
-        verifyNameOfDecedent(pdfFilePath);
-        verifyDateOfDeath(pdfFilePath);
-        verifyDateLettersGranted(pdfFilePath);
-        verifyFileNumber(pdfFilePath);
+        verifyFieldInPDF(pdfFilePath,
+                "REGISTER OF WILLS OF INDIANA COUNTY, PENNSYLVANIA",
+                "a/k/a Krish",
+                "Kris Warner",
+                "Decedent Name");
+
+        verifyFieldInPDF(pdfFilePath,
+                "a/k/a Krish",
+                "02/25/2025 :",
+                "12/05/2023",
+                "Date of Death");
+
+        verifyDate1(pdfFilePath);
+
+        List<String> pdfLines = Arrays.asList(
+                "Date Letters Granted: 02/15/2025",
+                "Corporate Fiduciary (if applicable)",
+                "zetaConsulting",
+                "Name of Corporate Fiduciary",
+                "Name of Representative and Title",
+                "Mountain View Drive",
+                "Address",
+                "Seattle, WA 98101",
+                "City, State, Zip",
+                "(206) 555-6789",
+                "Telephone",
+                "liam.anderson@zetaconsulting.com",
+                "Email",
+                "Rihan Benjamin Miles Jr.",
+                "Name of Person",
+                "Riverside Drive",
+                "Address",
+                "Kansas City, MO 64101",
+                "City, State, Zip",
+                "(816) 555-4321",
+                "Telephone",
+                "rihan.miles@business.com",
+                "Email"
+        );
+
+        verifyRelatedCorporateFiduciaryDetails(pdfLines);
+
+        verifyFieldInPDF(pdfFilePath,
+                "a/k/a Krish",
+                "02/25/2025 :",
+                fourDigitFileNumberForm,
+                "File Number");
     }
 
+    private static void verifyDate1(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "To the Register:";  // The next line after the date
 
-    public void verifyNameOfDecedent(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "Name of Decedent:";
-        String afterLine = "Date of Death:";
-
-        String extractedName = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
-
-        String expectedName = "Kris Warner"; // Update as needed
-        validateExtractedValue(expectedName, extractedName, "Decedent Name");
-    }
-
-    public void verifyDateOfDeath(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "Date of Death:";
-        String afterLine = "Date Letters Granted:";
-
-        String extractedDateOfDeath = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
-
-        String expectedDateOfDeath = "12/05/2023"; // Update as needed
-        validateExtractedValue(expectedDateOfDeath, extractedDateOfDeath, "Date of Death");
-    }
-
-    public void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "Date Letters Granted:";
-        String afterLine = "File Number:";
-
-        String extractedDateLetters = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
-
-        String expectedDateLetters = "02/15/2025"; // Update as needed
-        validateExtractedValue(expectedDateLetters, extractedDateLetters, "Date Letters Granted");
-    }
-
-
-    public void verifyFileNumber(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "File Number:";
-        String afterLine = "Some other reference"; // Adjust if there's a specific end marker
-
-        String extractedFileNumber = extractValueBetweenLines(pdfFilePath, beforeLine, afterLine);
-
-        String expectedFileNumber = "22-2023-1234"; // Update as needed
-        validateExtractedValue(expectedFileNumber, extractedFileNumber, "File Number");
-    }
-
-    private String extractValueBetweenLines(String pdfFilePath, String beforeLine, String afterLine) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -685,15 +689,57 @@ public class ProbateFormsRW08Page extends BasePage {
             CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
         }
 
-        int startIndex = -1, endIndex = -1;
-        String extractedValue = "";
+        int endIndex = -1;
+        String extractedDate = "";
 
-        // Find start and end lines
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
-            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-            if (trimmedLine.contains(afterLine) && startIndex != -1) {
+            // Find the first occurrence of "(Date)"
+            if (trimmedLine.equalsIgnoreCase(beforeLine)) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        // Extract the line before "(Date)"
+        if (endIndex > 0) {  // Ensure it's not the first line
+            extractedDate = allLines[endIndex - 1].trim();
+        }
+
+        if (extractedDate.isEmpty()) {
+            throw new AutomationException("❌ Validation Failed: No Date field found before (Date).");
+        }
+
+        String extractDate = cleanName(extractedDate, "Date Letters Granted");
+
+        String expectedDateForm1 = dateLetterGrantedForm;
+        // Expected Date for comparison
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + dateLetterGrantedForm + "', Extracted: '" + extractDate + "'");
+
+        if (expectedDateForm1.equalsIgnoreCase(extractDate)) {
+            CommonSteps.logInfo("✅ Validation Passed: Extracted Date matches expected.");
+        } else {
+            throw new AutomationException("❌ Validation Failed: Extracted Date does not match expected value.");
+        }
+    }
+
+    public static void verifyFieldInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
+
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
                 endIndex = i;
                 break;
             }
@@ -703,72 +749,142 @@ public class ProbateFormsRW08Page extends BasePage {
             for (int i = startIndex + 1; i < endIndex; i++) {
                 String currentLine = allLines[i].trim();
                 if (!currentLine.isBlank()) {
-                    extractedValue = currentLine; // Store the first valid line
-                    break;
+                    extractedValue = cleanName(currentLine, fieldName);
+                    break; // Assuming only one line needs to be extracted
                 }
             }
 
+            CommonSteps.logInfo("📌 Extracted " + fieldName + ": " + extractedValue);
+
             if (extractedValue.isEmpty()) {
-                throw new AutomationException("❌ Validation Failed: No value found between '" + beforeLine + "' and '" + afterLine + "'.");
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
             }
+
+            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
         } else {
-            throw new AutomationException("❌ Before or after line not found in PDF!");
-        }
-
-        return extractedValue;
-    }
-
-
-    private void validateExtractedValue(String expectedValue, String extractedValue, String fieldName) throws AutomationException {
-        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
-
-        if (expectedValue.equalsIgnoreCase(extractedValue)) {
-            CommonSteps.logInfo("✅ Validation Passed: " + fieldName + " matches expected.");
-        } else {
-            throw new AutomationException("❌ Validation Failed: " + fieldName + " does not match expected value.");
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
     }
 
+    private static String cleanName(String rawText, String fieldType) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
 
-    public void userResetsTheRWForm() throws AutomationException {
-        scrollToElementAndClick(WILL_NUMBER_FIELD);
-        DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
+        String cleanedText = rawText.trim();
 
-        scrollToElementAndClick(DATE_LETTER_GRANTED);
-        DriverFactory.drivers.get().findElement(By.xpath(DATE_LETTER_GRANTED)).clear();
+        switch (fieldType.toLowerCase()) {
+            case "date letters granted":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Date Letters Granted: )\\b", "").trim();
+                break;
 
-        DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
+            case "decedent name":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Name of Decedent: )\\b", "").trim();
+                break;
 
-        scrollToElementAndClick(SIGNED_DATE);
-        DriverFactory.drivers.get().findElement(By.xpath(SIGNED_DATE)).clear();
+            case "date of death":
+                cleanedText = cleanedText.replaceAll("(?i)Date of Death:\\s*", "") // Remove "Date of Death:"
+                        .replaceAll("\\s*File Number:.*$", "") // Remove "File Number" and everything after it
+                        .replaceAll("[:]+$", "") // Remove trailing colons if any
+                        .trim();
+                break;
 
-        scrollToElementAndClick(SERVED_DATE);
-        DriverFactory.drivers.get().findElement(By.xpath(SERVED_DATE)).clear();
+            case "file number":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Date of Death: 12/05/2023 File Number:)\\b", "").trim();
+                break;
 
-        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT)).click();
-        WebDriverUtil.waitForAWhile(3);
+            default:
+                // Generic cleanup for any other case
+                cleanedText = cleanedText.replaceAll("[:,\\.\\s]+$", "").trim();
+                break;
+        }
 
-        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
-
-        scrollToElementAndClick(BENE_NAME_FIELD);
-
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(SAVE_BTN).click();
-        WebDriverUtil.waitForAWhile(2);
+        return cleanedText;
     }
+
+    public void verifyRelatedCorporateFiduciaryDetails(List<String> pdfLines) {
+
+
+
+
+        // Extract and Map Data
+        Map<String, String> extractedData = extractWitnessDetails(pdfLines);
+
+        // Print Extracted Data
+        extractedData.forEach((key, value) -> System.out.println(key + " -> " + value));
+    }
+
+    private static Map<String, String> extractWitnessDetails(List<String> pdfLines) {
+        Map<String, String> witnessData = new LinkedHashMap<>();
+        String key = null;
+
+        for (String line : pdfLines) {
+            if (isLabel(line)) {
+                key = line; // Store label for the next line
+            } else if (key != null) {
+                witnessData.put(key, line); // Map label -> value
+                key = null; // Reset key after assignment
+            }
+        }
+
+        return witnessData;
+    }
+
+    private static boolean isLabel(String line) {
+        return line.equalsIgnoreCase("Name of Corporate Fiduciary") ||
+                line.equalsIgnoreCase("Name of Representative and Title") ||
+                line.equalsIgnoreCase("Address") ||
+                line.equalsIgnoreCase("City, State, Zip") ||
+                line.equalsIgnoreCase("Telephone") ||
+                line.equalsIgnoreCase("Email") ||
+                line.equalsIgnoreCase("Name of Person") ||
+                line.equalsIgnoreCase("Signature of Officer/Representative");
 }
+
+public void userResetsTheRWForm() throws AutomationException {
+    scrollToElementAndClick(WILL_NUMBER_FIELD);
+    DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
+
+    scrollToElementAndClick(DATE_LETTER_GRANTED);
+    DriverFactory.drivers.get().findElement(By.xpath(DATE_LETTER_GRANTED)).clear();
+
+    DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
+
+    scrollToElementAndClick(SIGNED_DATE);
+    DriverFactory.drivers.get().findElement(By.xpath(SIGNED_DATE)).clear();
+
+    scrollToElementAndClick(SERVED_DATE);
+    DriverFactory.drivers.get().findElement(By.xpath(SERVED_DATE)).clear();
+
+    DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT)).click();
+    WebDriverUtil.waitForAWhile(3);
+
+    scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+
+    scrollToElementAndClick(BENE_NAME_FIELD);
+
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement("//span[@class='cursor']").click();
+
+    WebDriverUtil.waitForAWhile();
+    driverUtil.getWebElement(SAVE_BTN).click();
+    WebDriverUtil.waitForAWhile(2);
+}
+}
+

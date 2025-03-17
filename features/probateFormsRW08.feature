@@ -60,16 +60,16 @@ Feature: 6in1 probate form RW08 Feature
   Scenario: Verify, these 2 sections are common for RW07, RW08 and anything updated is reflected in all the forms.
     When user click on the "RW 07" form
     Then user verifies Corporate Fiduciary and Person sections information is common for RW07 and RW08
-
-  Scenario: Verify, selection is cleared on clicking clear selection button.
-    When user click on the "RW 08" form
-    And user clicks on Clear Selection buttons
-    Then user verifies selected contacts on "RW08" form are cleared
+    And user click on the "RW 08" form
 
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'Rw08'
     And verify all the fields entered are correctly reflected in the 'Rw08' pdf
+
+  Scenario: Verify, selection is cleared on clicking clear selection button.
+    When user clicks on Clear Selection buttons
+    Then user verifies selected contacts on "RW08" form are cleared
 
   Scenario: Reset the RW08 form
     When user resets the "RW08" form

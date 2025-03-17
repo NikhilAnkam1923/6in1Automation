@@ -496,7 +496,7 @@ public class CommonSteps {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    @Then("^user click on the \"([^\"]*)\" form$")
+    @And("^user click on the \"([^\"]*)\" form$")
     public void userClickOnTheRW(String formToSelect) throws AutomationException {
         CommonSteps.logInfo("user click on the " + formToSelect + " form");
         driverUtil.getWebElement(String.format(RW_FORM_XPATH, formToSelect)).click();

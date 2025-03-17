@@ -337,7 +337,7 @@ public class ProbateFormsRWxxPage extends BasePage {
 
 
     public static void verifyReviewerName(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "Estate of William John  , Deceased";
+        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John , Deceased");
         String afterLine = "depose and say that I, the Deputy Register of Wills in the above-referenced estate, declare that";
 
         List<String> names = new ArrayList<>();
@@ -359,7 +359,12 @@ public class ProbateFormsRWxxPage extends BasePage {
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
-            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
+            for (String beforeLine : beforeLines) {
+                if (trimmedLine.contains(beforeLine.trim())) {
+                    startIndex = i;
+                    break;  // Stop checking once we find a match
+                }
+            }
             if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
                 endIndex = i;
                 break;
@@ -420,8 +425,8 @@ public class ProbateFormsRWxxPage extends BasePage {
 
 
     public static void verifyreviewerDesignation(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "I, Louis Pat , being duly sworn according to law,";
-        String afterLine = "Harry Steve ,";
+        String beforeLine = "I, Louis Pat ,being duly sworn according to law";
+        String afterLine = "Harry and Steve ,";
 
 
         List<String> names = new ArrayList<>();
@@ -502,7 +507,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         document.close();
 
         String beforeLine = "depose and say that I, the Deputy Register of Wills in the above-referenced estate, declare that";
-        String afterLine = "whose signature(s) appears as subscribing witness(es) to the WILL or CODICIL of the above";
+        String afterLine = "whose signature(s) appears as subscribing witness(es) to the WILL or CODICIL of the above Testator,";
 
         int startIndex = pdfText.indexOf(beforeLine);
         int endIndex = pdfText.indexOf(afterLine, startIndex);
@@ -511,22 +516,43 @@ public class ProbateFormsRWxxPage extends BasePage {
             throw new AutomationException("❌ Witness name section not found in the PDF.");
         }
 
-        String[] extractedWitnesses = pdfText.substring(startIndex + beforeLine.length(), endIndex).trim()
-                .replace(",", "").split("\\s+");
+        // Extract witness section
+        String extractedText = pdfText.substring(startIndex + beforeLine.length(), endIndex).trim();
 
-        if (extractedWitnesses.length != 2) {
-            throw new AutomationException("❌ Expected 2 witness names, but found: " + Arrays.toString(extractedWitnesses));
+        // Clean the extracted text using `cleanReviewerReason`
+        extractedText = cleanWitness(extractedText);
+
+        // Split names by " and " (assuming they are separated by "and")
+        String[] witnessNames = extractedText.split("\\s+and\\s+");
+
+        if (witnessNames.length != 2) {
+            throw new AutomationException("❌ Expected 2 witness names, but found: " + extractedText);
         }
 
-        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + enteredWitness1 + "', Extracted: '" + extractedWitnesses[0] + "'");
-        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + enteredWitness2 + "', Extracted: '" + extractedWitnesses[1] + "'");
+        String extractedWitness1 = witnessNames[0];
+        String extractedWitness2 = witnessNames[1];
 
-        if (!enteredWitness1.equals(extractedWitnesses[0]) || !enteredWitness2.equals(extractedWitnesses[1])) {
+        // Log extracted values
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + enteredWitness1 + "', Extracted: '" + extractedWitness1 + "'");
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + enteredWitness2 + "', Extracted: '" + extractedWitness2 + "'");
+
+        // Validate extracted names with expected names
+        if (!enteredWitness1.equalsIgnoreCase(extractedWitness1) || !enteredWitness2.equalsIgnoreCase(extractedWitness2)) {
             throw new AutomationException("❌ Witness name mismatch! Expected: [" + enteredWitness1 + ", " + enteredWitness2
-                    + "], Extracted: " + Arrays.toString(extractedWitnesses));
+                    + "], Extracted: [" + extractedWitness1 + ", " + extractedWitness2 + "]");
         }
 
-        CommonSteps.logInfo("✅ Witness names verified successfully: " + enteredWitness1 + " and " + enteredWitness2);
+        CommonSteps.logInfo("✅ Witness names verified successfully: " + extractedWitness1 + " and " + extractedWitness2);
+    }
+
+    // Helper method for cleaning text
+    private static String cleanWitness(String rawText) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
+
+        return rawText
+                .replaceAll("\\s+", " ") // Normalize spaces
+                .replaceAll("[,\\.]+$", "") // Remove trailing commas, dots
+                .trim(); // Trim spaces
     }
 
     public static void verifyReviewerReason(String pdfFilePath) throws IOException, AutomationException {
@@ -589,56 +615,59 @@ public class ProbateFormsRWxxPage extends BasePage {
                 .trim(); // Trim spaces
     }
 
-    public static void verifyReviewerSign(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "and";
-        String afterLine = "Executed in Register’s Office";
+    private static void verifyReviewerSign(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "UNAVAILABLE WITNESS AFFIDAVIT";  // The next line after the date
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
-        // Split the entire PDF content into lines
         String[] allLines = pdfText.split("\\r?\\n");
 
-        int startIndex = -1, endIndex = -1;
-        String extractedReviewerSign = "";
+        int endIndex = -1;
+        String extractedReviewerSignature = "";
 
-        // Find start and end lines
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
-            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-            if (trimmedLine.contains(afterLine) && startIndex != -1) {
+            // Find the first occurrence of "UNAVAILABLE WITNESS AFFIDAVIT"
+            if (trimmedLine.equalsIgnoreCase(beforeLine)) {
                 endIndex = i;
                 break;
             }
         }
 
-        if (startIndex != -1 && endIndex != -1) {
-            for (int i = startIndex + 1; i < endIndex; i++) {
-                String currentLine = allLines[i].trim();
-                if (!currentLine.isBlank()) {
-                    extractedReviewerSign = currentLine; // Directly store the name
-                    break; // Stop after extracting the first valid name
-                }
-            }
-
-            if (extractedReviewerSign.isEmpty()) {
-                throw new AutomationException("❌ Validation Failed: No reviewer Signature found between specified lines.");
-            }
-
-            // Validate extracted name
-            String expectedReviewerSign = enteredReviewerSign.trim();
-            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedReviewerSign + "', Extracted: '" + extractedReviewerSign
-                    + "'");
-
-            if (expectedReviewerSign.equalsIgnoreCase(extractedReviewerSign)) {
-                CommonSteps.logInfo("✅ Validation Passed: Reviewer Signature matches expected.");
-            } else {
-                throw new AutomationException("❌ Validation Failed: Reviewer Signature does not match expected value.");
-            }
-        } else {
-            throw new AutomationException("❌ Before or after line not found!");
+        // Extract the line before "UNAVAILABLE WITNESS AFFIDAVIT"
+        if (endIndex > 0) {  // Ensure it's not the first line
+            extractedReviewerSignature = allLines[endIndex - 1].trim();
         }
+
+        if (extractedReviewerSignature.isEmpty()) {
+            throw new AutomationException("❌ Validation Failed: No Reviewer Signature found before (Date).");
+        }
+
+        // Clean the extracted signature
+        extractedReviewerSignature = cleanReviewerSignature(extractedReviewerSignature);
+
+        // Expected Signature for comparison
+        String expectedReviewerSignature = enteredReviewerSign.trim();
+
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedReviewerSignature + "', Extracted: '" + extractedReviewerSignature + "'");
+
+        if (expectedReviewerSignature.equalsIgnoreCase(extractedReviewerSignature)) {
+            CommonSteps.logInfo("✅ Validation Passed: Extracted Reviewer Signature matches expected.");
+        } else {
+            throw new AutomationException("❌ Validation Failed: Extracted Reviewer Signature does not match expected value.");
+        }
+    }
+
+    private static String cleanReviewerSignature(String rawText) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
+
+        return rawText
+                .replaceAll("\\(Signature\\)", "") // Remove "(Signature)"
+                .replaceAll("[,\\.]+$", "") // Remove trailing commas, dots
+                .replaceAll("\\s+", " ") // Normalize spaces
+                .trim(); // Trim spaces
     }
 }
