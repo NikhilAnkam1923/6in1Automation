@@ -197,6 +197,18 @@ public class ProbateFormsRW02Page extends BasePage{
     static String modifiedEstateAddressForm;
     static String modifiedEstateCityForm;
     static String modifiedEstateCountyForm;
+    static String countyOnForm;
+    static String fullNameForm;
+    static String fileNumberForm;
+    static String dateOfDeathForm;
+    static String ssnForm;
+    static String ageAtDeathForm;
+    static String domicileAddressForm;
+    static String domicileCityForm;
+    static String placeOfDeathAddressForm;
+    static String placeOfDeathCityForm;
+    static String placeOfDeathCountryForm;
+    static String alsoKnownAsForm;
 
     static String DownloadedFileName;
 
@@ -272,7 +284,7 @@ public class ProbateFormsRW02Page extends BasePage{
     public void verifyCorrectCountyName() throws AutomationException {
         waitForVisibleElement(By.xpath(RW02_FETCHED_COUNTY));
         String domicileCountry = getEstateValue("DomicileCountry");
-        String countyOnForm = driverUtil.getWebElement(RW02_FETCHED_COUNTY).getAttribute("value");
+        countyOnForm = driverUtil.getWebElement(RW02_FETCHED_COUNTY).getAttribute("value");
         if(!countyOnForm.equals(domicileCountry)){
             throw new AutomationException("County name is not fetched correctly from the decedent info.");
         }
@@ -334,29 +346,29 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyDecedentInformationIsAutoPopulatedOnTheForm() throws AutomationException {
-        String fullName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
-        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
-        String dateOfDeath = getEstateValue("DateOfDeath");
-        String ssn = getEstateValue("SSN");
-        String ageAtDeath = getEstateValue("AgeAtDeath");
-        String domicileAddress = getEstateValue("DomicileAddressLine1") + ", " + getEstateValue("DomicileAddressLine2") + ", " + getEstateValue("DomicileZip");
-        String domicileCity = getEstateValue("DomicileCity");
-        String placeOfDeathAddress = getEstateValue("PlaceOfDeathAddressLine1") + ", " + getEstateValue("PlaceOfDeathAddressLine2") + ", " + getEstateValue("PlaceOfDeathZip");
-        String placeOfDeathCity = getEstateValue("PlaceOfDeathCity");
-        String placeOfDeathCountry = getEstateValue("PlaceOfDeathCountry");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+        fullNameForm = getEstateValue("FirstName") + " " + getEstateValue("LastName");
+        fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
+        dateOfDeathForm = getEstateValue("DateOfDeath");
+        ssnForm = getEstateValue("SSN");
+        ageAtDeathForm = getEstateValue("AgeAtDeath");
+        domicileAddressForm = getEstateValue("DomicileAddressLine1") + ", " + getEstateValue("DomicileAddressLine2") + ", " + getEstateValue("DomicileZip");
+        domicileCityForm = getEstateValue("DomicileCity");
+        placeOfDeathAddressForm = getEstateValue("PlaceOfDeathAddressLine1") + ", " + getEstateValue("PlaceOfDeathAddressLine2") + ", " + getEstateValue("PlaceOfDeathZip");
+        placeOfDeathCityForm = getEstateValue("PlaceOfDeathCity");
+        placeOfDeathCountryForm = getEstateValue("PlaceOfDeathCountry");
+        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
 
-        verifyAutoPopulatedValue(fullName);
-        verifyAutoPopulatedValue(fileNumber);
-        verifyAutoPopulatedValue(dateOfDeath);
-        verifyAutoPopulatedValue(ssn);
-        verifyAutoPopulatedValue(ageAtDeath);
-        verifyAutoPopulatedValue(domicileAddress);
-        verifyAutoPopulatedValue(domicileCity);
-        verifyAutoPopulatedValue(placeOfDeathAddress);
-        verifyAutoPopulatedValue(placeOfDeathCity);
-        verifyAutoPopulatedValue(placeOfDeathCountry);
-        verifyAutoPopulatedValue(alsoKnownAs);
+        verifyAutoPopulatedValue(fullNameForm);
+        verifyAutoPopulatedValue(fileNumberForm);
+        verifyAutoPopulatedValue(dateOfDeathForm);
+        verifyAutoPopulatedValue(ssnForm);
+        verifyAutoPopulatedValue(ageAtDeathForm);
+        verifyAutoPopulatedValue(domicileAddressForm);
+        verifyAutoPopulatedValue(domicileCityForm);
+        verifyAutoPopulatedValue(placeOfDeathAddressForm);
+        verifyAutoPopulatedValue(placeOfDeathCityForm);
+        verifyAutoPopulatedValue(placeOfDeathCountryForm);
+        verifyAutoPopulatedValue(alsoKnownAsForm);
     }
 
 

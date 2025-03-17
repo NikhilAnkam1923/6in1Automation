@@ -80,6 +80,9 @@ public class ProbateFormsRWxxPage extends BasePage {
     static String enteredWitness2;
     static String enteredReason;
     static String enteredReviewerSign;
+    static String domicileCountryForm;
+    static String displayNameForm;
+    static String alsoKnownAsForm;
 
     public void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
@@ -172,13 +175,13 @@ public class ProbateFormsRWxxPage extends BasePage {
     }
 
     public void verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+        domicileCountryForm = getEstateValue("DomicileCountry");
+        displayNameForm = getEstateValue("DisplayName");
+        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
 
-        verifyAutoPopulatedValue(domicileCountry);
-        verifyAutoPopulatedValue(displayName);
-        verifyAutoPopulatedValue(alsoKnownAs);
+        verifyAutoPopulatedValue(domicileCountryForm);
+        verifyAutoPopulatedValue(displayNameForm);
+        verifyAutoPopulatedValue(alsoKnownAsForm);
     }
 
     private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {

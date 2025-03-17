@@ -89,6 +89,9 @@ public class ProbateFormsRW05Page extends BasePage {
     static String enteredStreetAddress2Form;
     static String enteredCityStateZip1Form;
     static String enteredCityStateZip2Form;
+    static String domicileCountryForm;
+    static String displayNameForm;
+    static String alsoKnownAsForm;
 
     public void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
@@ -176,13 +179,13 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     public void verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+        domicileCountryForm = getEstateValue("DomicileCountry");
+        displayNameForm = getEstateValue("DisplayName");
+        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
 
-        verifyAutoPopulatedValue(domicileCountry);
-        verifyAutoPopulatedValue(displayName);
-        verifyAutoPopulatedValue(alsoKnownAs);
+        verifyAutoPopulatedValue(domicileCountryForm);
+        verifyAutoPopulatedValue(displayNameForm);
+        verifyAutoPopulatedValue(alsoKnownAsForm);
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
@@ -206,13 +209,9 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
-
-        String domicileCountryField = String.format(RW_INPUT_FIELD_XPATH, domicileCountry);
-        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
-        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAs);
+        String domicileCountryField = String.format(RW_INPUT_FIELD_XPATH, domicileCountryForm);
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayNameForm);
+        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAsForm);
 
         WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(domicileCountryField);
