@@ -419,8 +419,8 @@ public class ProbateFormsRW03Page extends BasePage {
     }
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "Estate of William John  , Deceased";
-        String afterLine = "(Print Name/s) (Print Name/s)";
+        List<String> beforeLines = Arrays.asList("a/k/a Jonny","Estate of William John ,Deceased");
+        String afterLine = "(each) a subscribing witness to";
 
         List<String> names = new ArrayList<>();
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -438,7 +438,13 @@ public class ProbateFormsRW03Page extends BasePage {
             String trimmedLine = allLines[i].trim();
             CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
 
-            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
+            for (String beforeLine : beforeLines) {
+                if (trimmedLine.contains(beforeLine.trim())) {
+                    startIndex = i;
+                    break;  // Stop checking once we find a match
+                }
+            }
+
             if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
                 endIndex = i;
                 break;

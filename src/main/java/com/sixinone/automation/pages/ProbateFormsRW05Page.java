@@ -271,8 +271,8 @@ public class ProbateFormsRW05Page extends BasePage {
         WebElement witnessName1 = driverUtil.getWebElement(WITNESS_NAME_1);
         WebElement witnessName2 = driverUtil.getWebElement(WITNESS_NAME_2);
 
-        fillFieldWithKeyStrokes(WITNESS_NAME_1,"RW03Form.witness1name");
-        fillFieldWithKeyStrokes(WITNESS_NAME_2,"RW03Form.witness2name");
+        fillFieldWithKeyStrokes(WITNESS_NAME_1, "RW03Form.witness1name");
+        fillFieldWithKeyStrokes(WITNESS_NAME_2, "RW03Form.witness2name");
 
         enteredWitness1Form = witnessName1.getAttribute("value");
         if (!enteredWitness1Form.equals(witness1name)) {
@@ -305,9 +305,9 @@ public class ProbateFormsRW05Page extends BasePage {
         WebElement witnessSign2 = driverUtil.getWebElement(WITNESS_2_SIGNATURE);
 
         clearField(WITNESS_1_SIGNATURE);
-        fillFieldWithKeyStrokes(WITNESS_1_SIGNATURE,"RW03Form.witness1signature");
+        fillFieldWithKeyStrokes(WITNESS_1_SIGNATURE, "RW03Form.witness1signature");
         clearField(WITNESS_2_SIGNATURE);
-        fillFieldWithKeyStrokes(WITNESS_2_SIGNATURE,"RW03Form.witness2signature");
+        fillFieldWithKeyStrokes(WITNESS_2_SIGNATURE, "RW03Form.witness2signature");
 
         enteredWitness1SignForm = witnessSign1.getAttribute("value");
         enteredWitness2SignForm = witnessSign2.getAttribute("value");
@@ -336,10 +336,10 @@ public class ProbateFormsRW05Page extends BasePage {
         String witness1CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness1CityStateZip").toString();
         String witness2CityStateZip = CommonUtil.getJsonPath("RW03Form").get("RW03Form.witness2CityStateZip").toString();
 
-        fillFieldWithKeyStrokes(WITNESS_1_STREET_ADDRESS,"RW03Form.witness1streetAddress");
-        fillFieldWithKeyStrokes(WITNESS_2_STREET_ADDRESS,"RW03Form.witness2streetAddress");
-        fillFieldWithKeyStrokes(W1_CITY_STATE_ZIP,"RW03Form.witness1CityStateZip");
-        fillFieldWithKeyStrokes(W2_CITY_STATE_ZIP,"RW03Form.witness2CityStateZip");
+        fillFieldWithKeyStrokes(WITNESS_1_STREET_ADDRESS, "RW03Form.witness1streetAddress");
+        fillFieldWithKeyStrokes(WITNESS_2_STREET_ADDRESS, "RW03Form.witness2streetAddress");
+        fillFieldWithKeyStrokes(W1_CITY_STATE_ZIP, "RW03Form.witness1CityStateZip");
+        fillFieldWithKeyStrokes(W2_CITY_STATE_ZIP, "RW03Form.witness2CityStateZip");
 
         enteredStreetAddress1Form = driverUtil.getWebElement(WITNESS_1_STREET_ADDRESS).getAttribute("value");
         if (!enteredStreetAddress1Form.equals(witness1streetAddress)) {
@@ -387,8 +387,6 @@ public class ProbateFormsRW05Page extends BasePage {
             verifyField(labels[i], expectedValues[i], actualValues[i]);
         }
     }
-
-
 
 
     public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
@@ -550,14 +548,27 @@ public class ProbateFormsRW05Page extends BasePage {
                     String streetAddress = "";
                     String cityStateZip = "";
 
-                    // Find the Street Address (next non-empty line after Signature)
+                    // Start looking for Street Address AFTER the signature line
                     for (int j = i + 1; j < pdfLines.size(); j++) {
-                        if (!pdfLines.get(j).trim().isEmpty() && !pdfLines.get(j).contains("(Signature)")) {
-                            streetAddress = pdfLines.get(j).trim();
+                        String possibleStreet = pdfLines.get(j).trim();
+
+                        // Skip empty lines or non-relevant labels
+                        if (possibleStreet.isEmpty() || possibleStreet.contains("(Street Address)") ||
+                                possibleStreet.matches(".*(City|State|Zip|Executed in Register’s Office|Sworn to).*")) {
+                            continue;
+                        }
+
+                        // Check for a valid street address
+                        if (possibleStreet.matches("^(\\d+\\s+.*|[A-Za-z]+\\s+(Street|Avenue|Road|Lane|Boulevard|Drive|Court|Parkway|Place|Circle|Trail|Way))\\b.*")) {
+                            streetAddress = possibleStreet;
+                            break; // Stop once a valid street is found
+                        }
+
+                        // **NEW FIX**: If we reach another signature without finding a street, break
+                        if (possibleStreet.contains("(Signature)")) {
                             break;
                         }
                     }
-
 
                     // Find the City, State, Zip (first line with a valid ZIP code)
                     for (int j = i + 2; j < pdfLines.size(); j++) {
@@ -610,6 +621,8 @@ public class ProbateFormsRW05Page extends BasePage {
             throw new AutomationException(String.join("\n", mismatchErrors));
         }
     }
+
+
 
     public void userResetsTheRWForm() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
