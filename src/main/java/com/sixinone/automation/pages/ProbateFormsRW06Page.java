@@ -84,6 +84,8 @@ public class ProbateFormsRW06Page extends BasePage {
     private static final String BENEFICIARY_TELEPHONE = "//div[@id='id_2_2']//p[text()='City, State, Zip']/following-sibling::p//span/input[@disabled and @value='%s']";
     private static final String BENEFICIARY_EMAIL = "//div[@id='id_2_2']//p[text()='Telephone']/following-sibling::p//span/input[@disabled and not(@value='')]";
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
+    private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -169,6 +171,9 @@ public class ProbateFormsRW06Page extends BasePage {
     static String beneficiary5CityStateZipForm;
     static String beneficiary5TelephoneForm;
     static String beneficiary5EmailForm;
+    static String domicileCountryForm;
+    static String displayNameForm;
+    static String alsoKnownAsForm;
 
 
     @Override
@@ -255,13 +260,13 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+        domicileCountryForm = getEstateValue("DomicileCountry");
+        displayNameForm = getEstateValue("DisplayName");
+        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
 
-        verifyCountyInHeader(domicileCountry);
-        verifyAutoPopulatedValue(displayName);
-        verifyAutoPopulatedValue(alsoKnownAs);
+        verifyCountyInHeader(domicileCountryForm);
+        verifyAutoPopulatedValue(displayNameForm);
+        verifyAutoPopulatedValue(alsoKnownAsForm);
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
@@ -272,11 +277,8 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
-
-        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
-        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAs);
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayNameForm);
+        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAsForm);
 
         WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(displayNameField);
@@ -367,6 +369,10 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void userResetsTheRWForm() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+
         WebDriverUtil.waitForAWhile();
         scrollToElementAndClick(CORPORATE_FIDUCIARY_SIGN_FIELD);
 
@@ -425,7 +431,7 @@ public class ProbateFormsRW06Page extends BasePage {
             String expectedTelephone = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".workNumber").toString();
             String expectedEmail = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".emailId").toString();
 
-            String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + " " + expectedSuffix;
+            String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName +"," + " " + expectedSuffix;
             String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);

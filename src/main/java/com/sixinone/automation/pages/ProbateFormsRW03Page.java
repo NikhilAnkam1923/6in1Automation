@@ -88,6 +88,9 @@ public class ProbateFormsRW03Page extends BasePage {
     static String enteredStreetAddress2Form;
     static String enteredCityStateZip1Form;
     static String enteredCityStateZip2Form;
+    static String domicileCountryForm;
+    static String displayNameForm;
+    static String alsoKnownAsForm;
 
     static String downloadedFileName;
 
@@ -178,13 +181,14 @@ public class ProbateFormsRW03Page extends BasePage {
     }
 
     public void verifyCountyEstateAndAkaNamesAreAutoPopulatedOnTheForm() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
+        domicileCountryForm = getEstateValue("DomicileCountry");
+        displayNameForm = getEstateValue("DisplayName");
+        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
 
-        verifyAutoPopulatedValue(domicileCountry);
-        verifyAutoPopulatedValue(displayName);
-        verifyAutoPopulatedValue(alsoKnownAs);
+
+        verifyAutoPopulatedValue(domicileCountryForm);
+        verifyAutoPopulatedValue(displayNameForm);
+        verifyAutoPopulatedValue(alsoKnownAsForm);
     }
 
 
@@ -211,13 +215,9 @@ public class ProbateFormsRW03Page extends BasePage {
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
-
-        String domicileCountryField = String.format(RW_INPUT_FIELD_XPATH, domicileCountry);
-        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
-        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAs);
+        String domicileCountryField = String.format(RW_INPUT_FIELD_XPATH, domicileCountryForm);
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayNameForm);
+        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAsForm);
 
         WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(domicileCountryField);
@@ -495,11 +495,8 @@ public class ProbateFormsRW03Page extends BasePage {
     public void verifyCounty(String pdfFilePath) throws AutomationException {
         Map<String, String> expectedData = new LinkedHashMap<>();
 
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-
-        expectedData.put("COUNTY", domicileCountry);
-        expectedData.put("Deceased", displayName);
+        expectedData.put("COUNTY", domicileCountryForm);
+        expectedData.put("Deceased", displayNameForm);
 
         try {
             PDDocument document = PDDocument.load(new File(pdfFilePath));

@@ -84,6 +84,8 @@ public class ProbateFormsRW08Page extends BasePage {
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
     private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
+    private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -107,6 +109,10 @@ public class ProbateFormsRW08Page extends BasePage {
     static int expectedAttachmentCountForm;
     static String selectedNameOfCorporateFiduciary;
     static String selectedNameOfPerson;
+    static String domicileCountryForm;
+    static String displayNameForm;
+    static String alsoKnownAsForm;
+    static String fileNumberForm;
 
     private static String getFieldValue(String locator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
@@ -183,15 +189,15 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyCountyEstateFileNumberAkaNamesAreAutoPopulatedOnTheForm() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
-        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
+        domicileCountryForm = getEstateValue("DomicileCountry");
+        displayNameForm = getEstateValue("DisplayName");
+        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
+        fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
 
-        verifyAutoPopulatedValue(domicileCountry);
-        verifyAutoPopulatedValue(displayName);
-        verifyAutoPopulatedValue(alsoKnownAs);
-        verifyAutoPopulatedValue(fileNumber);
+        verifyAutoPopulatedValue(domicileCountryForm);
+        verifyAutoPopulatedValue(displayNameForm);
+        verifyAutoPopulatedValue(alsoKnownAsForm);
+        verifyAutoPopulatedValue(fileNumberForm);
 
         initialFileNumberForm = driverUtil.getWebElement(FILE_NUMBER_FIELD).getAttribute("value");
     }
@@ -204,13 +210,9 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyAutoPopulatedFieldsAreNotEditable() throws AutomationException {
-        String domicileCountry = getEstateValue("DomicileCountry");
-        String displayName = getEstateValue("DisplayName");
-        String alsoKnownAs = getEstateValue("AlsoKnownAs");
-
-        String domicileCountryField = String.format(RW_INPUT_FIELD_XPATH, domicileCountry);
-        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
-        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAs);
+        String domicileCountryField = String.format(RW_INPUT_FIELD_XPATH, domicileCountryForm);
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayNameForm);
+        String alsoKnownAsField = String.format(RW_INPUT_FIELD_XPATH, alsoKnownAsForm);
 
         WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(domicileCountryField);
@@ -846,6 +848,10 @@ public class ProbateFormsRW08Page extends BasePage {
 }
 
 public void userResetsTheRWForm() throws AutomationException {
+    Actions actions = new Actions(DriverFactory.drivers.get());
+    actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+    WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+
     scrollToElementAndClick(WILL_NUMBER_FIELD);
     DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
 

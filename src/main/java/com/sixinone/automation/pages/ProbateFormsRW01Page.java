@@ -100,6 +100,14 @@ public class ProbateFormsRW01Page extends BasePage {
     static String executorLastNameForm;
     static String coExecutorLastNameForm;
     static String secondaryCoExecutorLastNameForm;
+    static String SSNForm;
+    static String LastNameForm;
+    static String SuffixForm;
+    static String FirstNameForm;
+    static String MiddleNameForm;
+    static String DateOfBirthForm;
+    static String DateOfDeathForm;
+    static String FileNumberForm;
 
     private static String getFieldValue(String locator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
@@ -192,9 +200,9 @@ public class ProbateFormsRW01Page extends BasePage {
     }
 
     public void verifyCorrectFileNumber() throws AutomationException {
-        String FileNumber = getEstateValue("FileNumberPart3");
+        FileNumberForm = getEstateValue("FileNumberPart3");
 
-        verifyFetchedInputField(FileNumber);
+        verifyFetchedInputField(FileNumberForm);
     }
 
     public void verifyCorrectInformationFetchedFromTheDecedentInfoTab() throws AutomationException, IOException, ParseException {
@@ -202,10 +210,39 @@ public class ProbateFormsRW01Page extends BasePage {
 
         for (String key : fieldKeys) {
             String value = getEstateValue(key);
+
             if (key.equals("MiddleName") && !value.isEmpty()) {
-                value = String.valueOf(value.charAt(0));
+                value = String.valueOf(value.charAt(0)); // Store only the first character
             }
+
+            assignToStaticVariable(key, value);
             verifyFetchedInputField(value);
+        }
+    }
+
+    private static void assignToStaticVariable(String key, String value) {
+        switch (key) {
+            case "SSN":
+                SSNForm = value;
+                break;
+            case "LastName":
+                LastNameForm = value;
+                break;
+            case "Suffix":
+                SuffixForm = value;
+                break;
+            case "FirstName":
+                FirstNameForm = value;
+                break;
+            case "MiddleName":
+                MiddleNameForm = value;
+                break;
+            case "DateOfBirth":
+                DateOfBirthForm = value;
+                break;
+            case "DateOfDeath":
+                DateOfDeathForm = value;
+                break;
         }
     }
 
@@ -239,25 +276,25 @@ public class ProbateFormsRW01Page extends BasePage {
         WebElement checkbox4 = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHECKBOX_XPATH_DYNAMIC, "Litigation Purposes (No Other Assets)")));
 
         checkbox1.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (!checkbox1.isSelected() || checkbox2.isSelected() || checkbox3.isSelected() || checkbox4.isSelected()) {
             throw new AutomationException("Only the first checkbox should be selected.");
         }
 
         checkbox2.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (checkbox1.isSelected() || !checkbox2.isSelected() || checkbox3.isSelected() || checkbox4.isSelected()) {
             throw new AutomationException("Only the second checkbox should be selected.");
         }
 
         checkbox3.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (checkbox1.isSelected() || checkbox2.isSelected() || !checkbox3.isSelected() || checkbox4.isSelected()) {
             throw new AutomationException("Only the third checkbox should be selected.");
         }
 
         checkbox4.click();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         if (checkbox1.isSelected() || checkbox2.isSelected() || checkbox3.isSelected() || !checkbox4.isSelected()) {
             throw new AutomationException("Only the fourth checkbox should be selected.");
         }

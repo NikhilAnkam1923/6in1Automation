@@ -82,6 +82,10 @@ public class ProbateFormsRW10Page extends BasePage{
     static String selectedNameOfCorporateFiduciary;
     static String selectedNameOfPerson;
     static String enteredOrphanCourtNumberForm;
+    static String domicileCountryForm;
+    static String displayNameForm;
+    static String dateOfDeathForm;
+    static String fileNumberForm;
 
     @Override
     String getName() {
@@ -158,9 +162,9 @@ public class ProbateFormsRW10Page extends BasePage{
 
     public void verifyTitleOfTheFormIsCorrectlyDisplayedAndCountyIsFetchedFromDecedentInfo() throws AutomationException, IOException, ParseException {
         String expectedTitle = CommonUtil.getJsonPath("RW10Form").get("RW10Form.title").toString();
-        String domicileCountry = getEstateValue("DomicileCountry");
+        domicileCountryForm = getEstateValue("DomicileCountry");
 
-        verifyAutoPopulatedValue(domicileCountry);
+        verifyAutoPopulatedValue(domicileCountryForm);
 
         String actualTitle = driverUtil.getWebElement(FORM_TITLE).getText();
 
@@ -170,13 +174,13 @@ public class ProbateFormsRW10Page extends BasePage{
     }
 
     public void verifyNameOfDecedentDateOfDeathFileNumberIsFetchedFromTheDecedentInfo() throws AutomationException {
-        String displayName = getEstateValue("DisplayName");
-        String dateOfDeath = getEstateValue("DateOfDeath");
-        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
+        displayNameForm = getEstateValue("DisplayName");
+        dateOfDeathForm = getEstateValue("DateOfDeath");
+        fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
 
-        verifyAutoPopulatedValue(displayName);
-        verifyAutoPopulatedValue(dateOfDeath);
-        verifyAutoPopulatedValue(fileNumber);
+        verifyAutoPopulatedValue(displayNameForm);
+        verifyAutoPopulatedValue(dateOfDeathForm);
+        verifyAutoPopulatedValue(fileNumberForm);
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
@@ -187,13 +191,9 @@ public class ProbateFormsRW10Page extends BasePage{
     }
 
     public void verifyNameDateOfDeathAndFileNumberFieldsAreNotEditable() throws AutomationException {
-        String displayName = getEstateValue("DisplayName");
-        String dateOfDeath = getEstateValue("DateOfDeath");
-        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
-
-        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayName);
-        String dateOfDeathField = String.format(RW_INPUT_FIELD_XPATH, dateOfDeath);
-        String fileNumberField = String.format(RW_INPUT_FIELD_XPATH,fileNumber);
+        String displayNameField = String.format(RW_INPUT_FIELD_XPATH, displayNameForm);
+        String dateOfDeathField = String.format(RW_INPUT_FIELD_XPATH, dateOfDeathForm);
+        String fileNumberField = String.format(RW_INPUT_FIELD_XPATH, fileNumberForm);
 
         WebDriverUtil.waitForAWhile(2);
         verifyFieldIsNotEditable(displayNameField);
