@@ -450,7 +450,7 @@ public class ProbateFormsRW05Page extends BasePage {
     }
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
-        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John  , Deceased");
+        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John , Deceased");
         String afterLine = "(Print Name/s) (Print Name/s)";
 
         List<String> names = new ArrayList<>();
@@ -531,6 +531,7 @@ public class ProbateFormsRW05Page extends BasePage {
             throw new AutomationException("❌ Before or after line not found!");
         }
     }
+
 
     // **Updated Helper Method to Clean Names Properly**
     private static String cleanPrintName(String rawName) {
