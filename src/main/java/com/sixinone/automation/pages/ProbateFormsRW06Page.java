@@ -271,7 +271,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
+        if (field.isEnabled() && field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable");
         }
     }
@@ -410,7 +410,7 @@ public class ProbateFormsRW06Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
         scrollToElementAndClick(SHOW_AKA_CHECkBOX);
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
     }
 
     public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
@@ -656,17 +656,6 @@ public class ProbateFormsRW06Page extends BasePage {
         }
     }
 
-    private void fillFieldWithFieldActivation(String fieldLocator, String data) throws AutomationException {
-        WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
-
-        field.sendKeys(Keys.SPACE);
-        field.sendKeys(Keys.BACK_SPACE);
-        field.sendKeys(data);
-
-        driverUtil.getWebElement("//body").click();
-        WebDriverUtil.waitForAWhile();
-    }
-
     public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
@@ -725,8 +714,15 @@ public class ProbateFormsRW06Page extends BasePage {
 
             String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i))).getAttribute("value");
 
-            fillFieldWithFieldActivation(String.format(LETTERS_ISSUED_TO_FIELD, i), reasonDataForm.get(i));
+            WebDriverUtil.waitForAWhile();
+            WebElement reasonField = driverUtil.getWebElementAndScroll(String.format(LETTERS_ISSUED_TO_FIELD, i));
 
+            reasonField.sendKeys(Keys.SPACE);
+            reasonField.sendKeys(Keys.BACK_SPACE);
+            reasonField.sendKeys(reasonDataForm.get(i));
+
+            driverUtil.getWebElement("//body").click();
+            
             WebDriverUtil.waitForAWhile(2);
             String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
 

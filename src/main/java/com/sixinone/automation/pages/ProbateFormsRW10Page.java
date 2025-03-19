@@ -386,7 +386,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
         String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString();
+        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
         String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
         String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
 
@@ -416,7 +416,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
     public void verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws IOException, ParseException, AutomationException {
         String attorneyFirstName = CommonUtil.getJsonPath("attorney2").get("attorney2.firstName").toString();
-        String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString();
+        String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString() + ",";
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
         String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
 
@@ -443,7 +443,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",","");
     }
 
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor7And10() throws AutomationException {
