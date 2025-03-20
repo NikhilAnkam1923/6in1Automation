@@ -14,6 +14,11 @@ public class PageFactory {
     public ProbateFormsRW04Page probateFormsRW04Page;
     public ProbateFormsRW05Page probateFormsRW05Page;
     public ProbateFormsRW06Page probateFormsRW06Page;
+    public ProbateFormsRWxxPage probateFormsRWxxPage;
+    public ProbateFormsRW07Page probateFormsRW07Page;
+    public ProbateFormsRW08Page probateFormsRW08Page;
+    public ProbateFormsRW10Page probateFormsRW10Page;
+    public ProbateFormsOC01Page probateFormsOC01Page;
 
     private PageFactory() throws IOException {
 
@@ -27,6 +32,11 @@ public class PageFactory {
         probateFormsRW04Page =new ProbateFormsRW04Page();
         probateFormsRW05Page =new ProbateFormsRW05Page();
         probateFormsRW06Page =new ProbateFormsRW06Page();
+        probateFormsRWxxPage =new ProbateFormsRWxxPage();
+        probateFormsRW07Page =new ProbateFormsRW07Page();
+        probateFormsRW08Page =new ProbateFormsRW08Page();
+        probateFormsRW10Page =new ProbateFormsRW10Page();
+        probateFormsOC01Page =new ProbateFormsOC01Page();
     }
 
     public static void init() throws IOException {
@@ -75,6 +85,18 @@ public class PageFactory {
     public static ProbateFormsRW06Page probateFormsRW06Page() {
         return factory.get().probateFormsRW06Page;
     }
+
+    public static ProbateFormsRWxxPage probateFormsRWxxPage() {
+        return factory.get().probateFormsRWxxPage;
+    }
+
+    public static ProbateFormsRW07Page probateFormsRW07Page() { return factory.get().probateFormsRW07Page; }
+
+    public static ProbateFormsRW08Page probateFormsRW08Page() { return factory.get().probateFormsRW08Page; }
+
+    public static ProbateFormsRW10Page probateFormsRW10Page() { return factory.get().probateFormsRW10Page; }
+
+    public static ProbateFormsOC01Page probateFormsOC01Page() { return factory.get().probateFormsOC01Page; }
 
 }
 

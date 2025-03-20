@@ -58,7 +58,7 @@ public class ProbateFormsRW06Steps {
     }
 
     @When("user verifies entered date and reason details on each form are not same")
-    public void userEntersRelationshipDateAndReasonDetailsOnEachForm() throws AutomationException {
+    public void userEntersRelationshipDateAndReasonDetailsOnEachForm() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that entered date and reason details on each form are not same");
         PageFactory.probateFormsRW06Page().userEntersDateAndReasonDetailsOnEachForm();
         CommonSteps.takeScreenshot();

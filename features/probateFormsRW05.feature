@@ -48,6 +48,11 @@ Feature: 6in1 probate form RW05 Feature
     And user click on the "RW 05" form
     Then user verifies all the input fields in the "RW05" form are auto saved
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw05'
+    And verify all the fields entered are correctly reflected in the 'Rw05' pdf
+
   Scenario: Reset the RW05 form
     When user resets the "RW05" form
 
