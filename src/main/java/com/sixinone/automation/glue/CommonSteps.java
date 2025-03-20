@@ -65,6 +65,7 @@ public class CommonSteps {
     private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
     private static final String PERSON_CLEAR_SELECTION_BTN = "//p[contains(text(),'Capacity')]/following-sibling::div//button[text()='Clear Selection']";
     private static final String CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN = "//p[contains(text(),'Corporate Fiduciary (if applicable)')]//button[text()='Clear Selection']";
+    private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -483,6 +484,9 @@ public class CommonSteps {
             case "RW10":
                 PageFactory.probateFormsRW10Page().userSavesEstateInfo();
                 break;
+            case "OC01":
+                PageFactory.probateFormsOC01Page().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -892,5 +896,12 @@ public class CommonSteps {
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
+    }
+
+    @When("^user navigates to page number: \"([^\"]*)\"$")
+    public void userNavigatesToPage(String pageNumber) throws AutomationException {
+        CommonSteps.logInfo("user navigates to page number: " + pageNumber);
+        driverUtil.getWebElement(String.format(PAGE_NUMBER_DYNAMIC_XPATH, pageNumber)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 }
