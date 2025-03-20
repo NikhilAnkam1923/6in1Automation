@@ -250,7 +250,7 @@ public class ProbateFormsRW07Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         CommonSteps.takeScreenshot();
 
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         driverUtil.getWebElement(SAVE_BTN).click();
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "contacts updated successfully.")));
@@ -517,7 +517,7 @@ public class ProbateFormsRW07Page extends BasePage{
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
         String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString();
+        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
         String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
         String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
 
@@ -547,7 +547,7 @@ public class ProbateFormsRW07Page extends BasePage{
 
     public void verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws IOException, ParseException, AutomationException {
         String attorneyFirstName = CommonUtil.getJsonPath("attorney2").get("attorney2.firstName").toString();
-        String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString();
+        String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString() + ",";
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
         String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
 

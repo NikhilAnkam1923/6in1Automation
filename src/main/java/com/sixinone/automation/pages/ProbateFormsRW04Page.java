@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -72,6 +73,9 @@ public class ProbateFormsRW04Page extends BasePage {
     private static final String WITNESS_2_STREET_ADDRESS = "//textarea[@name='witness2Address']";
     private static final String W1_CITY_STATE_ZIP = "//input[@name='witness1CityStateZip']";
     private static final String W2_CITY_STATE_ZIP = "//input[@name='witness2CityStateZip']";
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
+    private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
+    private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -189,7 +193,7 @@ public class ProbateFormsRW04Page extends BasePage {
     }
 
     public void verifyCorrectEstateSNameIsDisplayedAcrossTheForm() throws AutomationException {
-        String EstateName = getEstateValue("FirstName") + " " + getEstateValue("MiddleName") + " " + getEstateValue("LastName") + " " + getEstateValue("Suffix");
+        String EstateName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
 
         acquaintedEstateNameForm = driverUtil.getWebElement(ESTATE_ACQUAINTED_WITH_NAME).getAttribute("value");
         if (!EstateName.equals(acquaintedEstateNameForm)) {
@@ -208,7 +212,7 @@ public class ProbateFormsRW04Page extends BasePage {
     }
 
     public void verifyDecedentNameOnTheFormIsAutoPopulatedFromTheEstate() throws AutomationException {
-        String EstateName = getEstateValue("FirstName") + " " + getEstateValue("MiddleName") + " " + getEstateValue("LastName") + " " + getEstateValue("Suffix");
+        String EstateName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
         String displayName = getEstateValue("DisplayName");
 
         WebElement estateHeaderName = driverUtil.getWebElement(ESTATE_OF_NAME);
@@ -409,8 +413,23 @@ public class ProbateFormsRW04Page extends BasePage {
         }
     }
 
+    private void scrollToElementAndClick(String elementLocator) throws AutomationException {
+        WebElement element = driverUtil.getWebElement(elementLocator);
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+
+        element.click();
+    }
+
     public void userResetTheRWForm() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
         DriverFactory.drivers.get().findElement(By.xpath(WITNESS_1_STREET_ADDRESS)).clear();
@@ -418,6 +437,7 @@ public class ProbateFormsRW04Page extends BasePage {
         DriverFactory.drivers.get().findElement(By.xpath(W1_CITY_STATE_ZIP)).clear();
         DriverFactory.drivers.get().findElement(By.xpath(W2_CITY_STATE_ZIP)).clear();
         driverUtil.getWebElement(W2_CITY_STATE_ZIP).sendKeys(Keys.ENTER);
+        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
         WebDriverUtil.waitForAWhile();
     }
 

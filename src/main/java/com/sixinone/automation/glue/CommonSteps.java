@@ -862,7 +862,7 @@ public class CommonSteps {
 
 
     @And("verify all the fields entered are correctly reflected in the {string} pdf")
-    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInTheRwPdf(String formName) throws AutomationException, IOException {
+    public void verifyAllTheFieldsEnteredAreCorrectlyReflectedInTheRwPdf(String formName) throws Exception {
         CommonSteps.logInfo("Verify form can be printed in PDF");
         switch (formName) {
             case "Rw01":
