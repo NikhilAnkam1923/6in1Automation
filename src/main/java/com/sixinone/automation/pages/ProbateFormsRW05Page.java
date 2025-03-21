@@ -183,6 +183,7 @@ public class ProbateFormsRW05Page extends BasePage {
         displayNameForm = getEstateValue("DisplayName");
         alsoKnownAsForm = getEstateValue("AlsoKnownAs");
 
+        WebDriverUtil.waitForAWhile(2);
         verifyAutoPopulatedValue(domicileCountryForm);
         verifyAutoPopulatedValue(displayNameForm);
         verifyAutoPopulatedValue(alsoKnownAsForm);
