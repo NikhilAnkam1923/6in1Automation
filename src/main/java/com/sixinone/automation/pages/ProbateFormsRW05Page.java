@@ -431,17 +431,26 @@ public class ProbateFormsRW05Page extends BasePage {
         try {
             verifyPrintNames(pdfFilePath);
             //verifyCounty(pdfFilePath);
+            verifyFieldsInPDF(pdfFilePath,
+                    "Commission.)",
+                    "SS:",
+                    enteredStreetAddress2Form,
+                    "Witness2 Street Address");
+            verifyFieldsInPDF(pdfFilePath,
+                    "Deputy for Register of Wills",
+                    "(Signature) Leo",
+                    enteredStreetAddress1Form,
+                    "Witness1 Street Address");
+
             validateWitnessDetails(pdfFilePath);
 
         } catch (IOException e) {
             CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
-        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John  , Deceased");
+        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John , Deceased");
         String afterLine = "(Print Name/s) (Print Name/s)";
 
         List<String> names = new ArrayList<>();
@@ -481,10 +490,10 @@ public class ProbateFormsRW05Page extends BasePage {
                     if (currentLine.contains(" and ")) {
                         String[] splitNames = currentLine.split(" and ");
                         for (String name : splitNames) {
-                            names.add(cleanName(name));
+                            names.add(cleanPrintName(name));
                         }
                     } else {
-                        names.add(cleanName(currentLine));
+                        names.add(cleanPrintName(currentLine));
                     }
                 }
             }
@@ -497,8 +506,8 @@ public class ProbateFormsRW05Page extends BasePage {
 
             // Create a map of expected names
             Map<String, String> expectedNames = new LinkedHashMap<>();
-            expectedNames.put("First Witness", cleanName(enteredWitness1Form));
-            expectedNames.put("Second Witness", cleanName(enteredWitness2Form));
+            expectedNames.put("First Witness", cleanPrintName(enteredWitness1Form));
+            expectedNames.put("Second Witness", cleanPrintName(enteredWitness2Form));
 
             boolean allMatch = true;
             for (int i = 0; i < expectedNames.size(); i++) {
@@ -523,8 +532,9 @@ public class ProbateFormsRW05Page extends BasePage {
         }
     }
 
+
     // **Updated Helper Method to Clean Names Properly**
-    private static String cleanName(String rawName) {
+    private static String cleanPrintName(String rawName) {
         if (rawName == null || rawName.trim().isEmpty()) return "";
 
         return rawName
@@ -533,8 +543,62 @@ public class ProbateFormsRW05Page extends BasePage {
                 .trim(); // Trim spaces
     }
 
+    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
+
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = cleanField(currentLine);
+                    break; // Assuming only one line needs to be extracted
+                }
+            }
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            CommonSteps.logInfo("🔍 Comparing -> for "+ fieldName +" Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+    }
+
+    // **Updated Helper Method to Clean Names Properly**
+    private static String cleanField(String rawName) {
+        if (rawName == null || rawName.trim().isEmpty()) return "";
+
+        return rawName
+                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
+                .trim(); // Trim spaces
+    }
+
     public void validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
-        Map<String, Map<String, String>> extractedWitnessDetails = new LinkedHashMap<>();
+        Map<String, String> extractedWitnessDetails = new LinkedHashMap<>();
         List<String> mismatchErrors = new ArrayList<>();
 
         try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
@@ -544,30 +608,7 @@ public class ProbateFormsRW05Page extends BasePage {
             for (int i = 0; i < pdfLines.size(); i++) {
                 if (pdfLines.get(i).contains("(Signature)")) {
                     String signature = pdfLines.get(i).replace("(Signature)", "").trim();
-                    String streetAddress = "";
                     String cityStateZip = "";
-
-                    // Start looking for Street Address AFTER the signature line
-                    for (int j = i + 1; j < pdfLines.size(); j++) {
-                        String possibleStreet = pdfLines.get(j).trim();
-
-                        // Skip empty lines or non-relevant labels
-                        if (possibleStreet.isEmpty() || possibleStreet.contains("(Street Address)") ||
-                                possibleStreet.matches(".*(City|State|Zip|Executed in Register’s Office|Sworn to).*")) {
-                            continue;
-                        }
-
-                        // Check for a valid street address
-                        if (possibleStreet.matches("^(\\d+\\s+.*|[A-Za-z]+\\s+(Street|Avenue|Road|Lane|Boulevard|Drive|Court|Parkway|Place|Circle|Trail|Way))\\b.*")) {
-                            streetAddress = possibleStreet;
-                            break; // Stop once a valid street is found
-                        }
-
-                        // **NEW FIX**: If we reach another signature without finding a street, break
-                        if (possibleStreet.contains("(Signature)")) {
-                            break;
-                        }
-                    }
 
                     // Find the City, State, Zip (first line with a valid ZIP code)
                     for (int j = i + 2; j < pdfLines.size(); j++) {
@@ -577,40 +618,32 @@ public class ProbateFormsRW05Page extends BasePage {
                         }
                     }
 
-                    extractedWitnessDetails.put(signature, Map.of(
-                            "Street Address", streetAddress,
-                            "City, State, Zip", cityStateZip
-                    ));
+                    extractedWitnessDetails.put(signature, cityStateZip);
                 }
             }
         }
 
         // Validate extracted witness details
-        for (Map.Entry<String, Map<String, String>> entry : extractedWitnessDetails.entrySet()) {
+        for (Map.Entry<String, String> entry : extractedWitnessDetails.entrySet()) {
             String extractedSignature = entry.getKey();
-            String extractedStreet = entry.getValue().get("Street Address");
-            String extractedCityStateZip = entry.getValue().get("City, State, Zip");
+            String extractedCityStateZip = entry.getValue();
 
             boolean witness1Match = extractedSignature.equalsIgnoreCase(enteredWitness1SignForm) &&
-                    extractedStreet.equalsIgnoreCase(enteredStreetAddress1Form) &&
                     extractedCityStateZip.equalsIgnoreCase(enteredCityStateZip1Form);
 
             boolean witness2Match = extractedSignature.equalsIgnoreCase(enteredWitness2SignForm) &&
-                    extractedStreet.equalsIgnoreCase(enteredStreetAddress2Form) &&
                     extractedCityStateZip.equalsIgnoreCase(enteredCityStateZip2Form);
 
             if (witness1Match || witness2Match) {
                 CommonSteps.logInfo("✅ Witness Verified: " + extractedSignature +
-                        " | Street: " + extractedStreet +
                         " | City/State/Zip: " + extractedCityStateZip);
             } else {
                 mismatchErrors.add("❌ Witness Mismatch: Expected one of -> " +
-                        "[ Witness1: { Name: " + enteredWitness1SignForm + ", Street: " + enteredStreetAddress1Form +
+                        "[ Witness1: { Name: " + enteredWitness1SignForm +
                         ", City/State/Zip: " + enteredCityStateZip1Form + " } OR " +
-                        "Witness2: { Name: " + enteredWitness2SignForm + ", Street: " + enteredStreetAddress2Form +
+                        "Witness2: { Name: " + enteredWitness2SignForm +
                         ", City/State/Zip: " + enteredCityStateZip2Form + " } ] " +
                         "but Found -> { Name: " + extractedSignature +
-                        ", Street: " + extractedStreet +
                         ", City/State/Zip: " + extractedCityStateZip + " }");
             }
         }
@@ -620,7 +653,6 @@ public class ProbateFormsRW05Page extends BasePage {
             throw new AutomationException(String.join("\n", mismatchErrors));
         }
     }
-
 
 
     public void userResetsTheRWForm() throws AutomationException {
@@ -655,7 +687,7 @@ public class ProbateFormsRW05Page extends BasePage {
     public void verifyNotaryBlockIsDisplayed() throws AutomationException {
         WebDriverUtil.waitForVisibleElement(By.xpath(NOTARY_BLOCK_XPATH));
         WebElement notaryBlock = driverUtil.getWebElementAndScroll(NOTARY_BLOCK_XPATH);
-        if(!notaryBlock.isDisplayed()){
+        if (!notaryBlock.isDisplayed()) {
             throw new AutomationException("Notary Block is not displayed");
         }
 

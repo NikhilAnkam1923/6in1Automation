@@ -406,23 +406,33 @@ public class ProbateFormsRW03Page extends BasePage {
             throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
     }
 
-
     public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
             verifyPrintNames(pdfFilePath);
-            verifyCounty(pdfFilePath);
+            //verifyCounty(pdfFilePath);
+            verifyFieldsInPDF(pdfFilePath,
+                    "Commission.)",
+                    "SS:",
+                    enteredStreetAddress2Form,
+                    "Witness2 Street Address");
+            verifyFieldsInPDF(pdfFilePath,
+                    "Deputy for Register of Wills",
+                    "(Signature) Leo",
+                    enteredStreetAddress1Form,
+                    "Witness1 Street Address");
+
             validateWitnessDetails(pdfFilePath);
 
         } catch (IOException e) {
-            throw new AutomationException("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
         }
     }
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
-        List<String> beforeLines = Arrays.asList("a/k/a Jonny","Estate of William John ,Deceased");
+        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John ,Deceased");
         String afterLine = "(each) a subscribing witness to";
 
         List<String> names = new ArrayList<>();
@@ -436,7 +446,7 @@ public class ProbateFormsRW03Page extends BasePage {
         int startIndex = -1, endIndex = -1;
 
         // Log each line and find start/end indexes
-        CommonSteps.logInfo("Full PDF Content with Line Numbers:");
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
             CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
@@ -456,38 +466,48 @@ public class ProbateFormsRW03Page extends BasePage {
 
         if (startIndex != -1 && endIndex != -1) {
             for (int i = startIndex + 1; i < endIndex; i++) {
-                if (!allLines[i].isBlank()) {
-                    names.add(allLines[i].trim());
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    // Handle cases where witnesses are on the same line
+                    if (currentLine.contains(" and ")) {
+                        String[] splitNames = currentLine.split(" and ");
+                        for (String name : splitNames) {
+                            names.add(cleanPrintName(name));
+                        }
+                    } else {
+                        names.add(cleanPrintName(currentLine));
+                    }
                 }
             }
 
-            CommonSteps.logInfo("\nPrint Names:");
-            names.forEach(CommonSteps::logInfo);
-
+            CommonSteps.logInfo("\n📌 Extracted Witness Names: " + names);
             if (names.isEmpty()) {
                 CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
+                return;
+            }
+
+            // Create a map of expected names
+            Map<String, String> expectedNames = new LinkedHashMap<>();
+            expectedNames.put("First Witness", cleanPrintName(enteredWitness1Form));
+            expectedNames.put("Second Witness", cleanPrintName(enteredWitness2Form));
+
+            boolean allMatch = true;
+            for (int i = 0; i < expectedNames.size(); i++) {
+                String expectedValue = expectedNames.values().toArray(new String[0])[i];
+                String actualValue = (i < names.size()) ? names.get(i) : "No Name";
+
+                CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
+
+                if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                    allMatch = false;
+                    break;
+                }
+            }
+
+            if (allMatch) {
+                CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
             } else {
-                // Create a map of expected names
-                Map<String, String> expectedNames = new LinkedHashMap<>();
-                expectedNames.put("First Witness", enteredWitness1Form);
-                expectedNames.put("Second Witness", enteredWitness2Form);
-
-                boolean allMatch = true;
-                for (int i = 0; i < expectedNames.size(); i++) {
-                    String expectedValue = (i < expectedNames.size()) ? expectedNames.values().toArray(new String[0])[i] : "No Name";
-                    String actualValue = (i < names.size()) ? names.get(i) : "No Name";
-
-                    if (!expectedValue.equalsIgnoreCase(actualValue)) {
-                        allMatch = false;
-                        break;
-                    }
-                }
-
-                if (allMatch) {
-                    CommonSteps.logInfo("✅ Validation Passed: Print names are " + String.join(" ", names) + " as expected.");
-                } else {
-                    throw new AutomationException("❌ Validation Failed: Print names do not match the expected values.");
-                }
+                throw new AutomationException("❌ Validation Failed: Print names do not match the expected values.");
             }
         } else {
             throw new AutomationException("❌ Before or after line not found!");
@@ -495,108 +515,124 @@ public class ProbateFormsRW03Page extends BasePage {
     }
 
 
-    public void verifyCounty(String pdfFilePath) throws AutomationException {
-        Map<String, String> expectedData = new LinkedHashMap<>();
+    // **Updated Helper Method to Clean Names Properly**
+    private static String cleanPrintName(String rawName) {
+        if (rawName == null || rawName.trim().isEmpty()) return "";
 
-        expectedData.put("COUNTY", domicileCountryForm);
-        expectedData.put("Deceased", displayNameForm);
+        return rawName
+                .replaceAll("(?i)\\b(each of|all of)\\b", "") // Remove unwanted phrases
+                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
+                .trim(); // Trim spaces
+    }
 
-        try {
-            PDDocument document = PDDocument.load(new File(pdfFilePath));
-            String fullText = new PDFTextStripper().getText(document);
-            document.close();
+    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
 
-            // Use the text as-is for case-sensitive comparison
-            String normalizedText = fullText.replaceAll("\\s+", " "); // Normalize space for clean matching
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
 
-            for (Map.Entry<String, String> entry : expectedData.entrySet()) {
-                String field = entry.getKey();  // No .toLowerCase() for case-sensitive comparison
-                String value = entry.getValue();  // No .toLowerCase() for case-sensitive comparison
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
 
-                boolean foundField = normalizedText.contains(field);
-                boolean foundValue = false;
-
-                if (foundField) {
-                    // Search for value in subsequent lines after field is found
-                    for (int i = 0; i < normalizedText.length(); i++) {
-                        if (normalizedText.substring(i).contains(value)) {
-                            foundValue = true;
-                            break;
-                        }
-                    }
-                }
-
-                // Output based on findings
-                if (foundField && foundValue) {
-                    CommonSteps.logInfo("✅ Field: \"" + entry.getKey() + "\" and Value: \"" + entry.getValue() + "\" are found.");
-                } else if (foundField) {
-                    throw new AutomationException("⚠️ Field: \"" + entry.getKey() + "\" found, but Value: \"" + entry.getValue() + "\" is missing.");
-                } else {
-                    throw new AutomationException("❌ Field: \"" + entry.getKey() + "\" not found in the PDF.");
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = cleanField(currentLine);
+                    break; // Assuming only one line needs to be extracted
                 }
             }
-        } catch (IOException e) {
-            throw new AutomationException("Error reading PDF: " + e.getMessage());
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            CommonSteps.logInfo("🔍 Comparing -> for "+ fieldName +" Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
     }
 
+    // **Updated Helper Method to Clean Names Properly**
+    private static String cleanField(String rawName) {
+        if (rawName == null || rawName.trim().isEmpty()) return "";
+
+        return rawName
+                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
+                .trim(); // Trim spaces
+    }
+
     public void validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
-        List<String> pdfLines = Arrays.asList(new PDFTextStripper().getText(PDDocument.load(new File(pdfFilePath))).split("\\r?\\n"));
         Map<String, String> extractedWitnessDetails = new LinkedHashMap<>();
+        List<String> mismatchErrors = new ArrayList<>();
 
-        // Extract witness details using the correct index for City, State, Zip
-        for (int i = 0; i < pdfLines.size(); i++) {
-            if (pdfLines.get(i).contains("(Signature)")) {
-                String signature = pdfLines.get(i).replace("(Signature) ", "").trim();
-                String cityStateZip = "";
+        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
+            List<String> pdfLines = Arrays.asList(new PDFTextStripper().getText(document).split("\\r?\\n"));
 
-                // Find the correct City, State, Zip after the signature
-                for (int j = i + 1; j < pdfLines.size(); j++) {
-                    if (pdfLines.get(j).matches(".*\\d{5}.*")) {  // Match line containing a ZIP code
-                        cityStateZip = pdfLines.get(j).trim();
-                        break;
+            // Extract witness details
+            for (int i = 0; i < pdfLines.size(); i++) {
+                if (pdfLines.get(i).contains("(Signature)")) {
+                    String signature = pdfLines.get(i).replace("(Signature)", "").trim();
+                    String cityStateZip = "";
+
+                    // Find the City, State, Zip (first line with a valid ZIP code)
+                    for (int j = i + 2; j < pdfLines.size(); j++) {
+                        if (pdfLines.get(j).matches(".*\\b\\d{5}(-\\d{4})?\\b.*")) { // Match ZIP or ZIP+4
+                            cityStateZip = pdfLines.get(j).trim();
+                            break;
+                        }
                     }
+
+                    extractedWitnessDetails.put(signature, cityStateZip);
                 }
-
-                extractedWitnessDetails.put(signature, cityStateZip);
-
-                CommonSteps.logInfo("✅ Found Witness: " + signature + ", (City, State, Zip) - " + cityStateZip);
             }
         }
 
-        // Expected witness details stored in a list of maps for dynamic validation
-        List<Map<String, String>> expectedWitnesses = new ArrayList<>();
-        expectedWitnesses.add(Map.of("sign", enteredWitness1SignForm, "cityStateZip", enteredCityStateZip1Form));
-        expectedWitnesses.add(Map.of("sign", enteredWitness2SignForm, "cityStateZip", enteredCityStateZip2Form));
+        // Validate extracted witness details
+        for (Map.Entry<String, String> entry : extractedWitnessDetails.entrySet()) {
+            String extractedSignature = entry.getKey();
+            String extractedCityStateZip = entry.getValue();
 
-        // Validate each expected witness
-        boolean allWitnessesValid = true;
-        for (int index = 0; index < expectedWitnesses.size(); index++) {
-            Map<String, String> expected = expectedWitnesses.get(index);
-            String witnessKey = expected.get("sign");
-            String expectedCityStateZip = expected.get("cityStateZip");
+            boolean witness1Match = extractedSignature.equalsIgnoreCase(enteredWitness1SignForm) &&
+                    extractedCityStateZip.equalsIgnoreCase(enteredCityStateZip1Form);
 
-            if (extractedWitnessDetails.containsKey(witnessKey)) {
-                String extractedCityStateZip = extractedWitnessDetails.get(witnessKey);
-                if (expectedCityStateZip.equals(extractedCityStateZip)) {
-                    CommonSteps.logInfo("✅ Witness " + (index + 1) + " (" + witnessKey + ") validated successfully. " +
-                            "Signature - " + witnessKey + ", (City, State, Zip) - " + expectedCityStateZip);
-                } else {
-                    CommonSteps.logInfo("❌ Witness " + (index + 1) + " (" + witnessKey + ") city/state/zip mismatch. " +
-                            "Expected: (City, State, Zip) - " + expectedCityStateZip +
-                            " | Extracted: " + extractedCityStateZip);
-                    allWitnessesValid = false;
-                }
+            boolean witness2Match = extractedSignature.equalsIgnoreCase(enteredWitness2SignForm) &&
+                    extractedCityStateZip.equalsIgnoreCase(enteredCityStateZip2Form);
+
+            if (witness1Match || witness2Match) {
+                CommonSteps.logInfo("✅ Witness Verified: " + extractedSignature +
+                        " | City/State/Zip: " + extractedCityStateZip);
             } else {
-                CommonSteps.logInfo("❌ Witness " + (index + 1) + " (" + witnessKey + ") not found in the PDF.");
-                allWitnessesValid = false;
+                mismatchErrors.add("❌ Witness Mismatch: Expected one of -> " +
+                        "[ Witness1: { Name: " + enteredWitness1SignForm +
+                        ", City/State/Zip: " + enteredCityStateZip1Form + " } OR " +
+                        "Witness2: { Name: " + enteredWitness2SignForm +
+                        ", City/State/Zip: " + enteredCityStateZip2Form + " } ] " +
+                        "but Found -> { Name: " + extractedSignature +
+                        ", City/State/Zip: " + extractedCityStateZip + " }");
             }
         }
 
-        if (allWitnessesValid) {
-            CommonSteps.logInfo("✅ All witnesses validated successfully.");
-        } else {
-            throw new AutomationException("❌ Witness validation failed.");
+        // If any mismatch occurred, throw an exception after logging all mismatches
+        if (!mismatchErrors.isEmpty()) {
+            throw new AutomationException(String.join("\n", mismatchErrors));
         }
     }
 

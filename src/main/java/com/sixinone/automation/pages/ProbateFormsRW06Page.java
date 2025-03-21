@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
@@ -171,6 +174,11 @@ public class ProbateFormsRW06Page extends BasePage {
     static String beneficiary5CityStateZipForm;
     static String beneficiary5TelephoneForm;
     static String beneficiary5EmailForm;
+    static String signatureOfficerOrRepresentative1Form;
+    static String signatureOfficerOrRepresentative2Form;
+    static String signatureOfficerOrRepresentative3Form;
+    static String signatureOfficerOrRepresentative4Form;
+    static String signatureOfficerOrRepresentative5Form;
     static String domicileCountryForm;
     static String displayNameForm;
     static String alsoKnownAsForm;
@@ -431,8 +439,9 @@ public class ProbateFormsRW06Page extends BasePage {
             String expectedTelephone = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".workNumber").toString();
             String expectedEmail = CommonUtil.getJsonPath(fiduciaryKey).get(fiduciaryKey + ".emailId").toString();
 
-            String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName +"," + " " + expectedSuffix;
+            String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + "," + " " + expectedSuffix;
             String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
+
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
             String actualName = nameFields.get(i).getAttribute("value");
@@ -456,6 +465,7 @@ public class ProbateFormsRW06Page extends BasePage {
                     corporateFiduciary1CityStateZipForm = actualCityStateZip;
                     corporateFiduciary1TelephoneForm = actualTelephone;
                     corporateFiduciary1EmailForm = actualEmail;
+                    signatureOfficerOrRepresentative1Form = expectedFullName;
                     break;
                 case 5:
                     corporateFiduciary2NameForm = actualName;
@@ -463,6 +473,7 @@ public class ProbateFormsRW06Page extends BasePage {
                     corporateFiduciary2CityStateZipForm = actualCityStateZip;
                     corporateFiduciary2TelephoneForm = actualTelephone;
                     corporateFiduciary2EmailForm = actualEmail;
+                    signatureOfficerOrRepresentative2Form = expectedFullName;
                     break;
                 case 2:
                     corporateFiduciary3NameForm = actualName;
@@ -470,6 +481,7 @@ public class ProbateFormsRW06Page extends BasePage {
                     corporateFiduciary3CityStateZipForm = actualCityStateZip;
                     corporateFiduciary3TelephoneForm = actualTelephone;
                     corporateFiduciary3EmailForm = actualEmail;
+                    signatureOfficerOrRepresentative3Form = expectedFullName;
                     break;
                 case 4:
                     corporateFiduciary4NameForm = actualName;
@@ -477,6 +489,7 @@ public class ProbateFormsRW06Page extends BasePage {
                     corporateFiduciary4CityStateZipForm = actualCityStateZip;
                     corporateFiduciary4TelephoneForm = actualTelephone;
                     corporateFiduciary4EmailForm = actualEmail;
+                    signatureOfficerOrRepresentative4Form = expectedFullName;
                     break;
                 case 1:
                     corporateFiduciary5NameForm = actualName;
@@ -484,6 +497,7 @@ public class ProbateFormsRW06Page extends BasePage {
                     corporateFiduciary5CityStateZipForm = actualCityStateZip;
                     corporateFiduciary5TelephoneForm = actualTelephone;
                     corporateFiduciary5EmailForm = actualEmail;
+                    signatureOfficerOrRepresentative5Form = expectedFullName;
                     break;
             }
 
@@ -722,8 +736,8 @@ public class ProbateFormsRW06Page extends BasePage {
             reasonField.sendKeys(reasonDataForm.get(i));
 
             driverUtil.getWebElement("//body").click();
-            
-            WebDriverUtil.waitForAWhile(2);
+
+            WebDriverUtil.waitForAWhile(4);
             String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
 
 
@@ -773,25 +787,17 @@ public class ProbateFormsRW06Page extends BasePage {
             throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
     }
 
-    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+    public void verifyAllFieldsInDownloadedPDF() throws Exception {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
 
-        verifyNameOrCorporateFiduciary1(pdfFilePath);
-        verifyDate1(pdfFilePath);
-        verifyFiduciaryDetailsForm1(pdfFilePath);
-
-        //        verifyIssueTo(pdfFilePath);
-//        verifyAddress(pdfFilePath);
-//        verifyCityStateZip(pdfFilePath);
-//        verifyTelephone(pdfFilePath);
-//        verifyEmail(pdfFilePath);
+        verifyDate(pdfFilePath);
+        verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
     }
 
-    public String verifyNameOrCorporateFiduciary1(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "(Date)";
-        String afterLine = "Name or Corporate Fiduciary (if applicable)";
+    private static void verifyDate(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "(Date)";  // The next line after the date
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
@@ -805,573 +811,224 @@ public class ProbateFormsRW06Page extends BasePage {
             CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
         }
 
-        int startIndex = -1, endIndex = -1;
-        String extractedNameOrCorporateFiduciaryName = "";
+        List<String> extractedDates = new ArrayList<>();
 
-        // Find start and end lines
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
-            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-                endIndex = i;
-                break;
-            }
-        }
-
-        if (startIndex != -1 && endIndex != -1) {
-            for (int i = startIndex + 1; i < endIndex; i++) {
-                String currentLine = allLines[i].trim();
-                if (!currentLine.isBlank()) {
-                    extractedNameOrCorporateFiduciaryName = currentLine; // Directly store the name
-                    break; // Stop after extracting the first valid name
+            // Find every occurrence of "(Date)"
+            if (trimmedLine.equalsIgnoreCase(beforeLine) && i > 0) {
+                String extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
+                if (!extractedDate.isEmpty()) {
+                    extractedDates.add(extractedDate);
                 }
             }
-
-            if (extractedNameOrCorporateFiduciaryName.isEmpty()) {
-                throw new AutomationException("❌ Validation Failed: No Name Or Corporate Fiduciary Field found between specified lines.");
-            }
-
-            // Validate extracted name
-            String expectededNameOrCorporateFiduciaryName = CorporateFiduciary1Form;
-            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectededNameOrCorporateFiduciaryName + "', Extracted: '" + extractedNameOrCorporateFiduciaryName
-                    + "'");
-
-            if (expectededNameOrCorporateFiduciaryName.equalsIgnoreCase(extractedNameOrCorporateFiduciaryName)) {
-                CommonSteps.logInfo("✅ Validation Passed: Extracted Name Or Corporate Fiduciary Field matches expected.");
-            } else {
-                throw new AutomationException("❌ Validation Failed: Extracted Name Or Corporate Fiduciary Field does not match expected value.");
-            }
-        } else {
-            throw new AutomationException("❌ Before or after line not found!");
-        }
-        return extractedNameOrCorporateFiduciaryName;
-    }
-
-    private static void verifyDate1(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "(Date)";  // The next line after the date
-
-        PDDocument document = PDDocument.load(new File(pdfFilePath));
-        String pdfText = new PDFTextStripper().getText(document);
-        document.close();
-
-        String[] allLines = pdfText.split("\\r?\\n");
-
-        int endIndex = -1;
-        String extractedDate = "";
-
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
-
-            // Find the first occurrence of "(Date)"
-            if (trimmedLine.equalsIgnoreCase(beforeLine)) {
-                endIndex = i;
-                break;
-            }
         }
 
-        // Extract the line before "(Date)"
-        if (endIndex > 0) {  // Ensure it's not the first line
-            extractedDate = allLines[endIndex - 1].trim();
-        }
-
-        if (extractedDate.isEmpty()) {
+        if (extractedDates.isEmpty()) {
             throw new AutomationException("❌ Validation Failed: No Date field found before (Date).");
         }
 
-        String expectedDateForm1 = dateDataForm1;
-        // Expected Date for comparison
-        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + dateDataForm1 + "', Extracted: '" + extractedDate + "'");
+        // 📌 Log all extracted dates
+        CommonSteps.logInfo("📌 Extracted Date(s): " + extractedDates);
 
-        if (expectedDateForm1.equalsIgnoreCase(extractedDate)) {
-            CommonSteps.logInfo("✅ Validation Passed: Extracted Date matches expected.");
-        } else {
-            throw new AutomationException("❌ Validation Failed: Extracted Date does not match expected value.");
+        // Expected Dates for comparison
+        List<String> expectedDates = Arrays.asList(dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,dateDataForm6,dateDataForm7,dateDataForm8,dateDataForm9,dateDataForm10);
+
+        // 🔍 Validate extracted dates
+        for (String extracted : extractedDates) {
+            CommonSteps.logInfo("🔍 Comparing -> Expected: " + expectedDates + ", Extracted: '" + extracted + "'");
+
+            if (expectedDates.stream().noneMatch(expected -> expected.equalsIgnoreCase(extracted))) {
+                throw new AutomationException("❌ Validation Failed: Extracted Date '" + extracted + "' does not match any expected value.");
+            }
+        }
+
+        // ✅ Final validation success message
+        CommonSteps.logInfo("✅ Validation Passed: All extracted dates match expected values.");
+    }
+
+    public static void verifyFiduciaryBeneficiaryDetailsForm(String pdfFilePath) throws IOException, AutomationException {
+        // Define expected values dynamically
+        Map<String, List<String>> fiduciaryFields = new HashMap<>();
+
+        fiduciaryFields.put("Name or Corporate Name", Arrays.asList(
+                CorporateFiduciary1Form, CorporateFiduciary2Form, CorporateFiduciary3Form, CorporateFiduciary4Form, CorporateFiduciary5Form));
+
+        fiduciaryFields.put("Issued To", Arrays.asList(reasonDataForm1, reasonDataForm2, reasonDataForm3, reasonDataForm4, reasonDataForm5,
+                reasonDataForm6, reasonDataForm7, reasonDataForm8, reasonDataForm9, reasonDataForm10));
+
+        fiduciaryFields.put("Signature of Officer/Representative", Arrays.asList(
+                signatureOfficerOrRepresentative1Form, signatureOfficerOrRepresentative2Form, signatureOfficerOrRepresentative3Form, signatureOfficerOrRepresentative4Form, signatureOfficerOrRepresentative5Form));
+
+        fiduciaryFields.put("Fiduciary Address", Arrays.asList(
+                corporateFiduciary1AddressForm, corporateFiduciary2AddressForm, corporateFiduciary3AddressForm, corporateFiduciary4AddressForm,
+                corporateFiduciary5AddressForm));
+
+        fiduciaryFields.put("City, State, Zip", Arrays.asList(
+                corporateFiduciary1CityStateZipForm, corporateFiduciary2CityStateZipForm, corporateFiduciary3CityStateZipForm, corporateFiduciary4CityStateZipForm,
+                corporateFiduciary5CityStateZipForm, beneficiary1CityStateZipForm, beneficiary2CityStateZipForm, beneficiary3CityStateZipForm, beneficiary4CityStateZipForm, beneficiary5CityStateZipForm));
+
+        fiduciaryFields.put("Telephone", Arrays.asList(
+                corporateFiduciary1TelephoneForm, corporateFiduciary2TelephoneForm, corporateFiduciary3TelephoneForm, corporateFiduciary4TelephoneForm,
+                corporateFiduciary5TelephoneForm, beneficiary1TelephoneForm, beneficiary2TelephoneForm, beneficiary3TelephoneForm, beneficiary4TelephoneForm, beneficiary5TelephoneForm));
+
+        fiduciaryFields.put("Email", Arrays.asList(
+                corporateFiduciary1EmailForm, corporateFiduciary2EmailForm, corporateFiduciary3EmailForm, corporateFiduciary4EmailForm,
+                corporateFiduciary5EmailForm, beneficiary1EmailForm, beneficiary2EmailForm, beneficiary3EmailForm, beneficiary4EmailForm, beneficiary5EmailForm));
+
+        fiduciaryFields.put("Beneficiary Address", Arrays.asList(
+                beneficiary1AddressForm, beneficiary2AddressForm, beneficiary3AddressForm, beneficiary4AddressForm, beneficiary5AddressForm));
+
+
+        // Define mapping of before and after lines
+        Map<String, String[]> fieldMarkers = new HashMap<>();
+
+        fieldMarkers.put("Name or Corporate Name", new String[]{
+                "(Date)",
+                "Name or Corporate Fiduciary (if applicable)"});
+
+        fieldMarkers.put("Issued To", new String[]{
+                "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully request",
+                "(Name or Corporate Name)"});
+
+        fieldMarkers.put("Signature of Officer/Representative", new String[]{
+                "Representative",
+                "Address"}); //first 5 is ok
+
+        fieldMarkers.put("Fiduciary Address", new String[]{
+                "Title of Officer/Representative",
+                "Address"});  //first 5 correct
+
+        fieldMarkers.put("City, State, Zip", new String[]{
+                "Address",
+                "City, State, Zip"});  // alternate
+
+        fieldMarkers.put("Telephone", new String[]{
+                "City, State, Zip",
+                "Telephone"});
+
+        fieldMarkers.put("Email", new String[]{
+                "Telephone",
+                "Email"});
+
+        fieldMarkers.put("Beneficiary Address", new String[]{
+                "Representative",
+                "Address"});   // last 5
+
+        // Iterate over all fields and validate dynamically
+        for (Map.Entry<String, List<String>> entry : fiduciaryFields.entrySet()) {
+            String fieldName = entry.getKey();
+            List<String> expectedValues = entry.getValue();
+            String beforeLine = fieldMarkers.get(fieldName)[0];
+            String afterLine = fieldMarkers.get(fieldName)[1];
+
+            verifyFieldInPDF(pdfFilePath, beforeLine, afterLine, expectedValues, fieldName);
         }
     }
 
-    public static void verifyFiduciaryDetailsForm1(String pdfFilePath) throws IOException, AutomationException {
-        verifyFieldInPDF(pdfFilePath,
-                "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully",
-                "(Name or Corporate Name)",
-                reasonDataForm1,
-                "Issued To");
-
-        verifyFieldInPDF(pdfFilePath,
-                "Title of Officer/Representative",
-                "Address",
-                corporateFiduciary1AddressForm,
-                "Address");
-
-        verifyFieldInPDF(pdfFilePath,
-                "Address",
-                "City, State, Zip",
-                corporateFiduciary1CityStateZipForm,
-                "City, State, Zip");
-
-        verifyFieldInPDF(pdfFilePath,
-                "City, State, Zip",
-                "Telephone",
-                corporateFiduciary1TelephoneForm,
-                "Telephone");
-
-        verifyFieldInPDF(pdfFilePath,
-                "Telephone",
-                "Email",
-                corporateFiduciary1EmailForm,
-                "Email");
-    }
-
-    public static void verifyFieldInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+    public static void verifyFieldInPDF(String pdfFilePath, String beforeLine, String afterLine, List<String> expectedValues, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
         String[] allLines = pdfText.split("\\r?\\n");
-        int startIndex = -1, endIndex = -1;
-        String extractedValue = "";
+        List<String> extractedValues = new ArrayList<>();
+        int startIndex = -1;
 
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
-            if (trimmedLine.contains(beforeLine.trim())) {
+
+            // Find start index
+            if (trimmedLine.equals(beforeLine.trim())) {
                 startIndex = i;
             }
-            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
-                endIndex = i;
-                break;
-            }
-        }
 
-        if (startIndex != -1 && endIndex != -1) {
-            for (int i = startIndex + 1; i < endIndex; i++) {
-                String currentLine = allLines[i].trim();
-                if (!currentLine.isBlank()) {
-                    extractedValue = cleanName(currentLine);
-                    break; // Assuming only one line needs to be extracted
+            // Find end index and extract data
+            if (startIndex != -1 && trimmedLine.equals(afterLine.trim())) {
+                StringBuilder extractedValue = new StringBuilder();
+                for (int j = startIndex + 1; j < i; j++) {
+                    String currentLine = allLines[j].trim();
+                    if (!currentLine.isBlank()) {
+                        extractedValue.append(currentLine).append(" ");
+                    }
+                }
+                if (extractedValue.length() > 0) {
+                    extractedValues.add(cleanExtractedValue(extractedValue.toString().trim(), fieldName));
+                }
+                startIndex = -1; // Reset for next occurrences
+
+                // ✅ Limit to first 5 occurrences for specific fields
+                if ((fieldName.equals("Signature of Officer/Representative") || fieldName.equals("Fiduciary Address") || fieldName.equals("Name or Corporate Name"))
+                        && extractedValues.size() == 5) {
+                    break; // Stop extracting after 5 occurrences
+                }
+
+                if (fieldName.equals("Beneficiary Address") && extractedValues.size() > 5) {
+                    extractedValues = extractedValues.subList(extractedValues.size() - 5, extractedValues.size());
+                    //for last 5 occurences
                 }
             }
-
-            CommonSteps.logInfo("📌 Extracted " + fieldName + ": " + extractedValue);
-
-            if (extractedValue.isEmpty()) {
-                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
-            }
-
-            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
-
-            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
-                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
-            }
-
-            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
-        } else {
-            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
+
+        if (extractedValues.isEmpty()) {
+            throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found in the document.");
+        }
+
+        // 📌 Log all extracted values
+        CommonSteps.logInfo("📌 Extracted '" + fieldName + "' values (up to 5 if applicable): " + extractedValues);
+
+        // 🔍 Validate extracted values against expected ones
+        for (String extracted : extractedValues) {
+            CommonSteps.logInfo("🔍 Comparing -> Expected: " + expectedValues + ", Extracted: '" + extracted + "'");
+
+            if (expectedValues.stream().noneMatch(expected -> expected.equalsIgnoreCase(extracted))) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' value '" + extracted + "' does not match any expected value.");
+            }
+        }
+
+        // ✅ Final validation success message
+        CommonSteps.logInfo("✅ Validation Passed: All occurrences of '" + fieldName + "' match expected values.");
     }
 
-    private static String cleanName(String rawText) {
+    private static String cleanExtractedValue(String rawText, String fieldName) {
         if (rawText == null || rawText.trim().isEmpty()) return "";
-        return rawText.replaceAll("(?i)\\b(request that Letters be issued to )\\b", "") // Remove unwanted phrases
-                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, spaces
-                .trim();
+
+        switch (fieldName) {
+            case "Issued To":
+                return rawText.replaceAll("(?i)\\b(that Letters be issued to )\\b", "")
+                        .replaceAll("[,\\.\\s]+$", "")
+                        .trim();
+
+
+            case "Corporate Name":
+                return rawText.replaceAll("[,\\.\\s]+$", "").trim();
+
+            case "Address":
+                return rawText.replaceAll("[,]+$", "")
+                        .replaceAll("\\s{2,}", " ")
+                        .trim();
+
+            case "City, State, Zip":
+                return rawText.replaceAll("[,\\.]+$", "").trim();
+
+            case "Telephone":
+                return rawText.replaceAll("[^0-9\\-() ]", "")
+                        .trim();
+
+            case "Email":
+                return rawText.replaceAll("[^a-zA-Z0-9@._-]", "")
+                        .trim();
+
+            default:
+                return rawText;
+        }
     }
 }
 
-//    public static void verifyIssueTo(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully";
-//        String afterLine = "(Name or Corporate Name)";
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        // Split the entire PDF content into lines
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        String extractedIssueTo = "";
-//
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//
-//            if (trimmedLine.contains(beforeLine.trim())) {
-//                startIndex = i;
-//            }
-//            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    extractedIssueTo = cleanName(currentLine);
-//                    break; // Assuming Issue To has only one name
-//                }
-//            }
-//
-//            CommonSteps.logInfo("📌 Extracted Issued To: " + extractedIssueTo);
-//
-//            if (extractedIssueTo.isEmpty()) {
-//                CommonSteps.logInfo("❌ Validation Failed: No 'Issued To' name found between the specified lines.");
-//                throw new AutomationException("Validation Failed: 'Issued To' name is missing!");
-//            }
-//
-//            String expectedReasonDataForm1=reasonDataForm1;
-//            // Expected Issued To name
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + reasonDataForm1 + "', Extracted: '" + extractedIssueTo + "'");
-//
-//            if (!expectedReasonDataForm1.equals(extractedIssueTo)) {
-//                throw new AutomationException("❌ Validation Failed: 'Issued To' name does not match the expected value.");
-//            }
-//            CommonSteps.logInfo("✅ Validation Passed: 'Issued To' name matches as expected.");
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//    // **Updated Helper Method to Clean Names Properly**
-//    private static String cleanName(String rawName) {
-//        if (rawName == null || rawName.trim().isEmpty()) return "";
-//
-//        return rawName
-//                .replaceAll("(?i)\\b(request that Letters be issued to )\\b", "") // Remove unwanted phrases
-//                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
-//                .trim(); // Trim spaces
-//    }
-//
-//    public static void verifyAddress(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "Title of Officer/Representative";
-//        String afterLine = "Address";
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        String extractedAddress = "";
-//
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-//            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    extractedAddress = currentLine;
-//                    break;
-//                }
-//            }
-//
-//            if (extractedAddress.isEmpty()) {
-//                throw new AutomationException("❌ Validation Failed: No Address field found between specified lines.");
-//            }
-//
-//            String expectedAddress = corporateFiduciary1AddressForm;
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedAddress + "', Extracted: '" + extractedAddress + "'");
-//
-//            if (expectedAddress.equalsIgnoreCase(extractedAddress)) {
-//                CommonSteps.logInfo("✅ Validation Passed: Extracted Address matches expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: Extracted Address does not match expected value.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//    public static void verifyCityStateZip(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "Address";
-//        String afterLine = "City, State, Zip";
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        String extractedCityStateZip = "";
-//
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-//            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    extractedCityStateZip = currentLine;
-//                    break;
-//                }
-//            }
-//
-//            if (extractedCityStateZip.isEmpty()) {
-//                throw new AutomationException("❌ Validation Failed: No City, State, Zip field found between specified lines.");
-//            }
-//
-//            String expectedCityStateZip = corporateFiduciary1CityStateZipForm;
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedCityStateZip + "', Extracted: '" + extractedCityStateZip + "'");
-//
-//            if (expectedCityStateZip.equalsIgnoreCase(extractedCityStateZip)) {
-//                CommonSteps.logInfo("✅ Validation Passed: Extracted City, State, Zip matches expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: Extracted City, State, Zip does not match expected value.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//    public static void verifyTelephone(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "City, State, Zip";
-//        String afterLine = "Telephone";
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        String extractedTelephone = "";
-//
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-//            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    extractedTelephone = currentLine;
-//                    break;
-//                }
-//            }
-//
-//            if (extractedTelephone.isEmpty()) {
-//                throw new AutomationException("❌ Validation Failed: No Telephone field found between specified lines.");
-//            }
-//
-//            String expectedTelephone = corporateFiduciary1TelephoneForm;
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedTelephone + "', Extracted: '" + extractedTelephone + "'");
-//
-//            if (expectedTelephone.equalsIgnoreCase(extractedTelephone)) {
-//                CommonSteps.logInfo("✅ Validation Passed: Extracted Telephone matches expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: Extracted Telephone does not match expected value.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//    public static void verifyEmail(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "Telephone";
-//        String afterLine = "Email"; // Adjust as needed for the actual ending point in your PDF
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        String extractedEmail = "";
-//
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-//            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    extractedEmail = currentLine;
-//                    break;
-//                }
-//            }
-//
-//            if (extractedEmail.isEmpty()) {
-//                throw new AutomationException("❌ Validation Failed: No Email field found between specified lines.");
-//            }
-//
-//            String expectedEmail = corporateFiduciary1EmailForm;
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedEmail + "', Extracted: '" + extractedEmail + "'");
-//
-//            if (expectedEmail.equalsIgnoreCase(extractedEmail)) {
-//                CommonSteps.logInfo("✅ Validation Passed: Extracted Email matches expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: Extracted Email does not match expected value.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//
-//    public static void verifySignatureofOfficerRepresentative(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "Representative";
-//        String afterLine = "Address";
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        // Split the entire PDF content into lines
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        String extractedSignatureofOfficerRepresentative = "";
-//
-//        // Find start and end lines
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//
-//            if (trimmedLine.equalsIgnoreCase(beforeLine)) startIndex = i;
-//            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    extractedSignatureofOfficerRepresentative = currentLine; // Directly store the name
-//                    break; // Stop after extracting the first valid name
-//                }
-//            }
-//
-//            if (extractedSignatureofOfficerRepresentative.isEmpty()) {
-//                throw new AutomationException("❌ Validation Failed: No Signature of Officer/Representative Field found between specified lines.");
-//            }
-//
-//            // Validate extracted name
-//            String expectededSignatureofOfficerRepresentative = CorporateFiduciary1Form;
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectededSignatureofOfficerRepresentative + "', Extracted: '" + extractedSignatureofOfficerRepresentative + "'");
-//
-//            if (expectededSignatureofOfficerRepresentative.equalsIgnoreCase(extractedSignatureofOfficerRepresentative)) {
-//                CommonSteps.logInfo("✅ Validation Passed: Extracted Signature of Officer/Representative Field matches expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: Extracted Signature of Officer/Representative Field does not match expected value.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//}
-//=============================
 
-//
-//    public void verifyCorporateFiduciaryDetails(String pdfFilePath) throws AutomationException {
-//        // Extract Corporate Fiduciary Name
-//        String corporateFiduciaryName = extractCorporateFiduciaryName(pdfFilePath);
-//
-//        if ("Sigma Enterprises".equalsIgnoreCase(corporateFiduciaryName.trim())) {
-//            Map<String, String> extractedData = extractCorporateFiduciaryData(pdfFilePath);
-//
-////            String beforeLine = "(Date)";
-////        String afterLine = "Name or Corporate Fiduciary (if applicable)";
-//
-//            // Validate extracted data
-//            validateField("NameOrCorporateFiduciary", extractedData.get("NameOrCorporateFiduciary"), corporateFiduciaryName);
-//            validateField("IssueTo", extractedData.get("IssueTo"), reasonDataForm1.trim());
-//            validateField("Address", extractedData.get("Address"), corporateFiduciary1AddressForm.trim());
-//            validateField("CityStateZip", extractedData.get("CityStateZip"), corporateFiduciary1CityStateZipForm.trim());
-//            validateField("Date", extractedData.get("Date"), dateDataForm1.trim());
-//            validateField("Email", extractedData.get("Email"), corporateFiduciary1EmailForm.trim());
-//            validateField("Telephone", extractedData.get("Telephone"), corporateFiduciary1TelephoneForm.trim());
-//
-//            CommonSteps.logInfo("✅ All Corporate Fiduciary details verified successfully.");
-//        } else {
-//            CommonSteps.logInfo("⚠️ Corporate Fiduciary name is not 'Sigma Enterprises'. Skipping further verification.");
-//        }
-//    }
-//
-//    // Extracts all relevant fields from the PDF
-//    private Map<String, String> extractCorporateFiduciaryData(String pdfFilePath) throws AutomationException {
-//        Map<String, String> extractedData = new HashMap<>();
-//        String pdfText = extractTextFromPDF(pdfFilePath);
-//
-//
-//        // Extract values using defined markers
-//        extractedData.put("NameOrCorporateFiduciary", extractValueBetween(pdfText, "Corporate Fiduciary:", "Issue To:"));
-//        extractedData.put("IssueTo", extractValueBetween(pdfText, "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully", "(Name or Corporate Name):"));
-//        extractedData.put("Address", extractValueBetween(pdfText, "Title of Officer/Representative","Address"));
-//        extractedData.put("CityStateZip", extractValueBetween(pdfText, "City, State, Zip:", "Date:"));
-//        extractedData.put("Date", extractValueBetween(pdfText, "Date:", "Email:"));
-//        extractedData.put("Email", extractValueBetween(pdfText, "Email:", "Telephone:"));
-//        extractedData.put("Telephone", extractValueBetween(pdfText, "Telephone:", "\n"));
-//
-//        CommonSteps.logInfo("🔍 Extracted Corporate Fiduciary Data: " + extractedData);
-//        return extractedData;
-//    }
-//
-//    // Extracts the Corporate Fiduciary Name
-//    private String extractCorporateFiduciaryName(String pdfFilePath) throws AutomationException {
-//        String pdfText = extractTextFromPDF(pdfFilePath);
-//        return extractValueBetween(pdfText, "Corporate Fiduciary:", "Issue To:");
-//    }
-//
-//    // Extracts value between two text markers
-//    private String extractValueBetween(String text, String start, String end) {
-//        int startIndex = text.indexOf(start);
-//        if (startIndex == -1) return "";
-//        startIndex += start.length();
-//
-//        int endIndex = text.indexOf(end, startIndex);
-//        if (endIndex == -1) endIndex = text.length();
-//
-//        return text.substring(startIndex, endIndex).trim();
-//    }
-//
-//    // Extracts text from the PDF file
-//    private String extractTextFromPDF(String pdfFilePath) throws AutomationException {
-//        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
-//            PDFTextStripper pdfStripper = new PDFTextStripper();
-//            return pdfStripper.getText(document);
-//        } catch (IOException e) {
-//            throw new AutomationException("❌ Error reading PDF file: " + pdfFilePath);
-//        }
-//    }
-//
-//    // Validates extracted value against expected value
-//    private void validateField(String fieldName, String extractedValue, String expectedValue) throws AutomationException {
-//        if (!expectedValue.equalsIgnoreCase(extractedValue.trim())) {
-//            throw new AutomationException("❌ Mismatch in " + fieldName + ": Expected [" + expectedValue + "], Found [" + extractedValue + "]");
-//        }
-//        CommonSteps.logInfo("✅ Verified " + fieldName + ": " + extractedValue);
-//    }
-//}
-//
-//
+
+
 
 
 
