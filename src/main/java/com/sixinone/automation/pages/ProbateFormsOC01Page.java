@@ -9,9 +9,11 @@ import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProbateFormsOC01Page extends BasePage{
@@ -67,6 +69,18 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String ADDRESS_LINE_1_FIELD = "//p//span[text()='Address:']/following-sibling::span//input";
     private static final String ADDRESS_LINE_2_FIELD = "//span[text()='Address:']/ancestor::p/following-sibling::p//span//input";
     private static final String SIGN_OF_COUNSEL_PAGE_11 = "//div[text()='Signature of Counsel for Petitioner']//span//input";
+    private static final String ESTATE_NAME_PAGE_2 = "//p[contains(text(),'Estate of')]//input";
+    private static final String DECEDENT_DIED_ON_FIELD = "//td//p[contains(text(),'Decedent died on')]/following::td//p//span//input";
+    private static final String PETITIONER_NAME_FIELD = "//td[@class='tr5 td9']//input";
+    private static final String PETITIONER_NAME_FIELD_2 = "//td[@class='tr5 td10']//input";
+    private static final String DRAG_CONTACT_XPATH = "//div[@class='drag-names-list']//div[@aria-roledescription='sortable']";
+    private static final String DROP_CONTACT_FIELD_XPATH = "//div[@class='right-droppable']//div[@class='drag-names-list drop-box h-100']";
+    private static final String ACCEPT_BTN = "//button[text()='Accept']";
+    private static final String VIEW_ATTACHMENT_BTN = "//span[contains(@class,'view-attachment')]";
+    private static final String PETITIONER_MODAL_INPUT_XPATH = "//div[@class='modal-body']//input[@type='text' and @value='%s']";
+    private static final String PETITIONER_INPUT_XPATH = "//input[@type='text' and @value='%s']";
+    private static final String MODAL_CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
+    private static final String DROPPED_CONTACTS_XPATH = "//div[@class='drag-names-list drop-box h-100']//div//div";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -82,6 +96,23 @@ public class ProbateFormsOC01Page extends BasePage{
     static String attorneyAddressLine1Form;
     static String attorneyAddressLine2Form;
     static String signOfCounselPage11Form;
+    static String estateNamePage2Form;
+    static String decedentDiedOnForm;
+    static String Fiduciary1Form;
+    static String Fiduciary2Form;
+    static String Fiduciary3Form;
+    static String Fiduciary4Form;
+    static String Fiduciary5Form;
+    static String nameOfPetitionerForm;
+    static String nameOfPetitioner2Form;
+    static String petitioner1AddressLine1Form;
+    static String petitioner1CityStateCodeZipForm;
+    static String petitioner2AddressLine1Form;
+    static String petitioner2CityStateCodeZipForm;
+    static String petitioner3AddressLine1Form;
+    static String petitioner3CityStateCodeZipForm;
+    static String petitioner4AddressLine1Form;
+    static String petitioner4CityStateCodeZipForm;
 
 
     @Override
@@ -324,4 +355,161 @@ public class ProbateFormsOC01Page extends BasePage{
         }
     }
 
+    public void verifyEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_2);
+        WebElement decedentDiedOnField = driverUtil.getWebElement(DECEDENT_DIED_ON_FIELD);
+
+        estateNamePage2Form =  estateNameField.getAttribute("value");
+        decedentDiedOnForm = decedentDiedOnField.getAttribute("value");
+
+        String enteredEstateName = getEstateValue("DisplayName");
+        String enteredDateOfDeathName = getEstateValue("DateOfDeath");
+
+        if(!enteredEstateName.equals(estateNamePage2Form)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNamePage2Form);
+        }
+
+        if(!enteredDateOfDeathName.equals(decedentDiedOnForm)){
+            throw new AutomationException("County name not fetched correctly. Expected: " + enteredDateOfDeathName + " ,Found: " + decedentDiedOnForm);
+        }
+
+        verifyFieldIsNotEditable(ESTATE_NAME_PAGE_2);
+        verifyFieldIsNotEditable(DECEDENT_DIED_ON_FIELD);
+    }
+
+    public void userClickOnPetitionerNameField() throws AutomationException {
+        scrollToElement(PETITIONER_NAME_FIELD);
+        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+    }
+
+    public void verifySidebarIsOpensAndFiduciaryContactsCanBeSelected() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        WebDriverUtil.waitForAWhile();
+
+        WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
+
+        if(!modalHeader.getText().contains("Select Contact")){
+            throw new AutomationException("Sidebar is not displayed for fiduciary contact.");
+        }
+
+        WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
+
+        Fiduciary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+        WebDriverUtil.waitForAWhile();
+        Fiduciary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+        WebDriverUtil.waitForAWhile();
+
+        CommonSteps.takeScreenshot();
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+    }
+
+    public void verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm() throws AutomationException, IOException, ParseException {
+        petitioner1AddressLine1Form = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.addressLine1").toString();
+        String fiduciary1City = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.city").toString() + ",";
+        String fiduciary1StateCode = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.stateCode").toString() + ",";
+        String fiduciary1Zip = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.zip").toString();
+        petitioner1CityStateCodeZipForm = fiduciary1City + " " + fiduciary1StateCode + " " + fiduciary1Zip;
+
+        petitioner2AddressLine1Form = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.addressLine1").toString();
+        String fiduciary2City = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.city").toString() + ",";
+        String fiduciary2StateCode = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.stateCode").toString() + ",";
+        String fiduciary2Zip = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.zip").toString();
+        petitioner2CityStateCodeZipForm = fiduciary2City + " " + fiduciary2StateCode + " " + fiduciary2Zip;
+
+        WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
+        WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
+
+        nameOfPetitionerForm = nameOfPetitionerField.getAttribute("value");
+        if(!nameOfPetitionerForm.equals(Fiduciary1Form)){
+            throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitionerForm);
+        }
+        verifyPetitionerOnForm(petitioner1AddressLine1Form);
+        verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+
+
+        nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
+        if(!nameOfPetitioner2Form.equals(Fiduciary2Form)){
+            throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitioner2Form);
+        }
+        verifyPetitionerOnForm(petitioner2AddressLine1Form);
+        verifyPetitionerOnForm(petitioner2CityStateCodeZipForm);
+    }
+
+    public void userSelectsMultipleFiduciaryContacts() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        WebDriverUtil.waitForAWhile();
+
+        WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
+
+        Fiduciary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+        WebDriverUtil.waitForAWhile();
+        Fiduciary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+        WebDriverUtil.waitForAWhile();
+//        Fiduciary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+//        actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+    }
+
+    public void verifyPetitionerOnForm(String expectedValue) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(String.format(PETITIONER_INPUT_XPATH, expectedValue));
+        if (field != null && field.getAttribute("value").equals(expectedValue)) {
+            CommonSteps.logInfo("Value is displayed correctly: " + expectedValue);
+        } else {
+            throw new AutomationException("Value is not displayed in table. Expected: " + expectedValue);
+        }
+    }
+
+    public void verifyPetitionerOnAttachment(String expectedValue) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(String.format(PETITIONER_MODAL_INPUT_XPATH, expectedValue));
+        if (field != null && field.getAttribute("value").equals(expectedValue)) {
+            CommonSteps.logInfo("Value is displayed correctly: " + expectedValue);
+        } else {
+            throw new AutomationException("Value is not displayed in table. Expected: " + expectedValue);
+        }
+    }
+
+    public void verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment() throws AutomationException, IOException, ParseException {
+        petitioner3AddressLine1Form = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine1").toString();
+        String fiduciary3City = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.city").toString() + ",";
+        String fiduciary3StateCode = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.stateCode").toString() + ",";
+        String fiduciary3Zip = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.zip").toString();
+        petitioner3CityStateCodeZipForm = fiduciary3City + " " + fiduciary3StateCode + " " + fiduciary3Zip;
+
+        petitioner4AddressLine1Form = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine1").toString();
+        String fiduciary4City = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.city").toString() + ",";
+        String fiduciary4StateCode = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.stateCode").toString() + ",";
+        String fiduciary4Zip = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.zip").toString();
+        petitioner4CityStateCodeZipForm = fiduciary4City + " " + fiduciary4StateCode + " " + fiduciary4Zip;
+
+        verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm();
+
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        verifyPetitionerOnAttachment(Fiduciary3Form);
+        verifyPetitionerOnAttachment(petitioner3AddressLine1Form);
+        verifyPetitionerOnAttachment(petitioner3CityStateCodeZipForm);
+
+        verifyPetitionerOnAttachment(Fiduciary4Form);
+        verifyPetitionerOnAttachment(petitioner4AddressLine1Form);
+        verifyPetitionerOnAttachment(petitioner4CityStateCodeZipForm);
+
+        CommonSteps.takeScreenshot();
+
+        driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
+    }
 }
