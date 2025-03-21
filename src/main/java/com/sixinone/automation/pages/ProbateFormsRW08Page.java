@@ -204,6 +204,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
+
         if (field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable");
         }
@@ -748,7 +749,7 @@ public class ProbateFormsRW08Page extends BasePage {
         }
 
         if (startIndex != -1 && endIndex != -1) {
-            for (int i = startIndex + 1; i < endIndex; i++) {
+            for (int i = startIndex; i < endIndex; i++) {
                 String currentLine = allLines[i].trim();
                 if (!currentLine.isBlank()) {
                     extractedValue = cleanName(currentLine, fieldName);
@@ -773,6 +774,43 @@ public class ProbateFormsRW08Page extends BasePage {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
     }
+
+
+
+    public void verifyRelatedCorporateFiduciaryDetails(List<String> pdfLines) {
+        // Extract and Map Data
+        Map<String, String> extractedData = extractWitnessDetails(pdfLines);
+
+        // Print Extracted Data
+        extractedData.forEach((key, value) -> System.out.println(key + " -> " + value));
+    }
+
+    private static Map<String, String> extractWitnessDetails(List<String> pdfLines) {
+        Map<String, String> witnessData = new LinkedHashMap<>();
+        String key = null;
+
+        for (String line : pdfLines) {
+            if (isLabel(line)) {
+                key = line; // Store label for the next line
+            } else if (key != null) {
+                witnessData.put(key, line); // Map label -> value
+                key = null; // Reset key after assignment
+            }
+        }
+
+        return witnessData;
+    }
+
+    private static boolean isLabel(String line) {
+        return line.equalsIgnoreCase("Name of Corporate Fiduciary") ||
+                line.equalsIgnoreCase("Name of Representative and Title") ||
+                line.equalsIgnoreCase("Address") ||
+                line.equalsIgnoreCase("City, State, Zip") ||
+                line.equalsIgnoreCase("Telephone") ||
+                line.equalsIgnoreCase("Email") ||
+                line.equalsIgnoreCase("Name of Person") ||
+                line.equalsIgnoreCase("Signature of Officer/Representative");
+}
 
     private static String cleanName(String rawText, String fieldType) {
         if (rawText == null || rawText.trim().isEmpty()) return "";
@@ -807,45 +845,6 @@ public class ProbateFormsRW08Page extends BasePage {
 
         return cleanedText;
     }
-
-    public void verifyRelatedCorporateFiduciaryDetails(List<String> pdfLines) {
-
-
-
-
-        // Extract and Map Data
-        Map<String, String> extractedData = extractWitnessDetails(pdfLines);
-
-        // Print Extracted Data
-        extractedData.forEach((key, value) -> System.out.println(key + " -> " + value));
-    }
-
-    private static Map<String, String> extractWitnessDetails(List<String> pdfLines) {
-        Map<String, String> witnessData = new LinkedHashMap<>();
-        String key = null;
-
-        for (String line : pdfLines) {
-            if (isLabel(line)) {
-                key = line; // Store label for the next line
-            } else if (key != null) {
-                witnessData.put(key, line); // Map label -> value
-                key = null; // Reset key after assignment
-            }
-        }
-
-        return witnessData;
-    }
-
-    private static boolean isLabel(String line) {
-        return line.equalsIgnoreCase("Name of Corporate Fiduciary") ||
-                line.equalsIgnoreCase("Name of Representative and Title") ||
-                line.equalsIgnoreCase("Address") ||
-                line.equalsIgnoreCase("City, State, Zip") ||
-                line.equalsIgnoreCase("Telephone") ||
-                line.equalsIgnoreCase("Email") ||
-                line.equalsIgnoreCase("Name of Person") ||
-                line.equalsIgnoreCase("Signature of Officer/Representative");
-}
 
 public void userResetsTheRWForm() throws AutomationException {
     Actions actions = new Actions(DriverFactory.drivers.get());
