@@ -737,7 +737,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
             driverUtil.getWebElement("//body").click();
 
-            WebDriverUtil.waitForAWhile(2);
+            WebDriverUtil.waitForAWhile(4);
             String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
 
 
