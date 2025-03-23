@@ -79,9 +79,14 @@ Feature: 6in1 probate form RW10 Feature
     When user click on the "RW 08" form
     Then user verifies Corporate Fiduciary and Person sections information is common for RW08 and RW10
 
-  Scenario: Verify, selection is cleared on clicking clear selection button.
+  Scenario: Verify form can be printed in pdf
     When user click on the "RW 10" form
-    And user clicks on Clear Selection buttons
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw10'
+    And verify all the fields entered are correctly reflected in the 'Rw10' pdf
+
+  Scenario: Verify, selection is cleared on clicking clear selection button.
+    When user clicks on Clear Selection buttons
     Then user verifies selected contacts on "RW10" form are cleared
 
   Scenario: Reset the RW10 form

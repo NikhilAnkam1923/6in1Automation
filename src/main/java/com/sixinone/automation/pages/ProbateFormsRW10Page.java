@@ -4,20 +4,27 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class ProbateFormsRW10Page extends BasePage{
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
+
+public class ProbateFormsRW10Page extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -77,6 +84,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
+    static String downloadedFileName;
     static String enteredReasonForm;
     static String enteredDateForm;
     static String selectedNameOfCorporateFiduciary;
@@ -168,8 +176,8 @@ public class ProbateFormsRW10Page extends BasePage{
 
         String actualTitle = driverUtil.getWebElement(FORM_TITLE).getText();
 
-        if(!actualTitle.equals(expectedTitle)){
-            throw new AutomationException("Form title is not displayed correctly. Expected: "+expectedTitle+" ,found: "+actualTitle);
+        if (!actualTitle.equals(expectedTitle)) {
+            throw new AutomationException("Form title is not displayed correctly. Expected: " + expectedTitle + " ,found: " + actualTitle);
         }
     }
 
@@ -185,8 +193,8 @@ public class ProbateFormsRW10Page extends BasePage{
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
-            throw new AutomationException("Field is editable: "+fieldLocator);
+        if (field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
+            throw new AutomationException("Field is editable: " + fieldLocator);
         }
     }
 
@@ -255,7 +263,7 @@ public class ProbateFormsRW10Page extends BasePage{
     public void verifyWhenYesOptionIsSelectedTextBoxInPoint2IsNotEnabledAndNotEditable() throws AutomationException {
         WebElement point2Textarea = driverUtil.getWebElement(Q2_TEXTAREA);
 
-        if (point2Textarea.getAttribute("disabled")==null && point2Textarea.isEnabled()) {
+        if (point2Textarea.getAttribute("disabled") == null && point2Textarea.isEnabled()) {
             throw new AutomationException("Textarea Field is enabled and editable.");
         }
 
@@ -267,7 +275,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebElement point2Textarea = driverUtil.getWebElement(Q2_TEXTAREA);
 
-        if (point2Textarea.getAttribute("disabled")!=null && !point2Textarea.isEnabled()) {
+        if (point2Textarea.getAttribute("disabled") != null && !point2Textarea.isEnabled()) {
             throw new AutomationException("Textarea Field is not enabled and not editable.");
         }
     }
@@ -282,8 +290,8 @@ public class ProbateFormsRW10Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         enteredReasonForm = point2Textarea.getText();
 
-        if(!reason.equals(enteredReasonForm)){
-            throw new AutomationException("Reason text field did not accept the text correctly. Expected: "+reason+" ,found: "+enteredReasonForm);
+        if (!reason.equals(enteredReasonForm)) {
+            throw new AutomationException("Reason text field did not accept the text correctly. Expected: " + reason + " ,found: " + enteredReasonForm);
         }
     }
 
@@ -292,7 +300,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebElement point3TextField = driverUtil.getWebElement(Q3_TEXT_FIELD);
 
-        if (point3TextField.getAttribute("disabled")!=null && !point3TextField.isEnabled()) {
+        if (point3TextField.getAttribute("disabled") != null && !point3TextField.isEnabled()) {
             throw new AutomationException("Text field is not enabled and not editable.");
         }
 
@@ -311,7 +319,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebElement point3TextField = driverUtil.getWebElement(Q3_TEXT_FIELD);
 
-        if (point3TextField.getAttribute("disabled")==null && point3TextField.isEnabled()) {
+        if (point3TextField.getAttribute("disabled") == null && point3TextField.isEnabled()) {
             throw new AutomationException("Text Field is enabled and editable.");
         }
     }
@@ -325,16 +333,16 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebElement point2Textarea = driverUtil.getWebElement(Q2_TEXTAREA);
 
-        if(!point2Textarea.getText().isEmpty() && point2Textarea.getText().contains(enteredReasonForm)){
-            throw new AutomationException("Reason entered in text area does not gets disappear. Found text: "+point2Textarea.getText());
+        if (!point2Textarea.getText().isEmpty() && point2Textarea.getText().contains(enteredReasonForm)) {
+            throw new AutomationException("Reason entered in text area does not gets disappear. Found text: " + point2Textarea.getText());
         }
     }
 
     public void verifyWhenNoIsTickedThenTextBoxInPoint2IsEditableEnabledAndEmpty() throws AutomationException {
         WebElement point2Textarea = driverUtil.getWebElement(Q2_TEXTAREA);
 
-        if(!point2Textarea.getText().isEmpty()){
-            throw new AutomationException("Text area is not empty. Found text: "+point2Textarea.getText());
+        if (!point2Textarea.getText().isEmpty()) {
+            throw new AutomationException("Text area is not empty. Found text: " + point2Textarea.getText());
         }
     }
 
@@ -367,11 +375,11 @@ public class ProbateFormsRW10Page extends BasePage{
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
-        WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH,corporateFiduciaryFirm));
+        WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
         corporateFiduciaryToSelect.click();
 
-        if(!corporateFiduciaryToSelect.isSelected()){
+        if (!corporateFiduciaryToSelect.isSelected()) {
             throw new AutomationException("Unable to select the corporate fiduciary contact.");
         }
 
@@ -392,18 +400,18 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
-        if(!modalHeader.getText().contains("Fiduciary")){
+        if (!modalHeader.getText().contains("Fiduciary")) {
             throw new AutomationException("Fiduciary type of contacts are not displayed.");
         }
 
-        String fiduciaryContactToSelect = fiduciaryFirstName+" "+fiduciaryMiddleName+" "+fiduciaryLastName+" "+fiduciarySuffix;
+        String fiduciaryContactToSelect = fiduciaryFirstName + " " + fiduciaryMiddleName + " " + fiduciaryLastName + " " + fiduciarySuffix;
 
-        WebElement fiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH,fiduciaryContactToSelect));
+        WebElement fiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, fiduciaryContactToSelect));
 
         WebDriverUtil.waitForAWhile();
         fiduciaryToSelect.click();
 
-        if(!fiduciaryToSelect.isSelected()){
+        if (!fiduciaryToSelect.isSelected()) {
             throw new AutomationException("Unable to select the fiduciary contact.");
         }
 
@@ -422,18 +430,18 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
-        if(!modalHeader.getText().contains("Attorney")){
+        if (!modalHeader.getText().contains("Attorney")) {
             throw new AutomationException("Attorney type of contacts are not displayed.");
         }
 
-        String attorneyContactToSelect = attorneyFirstName+" "+attorneyMiddleName+" "+attorneyLastName+" "+attorneySuffix;
+        String attorneyContactToSelect = attorneyFirstName + " " + attorneyMiddleName + " " + attorneyLastName + " " + attorneySuffix;
 
-        WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH,attorneyContactToSelect));
+        WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, attorneyContactToSelect));
 
         WebDriverUtil.waitForAWhile();
         attorneyToSelect.click();
 
-        if(!attorneyToSelect.isSelected()){
+        if (!attorneyToSelect.isSelected()) {
             throw new AutomationException("Unable to select the attorney contact.");
         }
 
@@ -443,7 +451,7 @@ public class ProbateFormsRW10Page extends BasePage{
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",","");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
     }
 
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor7And10() throws AutomationException {
@@ -451,12 +459,12 @@ public class ProbateFormsRW10Page extends BasePage{
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
         String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
 
-        if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)){
-            throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW07. Expected Name: "+selectedNameOfCorporateFiduciary+" ,Found: "+corporateFiduciaryName);
+        if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
+            throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW07. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
         }
 
-        if (!nameOfPerson.equals(selectedNameOfPerson)){
-            throw new AutomationException("Changes made in Person section on RW10 are not reflected on RW07. Expected Name: "+selectedNameOfPerson+" ,Found: "+nameOfPerson);
+        if (!nameOfPerson.equals(selectedNameOfPerson)) {
+            throw new AutomationException("Changes made in Person section on RW10 are not reflected on RW07. Expected Name: " + selectedNameOfPerson + " ,Found: " + nameOfPerson);
         }
     }
 
@@ -465,12 +473,12 @@ public class ProbateFormsRW10Page extends BasePage{
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
         String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
 
-        if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)){
-            throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW08. Expected Name: "+selectedNameOfCorporateFiduciary+" ,Found: "+corporateFiduciaryName);
+        if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
+            throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW08. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
         }
 
-        if (!nameOfPerson.equals(selectedNameOfPerson)){
-            throw new AutomationException("Changes made in Person section on RW10 are not reflected on RW08. Expected Name: "+selectedNameOfPerson+" ,Found: "+nameOfPerson);
+        if (!nameOfPerson.equals(selectedNameOfPerson)) {
+            throw new AutomationException("Changes made in Person section on RW10 are not reflected on RW08. Expected Name: " + selectedNameOfPerson + " ,Found: " + nameOfPerson);
         }
     }
 
@@ -492,16 +500,190 @@ public class ProbateFormsRW10Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         WebElement point3TextField = driverUtil.getWebElement(Q3_TEXT_FIELD);
 
-        if(!point3TextField.getAttribute("value").isEmpty() && point3TextField.getAttribute("value").contains(enteredOrphanCourtNumberForm)){
-            throw new AutomationException("Reason entered in text area does not gets disappear. Found text: "+point3TextField.getAttribute("value"));
+        if (!point3TextField.getAttribute("value").isEmpty() && point3TextField.getAttribute("value").contains(enteredOrphanCourtNumberForm)) {
+            throw new AutomationException("Reason entered in text area does not gets disappear. Found text: " + point3TextField.getAttribute("value"));
         }
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+        } catch (IOException e) {
+            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+        }
+    }
+
+    private static void verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        // Fields for Corporate Fiduciary (1st occurrence)
+        String corporateFiduciary = null, corpAddress = null, corpCityStateZip = null, corpTelephone = null, corpEmail = null;
+
+        // Fields for Name of Person (2nd occurrence)
+        String personName = null, personAddress = null, personCityStateZip = null, personTelephone = null, personEmail = null;
+
+        boolean personFoundFirstTime = false; // Track first occurrence of "Name of Person"
+
+        for (int i = 0; i < allLines.length; i++) {
+            String currentLine = allLines[i].trim();
+
+            // Extract Corporate Fiduciary (1st occurrence)
+            if (corporateFiduciary == null && currentLine.equalsIgnoreCase("Name of Corporate Fiduciary") && i > 0) {
+                corporateFiduciary = clean(allLines[i - 1], "Corporate Fiduciary");
+            } else if (corporateFiduciary != null && corpAddress == null && currentLine.equalsIgnoreCase("Address") && i > 0) {
+                corpAddress = clean(allLines[i - 1], "Address");
+            } else if (corporateFiduciary != null && corpCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 0) {
+                corpCityStateZip = clean(allLines[i - 1], "CityStateZip");
+            } else if (corporateFiduciary != null && corpTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 0) {
+                corpTelephone = clean(allLines[i - 1], "Telephone");
+            } else if (corporateFiduciary != null && corpEmail == null && currentLine.equalsIgnoreCase("Email") && i > 0) {
+                corpEmail = clean(allLines[i - 1], "Email");
+            }
+
+            // Extract Name of Person (2nd occurrence)
+            if (currentLine.equalsIgnoreCase("Name of Person") && i > 0) {
+                if (!personFoundFirstTime) {
+                    personFoundFirstTime = true; // Mark the first occurrence but do nothing
+                } else if (personName == null) { // Now process the second occurrence
+                    personName = clean(allLines[i - 1], "Person Name");
+                }
+            } else if (personFoundFirstTime && personName != null && personAddress == null && currentLine.equalsIgnoreCase("Address") && i > 0) {
+                personAddress = clean(allLines[i - 1], "Address");
+            } else if (personFoundFirstTime && personName != null && personCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 0) {
+                personCityStateZip = clean(allLines[i - 1], "CityStateZip");
+            } else if (personFoundFirstTime && personName != null && personTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 0) {
+                personTelephone = clean(allLines[i - 1], "Telephone");
+            } else if (personFoundFirstTime && personName != null && personEmail == null && currentLine.equalsIgnoreCase("Email") && i > 0) {
+                personEmail = clean(allLines[i - 1], "Email");
+            }
+
+            // Exit loop early if all values are found
+            if (corporateFiduciary != null && personName != null &&
+                    corpAddress != null && corpCityStateZip != null && corpTelephone != null && corpEmail != null &&
+                    personAddress != null && personCityStateZip != null && personTelephone != null && personEmail != null) {
+                break;
+            }
+        }
+
+        // Validate Corporate Fiduciary Details (1st occurrence)
+        if (corporateFiduciary != null) {
+            validateField("Corporate Fiduciary", corporateFiduciary, "zetaConsulting");
+            validateField("Corporate Address", corpAddress, "Mountain View Drive");
+            validateField("Corporate City, State, Zip", corpCityStateZip, "Seattle, WA 98101");
+            validateField("Corporate Telephone", corpTelephone, "(206) 555-6789");
+            validateField("Corporate Email", corpEmail, "liam.anderson@zetaconsulting.com");
+        }
+
+        // Validate Name of Person Details (2nd occurrence)
+        if (personName != null) {
+            validateField("Name of Person", personName, "Rihan Benjamin Miles Jr");
+            validateField("Person Address", personAddress, "Riverside Drive");
+            validateField("Person City, State, Zip", personCityStateZip, "Kansas City, MO 64101");
+            validateField("Person Telephone", personTelephone, "(816) 555-4321");
+            validateField("Person Email", personEmail, "rihan.miles@business.com");
+        }
+
+        if (corporateFiduciary == null && personName == null) {
+            throw new AutomationException("❌ Validation Failed: Neither Corporate Fiduciary nor Name of Person was found.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: Corporate Fiduciary and Name of Person details successfully matched.");
+    }
+
+    private static void validateField(String fieldName, String extracted, String expected) throws AutomationException {
+        CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + extracted + "'");
+
+        if (extracted == null) {
+            throw new AutomationException("❌ Validation Failed: '" + fieldName + "' was not found in the document.");
+        }
+
+        if (!expected.equalsIgnoreCase(extracted)) {
+            throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+    }
+
+    private static String clean(String rawText, String fieldType) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
+
+        String cleanedText = rawText.trim();
+
+        switch (fieldType.toLowerCase()) {
+            case "date letters granted":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Date Letters Granted: )\\b", "").trim();
+                break;
+
+            case "date of death":
+                cleanedText = cleanedText.replaceAll("(?i)Date of Death:\\s*", "") // Remove "Date of Death:"
+                        .replaceAll("\\s*File Number:.*$", "") // Remove "File Number" and everything after it
+                        .replaceAll("[:]+$", "") // Remove trailing colons if any
+                        .trim();
+                break;
+
+            case "file number":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Date of Death: 12/05/2023 File Number:)\\b", "").trim();
+                break;
+
+            default:
+                // Generic cleanup for any other case
+                cleanedText = cleanedText.replaceAll("[:,\\.\\s]+$", "").trim();
+                break;
+        }
+
+        return cleanedText;
+    }
+
 
     public static void clearField(String fieldXpath) throws AutomationException {
         WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
         fieldElement.sendKeys(Keys.CONTROL + "a");
         fieldElement.sendKeys(Keys.BACK_SPACE);
     }
+
 
     public void userResetsTheRWForm() throws AutomationException {
         clearField(DATE_FIELD);
