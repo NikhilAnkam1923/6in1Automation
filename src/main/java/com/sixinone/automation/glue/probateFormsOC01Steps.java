@@ -56,4 +56,44 @@ public class probateFormsOC01Steps {
         PageFactory.probateFormsOC01Page().verifyAttorneyDetailsAreSyncedWithPageOfSameForm();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies estate name and date of death fields display preloaded data and are non-editable")
+    public void userVerifiesEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate name and date of death fields display preloaded data and are non-editable");
+        PageFactory.probateFormsOC01Page().verifyEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user click on Petitioner name field")
+    public void userClickOnPetitionerNameField() throws AutomationException {
+        CommonSteps.logInfo("user click on Petitioner name field");
+        PageFactory.probateFormsOC01Page().userClickOnPetitionerNameField();
+    }
+
+    @Then("user verifies a sidebar is opens and fiduciary contacts can be selected")
+    public void userVerifiesASidebarIsOpensAndFiduciaryContactsCanBeSelected() throws AutomationException {
+        CommonSteps.logInfo("Verified that a sidebar is opens and fiduciary contacts can be selected");
+        PageFactory.probateFormsOC01Page().verifySidebarIsOpensAndFiduciaryContactsCanBeSelected();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user verifies the selected fiduciaries populate in the Petitioner fields on the form")
+    public void userVerifiesTheSelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that the selected fiduciaries populate in the Petitioner fields on the form");
+        PageFactory.probateFormsOC01Page().verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user selects multiple fiduciary contacts")
+    public void userSelectsMultipleFiduciaryContacts() throws AutomationException {
+        CommonSteps.logInfo("user selects multiple fiduciary contacts");
+        PageFactory.probateFormsOC01Page().userSelectsMultipleFiduciaryContacts();
+    }
+
+    @Then("user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment")
+    public void userVerifiesOutOfTheSelectedPetitionersOnlyAreVisibleOnTheFormAndRestAreOnTheAttachment() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that out of the selected petitioners only 2 are visible on the form and rest are on the attachment");
+        PageFactory.probateFormsOC01Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
+    }
+
 }

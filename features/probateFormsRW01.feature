@@ -13,11 +13,11 @@ Feature: 6in1 probate form RW01 Feature
 
   Scenario: Open Estate
     When user opens "William John" Estate
-    And user saves entered Estate information for "RW01" form
+    And user saves entered Estate information for "REV346" form
 
   Scenario: Verify, file no. is displayed at the top of the form.
     When user navigates to the probate forms tab
-    And user click on the "RW 01" form
+    And user click on the "REV 346" form
     Then user verifies correct file number is displayed at the top of the form
 
   Scenario: Verify, decedent information is displayed in section1 of the form.
@@ -80,7 +80,7 @@ Feature: 6in1 probate form RW01 Feature
     And verify all the fields entered are correctly reflected in the 'Rw01' pdf
 
   Scenario: Reset the RW01 form
-    When user resets the "RW01" form
+    When user resets the "REV346" form
 
   @Setup
   Scenario:SETUP: Close Browser
