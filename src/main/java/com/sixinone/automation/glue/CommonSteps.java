@@ -454,7 +454,7 @@ public class CommonSteps {
     public void userSavesEstateInformation(String formName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user saves Estate Information for "+formName+" form");
         switch (formName) {
-            case "RW01":
+            case "REV346":
                 PageFactory.probateFormsRW01Page().userSavesEstateInfo();
                 break;
             case "RW02":
@@ -517,7 +517,7 @@ public class CommonSteps {
     public void userResetsTheRWForm(String formName) throws AutomationException {
         CommonSteps.logInfo("user resets the "+formName+" form");
         switch (formName) {
-            case "RW01":
+            case "REV346":
                 PageFactory.probateFormsRW01Page().userResetsTheRWForm();
                 break;
             case "RW02":

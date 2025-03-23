@@ -488,7 +488,7 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifySelectedValuesAreRetainedAndAutoSaved() throws AutomationException {
-        clickOnRWForm("RW 01");
+        clickOnRWForm("RW 03");
         clickOnRWForm("RW 02");
 
         if(!getSelectedOption(PERSONAL_PROPERTY_DRDWN).equals(personalPropertyForm)){
@@ -550,7 +550,7 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyAmountEnteredInAllTheFieldsAreAutoSaved() throws AutomationException {
-        clickOnRWForm("RW 01");
+        clickOnRWForm("RW 03");
         clickOnRWForm("RW 02");
 
         if(!driverUtil.getWebElement(PERSONAL_PROPERTY_AMOUNT).getAttribute("value").equals(enteredPersonalPropertyAmountForm)){
@@ -626,7 +626,7 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyCopiedAddressIsRetainedAndAutoSaved() throws AutomationException {
-        clickOnRWForm("RW 01");
+        clickOnRWForm("RW 03");
         clickOnRWForm("RW 02");
 
         WebDriverUtil.waitForAWhile();
@@ -663,7 +663,7 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyModificationsAreSavedSuccessfully() throws AutomationException {
-        clickOnRWForm("RW 01");
+        clickOnRWForm("RW 03");
         clickOnRWForm("RW 02");
 
         WebDriverUtil.waitForAWhile();
