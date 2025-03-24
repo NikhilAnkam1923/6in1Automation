@@ -12,7 +12,7 @@ Feature: 6in1 probate form RW07 Feature
       | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
-    When user opens "Kris Warner" Estate
+    When user opens "William John" Estate
     And user saves entered Estate information for "RW07" form
 
   Scenario: Verify, county, estate and file number aka names are auto populated on the form.
@@ -63,10 +63,14 @@ Feature: 6in1 probate form RW07 Feature
     And user clicks on name of person field
     Then user verifies for "RW07" form attorney type of contacts are displayed in the list and can be selected
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw07'
+    And verify all the fields entered are correctly reflected in the 'Rw07' pdf
+
   Scenario: Verify, selection is cleared on clicking clear selection button.
     When user clicks on Clear Selection buttons
     Then user verifies selected contacts on "RW07" form are cleared
-
 
   Scenario: Reset the RW07 form
     When user resets the "RW07" form

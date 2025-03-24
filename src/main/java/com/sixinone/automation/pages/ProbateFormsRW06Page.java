@@ -422,7 +422,7 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
-        List<Integer> corporateFiduciaryNum = Arrays.asList(3, 5, 2, 4, 1);
+        List<Integer> corporateFiduciaryNum = Arrays.asList(5, 2, 1, 3, 4);
 
         for (int i = 0; i < corporateFiduciaryNum.size(); i++) {
             int fiduciaryIndex = corporateFiduciaryNum.get(i);
@@ -579,7 +579,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 Beneficiary2Form
         );
 
-        List<Integer> beneficiaryNum = Arrays.asList(1, 5, 4, 2, 3);
+        List<Integer> beneficiaryNum = Arrays.asList(5, 2, 1, 3, 4);
 
         for (int i = 0; i < beneficiaryNum.size(); i++) {
             int beneficiaryIndex = beneficiaryNum.get(i);

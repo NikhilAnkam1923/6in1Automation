@@ -17,7 +17,7 @@ Feature: 6in1 probate form RWxx Feature
 
   Scenario: Verify that the county, estate name, and "Also Known As" (AKA) values are auto-populated from the selected estate.
     When user navigates to the probate forms tab
-    And user click on the "RW xx" form
+    And user click on the "UWA" form
     Then user selects the aka checkbox
     Then user verifies the county, estate and aka names are auto-populated on the "RWxx" form
 
