@@ -94,42 +94,42 @@ Feature: 6in1 probate form RW02 Feature
     And user clicks on Accept Button
     Then user verifies correct beneficiary name, relationship and address is displayed in the table
 
-#  Scenario: Verify, if the selected contacts are exceed count of 4 then, it should be transferred to attachment.
-#    Then user verifies if the selected contacts are exceed count of 4 then it should be transferred to attachment
-#
-#  Scenario: Verify, on checking "Display all heirs on attachment".
-#    And user checks 'Display ALL heirs on attachment' checkbox
-#    Then user verifies all the contacts are transferred to attachment
-#
-#  Scenario:Verify that deselecting option B disables the beneficiaries' selection.
-#    And user deselects Option B
-#    Then user verifies the beneficiaries' selection field is disabled
-#
-#  Scenario: Verify, on page 2 petitioner's name are by default printed on the table.
-#    Then user verifies on page 2 petitioner's name are by default printed on the table
-#
-#  Scenario: Verify fees section.
-#    And user enters values in letters fields
-#    And user enters data in Other field
-#    And user adds amount in front of the respective fields
-#    Then user verifies total is displayed correctly
-#
-#  Scenario: Verify, attorney can be selected.
-#    Then user verifies only 1 contact can be selected from the list
-#    Then user verifies selected attorney contact's information is displayed correctly
-#
-#  Scenario: Verify, information in decree of the register.
-#    Then user verifies decree of the register information is displayed correctly
-#
-#  Scenario: Verify form can be printed in pdf
-#    When user click on print form button
-#    Then verify form can be printed in pdf with name as 'Rw02'
-#    And verify all the fields entered are correctly reflected in the 'Rw02' pdf
-#
-#  Scenario: Reset the RW02 form
-#    When user resets the "RW02" form
-#
-#  @Setup
-#  Scenario:SETUP: Close Browser
-#    When user logged out from the application
-#    Then User close browser
+  Scenario: Verify, if the selected contacts are exceed count of 4 then, it should be transferred to attachment.
+    Then user verifies if the selected contacts are exceed count of 4 then it should be transferred to attachment
+
+  Scenario: Verify, on checking "Display all heirs on attachment".
+    And user checks 'Display ALL heirs on attachment' checkbox
+    Then user verifies all the contacts are transferred to attachment
+
+  Scenario:Verify that deselecting option B disables the beneficiaries' selection.
+    And user deselects Option B
+    Then user verifies the beneficiaries' selection field is disabled
+
+  Scenario: Verify, on page 2 petitioner's name are by default printed on the table.
+    Then user verifies on page 2 petitioner's name are by default printed on the table
+
+  Scenario: Verify fees section.
+    And user enters values in letters fields
+    And user enters data in Other field
+    And user adds amount in front of the respective fields
+    Then user verifies total is displayed correctly
+
+  Scenario: Verify, attorney can be selected.
+    Then user verifies only 1 contact can be selected from the list
+    Then user verifies selected attorney contact's information is displayed correctly
+
+  Scenario: Verify, information in decree of the register.
+    Then user verifies decree of the register information is displayed correctly
+
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw02'
+    And verify all the fields entered are correctly reflected in the 'Rw02' pdf
+
+  Scenario: Reset the RW02 form
+    When user resets the "RW02" form
+
+  @Setup
+  Scenario:SETUP: Close Browser
+    When user logged out from the application
+    Then User close browser

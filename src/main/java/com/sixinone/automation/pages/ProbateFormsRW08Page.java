@@ -113,6 +113,14 @@ public class ProbateFormsRW08Page extends BasePage {
     static String displayNameForm;
     static String alsoKnownAsForm;
     static String fileNumberForm;
+    static String fiduciaryCityStateCodeZip;
+    static String fiduciaryAddressLine1Form;
+    static String fiduciaryPhoneForm;
+    static String fiduciaryEmailForm;
+    static String attorneyAddressLine1Form;
+    static String attorneyPhoneForm;
+    static String attorneyEmailForm;
+    static String attorneyCityStateCodeZip;
 
     private static String getFieldValue(String locator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
@@ -477,6 +485,15 @@ public class ProbateFormsRW08Page extends BasePage {
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
         String corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
 
+        String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
+        String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
+        String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
+        fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
+        fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
+
+        fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
+
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
         WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
@@ -531,6 +548,16 @@ public class ProbateFormsRW08Page extends BasePage {
         String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString() + ",";
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
         String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
+
+        String attorneyCityForm = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
+        String attorneyStateForm = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
+        String attorneyZipForm = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
+        attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
+        attorneyEmailForm = CommonUtil.getJsonPath("attorney2").get("attorney2.emailId").toString();
+
+        attorneyCityStateCodeZip = attorneyCityForm + ", " + attorneyStateForm + " " + attorneyZipForm;
+
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 

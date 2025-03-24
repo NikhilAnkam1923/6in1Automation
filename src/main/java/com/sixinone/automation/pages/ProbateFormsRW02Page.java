@@ -209,6 +209,13 @@ public class ProbateFormsRW02Page extends BasePage{
     static String placeOfDeathCityForm;
     static String placeOfDeathCountryForm;
     static String alsoKnownAsForm;
+    static String allFiduciaryContactsForm;
+    static String attorneyFirmNameForm;
+    static String attorneyAddressLine1Form;
+    static String attorneyAddressLine2Form;
+    static String attorneyCityStateZipForm;
+    static String attorneyPhoneForm;
+    static String attorneyFaxForm;
 
     static String DownloadedFileName;
 
@@ -437,22 +444,9 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
-//        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
-//        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
-//        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
-//        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
-//
-//        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
-
         driverUtil.getWebElement(VIEW_ATTACHMENT_HEADER).click();
 
         List<String> fiduciaryContacts = new ArrayList<>();
-//
-//        for (int i = 2; i <= 5; i++) {
-//            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
-//
-//            corporateFiduciaryContacts.add(entityName.trim());
-//        }
 
         for (int i = 1; i <= 4; i++) {
             String firstName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
@@ -464,9 +458,6 @@ public class ProbateFormsRW02Page extends BasePage{
         }
 
         String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
-
-//        String expectedCorporateFiduciaryContacts = String.join(", ", corporateFiduciaryContacts);
-//        String expectedContactsOnAttachment = String.join(", ", fiduciaryContact,expectedCorporateFiduciaryContacts);
 
         verifyAutoPopulatedValueOnAttachment(expectedFiduciaryContacts);
 
@@ -849,13 +840,6 @@ public class ProbateFormsRW02Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
-
-
-        System.out.println("BeneContact1Form: " + BeneContact1Form);
-        System.out.println("BeneContact2Form: " + BeneContact2Form);
-        System.out.println("BeneContact3Form: " + BeneContact3Form);
-        System.out.println("BeneContact4Form: " + BeneContact4Form);
-        System.out.println("BeneContact5Form: " + BeneContact5Form);
     }
 
     public void userClicksOnAcceptButton() throws AutomationException {
@@ -906,26 +890,21 @@ public class ProbateFormsRW02Page extends BasePage{
         verifyBeneContactInTable("None");
         verifyBeneContactInTable("None");
 
-        verifyBeneContactInTable(BeneContactAddress1Form);
         verifyBeneContactInTable(BeneContactAddress5Form);
-        verifyBeneContactInTable(BeneContactAddress4Form);
         verifyBeneContactInTable(BeneContactAddress2Form);
+        verifyBeneContactInTable(BeneContactAddress1Form);
+        verifyBeneContactInTable(BeneContactAddress3Form);
     }
 
     public void verifyContactsAreTransferredToAttachment() throws AutomationException, IOException, ParseException {
-        String beneficiary3AddressLine1 = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.addressLine1").toString();
-        String beneficiary3City = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.city").toString();
-        String beneficiary3StateCode = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.stateCode").toString();
-        String beneficiary3Zip = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.zip").toString();
-
-        BeneContactAddress3Form = beneficiary3AddressLine1+", "+beneficiary3City+", "+beneficiary3StateCode+", "+beneficiary3Zip;
+        String beneficiary4AddressLine1 = CommonUtil.getJsonPath("beneficiary4").get("beneficiary4.addressLine1").toString();
 
         driverUtil.getWebElement(BENE_VIEW_ATTACHMENT).click();
         WebDriverUtil.waitForAWhile();
 
         verifyBeneContactOnAttachment(BeneContact2Form);
         verifyBeneContactAddressAndRelationOnAttachment("None");
-        verifyBeneContactAddressAndRelationOnAttachment(beneficiary3AddressLine1);
+        verifyBeneContactAddressAndRelationOnAttachment(beneficiary4AddressLine1);
 
         CommonSteps.takeScreenshot();
 
@@ -996,76 +975,71 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyPetitionerSNameAreByDefaultPrintedOnTheTable() throws AutomationException, IOException, ParseException {
-        String fiduciary1FirstName = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.firstName").toString();
-        String fiduciary1LastName = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.lastName").toString();
-        String fiduciary1MiddleName = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.middleName").toString();
-        String fiduciary1Suffix = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.suffix").toString();
+        String fiduciary5FirstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
+        String fiduciary5LastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString();
+        String fiduciary5MiddleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
+        String fiduciary5Suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
 
-        String fiduciary2FirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciary2LastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString();
-        String fiduciary2MiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
-        String fiduciary2Suffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String entityName1 = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        String entityName2 = CommonUtil.getJsonPath("corporateFiduciary2").get("corporateFiduciary2.entityName").toString();
+        String entityName3 = CommonUtil.getJsonPath("corporateFiduciary3").get("corporateFiduciary3.entityName").toString();
 
-        String fiduciary3FirstName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
-        String fiduciary3LastName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString();
-        String fiduciary3MiddleName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
-        String fiduciary3Suffix = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
-
-        String fiduciary4FirstName = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.firstName").toString();
-        String fiduciary4LastName = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.lastName").toString();
-        String fiduciary4MiddleName = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.middleName").toString();
-        String fiduciary4Suffix = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.suffix").toString();
-
-        String fiduciaryContact1 = fiduciary1FirstName+" "+fiduciary1MiddleName+" "+fiduciary1LastName+", "+fiduciary1Suffix;
-        String fiduciaryContact2 = fiduciary2FirstName+" "+fiduciary2MiddleName+" "+fiduciary2LastName+", "+fiduciary2Suffix;
-        String fiduciaryContact3 = fiduciary3FirstName+" "+fiduciary3MiddleName+" "+fiduciary3LastName+", "+fiduciary3Suffix;
-        String fiduciaryContact4 = fiduciary4FirstName+" "+fiduciary4MiddleName+" "+fiduciary4LastName+", "+fiduciary4Suffix;
+        String fiduciaryContact5 = fiduciary5FirstName+" "+fiduciary5MiddleName+" "+fiduciary5LastName+", "+fiduciary5Suffix;
 
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
         scrollToElementAndClick(PAGE_2_COUNTY);
 
-        verifyAutoPopulatedValue(fiduciaryContact1);
-        verifyAutoPopulatedValue(fiduciaryContact2);
-        verifyAutoPopulatedValue(fiduciaryContact3);
-        verifyAutoPopulatedValue(fiduciaryContact4);
+        verifyAutoPopulatedValue(fiduciaryContact5);
+        verifyAutoPopulatedValue(entityName1);
+        verifyAutoPopulatedValue(entityName2);
+        verifyAutoPopulatedValue(entityName3);
     }
 
     public void verifyDecreeOfRegisterInformationDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        List<String> fiduciaryContacts = new ArrayList<>();
-
-        for (int i = 1; i <= 5; i++) {
-            String firstName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
-            String lastName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
-            String middleName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
-            String suffix = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
-
-            fiduciaryContacts.add(String.join(" ", firstName, middleName, lastName, suffix).trim());
-        }
-
-        String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
-
         List<String> corporateFiduciaryContacts = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
             String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
 
-            corporateFiduciaryContacts.add(entityName.trim());
+            corporateFiduciaryContacts.add(String.join(" ", entityName).trim());
         }
 
-        String expectedCorporateFiduciaryContacts = String.join(", ", corporateFiduciaryContacts);
+        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
+        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
+        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
+        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
+
+        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
+
+        String expectedCorporateFiduciaryContact = String.join(", ", corporateFiduciaryContacts);
+        String expectedCorporateAndFiduciaryContacts = String.join(", ", fiduciaryContact, expectedCorporateFiduciaryContact);
+
+
+        List<String> fiduciaryContacts = new ArrayList<>();
+
+        for (int i = 1; i <= 4; i++) {
+            String firstNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
+            String lastNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
+            String middleNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
+            String suffixFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
+
+            fiduciaryContacts.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
+        }
+
+        String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
 
         String decedentName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
         String akaNames = getEstateValue("AlsoKnownAs1") + " " + getEstateValue("AlsoKnownAs2") + " " + getEstateValue("AlsoKnownAs3");
-        String fileNumber = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
-        String allFiduciaryContacts = expectedFiduciaryContacts+", "+expectedCorporateFiduciaryContacts;
+        String fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
+        allFiduciaryContactsForm = expectedCorporateAndFiduciaryContacts+", "+expectedFiduciaryContacts;
         String dateOfWill = getEstateValue("DateOfWill");
 
         verifyAutoPopulatedValue(decedentName);
-        verifyAutoPopulatedValue(fileNumber);
+        verifyAutoPopulatedValue(fileNumberForm);
         verifyAutoPopulatedValue(akaNames.trim());
-        verifyAutoPopulatedValue(allFiduciaryContacts);
+        verifyAutoPopulatedValue(allFiduciaryContactsForm);
         verifyAutoPopulatedValue(dateOfWill);
         verifyAutoPopulatedValue(rwCodicilDate1Form);
         verifyAutoPopulatedValue(rwCodicilDate2Form);
@@ -1161,6 +1135,7 @@ public class ProbateFormsRW02Page extends BasePage{
         totalFees += Double.parseDouble(automationFeesForm);
         totalFees += Double.parseDouble(jcsFeesForm);
 
+        WebDriverUtil.waitForAWhile();
         String calculatedTotalFees = df.format(totalFees);
         WebDriverUtil.waitForAWhile();
 
@@ -1191,26 +1166,26 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyAttorneyContactSInformationIsDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        String attorneyFirmName = CommonUtil.getJsonPath("attorney2").get("attorney2.entityName").toString();
-        String attorneyAddressLine1 = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
-        String attorneyAddressLine2 = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine2").toString();
+        attorneyFirmNameForm = CommonUtil.getJsonPath("attorney2").get("attorney2.entityName").toString();
+        attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        attorneyAddressLine2Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine2").toString();
         String attorneyCity = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
         String attorneyStateCode = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
         String attorneyZip = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
-        String attorneyPhone = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
-        String attorneyFax = CommonUtil.getJsonPath("attorney2").get("attorney2.fax").toString();
+        attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
+        attorneyFaxForm = CommonUtil.getJsonPath("attorney2").get("attorney2.fax").toString();
 
-        String attorneyCityStateZip = attorneyCity+", "+attorneyStateCode+", "+attorneyZip;
+        attorneyCityStateZipForm = attorneyCity+", "+attorneyStateCode+", "+attorneyZip;
 
         WebDriverUtil.waitForAWhile();
 
         verifyFetchedAttorneyContact(selectedAttorneyContactForm);
-        verifyFetchedAttorneyContact(attorneyFirmName);
-        verifyFetchedAttorneyContact(attorneyAddressLine1);
-        verifyFetchedAttorneyContact(attorneyAddressLine2);
-        verifyFetchedAttorneyContact(attorneyCityStateZip);
-        verifyFetchedAttorneyContact(attorneyPhone);
-        verifyFetchedAttorneyContact(attorneyFax);
+        verifyFetchedAttorneyContact(attorneyFirmNameForm);
+        verifyFetchedAttorneyContact(attorneyAddressLine1Form);
+        verifyFetchedAttorneyContact(attorneyAddressLine2Form);
+        verifyFetchedAttorneyContact(attorneyCityStateZipForm);
+        verifyFetchedAttorneyContact(attorneyPhoneForm);
+        verifyFetchedAttorneyContact(attorneyFaxForm);
     }
 
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
