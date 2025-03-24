@@ -4,7 +4,7 @@ Feature: 6in1 probate form RW08 Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://nikeshoe.uat.lacknersoftware.cloud"
+    And user go to application "$6in1_url"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:

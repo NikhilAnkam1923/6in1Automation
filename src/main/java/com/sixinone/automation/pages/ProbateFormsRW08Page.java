@@ -115,12 +115,23 @@ public class ProbateFormsRW08Page extends BasePage {
     static String fileNumberForm;
     static String fiduciaryCityStateCodeZip;
     static String fiduciaryAddressLine1Form;
+    static String corporateFiduciaryFirm;
     static String fiduciaryPhoneForm;
     static String fiduciaryEmailForm;
     static String attorneyAddressLine1Form;
     static String attorneyPhoneForm;
     static String attorneyEmailForm;
     static String attorneyCityStateCodeZip;
+    static String beneAddress1Form;
+    static String beneAddress2Form;
+    static String beneAddress3Form;
+    static String beneAddress4Form;
+    static String beneAddress5Form;
+    static String beneAddress6Form;
+    static String beneAddress7Form;
+
+
+    static String enteredCityStateZipForm;
 
     private static String getFieldValue(String locator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
@@ -145,9 +156,10 @@ public class ProbateFormsRW08Page extends BasePage {
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
         estateInfo.put("DomicileAddressLine2", getFieldValue(DOMICILE_ADDRESS_LINE2));
-        estateInfo.put("DomicileZip", getFieldValue(DOMICILE_ZIP));
-        estateInfo.put("DomicileCity", getFieldValue(DOMICILE_CITY));
-        estateInfo.put("DomicileState", getFieldValue(DOMICILE_STATE));
+        String enteredZipForm = estateInfo.put("DomicileZip", getFieldValue(DOMICILE_ZIP));
+        String enteredCityForm = estateInfo.put("DomicileCity", getFieldValue(DOMICILE_CITY));
+        String enteredStateForm = estateInfo.put("DomicileState", getFieldValue(DOMICILE_STATE));
+        enteredCityStateZipForm = enteredZipForm + "," + enteredCityForm + enteredStateForm;
         estateInfo.put("DomicileCountry", getFieldValue(DOMICILE_COUNTRY));
         estateInfo.put("DomicileMunicipality", getFieldValue(DOMICILE_MUNICIPALITY));
         estateInfo.put("LastResidence", getFieldValue(LAST_RESIDENCE_FIELD));
@@ -341,7 +353,7 @@ public class ProbateFormsRW08Page extends BasePage {
         }
     }
 
-    public void verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException {
+    public void verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
         scrollToElementAndClick(BENE_NAME_FIELD);
@@ -350,25 +362,25 @@ public class ProbateFormsRW08Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
 
-        Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary6Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary6Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary7Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",","");
+        Beneficiary7Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
 
         WebDriverUtil.waitForAWhile();
@@ -377,6 +389,40 @@ public class ProbateFormsRW08Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Additional beneficiaries will be added to an attachment.")));
 
         verifyBeneficiariesDisplayedCorrectlyOnForm();
+
+
+        for (int i = 1; i <= 7; i++) {
+            String beneficiaryPrefix = "beneficiary" + i;
+
+            String beneficiaryCity = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".city").toString();
+            String beneficiaryState = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".stateCode").toString();
+            String beneficiaryZip = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".zip").toString();
+            String beneficiaryAddress = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".addressLine1").toString();
+
+            String beneficiaryCityStateZip = beneficiaryCity + ", " + beneficiaryState + " " + beneficiaryZip;
+            String beneAddressForm = beneficiaryAddress + ", " + beneficiaryCityStateZip;
+
+            // Store values dynamically
+            switch (i) {
+                case 1: beneAddress1Form = beneAddressForm; break;
+                case 2: beneAddress2Form = beneAddressForm; break;
+                case 3: beneAddress3Form = beneAddressForm; break;
+                case 4: beneAddress4Form = beneAddressForm; break;
+                case 5: beneAddress5Form = beneAddressForm; break;
+                case 6: beneAddress6Form = beneAddressForm; break;
+                case 7: beneAddress7Form = beneAddressForm; break;
+            }
+        }
+
+        System.out.println("Beneficiary 1 Address: " + beneAddress1Form);
+        System.out.println("Beneficiary 2 Address: " + beneAddress2Form);
+        System.out.println("Beneficiary 3 Address: " + beneAddress3Form);
+        System.out.println("Beneficiary 4 Address: " + beneAddress4Form);
+        System.out.println("Beneficiary 5 Address: " + beneAddress5Form);
+        System.out.println("Beneficiary 6 Address: " + beneAddress6Form);
+        System.out.println("Beneficiary 7 Address: " + beneAddress7Form);
+
+
     }
 
     private void verifyBeneficiariesDisplayedCorrectlyOnForm() throws AutomationException {
@@ -483,7 +529,7 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
-        String corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
 
         String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
         String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
@@ -495,6 +541,8 @@ public class ProbateFormsRW08Page extends BasePage {
         fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
+
+        WebDriverUtil.waitForAWhile();
 
         WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
@@ -582,7 +630,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",","");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
     }
 
     public void verifySelectedContactsAreCleared() throws AutomationException {
@@ -656,62 +704,61 @@ public class ProbateFormsRW08Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
 
-        verifyFieldInPDF(pdfFilePath,
-                "REGISTER OF WILLS OF INDIANA COUNTY, PENNSYLVANIA",
-                "a/k/a Krish",
-                "Kris Warner",
-                "Decedent Name");
+        verifyDateLettersGranted(pdfFilePath);
 
-        verifyFieldInPDF(pdfFilePath,
-                "a/k/a Krish",
-                "02/25/2025 :",
-                "12/05/2023",
-                "Date of Death");
+        verifyFieldsInPDF(pdfFilePath,
+                "Date of Death: 12/05/2023 File Number:22-2023-1234",
+                "See Attachment",
+                servedDateForm,
+                "Served Date");
 
-        verifyDate1(pdfFilePath);
-
-        List<String> pdfLines = Arrays.asList(
-                "Date Letters Granted: 02/15/2025",
+        verifyFieldsInPDF(pdfFilePath,
+                "Rules was served on or mailed to the following beneficiaries of the above-captioned estate on",
                 "Corporate Fiduciary (if applicable)",
-                "zetaConsulting",
-                "Name of Corporate Fiduciary",
-                "Name of Representative and Title",
-                "Mountain View Drive",
-                "Address",
-                "Seattle, WA 98101",
-                "City, State, Zip",
-                "(206) 555-6789",
-                "Telephone",
-                "liam.anderson@zetaconsulting.com",
-                "Email",
-                "Rihan Benjamin Miles Jr.",
-                "Name of Person",
-                "Riverside Drive",
-                "Address",
-                "Kansas City, MO 64101",
-                "City, State, Zip",
-                "(816) 555-4321",
-                "Telephone",
-                "rihan.miles@business.com",
-                "Email"
-        );
+                signedDateForm,
+                "Signed Date");
 
-        verifyRelatedCorporateFiduciaryDetails(pdfLines);
-
-        verifyFieldInPDF(pdfFilePath,
+        verifyFieldsInPDF(pdfFilePath,
                 "a/k/a Krish",
                 "02/25/2025 :",
                 fourDigitFileNumberForm,
                 "File Number");
+
+        verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+
+        List<String> expectedNames = Arrays.asList(
+                Beneficiary1Form,
+                Beneficiary2Form,
+                Beneficiary3Form,
+                Beneficiary4Form,
+                Beneficiary5Form,
+                Beneficiary6Form,
+                Beneficiary7Form
+        );
+
+        List<String> expectedAddresses = Arrays.asList(
+                beneAddress1Form,
+                beneAddress4Form,
+                beneAddress6Form,
+                beneAddress7Form,
+                beneAddress3Form,
+                beneAddress5Form,
+                beneAddress2Form
+        );
+
+// Call the method
+        verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
+
     }
 
-    private static void verifyDate1(String pdfFilePath) throws IOException, AutomationException {
+    private static void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "To the Register:";  // The next line after the date
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
+        // Split the entire PDF content into lines
         String[] allLines = pdfText.split("\\r?\\n");
 
         CommonSteps.logInfo("📄 **Full PDF Content (All Lines):**");
@@ -719,48 +766,59 @@ public class ProbateFormsRW08Page extends BasePage {
             CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
         }
 
-        int endIndex = -1;
-        String extractedDate = "";
+        String extractedDate = null;
+        boolean beforeLineFound = false;
 
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
-            // Find the first occurrence of "(Date)"
+            // Find the first occurrence of "To the Register:"
             if (trimmedLine.equalsIgnoreCase(beforeLine)) {
-                endIndex = i;
-                break;
+                beforeLineFound = true;
+                if (i > 0) {
+                    extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
+                    extractedDate = clean(extractedDate, "Date Letters Granted"); // Clean the extracted value
+
+                    if (!extractedDate.isEmpty()) {
+                        break;  // Stop after the first valid extraction
+                    }
+                }
             }
         }
 
-        // Extract the line before "(Date)"
-        if (endIndex > 0) {  // Ensure it's not the first line
-            extractedDate = allLines[endIndex - 1].trim();
+        // Log a warning if beforeLine is missing
+        if (!beforeLineFound) {
+            CommonSteps.logInfo("⚠️ Warning: 'To the Register:' not found in the PDF.");
         }
 
-        if (extractedDate.isEmpty()) {
-            throw new AutomationException("❌ Validation Failed: No Date field found before (Date).");
+        if (extractedDate == null || extractedDate.isEmpty()) {
+            throw new AutomationException("❌ Validation Failed: No Date field found before 'To the Register:'.");
         }
 
-        String extractDate = cleanName(extractedDate, "Date Letters Granted");
+        // 📌 Log the extracted date
+        CommonSteps.logInfo("📌 Extracted Date Letters Granted: '" + extractedDate + "'");
 
-        String expectedDateForm1 = dateLetterGrantedForm;
-        // Expected Date for comparison
-        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + dateLetterGrantedForm + "', Extracted: '" + extractDate + "'");
+        // Expected Date for comparison (assuming it holds only one expected date)
+        String expectedDate = dateLetterGrantedForm;
 
-        if (expectedDateForm1.equalsIgnoreCase(extractDate)) {
-            CommonSteps.logInfo("✅ Validation Passed: Extracted Date matches expected.");
-        } else {
-            throw new AutomationException("❌ Validation Failed: Extracted Date does not match expected value.");
+        // 🔍 Validate extracted date
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedDate + "', Extracted: '" + extractedDate + "'");
+
+        if (!expectedDate.equalsIgnoreCase(extractedDate)) {
+            throw new AutomationException("❌ Validation Failed: Extracted Date '" + extractedDate + "' does not match expected value.");
         }
+
+        // ✅ Final validation success message
+        CommonSteps.logInfo("✅ Validation Passed: Extracted date matches the expected value.");
     }
 
-    public static void verifyFieldInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+
+    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
         String[] allLines = pdfText.split("\\r?\\n");
-
         int startIndex = -1, endIndex = -1;
         String extractedValue = "";
 
@@ -776,21 +834,19 @@ public class ProbateFormsRW08Page extends BasePage {
         }
 
         if (startIndex != -1 && endIndex != -1) {
-            for (int i = startIndex; i < endIndex; i++) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
                 String currentLine = allLines[i].trim();
                 if (!currentLine.isBlank()) {
-                    extractedValue = cleanName(currentLine, fieldName);
+                    extractedValue = clean(currentLine, fieldName);
                     break; // Assuming only one line needs to be extracted
                 }
             }
-
-            CommonSteps.logInfo("📌 Extracted " + fieldName + ": " + extractedValue);
 
             if (extractedValue.isEmpty()) {
                 throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
             }
 
-            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
 
             if (!expectedValue.equalsIgnoreCase(extractedValue)) {
                 throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
@@ -802,44 +858,173 @@ public class ProbateFormsRW08Page extends BasePage {
         }
     }
 
+    private static void verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
 
+        String[] allLines = pdfText.split("\\r?\\n");
 
-    public void verifyRelatedCorporateFiduciaryDetails(List<String> pdfLines) {
-        // Extract and Map Data
-        Map<String, String> extractedData = extractWitnessDetails(pdfLines);
+        // Fields for Corporate Fiduciary (1st occurrence)
+        String corporateFiduciary = null, corpAddress = null, corpCityStateZip = null, corpTelephone = null, corpEmail = null;
 
-        // Print Extracted Data
-        extractedData.forEach((key, value) -> System.out.println(key + " -> " + value));
-    }
+        // Fields for Name of Person (2nd occurrence)
+        String personName = null, personAddress = null, personCityStateZip = null, personTelephone = null, personEmail = null;
 
-    private static Map<String, String> extractWitnessDetails(List<String> pdfLines) {
-        Map<String, String> witnessData = new LinkedHashMap<>();
-        String key = null;
+        boolean personFoundFirstTime = false; // Track first occurrence of "Name of Person"
 
-        for (String line : pdfLines) {
-            if (isLabel(line)) {
-                key = line; // Store label for the next line
-            } else if (key != null) {
-                witnessData.put(key, line); // Map label -> value
-                key = null; // Reset key after assignment
+        for (int i = 0; i < allLines.length; i++) {
+            String currentLine = allLines[i].trim();
+
+            // Extract Corporate Fiduciary (1st occurrence)
+            if (corporateFiduciary == null && currentLine.equalsIgnoreCase("Name of Corporate Fiduciary") && i > 0) {
+                corporateFiduciary = clean(allLines[i - 1], "Corporate Fiduciary");
+            } else if (corporateFiduciary != null && corpAddress == null && currentLine.equalsIgnoreCase("Address") && i > 0) {
+                corpAddress = clean(allLines[i - 1], "Address");
+            } else if (corporateFiduciary != null && corpCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 0) {
+                corpCityStateZip = clean(allLines[i - 1], "CityStateZip");
+            } else if (corporateFiduciary != null && corpTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 0) {
+                corpTelephone = clean(allLines[i - 1], "Telephone");
+            } else if (corporateFiduciary != null && corpEmail == null && currentLine.equalsIgnoreCase("Email") && i > 0) {
+                corpEmail = clean(allLines[i - 1], "Email");
+            }
+
+            // Extract Name of Person (2nd occurrence)
+            if (currentLine.equalsIgnoreCase("Name of Person") && i > 0) {
+                if (!personFoundFirstTime) {
+                    personFoundFirstTime = true; // Mark the first occurrence but do nothing
+                } else if (personName == null) { // Now process the second occurrence
+                    personName = clean(allLines[i - 1], "Person Name");
+                }
+            } else if (personFoundFirstTime && personName != null && personAddress == null && currentLine.equalsIgnoreCase("Address") && i > 0) {
+                personAddress = clean(allLines[i - 1], "Address");
+            } else if (personFoundFirstTime && personName != null && personCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 0) {
+                personCityStateZip = clean(allLines[i - 1], "CityStateZip");
+            } else if (personFoundFirstTime && personName != null && personTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 0) {
+                personTelephone = clean(allLines[i - 1], "Telephone");
+            } else if (personFoundFirstTime && personName != null && personEmail == null && currentLine.equalsIgnoreCase("Email") && i > 0) {
+                personEmail = clean(allLines[i - 1], "Email");
+            }
+
+            // Exit loop early if all values are found
+            if (corporateFiduciary != null && personName != null &&
+                    corpAddress != null && corpCityStateZip != null && corpTelephone != null && corpEmail != null &&
+                    personAddress != null && personCityStateZip != null && personTelephone != null && personEmail != null) {
+                break;
             }
         }
 
-        return witnessData;
+        // Validate Corporate Fiduciary Details (1st occurrence)
+        if (corporateFiduciary != null) {
+            validateField("Corporate Fiduciary", corporateFiduciary, corporateFiduciaryFirm);
+            validateField("Corporate Address", corpAddress, fiduciaryAddressLine1Form);
+            validateField("Corporate City, State, Zip", corpCityStateZip, fiduciaryCityStateCodeZip);
+            validateField("Corporate Telephone", corpTelephone, fiduciaryPhoneForm);
+            validateField("Corporate Email", corpEmail, fiduciaryEmailForm);
+        }
+
+        // Validate Name of Person Details (2nd occurrence)
+        if (personName != null) {
+            validateField("Name of Person", personName, selectedNameOfPerson);
+            validateField("Person Address", personAddress, attorneyAddressLine1Form);
+            validateField("Person City, State, Zip", personCityStateZip, attorneyCityStateCodeZip);
+            validateField("Person Telephone", personTelephone, attorneyPhoneForm);
+            validateField("Person Email", personEmail, attorneyEmailForm);
+        }
+
+        if (corporateFiduciary == null && personName == null) {
+            throw new AutomationException("❌ Validation Failed: Neither Corporate Fiduciary nor Name of Person was found.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: Corporate Fiduciary and Name of Person details successfully matched.");
     }
 
-    private static boolean isLabel(String line) {
-        return line.equalsIgnoreCase("Name of Corporate Fiduciary") ||
-                line.equalsIgnoreCase("Name of Representative and Title") ||
-                line.equalsIgnoreCase("Address") ||
-                line.equalsIgnoreCase("City, State, Zip") ||
-                line.equalsIgnoreCase("Telephone") ||
-                line.equalsIgnoreCase("Email") ||
-                line.equalsIgnoreCase("Name of Person") ||
-                line.equalsIgnoreCase("Signature of Officer/Representative");
-}
+    private static void verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
+            throws IOException, AutomationException {
 
-    private static String cleanName(String rawText, String fieldType) {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String beforeLine = "Address";
+        String afterLine = "Copyright (c) 2016 form software only The Lackner Group, Inc.Form RW-08 eff. 09.01.16";
+
+        List<String> extractedLines = extractDataAfterThirdOccurrence(pdfText, beforeLine, afterLine);
+        if (extractedLines.isEmpty()) {
+            throw new AutomationException("❌ No data found between the third occurrence of '" + beforeLine + "' and '" + afterLine + "'");
+        }
+
+        List<String> extractedNames = new ArrayList<>();
+        List<String> extractedAddresses = new ArrayList<>();
+
+        // Extracting names and addresses
+        for (String line : extractedLines) {
+            int firstCommaIndex = line.indexOf(",");
+            if (firstCommaIndex != -1) {
+                String name = line.substring(0, firstCommaIndex).trim();
+                String address = line.substring(firstCommaIndex + 1).trim();
+
+                extractedNames.add(name);
+                extractedAddresses.add(address);
+            } else {
+                throw new AutomationException("❌ Could not split name and address properly in line: " + line);
+            }
+        }
+
+        if (extractedNames.size() != expectedNames.size() || extractedAddresses.size() != expectedAddresses.size()) {
+            throw new AutomationException("❌ Mismatch in extracted and expected name/address counts!");
+        }
+
+        for (int i = 0; i < expectedNames.size(); i++) {
+            CommonSteps.logInfo("🔍 Comparing Expected Name: " + expectedNames.get(i) + " and Address : " + expectedAddresses.get(i) +
+                    ". Extracted -> Name: " + extractedNames.get(i) + " and Address : " + extractedAddresses.get(i));
+        }
+    }
+
+    private static List<String> extractDataAfterThirdOccurrence(String text, String beforeLine, String afterLine) {
+        List<String> extractedData = new ArrayList<>();
+        boolean capture = false;
+        int addressCount = 0;
+
+        for (String line : text.split("\\r?\\n")) {
+            line = line.trim();
+
+            if (line.equalsIgnoreCase(beforeLine)) {
+                addressCount++;
+                if (addressCount == 3) { // Start capturing after the third occurrence
+                    capture = true;
+                    continue;
+                }
+            }
+
+            if (capture) {
+                if (line.equalsIgnoreCase(afterLine)) {
+                    break;  // Stop capturing at afterLine
+                }
+                if (!line.isEmpty()) {
+                    extractedData.add(line);
+                }
+            }
+        }
+        return extractedData;
+    }
+
+    private static void validateField(String fieldName, String extracted, String expected) throws AutomationException {
+        CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + extracted + "'");
+
+        if (extracted == null) {
+            throw new AutomationException("❌ Validation Failed: '" + fieldName + "' was not found in the document.");
+        }
+
+        if (!expected.equalsIgnoreCase(extracted)) {
+            throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+    }
+
+
+    private static String clean(String rawText, String fieldType) {
         if (rawText == null || rawText.trim().isEmpty()) return "";
 
         String cleanedText = rawText.trim();
@@ -851,6 +1036,10 @@ public class ProbateFormsRW08Page extends BasePage {
 
             case "decedent name":
                 cleanedText = cleanedText.replaceAll("(?i)\\b(Name of Decedent: )\\b", "").trim();
+                break;
+
+            case "signed date":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Date )\\b", "").trim();
                 break;
 
             case "date of death":
@@ -873,50 +1062,50 @@ public class ProbateFormsRW08Page extends BasePage {
         return cleanedText;
     }
 
-public void userResetsTheRWForm() throws AutomationException {
-    Actions actions = new Actions(DriverFactory.drivers.get());
-    actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
-    WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+    public void userResetsTheRWForm() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
 
-    scrollToElementAndClick(WILL_NUMBER_FIELD);
-    DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
+        scrollToElementAndClick(WILL_NUMBER_FIELD);
+        DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
 
-    scrollToElementAndClick(DATE_LETTER_GRANTED);
-    DriverFactory.drivers.get().findElement(By.xpath(DATE_LETTER_GRANTED)).clear();
+        scrollToElementAndClick(DATE_LETTER_GRANTED);
+        DriverFactory.drivers.get().findElement(By.xpath(DATE_LETTER_GRANTED)).clear();
 
-    DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
+        DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
 
-    scrollToElementAndClick(SIGNED_DATE);
-    DriverFactory.drivers.get().findElement(By.xpath(SIGNED_DATE)).clear();
+        scrollToElementAndClick(SIGNED_DATE);
+        DriverFactory.drivers.get().findElement(By.xpath(SIGNED_DATE)).clear();
 
-    scrollToElementAndClick(SERVED_DATE);
-    DriverFactory.drivers.get().findElement(By.xpath(SERVED_DATE)).clear();
+        scrollToElementAndClick(SERVED_DATE);
+        DriverFactory.drivers.get().findElement(By.xpath(SERVED_DATE)).clear();
 
-    DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT)).click();
-    WebDriverUtil.waitForAWhile(3);
+        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT)).click();
+        WebDriverUtil.waitForAWhile(3);
 
-    scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
 
-    scrollToElementAndClick(BENE_NAME_FIELD);
+        scrollToElementAndClick(BENE_NAME_FIELD);
 
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
 
-    WebDriverUtil.waitForAWhile();
-    driverUtil.getWebElement(SAVE_BTN).click();
-    WebDriverUtil.waitForAWhile(2);
-}
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(SAVE_BTN).click();
+        WebDriverUtil.waitForAWhile(2);
+    }
 }
 

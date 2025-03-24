@@ -99,6 +99,7 @@ public class ProbateFormsRW07Page extends BasePage{
     static String displayNameForm;
     static String alsoKnownAsForm;
     static String fileNumberForm;
+    static String corporateFiduciaryFirm;
     static String fiduciaryCityStateCodeZip;
     static String fiduciaryAddressLine1Form;
     static String fiduciaryPhoneForm;
@@ -504,7 +505,7 @@ public class ProbateFormsRW07Page extends BasePage{
     }
 
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
-        String corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
 
         String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
         String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
