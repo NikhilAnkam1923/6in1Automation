@@ -655,13 +655,13 @@ public class ProbateFormsRW08Page extends BasePage {
         verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
 
         List<String> expectedNames = Arrays.asList(
-                "Sophia Grace Martinez Jr.",
-                "Matthew Joseph White Sr.",
-                "Alexander James Henderson Sr.",
-                "Sophia Marie Thompson Jr.",
-                "Olivia Elizabeth Garcia Jr.",
-                "Isabella Natalie Rodriguez Jr.",
-                "Christopher Daniel Lee Sr."
+                Beneficiary1Form,
+                Beneficiary2Form,
+                Beneficiary3Form,
+                Beneficiary4Form,
+                Beneficiary5Form,
+                Beneficiary6Form,
+                Beneficiary7Form
         );
 
         List<String> expectedAddresses = Arrays.asList(

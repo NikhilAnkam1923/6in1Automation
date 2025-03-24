@@ -3,7 +3,7 @@
 <suite name="6 in 1 UI Test Automation" data-provider-thread-count="1">
 	<test name="6 in 1 Test Suite">
 		<classes>
-			<class name="runner.LoginTestRunner" />
+			<class name="runner.TestRunner" />
 		</classes>
 	</test>
 </suite>
