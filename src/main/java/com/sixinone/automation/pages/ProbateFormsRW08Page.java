@@ -402,7 +402,6 @@ public class ProbateFormsRW08Page extends BasePage {
             String beneficiaryCityStateZip = beneficiaryCity + ", " + beneficiaryState + " " + beneficiaryZip;
             String beneAddressForm = beneficiaryAddress + ", " + beneficiaryCityStateZip;
 
-            // Store values dynamically
             switch (i) {
                 case 1: beneAddress1Form = beneAddressForm; break;
                 case 2: beneAddress2Form = beneAddressForm; break;
@@ -413,14 +412,6 @@ public class ProbateFormsRW08Page extends BasePage {
                 case 7: beneAddress7Form = beneAddressForm; break;
             }
         }
-
-        System.out.println("Beneficiary 1 Address: " + beneAddress1Form);
-        System.out.println("Beneficiary 2 Address: " + beneAddress2Form);
-        System.out.println("Beneficiary 3 Address: " + beneAddress3Form);
-        System.out.println("Beneficiary 4 Address: " + beneAddress4Form);
-        System.out.println("Beneficiary 5 Address: " + beneAddress5Form);
-        System.out.println("Beneficiary 6 Address: " + beneAddress6Form);
-        System.out.println("Beneficiary 7 Address: " + beneAddress7Form);
 
 
     }

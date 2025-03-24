@@ -190,6 +190,7 @@ public class ProbateFormsRW02Page extends BasePage{
     static String otherFees5Form;
     static String automationFeesForm;
     static String jcsFeesForm;
+    static String totalFeesForm;
     static String selectedAttorneyContactForm;
     static String rwCodicilDate1Form;
     static String rwCodicilDate2Form;
@@ -208,7 +209,9 @@ public class ProbateFormsRW02Page extends BasePage{
     static String placeOfDeathAddressForm;
     static String placeOfDeathCityForm;
     static String placeOfDeathCountryForm;
-    static String alsoKnownAsForm;
+    static String AKA1Form;
+    static String akaName2Form;
+    static String akaName3Form;
     static String allFiduciaryContactsForm;
     static String attorneyFirmNameForm;
     static String attorneyAddressLine1Form;
@@ -216,6 +219,14 @@ public class ProbateFormsRW02Page extends BasePage{
     static String attorneyCityStateZipForm;
     static String attorneyPhoneForm;
     static String attorneyFaxForm;
+    static String totalEstimatedValueForm;
+    static String stateRelevantCircumstances1Form;
+    static String stateRelevantCircumstances2Form;
+    static String exceptionTextForm;
+    static String Petitioner1Form;
+    static String Petitioner2Form;
+    static String Petitioner3Form;
+    static String Petitioner4Form;
 
     static String DownloadedFileName;
 
@@ -363,7 +374,7 @@ public class ProbateFormsRW02Page extends BasePage{
         placeOfDeathAddressForm = getEstateValue("PlaceOfDeathAddressLine1") + ", " + getEstateValue("PlaceOfDeathAddressLine2") + ", " + getEstateValue("PlaceOfDeathZip");
         placeOfDeathCityForm = getEstateValue("PlaceOfDeathCity");
         placeOfDeathCountryForm = getEstateValue("PlaceOfDeathCountry");
-        alsoKnownAsForm = getEstateValue("AlsoKnownAs");
+        AKA1Form = getEstateValue("AlsoKnownAs");
 
         verifyAutoPopulatedValue(fullNameForm);
         verifyAutoPopulatedValue(fileNumberForm);
@@ -375,7 +386,7 @@ public class ProbateFormsRW02Page extends BasePage{
         verifyAutoPopulatedValue(placeOfDeathAddressForm);
         verifyAutoPopulatedValue(placeOfDeathCityForm);
         verifyAutoPopulatedValue(placeOfDeathCountryForm);
-        verifyAutoPopulatedValue(alsoKnownAsForm);
+        verifyAutoPopulatedValue(AKA1Form);
     }
 
 
@@ -413,11 +424,11 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyMultipleAkaNamesCanBeAddedSeparatedByComma() throws IOException, ParseException, AutomationException {
-        String akaName2 = CommonUtil.getJsonPath("RW02Form").get("RW02Form.akaName2").toString();
-        String akaName3 = CommonUtil.getJsonPath("RW02Form").get("RW02Form.akaName3").toString();
+        akaName2Form = CommonUtil.getJsonPath("RW02Form").get("RW02Form.akaName2").toString();
+        akaName3Form = CommonUtil.getJsonPath("RW02Form").get("RW02Form.akaName3").toString();
 
-        driverUtil.getWebElement(RW_AKA_FIELD2).sendKeys(akaName2);
-        driverUtil.getWebElement(RW_AKA_FIELD3).sendKeys(akaName3);
+        driverUtil.getWebElement(RW_AKA_FIELD2).sendKeys(akaName2Form);
+        driverUtil.getWebElement(RW_AKA_FIELD3).sendKeys(akaName3Form);
         CommonSteps.takeScreenshot();
     }
 
@@ -577,8 +588,8 @@ public class ProbateFormsRW02Page extends BasePage{
 
     public void verifyTotalEstimatedValueIsTheTotalOfFirstAndLastFieldsOnly() throws AutomationException {
         String sumOfFistAndLastFields = String.format("%.2f", Double.parseDouble(enteredPersonalPropertyAmountForm) + Double.parseDouble(enteredRealEstatePropertyAmountForm));
-        String totalEstimatedValue = driverUtil.getWebElement(TOTAL_ESTIMATED_VALUE).getAttribute("value");
-        if(!totalEstimatedValue.equals(sumOfFistAndLastFields)){
+        totalEstimatedValueForm = driverUtil.getWebElement(TOTAL_ESTIMATED_VALUE).getAttribute("value");
+        if(!totalEstimatedValueForm.equals(sumOfFistAndLastFields)){
             throw new AutomationException("The total estimated value is not the total of first and last fields only");
         }
     }
@@ -775,23 +786,28 @@ public class ProbateFormsRW02Page extends BasePage{
 
     }
 
-    public void verifyTextCanBeEnteredInTheStateRelevantCircumstancesTextFields() throws AutomationException {
-        driverUtil.getWebElement(STATE_RELEVANT_CIRCUMSTANCES_1).sendKeys("Original Executor renounced.");
-        driverUtil.getWebElement(STATE_RELEVANT_CIRCUMSTANCES_2).sendKeys("Named Executor is deceased.");
+    public void verifyTextCanBeEnteredInTheStateRelevantCircumstancesTextFields() throws AutomationException, IOException, ParseException {
+        stateRelevantCircumstances1Form = CommonUtil.getJsonPath("RW02Form").get("RW02Form.stateRelevantCircumstances1Form").toString();
+        stateRelevantCircumstances2Form = CommonUtil.getJsonPath("RW02Form").get("RW02Form.stateRelevantCircumstances2Form").toString();
+
+        driverUtil.getWebElement(STATE_RELEVANT_CIRCUMSTANCES_1).sendKeys(stateRelevantCircumstances1Form);
+        driverUtil.getWebElement(STATE_RELEVANT_CIRCUMSTANCES_2).sendKeys(stateRelevantCircumstances2Form);
     }
 
     public void userChecksExceptionsCheckboxFromOptionA() {
         DriverFactory.drivers.get().findElement(By.xpath(A_EXCEPTION)).click();
     }
 
-    public void verifyTextFieldIsEnabledAndTextCanBeEntered() throws AutomationException {
+    public void verifyTextFieldIsEnabledAndTextCanBeEntered() throws AutomationException, IOException, ParseException {
+        exceptionTextForm = CommonUtil.getJsonPath("RW02Form").get("RW02Form.exceptionTextForm").toString();
+
         WebElement textField = driverUtil.getWebElement(A_EXCEPTION_TEXT);
         WebDriverUtil.waitForAWhile();
         if(!textField.isEnabled()){
             throw new AutomationException("Text field is not enabled");
         }
 
-        textField.sendKeys("The originally named Executor has renounced their right to serve.");
+        textField.sendKeys(exceptionTextForm);
     }
 
     public void userChecksOptionBCheckbox() {
@@ -980,21 +996,21 @@ public class ProbateFormsRW02Page extends BasePage{
         String fiduciary5MiddleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
         String fiduciary5Suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
 
-        String entityName1 = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
-        String entityName2 = CommonUtil.getJsonPath("corporateFiduciary2").get("corporateFiduciary2.entityName").toString();
-        String entityName3 = CommonUtil.getJsonPath("corporateFiduciary3").get("corporateFiduciary3.entityName").toString();
+        Petitioner2Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        Petitioner3Form = CommonUtil.getJsonPath("corporateFiduciary2").get("corporateFiduciary2.entityName").toString();
+        Petitioner4Form = CommonUtil.getJsonPath("corporateFiduciary3").get("corporateFiduciary3.entityName").toString();
 
-        String fiduciaryContact5 = fiduciary5FirstName+" "+fiduciary5MiddleName+" "+fiduciary5LastName+", "+fiduciary5Suffix;
+        Petitioner1Form = fiduciary5FirstName+" "+fiduciary5MiddleName+" "+fiduciary5LastName+", "+fiduciary5Suffix;
 
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
         scrollToElementAndClick(PAGE_2_COUNTY);
 
-        verifyAutoPopulatedValue(fiduciaryContact5);
-        verifyAutoPopulatedValue(entityName1);
-        verifyAutoPopulatedValue(entityName2);
-        verifyAutoPopulatedValue(entityName3);
+        verifyAutoPopulatedValue(Petitioner1Form);
+        verifyAutoPopulatedValue(Petitioner2Form);
+        verifyAutoPopulatedValue(Petitioner3Form);
+        verifyAutoPopulatedValue(Petitioner4Form);
     }
 
     public void verifyDecreeOfRegisterInformationDisplayedCorrectly() throws AutomationException, IOException, ParseException {
@@ -1139,7 +1155,9 @@ public class ProbateFormsRW02Page extends BasePage{
         String calculatedTotalFees = df.format(totalFees);
         WebDriverUtil.waitForAWhile();
 
-        if(!driverUtil.getWebElement(TOTAL_FEES).getAttribute("value").equals(calculatedTotalFees)){
+        totalFeesForm = driverUtil.getWebElement(TOTAL_FEES).getAttribute("value");
+
+        if(!totalFeesForm.equals(calculatedTotalFees)){
             throw new AutomationException("Total is incorrect.");
         }
     }

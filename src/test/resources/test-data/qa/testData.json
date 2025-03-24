@@ -191,7 +191,10 @@
     "akaNameInitial": "Krish",
     "akaName1": "Fanny,",
     "akaName2": "Cris,",
-    "akaName3": "Grace,"
+    "akaName3": "Grace,",
+    "stateRelevantCircumstances1Form": "Original Executor renounced.",
+    "stateRelevantCircumstances2Form": "Named Executor is deceased.",
+    "exceptionTextForm": "The originally named Executor has renounced their right to serve."
   },
   "RWxxForm": {
     "reviewerName": "Louis Pat",
