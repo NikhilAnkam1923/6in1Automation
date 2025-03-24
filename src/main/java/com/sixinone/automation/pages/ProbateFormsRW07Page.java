@@ -234,20 +234,20 @@ public class ProbateFormsRW07Page extends BasePage{
 
         Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
 
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         CommonSteps.takeScreenshot();
 
         WebDriverUtil.waitForAWhile(2);
@@ -275,7 +275,7 @@ public class ProbateFormsRW07Page extends BasePage{
 
     public void verifyNameAndAddressOfTheBeneficiaryCorrectlyDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
         List<WebElement> BeneficiaryAddressFields = driverUtil.getWebElements(BENE_ADDRESS_FIELD);
-        List<Integer> beneficiaryNum = Arrays.asList(1, 4, 3, 5, 2);
+        List<Integer> beneficiaryNum = Arrays.asList(5, 2, 1, 3, 4);
 
         for (int i = 0; i < BeneficiaryAddressFields.size(); i++) {
             int beneficiaryIndex = beneficiaryNum.get(i);
@@ -290,9 +290,9 @@ public class ProbateFormsRW07Page extends BasePage{
             String expectedAddressLine1 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString() + ",";
             String expectedAddressLine2 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine2").toString() + ",";
 
-            String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + " ";
+            String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName;
             String expectedStateCodeZip = expectedState + " " + expectedZip;
-            String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + "\n" + expectedStateCodeZip;
+            String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + " " + expectedStateCodeZip + "\n";
 
 
             String actualNameAndAddress = BeneficiaryAddressFields.get(i).getAttribute("value");
@@ -481,7 +481,7 @@ public class ProbateFormsRW07Page extends BasePage{
         String expectedZip = CommonUtil.getJsonPath("RW07Form").get("RW07Form.zip").toString();
         String expectedPhone = CommonUtil.getJsonPath("RW07Form").get("RW07Form.phone").toString();
 
-        String expectedRegistrarsAddress = expectedRegisterOfWills+"\\n"+expectedStreet+"\\n"+expectedCity+", "+expectedStateCode+" "+expectedZip+"\\n"+expectedPhone;
+        String expectedRegistrarsAddress = expectedRegisterOfWills+"\n"+expectedStreet+"\n"+expectedCity+", "+expectedStateCode+" "+expectedZip+"\n"+expectedPhone;
 
         String actualRegistrarsAddress =  driverUtil.getWebElement(REGISTRARS_ADDRESS_FIELD).getText();
 
@@ -553,6 +553,7 @@ public class ProbateFormsRW07Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
+        WebDriverUtil.waitForAWhile();
         if(!modalHeader.getText().contains("Attorney")){
             throw new AutomationException("Attorney type of contacts are not displayed.");
         }

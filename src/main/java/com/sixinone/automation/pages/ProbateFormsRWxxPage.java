@@ -10,8 +10,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +71,8 @@ public class ProbateFormsRWxxPage extends BasePage {
     private static final String WITNESS_NAME_2 = "//td//input[@name='witness2Name']";
     private static final String REASON = "//textarea[@name='reason']";
     private static final String REVIEWER_SIGN = "//p[contains(text(),'(Signature)')]//input[@name='reviewerName']";
+    private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
+    private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -194,14 +198,31 @@ public class ProbateFormsRWxxPage extends BasePage {
         WebDriverUtil.waitForAWhile();
     }
 
+    private void scrollToElementAndClick(String elementLocator) throws AutomationException {
+        WebElement element = driverUtil.getWebElement(elementLocator);
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+
+        element.click();
+    }
 
     public void userResetsTheRWForm() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+
         clearField(REVIEWER_NAME);
         clearField(REVIEWER_DESIGNATION);
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
         DriverFactory.drivers.get().findElement(By.xpath(REASON)).clear();
         driverUtil.getWebElement(REASON).sendKeys(Keys.ENTER);
+
+        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+        WebDriverUtil.waitForAWhile();
     }
 
     public void verifyTextCanBeEnteredInAllTheTextAreasAndIsAutoSaved() throws IOException, ParseException, AutomationException {
@@ -217,7 +238,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         fillFieldWithKeyStrokes(WITNESS_NAME_2, "RWxxForm.witness2name");
         fillFieldWithKeyStrokes(REASON, "RWxxForm.reason");
 
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
 
         enteredReviewerName = driverUtil.getWebElement(REVIEWER_NAME).getAttribute("value");
         enteredReviewerDesignation = driverUtil.getWebElement(REVIEWER_DESIGNATION).getAttribute("value");
@@ -246,7 +267,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         }
 
         clickOnRWForm("RW 05");
-        clickOnRWForm("RW xx");
+        clickOnRWForm("UWA");
 
         WebDriverUtil.waitForAWhile(1);
 

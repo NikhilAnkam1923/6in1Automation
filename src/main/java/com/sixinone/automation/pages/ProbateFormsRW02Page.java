@@ -415,7 +415,44 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void verifyFiduciaryTypeOfContactsAreDisplayed() throws AutomationException, IOException, ParseException {
+        List<String> corporateFiduciaryContacts = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
+
+            corporateFiduciaryContacts.add(String.join(" ", entityName).trim());
+        }
+
+        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
+        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
+        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
+        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
+
+        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
+
+        String expectedCorporateFiduciaryContact = String.join(", ", corporateFiduciaryContacts);
+        String expectedFiduciaryContacts = String.join(", ", fiduciaryContact, expectedCorporateFiduciaryContact);
+
+        verifyAutoPopulatedValue(expectedFiduciaryContacts);
+    }
+
+    public void verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
+//        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
+//        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
+//        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
+//        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
+//
+//        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
+
+        driverUtil.getWebElement(VIEW_ATTACHMENT_HEADER).click();
+
         List<String> fiduciaryContacts = new ArrayList<>();
+//
+//        for (int i = 2; i <= 5; i++) {
+//            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
+//
+//            corporateFiduciaryContacts.add(entityName.trim());
+//        }
 
         for (int i = 1; i <= 4; i++) {
             String firstName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
@@ -426,35 +463,12 @@ public class ProbateFormsRW02Page extends BasePage{
             fiduciaryContacts.add(String.join(" ", firstName, middleName, lastName, suffix).trim());
         }
 
-        String entityName = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
-        String FiduciaryContacts = String.join(", ", fiduciaryContacts);
-        String expectedFiduciaryContacts = String.join(", ", FiduciaryContacts, entityName);
+        String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
 
-        verifyAutoPopulatedValue(expectedFiduciaryContacts);
-    }
+//        String expectedCorporateFiduciaryContacts = String.join(", ", corporateFiduciaryContacts);
+//        String expectedContactsOnAttachment = String.join(", ", fiduciaryContact,expectedCorporateFiduciaryContacts);
 
-    public void verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
-        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
-        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
-        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
-        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
-
-        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
-
-        driverUtil.getWebElement(VIEW_ATTACHMENT_HEADER).click();
-
-        List<String> corporateFiduciaryContacts = new ArrayList<>();
-
-        for (int i = 2; i <= 5; i++) {
-            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
-
-            corporateFiduciaryContacts.add(entityName.trim());
-        }
-
-        String expectedCorporateFiduciaryContacts = String.join(", ", corporateFiduciaryContacts);
-        String expectedContactsOnAttachment = String.join(", ", fiduciaryContact,expectedCorporateFiduciaryContacts);
-
-        verifyAutoPopulatedValueOnAttachment(expectedContactsOnAttachment);
+        verifyAutoPopulatedValueOnAttachment(expectedFiduciaryContacts);
 
         CommonSteps.takeScreenshot();
 
@@ -835,6 +849,13 @@ public class ProbateFormsRW02Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
+
+
+        System.out.println("BeneContact1Form: " + BeneContact1Form);
+        System.out.println("BeneContact2Form: " + BeneContact2Form);
+        System.out.println("BeneContact3Form: " + BeneContact3Form);
+        System.out.println("BeneContact4Form: " + BeneContact4Form);
+        System.out.println("BeneContact5Form: " + BeneContact5Form);
     }
 
     public void userClicksOnAcceptButton() throws AutomationException {
