@@ -855,6 +855,9 @@ public class CommonSteps {
             case "Rw08":
                 PageFactory.probateFormsRW08Page().verifyFormPrintedInPDFForm(formName);
                 break;
+            case "Rw07":
+                PageFactory.probateFormsRW07Page().verifyFormPrintedInPDFForm(formName);
+                break;
             case "Rwxx":
                 PageFactory.probateFormsRWxxPage().verifyFormPrintedInPDFForm(formName);
                 break;
@@ -890,6 +893,9 @@ public class CommonSteps {
                 break;
             case "Rw06":
                 PageFactory.probateFormsRW06Page().verifyAllFieldsInDownloadedPDF();
+                break;
+            case "Rw07":
+                PageFactory.probateFormsRW07Page().verifyAllFieldsInDownloadedPDF();
                 break;
             case "Rw08":
                 PageFactory.probateFormsRW08Page().verifyAllFieldsInDownloadedPDF();

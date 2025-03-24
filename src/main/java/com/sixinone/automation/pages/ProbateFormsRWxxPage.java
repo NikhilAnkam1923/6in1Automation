@@ -654,65 +654,6 @@ public class ProbateFormsRWxxPage extends BasePage {
                 .trim(); // Trim spaces
     }
 
-//    public static void verifyReviewerReason(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "is/are not readily available to prove the signature of the Testator by reason of";
-//        String afterLine = "Sworn to or affirmed and subscribed"; // Last identifiable text
-//
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        // Split the entire PDF content into lines
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//        StringBuilder extractedReason = new StringBuilder();
-//
-//        // Find Start and End Lines
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//
-//            if (trimmedLine.contains(beforeLine)) startIndex = i;
-//            if (trimmedLine.contains(afterLine) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                extractedReason.append(allLines[i].trim()).append(" ");
-//            }
-//            String finalExtractedReason = cleanReviewerReason(extractedReason.toString().trim());
-//
-//            if (finalExtractedReason.isEmpty()) {
-//                throw new AutomationException("❌ Validation Failed: No reviewer reason found between specified lines.");
-//            }
-//
-//            // Expected reason to compare
-//            String expectedReason = cleanReviewerReason(enteredReason);
-//
-//            CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedReason + "', Extracted: '" + finalExtractedReason + "'");
-//
-//            if (expectedReason.equalsIgnoreCase(finalExtractedReason)) {
-//                CommonSteps.logInfo("✅ Validation Passed: Reviewer reason matches expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: Reviewer reason does not match expected value.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//    // Cleaning function to normalize extracted text
-//    private static String cleanReviewerReason(String rawText) {
-//        if (rawText == null || rawText.trim().isEmpty()) return "";
-//
-//        return rawText
-//                .replaceAll("\\s+", " ") // Normalize spaces
-//                .replaceAll("[,\\.]+$", "") // Remove trailing commas, dots
-//                .trim(); // Trim spaces
-//    }
 
     private static void verifyReviewerSign(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "UNAVAILABLE WITNESS AFFIDAVIT";  // The next line after the date

@@ -1244,8 +1244,6 @@ public class ProbateFormsRW02Page extends BasePage{
                 : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
 
         verifyPrintNames(pdfFilePath);
-
-
     }
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException {

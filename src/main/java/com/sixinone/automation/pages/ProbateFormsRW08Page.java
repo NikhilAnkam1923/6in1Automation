@@ -1012,6 +1012,7 @@ public class ProbateFormsRW08Page extends BasePage {
     private static void validateField(String fieldName, String extracted, String expected) throws AutomationException {
         CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + extracted + "'");
 
+
         if (extracted == null) {
             throw new AutomationException("❌ Validation Failed: '" + fieldName + "' was not found in the document.");
         }
