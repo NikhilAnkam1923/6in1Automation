@@ -872,11 +872,11 @@ public class ProbateFormsRW02Page extends BasePage{
         String beneficiary5StateCode = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.stateCode").toString();
         String beneficiary5Zip = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.zip").toString();
 
-        BeneContactAddress1Form = beneficiary1AddressLine1+", "+beneficiary1City+", "+beneficiary1StateCode+", "+beneficiary1Zip;
-        BeneContactAddress2Form = beneficiary2AddressLine1+", "+beneficiary2City+", "+beneficiary2StateCode+", "+beneficiary2Zip;
-        BeneContactAddress3Form = beneficiary3AddressLine1+", "+beneficiary3City+", "+beneficiary3StateCode+", "+beneficiary3Zip;
-        BeneContactAddress4Form = beneficiary4AddressLine1+", "+beneficiary4City+", "+beneficiary4StateCode+", "+beneficiary4Zip;
-        BeneContactAddress5Form = beneficiary5AddressLine1+", "+beneficiary5City+", "+beneficiary5StateCode+", "+beneficiary5Zip;
+        BeneContactAddress1Form = beneficiary1AddressLine1+", "+beneficiary1City+", "+beneficiary1StateCode+" "+beneficiary1Zip;
+        BeneContactAddress2Form = beneficiary2AddressLine1+", "+beneficiary2City+", "+beneficiary2StateCode+" "+beneficiary2Zip;
+        BeneContactAddress3Form = beneficiary3AddressLine1+", "+beneficiary3City+", "+beneficiary3StateCode+" "+beneficiary3Zip;
+        BeneContactAddress4Form = beneficiary4AddressLine1+", "+beneficiary4City+", "+beneficiary4StateCode+" "+beneficiary4Zip;
+        BeneContactAddress5Form = beneficiary5AddressLine1+", "+beneficiary5City+", "+beneficiary5StateCode+" "+beneficiary5Zip;
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Bene/Heirs updated successfully.")));
 
@@ -1175,7 +1175,7 @@ public class ProbateFormsRW02Page extends BasePage{
         attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
         attorneyFaxForm = CommonUtil.getJsonPath("attorney2").get("attorney2.fax").toString();
 
-        attorneyCityStateZipForm = attorneyCity+", "+attorneyStateCode+", "+attorneyZip;
+        attorneyCityStateZipForm = attorneyCity+", "+attorneyStateCode+" "+attorneyZip;
 
         WebDriverUtil.waitForAWhile();
 
