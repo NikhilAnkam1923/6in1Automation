@@ -305,7 +305,7 @@ public class ProbateFormsOC01Page extends BasePage{
         String attorneyFax = CommonUtil.getJsonPath("attorney1").get("attorney1.fax").toString();
         String attorneyEmail = CommonUtil.getJsonPath("attorney1").get("attorney1.emailId").toString();
 
-        String attorneyCitySateZip = attorneyCity + ", " + attorneySateCode + ", " + attorneyZip;
+        String attorneyCitySateZip = attorneyCity + ", " + attorneySateCode + " " + attorneyZip;
 
         WebElement nameOfLawFirmField = driverUtil.getWebElement(NAME_OF_LAW_FIRM_FIELD);
         WebElement telephoneField = driverUtil.getWebElement(TELEPHONE_FIELD);
@@ -411,16 +411,16 @@ public class ProbateFormsOC01Page extends BasePage{
     }
 
     public void verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm() throws AutomationException, IOException, ParseException {
-        petitioner1AddressLine1Form = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.addressLine1").toString();
-        String fiduciary1City = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.city").toString() + ",";
-        String fiduciary1StateCode = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.stateCode").toString() + ",";
-        String fiduciary1Zip = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.zip").toString();
+        petitioner1AddressLine1Form = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine1").toString();
+        String fiduciary1City = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.city").toString() + ",";
+        String fiduciary1StateCode = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.stateCode").toString();
+        String fiduciary1Zip = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.zip").toString();
         petitioner1CityStateCodeZipForm = fiduciary1City + " " + fiduciary1StateCode + " " + fiduciary1Zip;
 
-        petitioner2AddressLine1Form = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.addressLine1").toString();
-        String fiduciary2City = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.city").toString() + ",";
-        String fiduciary2StateCode = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.stateCode").toString() + ",";
-        String fiduciary2Zip = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.zip").toString();
+        petitioner2AddressLine1Form = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine1").toString();
+        String fiduciary2City = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.city").toString() + ",";
+        String fiduciary2StateCode = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.stateCode").toString();
+        String fiduciary2Zip = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.zip").toString();
         petitioner2CityStateCodeZipForm = fiduciary2City + " " + fiduciary2StateCode + " " + fiduciary2Zip;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
@@ -483,16 +483,16 @@ public class ProbateFormsOC01Page extends BasePage{
     }
 
     public void verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment() throws AutomationException, IOException, ParseException {
-        petitioner3AddressLine1Form = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.addressLine1").toString();
-        String fiduciary3City = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.city").toString() + ",";
-        String fiduciary3StateCode = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.stateCode").toString() + ",";
-        String fiduciary3Zip = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.zip").toString();
+        petitioner3AddressLine1Form = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.addressLine1").toString();
+        String fiduciary3City = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.city").toString() + ",";
+        String fiduciary3StateCode = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.stateCode").toString();
+        String fiduciary3Zip = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.zip").toString();
         petitioner3CityStateCodeZipForm = fiduciary3City + " " + fiduciary3StateCode + " " + fiduciary3Zip;
 
-        petitioner4AddressLine1Form = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.addressLine1").toString();
-        String fiduciary4City = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.city").toString() + ",";
-        String fiduciary4StateCode = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.stateCode").toString() + ",";
-        String fiduciary4Zip = CommonUtil.getJsonPath("fiduciary1").get("fiduciary1.zip").toString();
+        petitioner4AddressLine1Form = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.addressLine1").toString();
+        String fiduciary4City = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.city").toString() + ",";
+        String fiduciary4StateCode = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.stateCode").toString();
+        String fiduciary4Zip = CommonUtil.getJsonPath("fiduciary4").get("fiduciary4.zip").toString();
         petitioner4CityStateCodeZipForm = fiduciary4City + " " + fiduciary4StateCode + " " + fiduciary4Zip;
 
         verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm();

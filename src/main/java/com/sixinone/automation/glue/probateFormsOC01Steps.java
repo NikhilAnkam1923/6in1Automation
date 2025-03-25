@@ -95,5 +95,4 @@ public class probateFormsOC01Steps {
         CommonSteps.logInfo("Verified that out of the selected petitioners only 2 are visible on the form and rest are on the attachment");
         PageFactory.probateFormsOC01Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
     }
-
 }
