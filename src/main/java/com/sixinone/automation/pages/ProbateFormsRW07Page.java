@@ -717,57 +717,36 @@ public class ProbateFormsRW07Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
 
-//        List<String> expectedBeneficiaryDetails = Arrays.asList(
-//                "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F, Denver, CO 80202",
-//                "Christopher Daniel Lee Broadway Avenue, Suite 300, Los Angeles, CA 90001",
-//                "Sophia Grace Martinez Lakeview Street, Apt 12C, Miami, FL 33101",
-//                "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A, Phoenix, AZ 85003",
-//                "Matthew Joseph White Main Street, Office 45B, Seattle, WA 98101"
-//        );
+        try {
+            List<String> expectedBeneficiaryDetails = Arrays.asList(
+                    "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F Denver, CO 80202",
+                    "Christopher Daniel Lee Broadway Avenue, Suite 300 Los Angeles, CA 90001",
+                    "Sophia Grace Martinez Lakeview Street, Apt 12C Miami, FL 33101",
+                    "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A Phoenix, AZ 85003",
+                    "Matthew Joseph White Main Street, Office 45B Seattle, WA 98101"
+            );
 
+            verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
 
-        List<String> expectedBeneficiaryDetails = Arrays.asList(
-                "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F Denver, CO 80202",
-                "Christopher Daniel Lee Broadway Avenue, Suite 300 Los Angeles, CA 90001",
-                "Sophia Grace Martinez Lakeview Street, Apt 12C Miami, FL 33101",
-                "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A Phoenix, AZ 85003",
-                "Matthew Joseph White Main Street, Office 45B Seattle, WA 98101"
-        );
+            List<String> expectedNames = Arrays.asList(
+                    FiduciaryName1Form, FiduciaryName2Form, FiduciaryName3Form, FiduciaryName4Form, FiduciaryName5Form
+            );
 
+            List<String> expectedAddresses = Arrays.asList(
+                    FiduciaryAddress1Form, FiduciaryAddress2Form, FiduciaryAddress3Form, FiduciaryAddress4Form, FiduciaryAddress5Form
+            );
 
+            List<String> expectedTelephones = Arrays.asList(
+                    FiduciaryTelephone1Form, FiduciaryTelephone2Form, FiduciaryTelephone3Form, FiduciaryTelephone4Form, FiduciaryTelephone5Form
+            );
 
+            verifyAllNamesAddressesTelephone(pdfFilePath, expectedNames, expectedAddresses, expectedTelephones);
+            verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
 
-        verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
-
-        List<String> expectedNames = Arrays.asList(
-                FiduciaryName1Form,
-                FiduciaryName2Form,
-                FiduciaryName3Form,
-                FiduciaryName4Form,
-                FiduciaryName5Form
-
-        );
-
-        List<String> expectedAddresses = Arrays.asList(
-                FiduciaryAddress1Form,
-                FiduciaryAddress2Form,
-                FiduciaryAddress3Form,
-                FiduciaryAddress4Form,
-                FiduciaryAddress5Form
-        );
-
-        List<String> expectedTelephones = Arrays.asList(
-                FiduciaryTelephone1Form,
-                FiduciaryTelephone2Form,
-                FiduciaryTelephone3Form,
-                FiduciaryTelephone4Form,
-                FiduciaryTelephone5Form
-        );
-
-
-// Call the method
-        verifyAllNamesAddressesTelephone(pdfFilePath, expectedNames, expectedAddresses, expectedTelephones);
-        verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
     }
 
     public static void verifyBeneficiaryDetails(String pdfFilePath, List<String> expectedBeneficiaryDetails)
@@ -910,7 +889,6 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
 
-
     // **Extract multiple occurrences of NAME ADDRESS TELEPHONE sections**
     private static List<List<String>> extractMultipleSections(String text, String beforeLine, String afterLine) {
         List<List<String>> allSections = new ArrayList<>();
@@ -948,7 +926,8 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
     // Validate individual fields
-    private static void validateField(String fieldName, String extracted, String expected) throws AutomationException {
+    private static void validateField(String fieldName, String extracted, String expected) throws
+            AutomationException {
         CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + extracted + "'");
 
         if (extracted == null || extracted.isEmpty()) {
@@ -962,7 +941,8 @@ public class ProbateFormsRW07Page extends BasePage {
         CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' processed.");
     }
 
-    private static void verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws IOException, AutomationException {
+    private static void verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws
+            IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();

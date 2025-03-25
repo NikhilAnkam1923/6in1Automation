@@ -350,15 +350,13 @@ public class ProbateFormsRWxxPage extends BasePage {
         try {
             verifyReviewerName(pdfFilePath);
 
-            verifyPDFSection(pdfFilePath, "Reviewer Designation", "I, Louis Pat ,being duly sworn according to law", "Harry and Steve ,",enteredReviewerDesignation );
+            verifyPDFSection(pdfFilePath, "Reviewer Designation", "I, Louis Pat ,being duly sworn according to law", "Harry and Steve ,", enteredReviewerDesignation);
             verifyWitnessNames(pdfFilePath);
             verifyPDFSection(pdfFilePath, "Reviewer Reason", "is/are not readily available to prove the signature of the Testator by reason of", "Sworn to or affirmed and subscribed", enteredReason);
-//            verifyreviewerDesignation(pdfFilePath);
-//            verifyReviewerReason(pdfFilePath);
             verifyReviewerSign(pdfFilePath);
-
-        } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
@@ -521,84 +519,6 @@ public class ProbateFormsRWxxPage extends BasePage {
                 return rawText.trim();
         }
     }
-
-
-//    public static void verifyreviewerDesignation(String pdfFilePath) throws IOException, AutomationException {
-//        String beforeLine = "I, Louis Pat ,being duly sworn according to law";
-//        String afterLine = "Harry and Steve ,";
-//
-//
-//        List<String> names = new ArrayList<>();
-//        PDDocument document = PDDocument.load(new File(pdfFilePath));
-//        String pdfText = new PDFTextStripper().getText(document);
-//        document.close();
-//
-//        // Split the entire PDF content into lines
-//        String[] allLines = pdfText.split("\\r?\\n");
-//
-//        int startIndex = -1, endIndex = -1;
-//
-//        //Find Start and End Lines
-//        for (int i = 0; i < allLines.length; i++) {
-//            String trimmedLine = allLines[i].trim();
-//
-//            if (trimmedLine.contains(beforeLine.trim())) startIndex = i;
-//            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//
-//        if (startIndex != -1 && endIndex != -1) {
-//            for (int i = startIndex + 1; i < endIndex; i++) {
-//                String currentLine = allLines[i].trim();
-//                if (!currentLine.isBlank()) {
-//                    names.add(cleanReviewerDesignation(currentLine));
-//                }
-//            }
-//
-//            if (names.isEmpty()) {
-//                CommonSteps.logInfo("❌ Validation Failed: No reviewer designation found between the specified lines.");
-//                return;
-//            }
-//
-//            // Create a map of expected names
-//            Map<String, String> expectedNames = new LinkedHashMap<>();
-//            expectedNames.put("Reviewer designation", cleanReviewerDesignation(enteredReviewerDesignation));
-//
-//
-//            boolean allMatch = true;
-//            for (int i = 0; i < expectedNames.size(); i++) {
-//                String expectedValue = expectedNames.values().toArray(new String[0])[i];
-//                String actualValue = (i < names.size()) ? names.get(i) : "No Name";
-//
-//                CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
-//
-//                if (!expectedValue.equalsIgnoreCase(actualValue)) {
-//                    allMatch = false;
-//                    break;
-//                }
-//            }
-//
-//            if (allMatch) {
-//                CommonSteps.logInfo("✅ Validation Passed: reviewer designation match as expected.");
-//            } else {
-//                throw new AutomationException("❌ Validation Failed: reviewer designation do not match the expected values.");
-//            }
-//        } else {
-//            throw new AutomationException("❌ Before or after line not found!");
-//        }
-//    }
-//
-//    private static String cleanReviewerDesignation(String rawName) {
-//        if (rawName == null || rawName.trim().isEmpty()) return "";
-//
-//        return rawName
-//                .replaceAll("(?i)^\\s*(depose and say that I, the ?)\\s*", "") // Remove "I," if it appears at the beginning
-//                .replaceAll("(?i)\\b( in the above-referenced estate, declare that)\\b", "") // Remove the phrase anywhere in the sentence
-//                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and spaces
-//                .trim(); // Trim spaces at the beginning and end
-//    }
 
     public void verifyWitnessNames(String pdfFilePath) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));

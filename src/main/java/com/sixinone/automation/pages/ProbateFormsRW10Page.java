@@ -574,8 +574,10 @@ public class ProbateFormsRW10Page extends BasePage {
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
             verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
-        } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 

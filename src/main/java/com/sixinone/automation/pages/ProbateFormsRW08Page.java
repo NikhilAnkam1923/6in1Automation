@@ -403,13 +403,27 @@ public class ProbateFormsRW08Page extends BasePage {
             String beneAddressForm = beneficiaryAddress + ", " + beneficiaryCityStateZip;
 
             switch (i) {
-                case 1: beneAddress1Form = beneAddressForm; break;
-                case 2: beneAddress2Form = beneAddressForm; break;
-                case 3: beneAddress3Form = beneAddressForm; break;
-                case 4: beneAddress4Form = beneAddressForm; break;
-                case 5: beneAddress5Form = beneAddressForm; break;
-                case 6: beneAddress6Form = beneAddressForm; break;
-                case 7: beneAddress7Form = beneAddressForm; break;
+                case 1:
+                    beneAddress1Form = beneAddressForm;
+                    break;
+                case 2:
+                    beneAddress2Form = beneAddressForm;
+                    break;
+                case 3:
+                    beneAddress3Form = beneAddressForm;
+                    break;
+                case 4:
+                    beneAddress4Form = beneAddressForm;
+                    break;
+                case 5:
+                    beneAddress5Form = beneAddressForm;
+                    break;
+                case 6:
+                    beneAddress6Form = beneAddressForm;
+                    break;
+                case 7:
+                    beneAddress7Form = beneAddressForm;
+                    break;
             }
         }
 
@@ -694,52 +708,54 @@ public class ProbateFormsRW08Page extends BasePage {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyDateLettersGranted(pdfFilePath);
 
-        verifyDateLettersGranted(pdfFilePath);
+            verifyFieldsInPDF(pdfFilePath,
+                    "Date of Death: 12/05/2023 File Number:22-2023-1234",
+                    "See Attachment",
+                    servedDateForm,
+                    "Served Date");
 
-        verifyFieldsInPDF(pdfFilePath,
-                "Date of Death: 12/05/2023 File Number:22-2023-1234",
-                "See Attachment",
-                servedDateForm,
-                "Served Date");
+            verifyFieldsInPDF(pdfFilePath,
+                    "Rules was served on or mailed to the following beneficiaries of the above-captioned estate on",
+                    "Corporate Fiduciary (if applicable)",
+                    signedDateForm,
+                    "Signed Date");
 
-        verifyFieldsInPDF(pdfFilePath,
-                "Rules was served on or mailed to the following beneficiaries of the above-captioned estate on",
-                "Corporate Fiduciary (if applicable)",
-                signedDateForm,
-                "Signed Date");
+            verifyFieldsInPDF(pdfFilePath,
+                    "a/k/a Krish",
+                    "02/25/2025 :",
+                    fourDigitFileNumberForm,
+                    "File Number");
 
-        verifyFieldsInPDF(pdfFilePath,
-                "a/k/a Krish",
-                "02/25/2025 :",
-                fourDigitFileNumberForm,
-                "File Number");
+            verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
 
-        verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+            List<String> expectedNames = Arrays.asList(
+                    Beneficiary1Form,
+                    Beneficiary2Form,
+                    Beneficiary3Form,
+                    Beneficiary4Form,
+                    Beneficiary5Form,
+                    Beneficiary6Form,
+                    Beneficiary7Form
+            );
 
-        List<String> expectedNames = Arrays.asList(
-                Beneficiary1Form,
-                Beneficiary2Form,
-                Beneficiary3Form,
-                Beneficiary4Form,
-                Beneficiary5Form,
-                Beneficiary6Form,
-                Beneficiary7Form
-        );
+            List<String> expectedAddresses = Arrays.asList(
+                    beneAddress1Form,
+                    beneAddress4Form,
+                    beneAddress6Form,
+                    beneAddress7Form,
+                    beneAddress3Form,
+                    beneAddress5Form,
+                    beneAddress2Form
+            );
 
-        List<String> expectedAddresses = Arrays.asList(
-                beneAddress1Form,
-                beneAddress4Form,
-                beneAddress6Form,
-                beneAddress7Form,
-                beneAddress3Form,
-                beneAddress5Form,
-                beneAddress2Form
-        );
-
-// Call the method
-        verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
-
+            verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
     }
 
     private static void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {

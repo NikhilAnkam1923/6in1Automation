@@ -482,22 +482,23 @@ public class ProbateFormsRW04Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-                verifyPrintNames(pdfFilePath);
-                //verifyCounty(pdfFilePath);
+            verifyPrintNames(pdfFilePath);
+            //verifyCounty(pdfFilePath);
             verifyFieldsInPDF(pdfFilePath,
                     "Deputy for Register of Wills",
                     "(Signature) Leo",
                     enteredStreetAddress1Form,
                     "Witness1 Street Address");
-                verifyFieldsInPDF(pdfFilePath,
-                        "(City, State, Zip)",
-                        "OATH OF NON-SUBSCRIBING WITNESS(ES)",
-                        enteredStreetAddress2Form,
-                        "Witness2 Street Address");
-                validateWitnessDetails(pdfFilePath);
+            verifyFieldsInPDF(pdfFilePath,
+                    "(City, State, Zip)",
+                    "OATH OF NON-SUBSCRIBING WITNESS(ES)",
+                    enteredStreetAddress2Form,
+                    "Witness2 Street Address");
+            validateWitnessDetails(pdfFilePath);
 
-            } catch (IOException e) {
-                CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
@@ -616,7 +617,7 @@ public class ProbateFormsRW04Page extends BasePage {
                 throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
             }
 
-            CommonSteps.logInfo("🔍 Comparing -> for "+ fieldName +" Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
 
             if (!expectedValue.equalsIgnoreCase(extractedValue)) {
                 throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");

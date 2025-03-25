@@ -30,9 +30,11 @@ import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.*;
 
-public class ProbateFormsRW02Page extends BasePage{
+public class ProbateFormsRW02Page extends BasePage {
     @Override
-    String getName() { return ""; }
+    String getName() {
+        return "";
+    }
 
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String RW_FORM_XPATH = "//a//p[text()='%s']";
@@ -237,7 +239,7 @@ public class ProbateFormsRW02Page extends BasePage{
     }
 
     public void clickOnRWForm(String formToSelect) throws AutomationException {
-        driverUtil.getWebElement(String.format(RW_FORM_XPATH,formToSelect)).click();
+        driverUtil.getWebElement(String.format(RW_FORM_XPATH, formToSelect)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
@@ -303,7 +305,7 @@ public class ProbateFormsRW02Page extends BasePage{
         waitForVisibleElement(By.xpath(RW02_FETCHED_COUNTY));
         String domicileCountry = getEstateValue("DomicileCountry");
         countyOnForm = driverUtil.getWebElement(RW02_FETCHED_COUNTY).getAttribute("value");
-        if(!countyOnForm.equals(domicileCountry)){
+        if (!countyOnForm.equals(domicileCountry)) {
             throw new AutomationException("County name is not fetched correctly from the decedent info.");
         }
     }
@@ -392,7 +394,7 @@ public class ProbateFormsRW02Page extends BasePage{
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.isEnabled() && field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
+        if (field.isEnabled() && field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable");
         }
     }
@@ -507,20 +509,20 @@ public class ProbateFormsRW02Page extends BasePage{
         clickOnRWForm("RW 03");
         clickOnRWForm("RW 02");
 
-        if(!getSelectedOption(PERSONAL_PROPERTY_DRDWN).equals(personalPropertyForm)){
-            throw new AutomationException("Selected value "+personalPropertyForm+" is not retained");
+        if (!getSelectedOption(PERSONAL_PROPERTY_DRDWN).equals(personalPropertyForm)) {
+            throw new AutomationException("Selected value " + personalPropertyForm + " is not retained");
         }
 
-        if(!getSelectedOption(PENNSYLVANIA_PROPERTY_DRDWN).equals(pennsylvaniaPropertyForm)){
-            throw new AutomationException("Selected value "+pennsylvaniaPropertyForm+" is not retained");
+        if (!getSelectedOption(PENNSYLVANIA_PROPERTY_DRDWN).equals(pennsylvaniaPropertyForm)) {
+            throw new AutomationException("Selected value " + pennsylvaniaPropertyForm + " is not retained");
         }
 
-        if(!getSelectedOption(COUNTY_PROPERTY_DRDWN).equals(countryPropertyForm)){
-            throw new AutomationException("Selected value "+countryPropertyForm+" is not retained");
+        if (!getSelectedOption(COUNTY_PROPERTY_DRDWN).equals(countryPropertyForm)) {
+            throw new AutomationException("Selected value " + countryPropertyForm + " is not retained");
         }
 
-        if(!getSelectedOption(REAL_ESTATE_PROPERTY_DRDWN).equals(realEstatePropertyForm)){
-            throw new AutomationException("Selected value "+realEstatePropertyForm+" is not retained");
+        if (!getSelectedOption(REAL_ESTATE_PROPERTY_DRDWN).equals(realEstatePropertyForm)) {
+            throw new AutomationException("Selected value " + realEstatePropertyForm + " is not retained");
         }
 
         CommonSteps.takeScreenshot();
@@ -530,6 +532,7 @@ public class ProbateFormsRW02Page extends BasePage{
         enteredAKA3Form = driverUtil.getWebElement(RW_AKA_FIELD3).getAttribute("value");
 
     }
+
     private void fillField(String fieldLocator, String data) throws AutomationException {
         WebElement field = DriverFactory.drivers.get().findElement(By.xpath(fieldLocator));
 
@@ -548,13 +551,13 @@ public class ProbateFormsRW02Page extends BasePage{
         WebElement realEstatePropertyAmount = driverUtil.getWebElement(REAL_ESTATE_PROPERTY_AMOUNT);
 
         clearField(PERSONAL_PROPERTY_AMOUNT);
-        fillField(PERSONAL_PROPERTY_AMOUNT,"320.00");
+        fillField(PERSONAL_PROPERTY_AMOUNT, "320.00");
         clearField(PENNSYLVANIA_PROPERTY_AMOUNT);
-        fillField(PENNSYLVANIA_PROPERTY_AMOUNT,"430.00");
+        fillField(PENNSYLVANIA_PROPERTY_AMOUNT, "430.00");
         clearField(COUNTY_PROPERTY_AMOUNT);
-        fillField(COUNTY_PROPERTY_AMOUNT,"530.00");
+        fillField(COUNTY_PROPERTY_AMOUNT, "530.00");
         clearField(REAL_ESTATE_PROPERTY_AMOUNT);
-        fillField(REAL_ESTATE_PROPERTY_AMOUNT,"670.00");
+        fillField(REAL_ESTATE_PROPERTY_AMOUNT, "670.00");
         realEstatePropertyAmount.sendKeys(Keys.TAB);
 
         WebDriverUtil.waitForAWhile(2);
@@ -569,27 +572,27 @@ public class ProbateFormsRW02Page extends BasePage{
         clickOnRWForm("RW 03");
         clickOnRWForm("RW 02");
 
-        if(!driverUtil.getWebElement(PERSONAL_PROPERTY_AMOUNT).getAttribute("value").equals(enteredPersonalPropertyAmountForm)){
-            throw new AutomationException("Entered value "+enteredPersonalPropertyAmountForm+" is not retained");
+        if (!driverUtil.getWebElement(PERSONAL_PROPERTY_AMOUNT).getAttribute("value").equals(enteredPersonalPropertyAmountForm)) {
+            throw new AutomationException("Entered value " + enteredPersonalPropertyAmountForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(PENNSYLVANIA_PROPERTY_AMOUNT).getAttribute("value").equals(enteredPennsylvaniaPropertyAmountForm)){
-            throw new AutomationException("Entered value "+enteredPennsylvaniaPropertyAmountForm+" is not retained");
+        if (!driverUtil.getWebElement(PENNSYLVANIA_PROPERTY_AMOUNT).getAttribute("value").equals(enteredPennsylvaniaPropertyAmountForm)) {
+            throw new AutomationException("Entered value " + enteredPennsylvaniaPropertyAmountForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(COUNTY_PROPERTY_AMOUNT).getAttribute("value").equals(enteredCountyPropertyAmountForm)){
-            throw new AutomationException("Entered value "+enteredCountyPropertyAmountForm+" is not retained");
+        if (!driverUtil.getWebElement(COUNTY_PROPERTY_AMOUNT).getAttribute("value").equals(enteredCountyPropertyAmountForm)) {
+            throw new AutomationException("Entered value " + enteredCountyPropertyAmountForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(REAL_ESTATE_PROPERTY_AMOUNT).getAttribute("value").equals(enteredRealEstatePropertyAmountForm)){
-            throw new AutomationException("Entered value "+enteredRealEstatePropertyAmountForm+" is not retained");
+        if (!driverUtil.getWebElement(REAL_ESTATE_PROPERTY_AMOUNT).getAttribute("value").equals(enteredRealEstatePropertyAmountForm)) {
+            throw new AutomationException("Entered value " + enteredRealEstatePropertyAmountForm + " is not retained");
         }
     }
 
     public void verifyTotalEstimatedValueIsTheTotalOfFirstAndLastFieldsOnly() throws AutomationException {
         String sumOfFistAndLastFields = String.format("%.2f", Double.parseDouble(enteredPersonalPropertyAmountForm) + Double.parseDouble(enteredRealEstatePropertyAmountForm));
         totalEstimatedValueForm = driverUtil.getWebElement(TOTAL_ESTIMATED_VALUE).getAttribute("value");
-        if(!totalEstimatedValueForm.equals(sumOfFistAndLastFields)){
+        if (!totalEstimatedValueForm.equals(sumOfFistAndLastFields)) {
             throw new AutomationException("The total estimated value is not the total of first and last fields only");
         }
     }
@@ -608,15 +611,15 @@ public class ProbateFormsRW02Page extends BasePage{
         String estateCity = driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value");
         String estateCounty = driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value");
 
-        if(!expectedEstateAddress.equals(estateAddress)){
+        if (!expectedEstateAddress.equals(estateAddress)) {
             throw new AutomationException("Address is not copied correctly");
         }
 
-        if(!expectedEstateCity.equals(estateCity)){
+        if (!expectedEstateCity.equals(estateCity)) {
             throw new AutomationException("City is not copied correctly");
         }
 
-        if(!expectedEstateCounty.equals(estateCounty)){
+        if (!expectedEstateCounty.equals(estateCounty)) {
             throw new AutomationException("County is not copied correctly");
         }
 
@@ -628,15 +631,15 @@ public class ProbateFormsRW02Page extends BasePage{
     public void verifyUncheckingTheCheckboxDoesNotClearTheRealEstateInPennsylvaniaSituatedAtField() throws AutomationException {
         userChecksUsePrincipalResidenceCheckbox();
 
-        if(driverUtil.getWebElement(ESTATE_PENNSYLVANIA_ADDRESS).getAttribute("value")==null){
+        if (driverUtil.getWebElement(ESTATE_PENNSYLVANIA_ADDRESS).getAttribute("value") == null) {
             throw new AutomationException("The address does not retained, the field is empty.");
         }
 
-        if(driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value")==null){
+        if (driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value") == null) {
             throw new AutomationException("The address does not retained, the field is empty.");
         }
 
-        if(driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value")==null){
+        if (driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value") == null) {
             throw new AutomationException("The address does not retained, the field is empty.");
         }
     }
@@ -647,16 +650,16 @@ public class ProbateFormsRW02Page extends BasePage{
 
         WebDriverUtil.waitForAWhile();
 
-        if(!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_ADDRESS).getAttribute("value").equals(copiedEstateAddressForm)){
-            throw new AutomationException("Copied value "+copiedEstateAddressForm+" is not retained");
+        if (!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_ADDRESS).getAttribute("value").equals(copiedEstateAddressForm)) {
+            throw new AutomationException("Copied value " + copiedEstateAddressForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value").equals(copiedEstateCityForm)){
-            throw new AutomationException("Copied value "+copiedEstateCityForm+" is not retained");
+        if (!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value").equals(copiedEstateCityForm)) {
+            throw new AutomationException("Copied value " + copiedEstateCityForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value").equals(copiedEstateCountyForm)){
-            throw new AutomationException("Copied value "+copiedEstateCountyForm+" is not retained");
+        if (!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value").equals(copiedEstateCountyForm)) {
+            throw new AutomationException("Copied value " + copiedEstateCountyForm + " is not retained");
         }
     }
 
@@ -684,16 +687,16 @@ public class ProbateFormsRW02Page extends BasePage{
 
         WebDriverUtil.waitForAWhile();
 
-        if(!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_ADDRESS).getAttribute("value").equals(modifiedEstateAddressForm)){
-            throw new AutomationException("Modified value "+modifiedEstateAddressForm+" is not retained");
+        if (!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_ADDRESS).getAttribute("value").equals(modifiedEstateAddressForm)) {
+            throw new AutomationException("Modified value " + modifiedEstateAddressForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value").equals(modifiedEstateCityForm)){
-            throw new AutomationException("Modified value "+modifiedEstateCityForm+" is not retained");
+        if (!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_CITY).getAttribute("value").equals(modifiedEstateCityForm)) {
+            throw new AutomationException("Modified value " + modifiedEstateCityForm + " is not retained");
         }
 
-        if(!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value").equals(modifiedEstateCountyForm)){
-            throw new AutomationException("Modified value "+modifiedEstateCountyForm+" is not retained");
+        if (!driverUtil.getWebElement(ESTATE_PENNSYLVANIA_COUNTY).getAttribute("value").equals(modifiedEstateCountyForm)) {
+            throw new AutomationException("Modified value " + modifiedEstateCountyForm + " is not retained");
         }
 
         CommonSteps.takeScreenshot();
@@ -717,7 +720,7 @@ public class ProbateFormsRW02Page extends BasePage{
         String fetchedDiedDate = driverUtil.getWebElement(FETCHED_DECEDENT_DIED_DATE).getAttribute("value");
         String expectedDateOfWill = getEstateValue("DateOfWill");
 
-        if(!fetchedDiedDate.equals(expectedDateOfWill)){
+        if (!fetchedDiedDate.equals(expectedDateOfWill)) {
             throw new AutomationException("Decedent died date is not auto fetched");
         }
     }
@@ -731,13 +734,13 @@ public class ProbateFormsRW02Page extends BasePage{
         String expectedCodicilDate2 = getEstateValue("CodicilDate2");
         String expectedCodicilDate3 = getEstateValue("CodicilDate3");
 
-        if(!codicilDate1.equals(expectedCodicilDate1)){
+        if (!codicilDate1.equals(expectedCodicilDate1)) {
             throw new AutomationException("Codicil date 1 is not auto fetched");
         }
-        if(!codicilDate2.equals(expectedCodicilDate2)){
+        if (!codicilDate2.equals(expectedCodicilDate2)) {
             throw new AutomationException("Codicil date 2 is not auto fetched");
         }
-        if(!codicilDate3.equals(expectedCodicilDate3)){
+        if (!codicilDate3.equals(expectedCodicilDate3)) {
             throw new AutomationException("Codicil date 3 is not auto fetched");
         }
     }
@@ -772,15 +775,15 @@ public class ProbateFormsRW02Page extends BasePage{
         driverUtil.getWebElement(ESTATE_TAB).click();
         WebDriverUtil.waitForAWhile();
 
-        if(!driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value").equals(rwCodicilDate1Form)){
+        if (!driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value").equals(rwCodicilDate1Form)) {
             throw new AutomationException("Updated codicil date 1 is not reflected");
         }
 
-        if(!driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value").equals(rwCodicilDate2Form)){
+        if (!driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value").equals(rwCodicilDate2Form)) {
             throw new AutomationException("Updated codicil date 2 is not reflected");
         }
 
-        if(!driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value").equals(rwCodicilDate3Form)){
+        if (!driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value").equals(rwCodicilDate3Form)) {
             throw new AutomationException("Updated codicil date 3 is not reflected");
         }
 
@@ -803,7 +806,7 @@ public class ProbateFormsRW02Page extends BasePage{
 
         WebElement textField = driverUtil.getWebElement(A_EXCEPTION_TEXT);
         WebDriverUtil.waitForAWhile();
-        if(!textField.isEnabled()){
+        if (!textField.isEnabled()) {
             throw new AutomationException("Text field is not enabled");
         }
 
@@ -827,7 +830,7 @@ public class ProbateFormsRW02Page extends BasePage{
     public void verifyBeneficiariesSelectionFieldAtTheBottomOfPageIsEnabled() throws AutomationException {
         WebElement beneField = driverUtil.getWebElement(BENEFICIARY_SELECTION_FIELD);
         WebDriverUtil.waitForAWhile(3);
-        if(!beneField.isEnabled()){
+        if (!beneField.isEnabled()) {
             throw new AutomationException("Beneficiaries' selection field at the bottom of page 1 is not enabled");
         }
     }
@@ -842,19 +845,19 @@ public class ProbateFormsRW02Page extends BasePage{
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_BENE_XPATH);
 
-        BeneContact1Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
+        BeneContact1Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact2Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
+        BeneContact2Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact3Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
+        BeneContact3Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact4Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
+        BeneContact4Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
+        BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
     }
 
@@ -888,11 +891,11 @@ public class ProbateFormsRW02Page extends BasePage{
         String beneficiary5StateCode = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.stateCode").toString();
         String beneficiary5Zip = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.zip").toString();
 
-        BeneContactAddress1Form = beneficiary1AddressLine1+", "+beneficiary1City+", "+beneficiary1StateCode+" "+beneficiary1Zip;
-        BeneContactAddress2Form = beneficiary2AddressLine1+", "+beneficiary2City+", "+beneficiary2StateCode+" "+beneficiary2Zip;
-        BeneContactAddress3Form = beneficiary3AddressLine1+", "+beneficiary3City+", "+beneficiary3StateCode+" "+beneficiary3Zip;
-        BeneContactAddress4Form = beneficiary4AddressLine1+", "+beneficiary4City+", "+beneficiary4StateCode+" "+beneficiary4Zip;
-        BeneContactAddress5Form = beneficiary5AddressLine1+", "+beneficiary5City+", "+beneficiary5StateCode+" "+beneficiary5Zip;
+        BeneContactAddress1Form = beneficiary1AddressLine1 + ", " + beneficiary1City + ", " + beneficiary1StateCode + " " + beneficiary1Zip;
+        BeneContactAddress2Form = beneficiary2AddressLine1 + ", " + beneficiary2City + ", " + beneficiary2StateCode + " " + beneficiary2Zip;
+        BeneContactAddress3Form = beneficiary3AddressLine1 + ", " + beneficiary3City + ", " + beneficiary3StateCode + " " + beneficiary3Zip;
+        BeneContactAddress4Form = beneficiary4AddressLine1 + ", " + beneficiary4City + ", " + beneficiary4StateCode + " " + beneficiary4Zip;
+        BeneContactAddress5Form = beneficiary5AddressLine1 + ", " + beneficiary5City + ", " + beneficiary5StateCode + " " + beneficiary5Zip;
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Bene/Heirs updated successfully.")));
 
@@ -974,7 +977,7 @@ public class ProbateFormsRW02Page extends BasePage{
     public void verifyBeneficiariesSelectionFieldIsDisabled() throws AutomationException {
         WebElement beneField = driverUtil.getWebElement(BENEFICIARY_SELECTION_FIELD);
         WebDriverUtil.waitForAWhile(2);
-        if(beneField.isEnabled()){
+        if (beneField.isEnabled()) {
             throw new AutomationException("Beneficiaries' selection field is enabled");
         }
     }
@@ -1000,7 +1003,7 @@ public class ProbateFormsRW02Page extends BasePage{
         Petitioner3Form = CommonUtil.getJsonPath("corporateFiduciary2").get("corporateFiduciary2.entityName").toString();
         Petitioner4Form = CommonUtil.getJsonPath("corporateFiduciary3").get("corporateFiduciary3.entityName").toString();
 
-        Petitioner1Form = fiduciary5FirstName+" "+fiduciary5MiddleName+" "+fiduciary5LastName+", "+fiduciary5Suffix;
+        Petitioner1Form = fiduciary5FirstName + " " + fiduciary5MiddleName + " " + fiduciary5LastName + ", " + fiduciary5Suffix;
 
         driverUtil.getWebElement(SECOND_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
@@ -1049,7 +1052,7 @@ public class ProbateFormsRW02Page extends BasePage{
         String decedentName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
         String akaNames = getEstateValue("AlsoKnownAs1") + " " + getEstateValue("AlsoKnownAs2") + " " + getEstateValue("AlsoKnownAs3");
         String fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
-        allFiduciaryContactsForm = expectedCorporateAndFiduciaryContacts+", "+expectedFiduciaryContacts;
+        allFiduciaryContactsForm = expectedCorporateAndFiduciaryContacts + ", " + expectedFiduciaryContacts;
         String dateOfWill = getEstateValue("DateOfWill");
 
         verifyAutoPopulatedValue(decedentName);
@@ -1157,7 +1160,7 @@ public class ProbateFormsRW02Page extends BasePage{
 
         totalFeesForm = driverUtil.getWebElement(TOTAL_FEES).getAttribute("value");
 
-        if(!totalFeesForm.equals(calculatedTotalFees)){
+        if (!totalFeesForm.equals(calculatedTotalFees)) {
             throw new AutomationException("Total is incorrect.");
         }
     }
@@ -1171,7 +1174,7 @@ public class ProbateFormsRW02Page extends BasePage{
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_BENE_XPATH);
 
-        selectedAttorneyContactForm = driverUtil.getWebElement(DRAG_BENE).getText().replace(",","");
+        selectedAttorneyContactForm = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
 
@@ -1193,7 +1196,7 @@ public class ProbateFormsRW02Page extends BasePage{
         attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
         attorneyFaxForm = CommonUtil.getJsonPath("attorney2").get("attorney2.fax").toString();
 
-        attorneyCityStateZipForm = attorneyCity+", "+attorneyStateCode+" "+attorneyZip;
+        attorneyCityStateZipForm = attorneyCity + ", " + attorneyStateCode + " " + attorneyZip;
 
         WebDriverUtil.waitForAWhile();
 
@@ -1260,9 +1263,14 @@ public class ProbateFormsRW02Page extends BasePage{
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
-
-        verifyPrintNames(pdfFilePath);
+        try {
+            verifyPrintNames(pdfFilePath);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
     }
+
 
     public static void verifyPrintNames(String pdfFilePath) throws IOException {
         String beforeLine = "Estate of William John  ,Deceased";
@@ -1330,7 +1338,6 @@ public class ProbateFormsRW02Page extends BasePage{
             CommonSteps.logInfo("❌ Before or after line not found!");
         }
     }
-
 
 
     public void userResetsTheRWForm() throws AutomationException {
