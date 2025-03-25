@@ -196,6 +196,7 @@ public class ProbateFormsRW03Page extends BasePage {
 
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement field = driverUtil.getWebElement(fieldLocator);
 
         if (field.isEnabled() && field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
@@ -426,8 +427,9 @@ public class ProbateFormsRW03Page extends BasePage {
 
             validateWitnessDetails(pdfFilePath);
 
-        } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 

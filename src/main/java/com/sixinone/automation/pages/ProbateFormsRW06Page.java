@@ -791,9 +791,14 @@ public class ProbateFormsRW06Page extends BasePage {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyDate(pdfFilePath);
+            verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
 
-        verifyDate(pdfFilePath);
-        verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
     }
 
     private static void verifyDate(String pdfFilePath) throws IOException, AutomationException {
@@ -833,7 +838,7 @@ public class ProbateFormsRW06Page extends BasePage {
         CommonSteps.logInfo("📌 Extracted Date(s): " + extractedDates);
 
         // Expected Dates for comparison
-        List<String> expectedDates = Arrays.asList(dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,dateDataForm6,dateDataForm7,dateDataForm8,dateDataForm9,dateDataForm10);
+        List<String> expectedDates = Arrays.asList(dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5, dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10);
 
         // 🔍 Validate extracted dates
         for (String extracted : extractedDates) {
