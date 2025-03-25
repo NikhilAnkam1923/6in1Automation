@@ -1213,7 +1213,7 @@ public class ProbateFormsRW02Page extends BasePage {
         WebElement printButton = driverUtil.getWebElementAndScroll(PRINTFORM_BUTTON);
         ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript("arguments[0].scrollIntoView({block: 'center'});", printButton);
         waitForVisibleElement(By.xpath(PRINTFORM_BUTTON));
-        printButton.click();
+        scrollToElementAndClick(PRINTFORM_BUTTON);
 
         Robot robot = new Robot();
         waitForAWhile(2); // Wait for the dialog to appear
