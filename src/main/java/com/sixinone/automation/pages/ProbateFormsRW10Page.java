@@ -622,7 +622,8 @@ public class ProbateFormsRW10Page extends BasePage {
             validateField("Name of Person", personName, "Rihan Benjamin Miles Jr");
             validateField("Person Address", personAddress, "Riverside Drive");
             validateField("Person City, State, Zip", personCityStateZip, "Kansas City, MO 64101");
-            validateField("Person Telephone", personTelephone, "(816) 555-4321");
+            validateField("Person Telephone", personTelephone, "412-716-7069");
+            ;
             validateField("Person Email", personEmail, "rihan.miles@business.com");
         }
 

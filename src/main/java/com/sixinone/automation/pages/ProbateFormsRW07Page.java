@@ -861,12 +861,11 @@ public class ProbateFormsRW07Page extends BasePage {
         CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + extracted + "'");
 
         if (extracted == null || extracted.isEmpty()) {
-            CommonSteps.logInfo("⚠️ Warning: '" + fieldName + "' not found in document.");
-            return; // No exception thrown, just logs the issue
+            throw new AutomationException("⚠️ Warning: '" + fieldName + "' not found in document.");
         }
 
         if (!expected.equalsIgnoreCase(extracted)) {
-            CommonSteps.logInfo("⚠️ Warning: '" + fieldName + "' does not match expected value.");
+            throw new AutomationException("⚠️ Warning: '" + fieldName + "' does not match expected value.");
         }
 
         CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' processed.");
@@ -891,15 +890,15 @@ public class ProbateFormsRW07Page extends BasePage {
             String currentLine = allLines[i].trim();
 
             if (corporateFiduciary == null && currentLine.equalsIgnoreCase("Name of Corporate Fiduciary") && i > 5) {
-                corporateFiduciary = clean(allLines[i + 8], "Corporate Fiduciary");
+                corporateFiduciary = clean(allLines[i + 8]);
             } else if (corporateFiduciary != null && corpAddress == null && currentLine.equalsIgnoreCase("Address") && i > 6) {
-                corpAddress = clean(allLines[i + 7], "Address");
+                corpAddress = clean(allLines[i + 7]);
             } else if (corporateFiduciary != null && corpCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 4) {
-                corpCityStateZip = clean(allLines[i + 7], "CityStateZip");
+                corpCityStateZip = clean(allLines[i + 7]);
             } else if (corporateFiduciary != null && corpTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 3) {
-                corpTelephone = clean(allLines[i + 7], "Telephone");
+                corpTelephone = clean(allLines[i + 7]);
             } else if (corporateFiduciary != null && corpEmail == null && currentLine.equalsIgnoreCase("Email") && i > 2) {
-                corpEmail = clean(allLines[i + 7], "Email");
+                corpEmail = clean(allLines[i + 7]);
             }
 
 // Extract Name of Person (2nd occurrence)
@@ -907,16 +906,16 @@ public class ProbateFormsRW07Page extends BasePage {
                 if (!personFoundFirstTime) {
                     personFoundFirstTime = true; // Mark the first occurrence but do nothing
                 } else if (personName == null) { // Now process the second occurrence
-                    personName = clean(allLines[i +41], "Person Name");
+                    personName = clean(allLines[i + 41]);
                 }
             } else if (personFoundFirstTime && personName != null && personAddress == null && currentLine.equalsIgnoreCase("Address") && i > 6) {
-                personAddress = clean(allLines[i - 41], "Address");
+                personAddress = clean(allLines[i + 41]);
             } else if (personFoundFirstTime && personName != null && personCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 4) {
-                personCityStateZip = clean(allLines[i - 41], "CityStateZip");
+                personCityStateZip = clean(allLines[i + 41]);
             } else if (personFoundFirstTime && personName != null && personTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 3) {
-                personTelephone = clean(allLines[i - 41], "Telephone");
+                personTelephone = clean(allLines[i + 41]);
             } else if (personFoundFirstTime && personName != null && personEmail == null && currentLine.equalsIgnoreCase("Email") && i > 2) {
-                personEmail = clean(allLines[i - 41], "Email");
+                personEmail = clean(allLines[i + 41]);
             }
 
             // Exit loop early if all values are found
@@ -952,22 +951,11 @@ public class ProbateFormsRW07Page extends BasePage {
         CommonSteps.logInfo("✅ Validation Passed: Corporate Fiduciary and Name of Person details successfully matched.");
     }
 
-    private static String clean(String rawText, String fieldType) {
+    private static String clean(String rawText) {
         if (rawText == null || rawText.trim().isEmpty()) return "";
 
         String cleanedText = rawText.trim();
-
-        switch (fieldType.toLowerCase()) {
-            case "file number":
-                cleanedText = cleanedText.replaceAll("(?i)\\b(Date of Death: 12/05/2023 File Number:)\\b", "").trim();
-                break;
-
-            default:
-                // Generic cleanup for any other case
-                cleanedText = cleanedText.replaceAll("[:,\\.\\s]+$", "").trim();
-                break;
-        }
-
+        cleanedText = cleanedText.replaceAll("[:,\\.\\s]+$", "").trim();
         return cleanedText;
     }
 
