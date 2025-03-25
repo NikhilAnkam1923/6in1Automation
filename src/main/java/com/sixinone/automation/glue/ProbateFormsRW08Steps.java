@@ -30,7 +30,7 @@ public class ProbateFormsRW08Steps {
     }
 
     @Then("user verifies multiple beneficiary contacts can be selected and displayed on the form")
-    public void userVerifiesMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException {
+    public void userVerifiesMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that multiple beneficiary contacts can be selected and displayed on the form");
         PageFactory.probateFormsRW08Page().verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm();
         CommonSteps.takeScreenshot();

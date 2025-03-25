@@ -113,6 +113,23 @@ public class ProbateFormsRW08Page extends BasePage {
     static String displayNameForm;
     static String alsoKnownAsForm;
     static String fileNumberForm;
+    static String fiduciaryCityStateCodeZip;
+    static String fiduciaryAddressLine1Form;
+    static String corporateFiduciaryFirm;
+    static String fiduciaryPhoneForm;
+    static String fiduciaryEmailForm;
+    static String attorneyAddressLine1Form;
+    static String attorneyPhoneForm;
+    static String attorneyEmailForm;
+    static String attorneyCityStateCodeZip;
+    static String beneAddress1Form;
+    static String beneAddress2Form;
+    static String beneAddress3Form;
+    static String beneAddress4Form;
+    static String beneAddress5Form;
+    static String beneAddress6Form;
+    static String beneAddress7Form;
+
 
     static String enteredCityStateZipForm;
 
@@ -336,7 +353,7 @@ public class ProbateFormsRW08Page extends BasePage {
         }
     }
 
-    public void verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException {
+    public void verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
         scrollToElementAndClick(BENE_NAME_FIELD);
@@ -372,6 +389,31 @@ public class ProbateFormsRW08Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Additional beneficiaries will be added to an attachment.")));
 
         verifyBeneficiariesDisplayedCorrectlyOnForm();
+
+
+        for (int i = 1; i <= 7; i++) {
+            String beneficiaryPrefix = "beneficiary" + i;
+
+            String beneficiaryCity = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".city").toString();
+            String beneficiaryState = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".stateCode").toString();
+            String beneficiaryZip = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".zip").toString();
+            String beneficiaryAddress = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".addressLine1").toString();
+
+            String beneficiaryCityStateZip = beneficiaryCity + ", " + beneficiaryState + " " + beneficiaryZip;
+            String beneAddressForm = beneficiaryAddress + ", " + beneficiaryCityStateZip;
+
+            switch (i) {
+                case 1: beneAddress1Form = beneAddressForm; break;
+                case 2: beneAddress2Form = beneAddressForm; break;
+                case 3: beneAddress3Form = beneAddressForm; break;
+                case 4: beneAddress4Form = beneAddressForm; break;
+                case 5: beneAddress5Form = beneAddressForm; break;
+                case 6: beneAddress6Form = beneAddressForm; break;
+                case 7: beneAddress7Form = beneAddressForm; break;
+            }
+        }
+
+
     }
 
     private void verifyBeneficiariesDisplayedCorrectlyOnForm() throws AutomationException {
@@ -478,9 +520,20 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
-        String corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+
+        String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
+        String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
+        String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
+        fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
+        fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
+
+        fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
+
+        WebDriverUtil.waitForAWhile();
 
         WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
@@ -534,6 +587,16 @@ public class ProbateFormsRW08Page extends BasePage {
         String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString() + ",";
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
         String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
+
+        String attorneyCityForm = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
+        String attorneyStateForm = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
+        String attorneyZipForm = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
+        attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
+        attorneyEmailForm = CommonUtil.getJsonPath("attorney2").get("attorney2.emailId").toString();
+
+        attorneyCityStateCodeZip = attorneyCityForm + ", " + attorneyStateForm + " " + attorneyZipForm;
+
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
@@ -665,13 +728,13 @@ public class ProbateFormsRW08Page extends BasePage {
         );
 
         List<String> expectedAddresses = Arrays.asList(
-                "Lakeview Street, Miami, FL 33101",
-                "Main Street, Seattle, WA 98101",
-                "Pine Street, Seattle, WA 98101",
-                "Lake Shore Drive, Chicago, IL 60611",
-                "Sunset Boulevard, Phoenix, AZ 85003",
-                "Hilltop Drive, Denver, CO 80202",
-                "Broadway Avenue, Los Angeles, CA 90001"
+                beneAddress1Form,
+                beneAddress4Form,
+                beneAddress6Form,
+                beneAddress7Form,
+                beneAddress3Form,
+                beneAddress5Form,
+                beneAddress2Form
         );
 
 // Call the method
@@ -844,20 +907,20 @@ public class ProbateFormsRW08Page extends BasePage {
 
         // Validate Corporate Fiduciary Details (1st occurrence)
         if (corporateFiduciary != null) {
-            validateField("Corporate Fiduciary", corporateFiduciary, "zetaConsulting");
-            validateField("Corporate Address", corpAddress, "Mountain View Drive");
-            validateField("Corporate City, State, Zip", corpCityStateZip, "Seattle, WA 98101");
-            validateField("Corporate Telephone", corpTelephone, "(206) 555-6789");
-            validateField("Corporate Email", corpEmail, "liam.anderson@zetaconsulting.com");
+            validateField("Corporate Fiduciary", corporateFiduciary, corporateFiduciaryFirm);
+            validateField("Corporate Address", corpAddress, fiduciaryAddressLine1Form);
+            validateField("Corporate City, State, Zip", corpCityStateZip, fiduciaryCityStateCodeZip);
+            validateField("Corporate Telephone", corpTelephone, fiduciaryPhoneForm);
+            validateField("Corporate Email", corpEmail, fiduciaryEmailForm);
         }
 
         // Validate Name of Person Details (2nd occurrence)
         if (personName != null) {
-            validateField("Name of Person", personName, "Rihan Benjamin Miles Jr");
-            validateField("Person Address", personAddress, "Riverside Drive");
-            validateField("Person City, State, Zip", personCityStateZip, "Kansas City, MO 64101");
-            validateField("Person Telephone", personTelephone, "(816) 555-4321");
-            validateField("Person Email", personEmail, "rihan.miles@business.com");
+            validateField("Name of Person", personName, selectedNameOfPerson);
+            validateField("Person Address", personAddress, attorneyAddressLine1Form);
+            validateField("Person City, State, Zip", personCityStateZip, attorneyCityStateCodeZip);
+            validateField("Person Telephone", personTelephone, attorneyPhoneForm);
+            validateField("Person Email", personEmail, attorneyEmailForm);
         }
 
         if (corporateFiduciary == null && personName == null) {

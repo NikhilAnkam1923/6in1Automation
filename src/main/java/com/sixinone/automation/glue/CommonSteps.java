@@ -864,8 +864,6 @@ public class CommonSteps {
             case "Rw10":
                 PageFactory.probateFormsRW10Page().verifyFormPrintedInPDFForm(formName);
                 break;
-
-
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }

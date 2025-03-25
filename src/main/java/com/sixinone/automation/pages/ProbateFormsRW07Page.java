@@ -108,6 +108,31 @@ public class ProbateFormsRW07Page extends BasePage {
     static String displayNameForm;
     static String alsoKnownAsForm;
     static String fileNumberForm;
+    static String corporateFiduciaryFirm;
+    static String fiduciaryCityStateCodeZip;
+    static String fiduciaryAddressLine1Form;
+    static String fiduciaryPhoneForm;
+    static String fiduciaryEmailForm;
+    static String attorneyAddressLine1Form;
+    static String attorneyPhoneForm;
+    static String attorneyEmailForm;
+    static String attorneyCityStateCodeZip;
+    static String selectedNameOfPerson;
+    static String FiduciaryName1Form;
+    static String FiduciaryAddress1Form;
+    static String FiduciaryTelephone1Form;
+    static String FiduciaryName2Form;
+    static String FiduciaryAddress2Form;
+    static String FiduciaryTelephone2Form;
+    static String FiduciaryName3Form;
+    static String FiduciaryAddress3Form;
+    static String FiduciaryTelephone3Form;
+    static String FiduciaryName4Form;
+    static String FiduciaryAddress4Form;
+    static String FiduciaryTelephone4Form;
+    static String FiduciaryName5Form;
+    static String FiduciaryAddress5Form;
+    static String FiduciaryTelephone5Form;
 
 
     private static String getFieldValue(String locator) throws AutomationException {
@@ -297,7 +322,7 @@ public class ProbateFormsRW07Page extends BasePage {
             String expectedState = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
             String expectedZip = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".zip").toString();
             String expectedAddressLine1 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString() + ",";
-            String expectedAddressLine2 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine2").toString() + ",";
+            String expectedAddressLine2 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine2").toString();
 
             String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName;
             String expectedStateCodeZip = expectedState + " " + expectedZip;
@@ -410,9 +435,41 @@ public class ProbateFormsRW07Page extends BasePage {
         List<WebElement> telephoneFields = driverUtil.getWebElements(TABLE_TELEPHONE_COLUMN);
 
         for (int row = 0; row < 5; row++) {
-            referenceNames.add(nameFields.get(row).getAttribute("value").trim());
-            referenceAddresses.add(addressFields.get(row).getAttribute("value").trim());
-            referenceTelephones.add(telephoneFields.get(row).getAttribute("value").trim());
+            String name = nameFields.get(row).getAttribute("value").trim();
+            String address = addressFields.get(row).getAttribute("value").trim();
+            String telephone = telephoneFields.get(row).getAttribute("value").trim();
+
+            referenceNames.add(name);
+            referenceAddresses.add(address);
+            referenceTelephones.add(telephone);
+
+            switch (row) {
+                case 0:
+                    FiduciaryName1Form = name;
+                    FiduciaryAddress1Form = address;
+                    FiduciaryTelephone1Form = telephone;
+                    break;
+                case 1:
+                    FiduciaryName2Form = name;
+                    FiduciaryAddress2Form = address;
+                    FiduciaryTelephone2Form = telephone;
+                    break;
+                case 2:
+                    FiduciaryName3Form = name;
+                    FiduciaryAddress3Form = address;
+                    FiduciaryTelephone3Form = telephone;
+                    break;
+                case 3:
+                    FiduciaryName4Form = name;
+                    FiduciaryAddress4Form = address;
+                    FiduciaryTelephone4Form = telephone;
+                    break;
+                case 4:
+                    FiduciaryName5Form = name;
+                    FiduciaryAddress5Form = address;
+                    FiduciaryTelephone5Form = telephone;
+                    break;
+            }
         }
 
 
@@ -505,7 +562,16 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
-        String corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+
+        String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
+        String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
+        String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
+        fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
+        fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
+
+        fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
@@ -560,6 +626,15 @@ public class ProbateFormsRW07Page extends BasePage {
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
         String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
 
+        String attorneyCityForm = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
+        String attorneyStateForm = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
+        String attorneyZipForm = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
+        attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
+        attorneyEmailForm = CommonUtil.getJsonPath("attorney2").get("attorney2.emailId").toString();
+
+        attorneyCityStateCodeZip = attorneyCityForm + ", " + attorneyStateForm + " " + attorneyZipForm;
+
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
         WebDriverUtil.waitForAWhile();
@@ -584,6 +659,7 @@ public class ProbateFormsRW07Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
     }
 
     public void verifySelectedContactsAreCleared() throws AutomationException {
@@ -640,39 +716,51 @@ public class ProbateFormsRW07Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
 
+//        List<String> expectedBeneficiaryDetails = Arrays.asList(
+//                "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F, Denver, CO 80202",
+//                "Christopher Daniel Lee Broadway Avenue, Suite 300, Los Angeles, CA 90001",
+//                "Sophia Grace Martinez Lakeview Street, Apt 12C, Miami, FL 33101",
+//                "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A, Phoenix, AZ 85003",
+//                "Matthew Joseph White Main Street, Office 45B, Seattle, WA 98101"
+//        );
+
+
         List<String> expectedBeneficiaryDetails = Arrays.asList(
-                "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F, Denver, CO 80202",
-                "Christopher Daniel Lee Broadway Avenue, Suite 300, Los Angeles, CA 90001",
-                "Sophia Grace Martinez Lakeview Street, Apt 12C, Miami, FL 33101",
-                "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A, Phoenix, AZ 85003",
-                "Matthew Joseph White Main Street, Office 45B, Seattle, WA 98101"
+                "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F Denver, CO 80202",
+                "Christopher Daniel Lee Broadway Avenue, Suite 300 Los Angeles, CA 90001",
+                "Sophia Grace Martinez Lakeview Street, Apt 12C Miami, FL 33101",
+                "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A Phoenix, AZ 85003",
+                "Matthew Joseph White Main Street, Office 45B Seattle, WA 98101"
         );
+
+
+
 
         verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
 
         List<String> expectedNames = Arrays.asList(
-                "Emily Ann Wilson",
-                "David James Clark",
-                "Daniel Robert Harris",
-                "Jessica Marie Brown",
-                "Michael Andrew Smith"
+                FiduciaryName1Form,
+                FiduciaryName2Form,
+                FiduciaryName3Form,
+                FiduciaryName4Form,
+                FiduciaryName5Form
 
         );
 
         List<String> expectedAddresses = Arrays.asList(
-                "Cedar Lane, New York, NY, 10001",
-                "Pine Street, San Francisco, CA, 94102",
-                "Willow Drive, Dallas, TX, 75201",
-                "Maple Avenue, Chicago, IL, 60610",
-                "Oak Street, Atlanta, GA, 30305"
+                FiduciaryAddress1Form,
+                FiduciaryAddress2Form,
+                FiduciaryAddress3Form,
+                FiduciaryAddress4Form,
+                FiduciaryAddress5Form
         );
 
         List<String> expectedTelephones = Arrays.asList(
-                "(212) 777-8888",
-                "(415) 654-7890",
-                "(214) 654-3210",
-                "(312) 555-6789",
-                "(678) 123-4567"
+                FiduciaryTelephone1Form,
+                FiduciaryTelephone2Form,
+                FiduciaryTelephone3Form,
+                FiduciaryTelephone4Form,
+                FiduciaryTelephone5Form
         );
 
 
@@ -751,6 +839,7 @@ public class ProbateFormsRW07Page extends BasePage {
                 .trim();
     }
 
+
     private static void verifyAllNamesAddressesTelephone(String pdfFilePath, List<String> expectedNames,
                                                          List<String> expectedAddresses, List<String> expectedTelephones)
             throws IOException, AutomationException {
@@ -762,7 +851,6 @@ public class ProbateFormsRW07Page extends BasePage {
         String beforeLine = "NAME ADDRESS TELEPHONE";
         String afterLine = "If the Decedent died testate";
 
-        // Extract **all** occurrences dynamically
         List<List<String>> extractedSections = extractMultipleSections(pdfText, beforeLine, afterLine);
 
         if (extractedSections.isEmpty()) {
@@ -784,22 +872,22 @@ public class ProbateFormsRW07Page extends BasePage {
                     String phone = phoneMatcher.group();
                     extractedTelephones.add(phone);
 
-                    // Extract name and address
+                    // Remove phone from the line
                     String nameAndAddress = line.substring(0, phoneMatcher.start()).trim();
 
-                    String extractedName = nameAndAddress;
-                    String extractedAddress = "UNKNOWN";
+                    // **Find first period (".") to separate name and address**
+                    int periodIndex = nameAndAddress.indexOf(".");
 
-                    for (String expectedAddress : expectedAddresses) {
-                        if (nameAndAddress.contains(expectedAddress)) {
-                            extractedName = nameAndAddress.replace(expectedAddress, "").trim();
-                            extractedAddress = expectedAddress;
-                            break;
-                        }
+                    if (periodIndex != -1) {
+                        String extractedName = nameAndAddress.substring(0, periodIndex + 1).trim();
+                        String extractedAddress = nameAndAddress.substring(periodIndex + 1).trim();
+
+                        extractedNames.add(extractedName);
+                        extractedAddresses.add(extractedAddress);
+                    } else {
+                        extractedNames.add(nameAndAddress);
+                        extractedAddresses.add("UNKNOWN");
                     }
-
-                    extractedNames.add(extractedName);
-                    extractedAddresses.add(extractedAddress);
                 } else {
                     CommonSteps.logInfo("⚠️ Warning: No valid phone number found in line: " + line);
                 }
@@ -819,6 +907,8 @@ public class ProbateFormsRW07Page extends BasePage {
 
         CommonSteps.logInfo("✅ Validation Completed: Names, Addresses, and Telephones processed.");
     }
+
+
 
     // **Extract multiple occurrences of NAME ADDRESS TELEPHONE sections**
     private static List<List<String>> extractMultipleSections(String text, String beforeLine, String afterLine) {
@@ -906,7 +996,7 @@ public class ProbateFormsRW07Page extends BasePage {
                 if (!personFoundFirstTime) {
                     personFoundFirstTime = true; // Mark the first occurrence but do nothing
                 } else if (personName == null) { // Now process the second occurrence
-                    personName = clean(allLines[i + 41]);
+                    personName = allLines[i + 41];
                 }
             } else if (personFoundFirstTime && personName != null && personAddress == null && currentLine.equalsIgnoreCase("Address") && i > 6) {
                 personAddress = clean(allLines[i + 41]);
@@ -928,20 +1018,20 @@ public class ProbateFormsRW07Page extends BasePage {
 
         // Validate Corporate Fiduciary Details (1st occurrence)
         if (corporateFiduciary != null) {
-            validateField("Corporate Fiduciary", corporateFiduciary, "zetaConsulting");
-            validateField("Corporate Address", corpAddress, "Mountain View Drive");
-            validateField("Corporate City, State, Zip", corpCityStateZip, "Seattle, WA 98101");
-            validateField("Corporate Telephone", corpTelephone, "(206) 555-6789");
-            validateField("Corporate Email", corpEmail, "liam.anderson@zetaconsulting.com");
+            validateField("Corporate Fiduciary", corporateFiduciary, corporateFiduciaryFirm);
+            validateField("Corporate Address", corpAddress, fiduciaryAddressLine1Form);
+            validateField("Corporate City, State, Zip", corpCityStateZip, fiduciaryCityStateCodeZip);
+            validateField("Corporate Telephone", corpTelephone, fiduciaryPhoneForm);
+            validateField("Corporate Email", corpEmail, fiduciaryEmailForm);
         }
 
         // Validate Name of Person Details (2nd occurrence)
         if (personName != null) {
-            validateField("Name of Person", personName, "Rihan Benjamin Miles Jr");
-            validateField("Person Address", personAddress, "Riverside Drive");
-            validateField("Person City, State, Zip", personCityStateZip, "Kansas City, MO 64101");
-            validateField("Person Telephone", personTelephone, "(816) 555-4321");
-            validateField("Person Email", personEmail, "rihan.miles@business.com");
+            validateField("Name of Person", personName, selectedNameOfPerson);
+            validateField("Person Address", personAddress, attorneyAddressLine1Form);
+            validateField("Person City, State, Zip", personCityStateZip, attorneyCityStateCodeZip);
+            validateField("Person Telephone", personTelephone, attorneyPhoneForm);
+            validateField("Person Email", personEmail, attorneyEmailForm);
         }
 
         if (corporateFiduciary == null && personName == null) {
