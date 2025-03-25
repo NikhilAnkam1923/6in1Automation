@@ -659,6 +659,7 @@ public class ProbateFormsRW07Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
+        WebDriverUtil.waitForAWhile();
         selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
     }
 

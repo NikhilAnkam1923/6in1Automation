@@ -196,6 +196,7 @@ public class ProbateFormsRW03Page extends BasePage {
 
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement field = driverUtil.getWebElement(fieldLocator);
 
         if (field.isEnabled() && field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
