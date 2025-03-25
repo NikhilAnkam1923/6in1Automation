@@ -716,22 +716,14 @@ public class ProbateFormsRW07Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
 
-//        List<String> expectedBeneficiaryDetails = Arrays.asList(
-//                "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F, Denver, CO 80202",
-//                "Christopher Daniel Lee Broadway Avenue, Suite 300, Los Angeles, CA 90001",
-//                "Sophia Grace Martinez Lakeview Street, Apt 12C, Miami, FL 33101",
-//                "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A, Phoenix, AZ 85003",
-//                "Matthew Joseph White Main Street, Office 45B, Seattle, WA 98101"
-//        );
-
-
         List<String> expectedBeneficiaryDetails = Arrays.asList(
                 "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F Denver, CO 80202",
                 "Christopher Daniel Lee Broadway Avenue, Suite 300 Los Angeles, CA 90001",
                 "Sophia Grace Martinez Lakeview Street, Apt 12C Miami, FL 33101",
                 "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A Phoenix, AZ 85003",
                 "Matthew Joseph White Main Street, Office 45B Seattle, WA 98101"
-        );
+        );  //beneficiary1NameAddressForm
+
 
 
 
