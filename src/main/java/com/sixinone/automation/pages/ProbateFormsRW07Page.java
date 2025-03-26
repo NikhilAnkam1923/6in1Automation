@@ -318,13 +318,14 @@ public class ProbateFormsRW07Page extends BasePage {
             String expectedLastName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".lastName").toString();
             String expectedMiddleName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".middleName").toString();
             String expectedFirstName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".firstName").toString();
+            String expectedSuffix = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".suffix").toString();
             String expectedCity = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".city").toString() + ",";
             String expectedState = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
             String expectedZip = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".zip").toString();
             String expectedAddressLine1 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString() + ",";
             String expectedAddressLine2 = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine2").toString();
 
-            String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName;
+            String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + ", " + expectedSuffix;
             String expectedStateCodeZip = expectedState + " " + expectedZip;
             String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + " " + expectedStateCodeZip;
 
@@ -664,6 +665,7 @@ public class ProbateFormsRW07Page extends BasePage {
         if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
             selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
         }
+        System.out.println("expected name of person: "+selectedNameOfPerson);
     }
 
     public void verifySelectedContactsAreCleared() throws AutomationException {
@@ -722,11 +724,11 @@ public class ProbateFormsRW07Page extends BasePage {
 
         try {
             List<String> expectedBeneficiaryDetails = Arrays.asList(
-                    "Isabella Natalie Rodriguez Hilltop Drive, Unit 7F Denver, CO 80202",
-                    "Christopher Daniel Lee Broadway Avenue, Suite 300 Los Angeles, CA 90001",
-                    "Sophia Grace Martinez Lakeview Street, Apt 12C Miami, FL 33101",
-                    "Olivia Elizabeth Garcia Sunset Boulevard, Penthouse 1A Phoenix, AZ 85003",
-                    "Matthew Joseph White Main Street, Office 45B Seattle, WA 98101"
+                    "Isabella Natalie Rodriguez, Jr. Hilltop Drive, Unit 7F Denver, CO 80202",
+                    "Christopher Daniel Lee, Sr. Broadway Avenue, Suite 300 Los Angeles, CA 90001",
+                    "Sophia Grace Martinez, Jr. Lakeview Street, Apt 12C Miami, FL 33101",
+                    "Olivia Elizabeth Garcia, Jr. Sunset Boulevard, Penthouse 1A Phoenix, AZ 85003",
+                    "Matthew Joseph White, Sr. Main Street, Office 45B Seattle, WA 98101"
             );
 
             verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
