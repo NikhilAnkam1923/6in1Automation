@@ -478,7 +478,10 @@ public class ProbateFormsRW10Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
+            selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
+        }
     }
 
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor7And10() throws AutomationException {

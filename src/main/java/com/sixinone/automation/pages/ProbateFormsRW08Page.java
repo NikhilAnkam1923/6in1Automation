@@ -362,25 +362,25 @@ public class ProbateFormsRW08Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
 
-        Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary6Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary6Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary7Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText().replace(",", "");
+        Beneficiary7Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
 
         WebDriverUtil.waitForAWhile();
@@ -635,7 +635,10 @@ public class ProbateFormsRW08Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
+            selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
+        }
     }
 
     public void verifySelectedContactsAreCleared() throws AutomationException {

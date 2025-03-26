@@ -845,19 +845,19 @@ public class ProbateFormsRW02Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_BENE_XPATH);
 
-        BeneContact1Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
+        BeneContact1Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact2Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
+        BeneContact2Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact3Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
+        BeneContact3Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact4Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
+        BeneContact4Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
+        BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
     }
 
@@ -1174,7 +1174,10 @@ public class ProbateFormsRW02Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_BENE_XPATH);
 
-        selectedAttorneyContactForm = driverUtil.getWebElement(DRAG_BENE).getText().replace(",", "");
+        selectedAttorneyContactForm = driverUtil.getWebElement(DRAG_BENE).getText();
+        if (!(selectedAttorneyContactForm.contains("Jr.") || selectedAttorneyContactForm.contains("Sr."))) {
+            selectedAttorneyContactForm = selectedAttorneyContactForm.replace(",", "");
+        }
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
 
