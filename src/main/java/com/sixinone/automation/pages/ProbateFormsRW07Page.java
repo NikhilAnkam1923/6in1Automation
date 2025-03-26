@@ -326,7 +326,7 @@ public class ProbateFormsRW07Page extends BasePage {
 
             String expectedName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName;
             String expectedStateCodeZip = expectedState + " " + expectedZip;
-            String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + " " + expectedStateCodeZip + "\n";
+            String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + " " + expectedStateCodeZip;
 
 
             String actualNameAndAddress = BeneficiaryAddressFields.get(i).getAttribute("value");
@@ -660,7 +660,10 @@ public class ProbateFormsRW07Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
         WebDriverUtil.waitForAWhile();
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
+            selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
+        }
     }
 
     public void verifySelectedContactsAreCleared() throws AutomationException {

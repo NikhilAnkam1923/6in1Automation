@@ -10,10 +10,13 @@ Feature: 6in1 probate form RW03 Feature
     Examples:
       | user-email                        | password  |
       | nikhilankam@benchmarkit.solutions | Bits@1234 |
+#not needed outline if uses single data so remove all outline
 
   Scenario: Open Estate
     When user opens "William John" Estate
     And user saves entered Estate information for "RW03" form
+#use examples instead of "" values
+#  try to runs with different user as well
 
   Scenario: Verify county, estate and aka names are auto-populated on the form
     When user navigates to the probate forms tab
@@ -21,6 +24,8 @@ Feature: 6in1 probate form RW03 Feature
     Then user selects the aka checkbox
     And user verifies the county, estate and aka names are auto-populated on the "RW03" form
 
+
+#not needed this scenario add in above scenario
   Scenario: Verify, the auto-populated fields are not editable.
     Then user verifies the auto-populated fields of "RW03" form are not editable
 
@@ -39,12 +44,13 @@ Feature: 6in1 probate form RW03 Feature
   Scenario: Verify, text can be entered in address, city, zip fields.
     Then user verifies both the address, city, zip fields of "RW03" form accept correct text
 
+#    is that needed extra steps like below 2//we can comment
   Scenario: Verify, form is auto saved.
     And user click on the "RW 04" form
     And user click on the "RW 03" form
     Then user verifies all the input fields in the "RW03" form are auto saved
 
-
+#use common methods in self created util class
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'Rw03'
@@ -58,3 +64,5 @@ Feature: 6in1 probate form RW03 Feature
     When user logged out from the application
     Then User close browser
 
+
+#    if possible make the small part of code for different page
