@@ -536,8 +536,8 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     private void fillField(String fieldLocator, String data) throws AutomationException {
+        waitForVisibleElement(By.xpath(fieldLocator));
         WebElement field = DriverFactory.drivers.get().findElement(By.xpath(fieldLocator));
-
         field.click();
         field.sendKeys(data);
 
