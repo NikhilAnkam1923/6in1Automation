@@ -2,11 +2,14 @@
 Feature: 6in1 probate form OC01 Feature
 
   @Setup
-  Scenario : SETUP: Launch Browser and go to application
+  Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     And user go to application "$6in1_url"
-    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
+    When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
+    Examples:
+      | user-email                        | password  |
+      | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "Sara Watt" Estate

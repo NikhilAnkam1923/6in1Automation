@@ -2,7 +2,7 @@
 Feature: 6in1 probate form RW06 Feature
 
   @Setup
-  Scenario : SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     And user go to application "$6in1_url"
     When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
