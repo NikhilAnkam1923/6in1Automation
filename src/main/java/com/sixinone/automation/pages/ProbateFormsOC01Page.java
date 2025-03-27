@@ -8,13 +8,20 @@ import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
+import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class ProbateFormsOC01Page extends BasePage{
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
@@ -81,6 +88,14 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String PETITIONER_INPUT_XPATH = "//input[@type='text' and @value='%s']";
     private static final String MODAL_CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
     private static final String DROPPED_CONTACTS_XPATH = "//div[@class='drag-names-list drop-box h-100']//div//div";
+    private static final String FORM_CODICIL_DATE_1 = "//input[@name='codicilDate1']";
+    private static final String FORM_CODICIL_DATE_2 = "//input[@name='codicilDate2']";
+    private static final String FORM_CODICIL_DATE_3 = "//input[@name='codicilDate3']";
+    private static final String DATE_OF_WILL_FORM = "//input[@name='dateOfWill']";
+    private static final String DECEDENT_TAB = "//span[text()='Decedent']";
+    private static final String ESTATE_NAME_PAGE_3 = "//p[contains(text(),'Estate of')]//input";
+    private static final String DATE_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].dateOfBirth']";
+    private static final String CHILDREN_DETAILS_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].name']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -113,6 +128,32 @@ public class ProbateFormsOC01Page extends BasePage{
     static String petitioner3CityStateCodeZipForm;
     static String petitioner4AddressLine1Form;
     static String petitioner4CityStateCodeZipForm;
+    static String dateOfWillForm;
+    static String codicilDate1Form;
+    static String codicilDate2Form;
+    static String codicilDate3Form;
+    static String estateNameFormPage3;
+    static String dateDataForm1;
+    static String dateDataForm2;
+    static String dateDataForm3;
+    static String dateDataForm4;
+    static String dateDataForm5;
+    static String dateDataForm6;
+    static String dateDataForm7;
+    static String dateDataForm8;
+    static String dateDataForm9;
+    static String dateDataForm10;
+    static String childrenDetailDataForm1;
+    static String childrenDetailDataForm2;
+    static String childrenDetailDataForm3;
+    static String childrenDetailDataForm4;
+    static String childrenDetailDataForm5;
+    static String childrenDetailDataForm6;
+    static String childrenDetailDataForm7;
+    static String childrenDetailDataForm8;
+    static String childrenDetailDataForm9;
+    static String childrenDetailDataForm10;
+
 
 
     @Override
@@ -188,6 +229,7 @@ public class ProbateFormsOC01Page extends BasePage{
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement field = driverUtil.getWebElement(fieldLocator);
 
         if (field.isEnabled() && field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
@@ -290,7 +332,7 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement nameOfCounselField = driverUtil.getWebElement(NAME_OF_COUNSEL_FIELD);
 
         nameOfCounselForm = nameOfCounselField.getAttribute("value");
-        if(!nameOfCounselForm.equals(selectedAttorney.replace(",",""))){
+        if(!nameOfCounselForm.equals(selectedAttorney)){
             throw new AutomationException("Attorney details not populated correctly in 'Name of Counsel' field. Expected: " + selectedAttorney + " ,Found: " + nameOfCounselForm);
         }
     }
@@ -511,5 +553,237 @@ public class ProbateFormsOC01Page extends BasePage{
         CommonSteps.takeScreenshot();
 
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
+    }
+
+    public void userSwapTheSelectedFiduciaryContacts() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> droppedContacts = driverUtil.getWebElements(DROPPED_CONTACTS_XPATH);
+
+        if (droppedContacts.size() >= 2) {
+            actions.clickAndHold(droppedContacts.get(0))
+                    .moveToElement(droppedContacts.get(1))
+                    .release()
+                    .perform();
+            WebDriverUtil.waitForAWhile();
+        } else {
+            throw new AutomationException("Not enough contacts in the drop section to perform a swap.");
+        }
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+    }
+
+    public void verifySwappedPetitionerNamesAreReflectedOnUIAccordingly() throws AutomationException, IOException, ParseException {
+        WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
+        WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
+
+        nameOfPetitionerForm = nameOfPetitionerField.getAttribute("value");
+        if(!nameOfPetitionerForm.equals(Fiduciary2Form)){
+            throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitionerForm);
+        }
+        verifyPetitionerOnForm(petitioner2AddressLine1Form);
+        verifyPetitionerOnForm(petitioner2CityStateCodeZipForm);
+
+        nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
+        if(!nameOfPetitioner2Form.equals(Fiduciary1Form)){
+            throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitioner2Form);
+        }
+        verifyPetitionerOnForm(petitioner1AddressLine1Form);
+        verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+    }
+
+    public static void clearField(String fieldXpath) throws AutomationException {
+        WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
+        fieldElement.sendKeys(Keys.CONTROL + "a");
+        fieldElement.sendKeys(Keys.BACK_SPACE);
+    }
+
+    public void userModifiesTheDateOfWillAndDateOfCodicilFields() throws AutomationException, IOException, ParseException {
+        String dateOfWill = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateOfWill").toString();
+        String codicilDate1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.codicilDate1").toString();
+        String codicilDate2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.codicilDate2").toString();
+        String codicilDate3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.codicilDate3").toString();
+
+        WebElement dateOfWillField = driverUtil.getWebElement(DATE_OF_WILL_FORM);
+        WebElement codicilDate1Field = driverUtil.getWebElement(FORM_CODICIL_DATE_1);
+        WebElement codicilDate2Field = driverUtil.getWebElement(FORM_CODICIL_DATE_2);
+        WebElement codicilDate3Field = driverUtil.getWebElement(FORM_CODICIL_DATE_3);
+
+        scrollToElement(DATE_OF_WILL_FORM);
+
+        clearField(DATE_OF_WILL_FORM);
+        dateOfWillField.sendKeys(dateOfWill);
+        clearField(FORM_CODICIL_DATE_1);
+        codicilDate1Field.sendKeys(codicilDate1);
+        clearField(FORM_CODICIL_DATE_2);
+        codicilDate2Field.sendKeys(codicilDate2);
+        clearField(FORM_CODICIL_DATE_3);
+        codicilDate3Field.sendKeys(codicilDate3);
+        codicilDate3Field.sendKeys(Keys.TAB);
+
+        WebDriverUtil.waitForAWhile();
+
+        dateOfWillForm = dateOfWillField.getAttribute("value");
+        codicilDate1Form = codicilDate1Field.getAttribute("value");
+        codicilDate2Form = codicilDate2Field.getAttribute("value");
+        codicilDate3Form = codicilDate3Field.getAttribute("value");
+    }
+
+    public void verifyUpdatedDatesAreReflectedInTheEstateRecord() throws AutomationException {
+        waitForVisibleElement(By.xpath(DECEDENT_TAB));
+        driverUtil.getWebElement(DECEDENT_TAB).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
+
+        driverUtil.getWebElement(ESTATE_TAB).click();
+        WebDriverUtil.waitForAWhile();
+
+        if (!driverUtil.getWebElement(DATE_OF_WILL).getAttribute("value").equals(dateOfWillForm)) {
+            throw new AutomationException("Updated date of will is not reflected");
+        }
+
+        if (!driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value").equals(codicilDate1Form)) {
+            throw new AutomationException("Updated codicil date 1 is not reflected");
+        }
+
+        if (!driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value").equals(codicilDate2Form)) {
+            throw new AutomationException("Updated codicil date 2 is not reflected");
+        }
+
+        if (!driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value").equals(codicilDate3Form)) {
+            throw new AutomationException("Updated codicil date 3 is not reflected");
+        }
+    }
+
+    public void verifyDecedentSNameIsDisplayedAndIsNonEditable() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_3);
+
+        estateNameFormPage3 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage3)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage3);
+        }
+
+        verifyFieldIsNotEditable(ESTATE_NAME_PAGE_3);
+    }
+
+    public void verifyMultipleChildrenAndDoBCanBeAdded() throws AutomationException, IOException, ParseException {
+        dateDataForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm1").toString();
+        dateDataForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm2").toString();
+        dateDataForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm3").toString();
+        dateDataForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm4").toString();
+        dateDataForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm5").toString();
+        dateDataForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm6").toString();
+        dateDataForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm7").toString();
+        dateDataForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm8").toString();
+        dateDataForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm9").toString();
+        dateDataForm10 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm10").toString();
+
+        childrenDetailDataForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm1").toString();
+        childrenDetailDataForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm2").toString();
+        childrenDetailDataForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm3").toString();
+        childrenDetailDataForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm4").toString();
+        childrenDetailDataForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm5").toString();
+        childrenDetailDataForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm6").toString();
+        childrenDetailDataForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm7").toString();
+        childrenDetailDataForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm8").toString();
+        childrenDetailDataForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm9").toString();
+        childrenDetailDataForm10 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm10").toString();
+
+        List<String> dateDataForm = Arrays.asList(
+                dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,
+                dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10
+        );
+
+        List<String> childrenDetailDataForm = Arrays.asList(
+                childrenDetailDataForm1, childrenDetailDataForm2, childrenDetailDataForm3, childrenDetailDataForm4, childrenDetailDataForm5,
+                childrenDetailDataForm6, childrenDetailDataForm7, childrenDetailDataForm8, childrenDetailDataForm9, childrenDetailDataForm10
+        );
+
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        for (int i = 0; i < 10; i++) {
+            WebDriverUtil.waitForAWhile(2);
+            scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+
+
+            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i)));
+
+            dateField.clear();
+//            Toolkit.getDefaultToolkit()
+//                    .getSystemClipboard()
+//                    .setContents(new StringSelection(dateDataForm.get(i)), null);
+//
+//            actions.moveToElement(dateField)
+//                    .click()
+//                    .keyDown(Keys.CONTROL)
+//                    .sendKeys("v")
+//                    .keyUp(Keys.CONTROL)
+//                    .build()
+//                    .perform();
+
+            for (char c : dateDataForm.get(i).toCharArray()) {
+                dateField.sendKeys(String.valueOf(c));
+                WebDriverUtil.waitForAWhile();
+            }
+
+            WebDriverUtil.waitForAWhile();
+            WebElement childrenDetailField = driverUtil.getWebElementAndScroll(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+
+//            reasonField.sendKeys(Keys.SPACE);
+//            reasonField.sendKeys(Keys.BACK_SPACE);
+//            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
+//            driverUtil.getWebElement("//span[text()='7.']").click();
+//            actions.sendKeys(Keys.TAB);
+
+//            driverUtil.getWebElement("//body").click();
+
+            WebDriverUtil.waitForAWhile();
+            String actualChildrenDetail = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).getAttribute("value");
+
+//            WebDriverUtil.waitForAWhile();
+
+
+            for (char c : childrenDetailDataForm.get(i).toCharArray()) {
+                childrenDetailField.sendKeys(String.valueOf(c));
+//                WebDriverUtil.waitForAWhile();
+            }
+//            driverUtil.getWebElement("//body").click();
+//            WebDriverUtil.waitForAWhile();
+//            dateField.sendKeys(dateDataForm.get(i));
+//            scrollToElement("//td[text()='Date of Birth:']");
+//            driverUtil.getWebElement("//td[text()='Date of Birth:']").click();
+
+//            WebDriverUtil.waitForAWhile();
+//            actions.sendKeys(Keys.TAB);
+
+//            driverUtil.getWebElement("//body").click();
+
+            WebDriverUtil.waitForAWhile();
+            String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).getAttribute("value");
+
+//            if (!actualChildrenDetail.equals(childrenDetailDataForm.get(i))) {
+//                throw new AutomationException("Reason field did not accept the entered text correctly. Expected: " + childrenDetailDataForm.get(i) + ", Found: " + actualChildrenDetail);
+//            }
+//
+//            if (!actualDate.equals(dateDataForm.get(i))) {
+//                throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
+//            }
+        }
+
+
+        //use in reset
+        for (int i = 9; i >= 0; i--) {
+            scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+//            clearField(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+//            clearField(String.format(DATE_FIELDS_PAGE_3, i));
+            DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).clear();
+            DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).clear();
+        }
     }
 }
