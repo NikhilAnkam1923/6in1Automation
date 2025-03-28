@@ -864,6 +864,7 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void userClicksOnAcceptButton() throws AutomationException {
+
         driverUtil.getWebElement(ACCEPT_BTN).click();
     }
 
@@ -1331,10 +1332,10 @@ public class ProbateFormsRW02Page extends BasePage {
         String beforeLine = "Name: William John  File No: 22-23-1234";
         String afterLine = "Date of Death: 12/05/2020  Age at Death: 70";
 
-        // Extract occurrences dynamically
         Set<String> extractedAKANames = new HashSet<>();
         String[] allLines = pdfText.split("\\r?\\n");
         int startIndex = -1;
+        boolean captureNextLine = false;
 
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
@@ -1347,17 +1348,24 @@ public class ProbateFormsRW02Page extends BasePage {
 
             // Identify end of occurrence
             if (startIndex != -1 && trimmedLine.equalsIgnoreCase(afterLine)) {
-                // Extract AKA names from lines between beforeLine and afterLine
-                for (int j = startIndex + 1; j < i; j++) {
-                    String currentLine = allLines[j].trim();
-                    if (currentLine.startsWith("a/k/a:")) {
-                        extractedAKANames.addAll(extractAKANames(currentLine));
-                    }
-                }
                 startIndex = -1; // Reset for next occurrence
+            }
+
+            // Extract AKA names
+            if (startIndex != -1) {
+                if (trimmedLine.startsWith("a/k/a:")) {
+                    // If line starts with a/k/a:, extract normally
+                    extractedAKANames.addAll(extractAKANames(trimmedLine));
+                    captureNextLine = true;  // Enable flag to capture next line
+                } else if (captureNextLine) {
+                    // If previous line was a/k/a, process this as a continuation
+                    extractedAKANames.addAll(extractAKANames(trimmedLine));
+                    captureNextLine = false;  // Reset flag after capturing
+                }
             }
         }
 
+        // Log extracted names
         for (String extractedName : extractedAKANames) {
             CommonSteps.logInfo("Expected AKA Names: " + expectedAKANames + " Extracted AKA Names: [" + extractedName + "] found");
         }
@@ -1379,31 +1387,26 @@ public class ProbateFormsRW02Page extends BasePage {
         return true;
     }
 
-
+    /**
+     * Extracts AKA names while handling edge cases like SSNs and parentheses.
+     */
     private static Set<String> extractAKANames(String rawText) {
         Set<String> akaNames = new HashSet<>();
 
-        // Remove "a/k/a:" prefix and clean text
+        // ✅ Remove "a/k/a:" prefix if present
         String cleanedText = rawText.replace("a/k/a:", "").trim();
 
-        // Split names correctly
-        String[] names = cleanedText.split(",");
+        // ✅ Remove unnecessary suffixes (like "(Assigned by Register)")
+        cleanedText = cleanedText.replaceAll("\\(.*?\\)", "").trim();  // Removes anything inside parentheses
 
-        for (String name : names) {
-            name = name.trim();
-
-            // ✅ Remove unnecessary suffixes (like "(Assigned by Register)")
-            name = name.replaceAll("\\(.*?\\)", "").trim();  // Removes anything inside parentheses
-
-            // ✅ Ignore SSNs (if they exist in the text)
-            if (!name.isEmpty() && !name.matches(".*\\d{3}-\\d{2}-\\d{4}.*")) {
-                akaNames.add(name);
-            }
+        // ✅ Ignore SSNs (if they exist in the text)
+        if (!cleanedText.matches(".*\\d{3}-\\d{2}-\\d{4}.*")) {
+            akaNames.addAll(Arrays.asList(cleanedText.split("\\s+"))); // Split by spaces for multi-word names
         }
+
         return akaNames;
     }
-
-
+    
     public static boolean verifyPropertyAmounts(String pdfFilePath, Map<String, String> expectedValues) throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));

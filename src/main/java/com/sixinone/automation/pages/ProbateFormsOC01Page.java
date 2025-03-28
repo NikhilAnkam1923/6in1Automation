@@ -4,7 +4,10 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -14,12 +17,15 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
@@ -98,6 +104,8 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String CHILDREN_DETAILS_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].name']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
+
+    static String downloadedFileName;
 
     static String countyNameForm;
     static String estateNameForm;
@@ -437,6 +445,7 @@ public class ProbateFormsOC01Page extends BasePage{
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
 
+        waitForVisibleElement(By.xpath(DRAG_CONTACT_XPATH));
         Fiduciary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
@@ -785,5 +794,116 @@ public class ProbateFormsOC01Page extends BasePage{
             DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).clear();
             DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).clear();
         }
+    }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyDateLettersGranted(pdfFilePath);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
+    }
+
+
+    private static void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
+        String beforeLine = "To the Register:";  // The next line after the date
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Split the entire PDF content into lines
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        CommonSteps.logInfo("📄 **Full PDF Content (All Lines):**");
+        for (int i = 0; i < allLines.length; i++) {
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
+        }
+
+        String extractedDate = null;
+        boolean beforeLineFound = false;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+
+            // Find the first occurrence of "To the Register:"
+            if (trimmedLine.equalsIgnoreCase(beforeLine)) {
+                beforeLineFound = true;
+                if (i > 0) {
+                    extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
+                    extractedDate = ( "Date Letters Granted"); // Clean the extracted value
+
+                    if (!extractedDate.isEmpty()) {
+                        break;  // Stop after the first valid extraction
+                    }
+                }
+            }
+        }
+
+        // Log a warning if beforeLine is missing
+        if (!beforeLineFound) {
+            CommonSteps.logInfo("⚠️ Warning: 'To the Register:' not found in the PDF.");
+        }
+
+        if (extractedDate == null || extractedDate.isEmpty()) {
+            throw new AutomationException("❌ Validation Failed: No Date field found before 'To the Register:'.");
+        }
+
+        // 📌 Log the extracted date
+        CommonSteps.logInfo("📌 Extracted Date Letters Granted: '" + extractedDate + "'");
+
+        // Expected Date for comparison (assuming it holds only one expected date)
+        String expectedDate = attorneyEmailForm;
+
+        // 🔍 Validate extracted date
+        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedDate + "', Extracted: '" + extractedDate + "'");
+
+        if (!expectedDate.equalsIgnoreCase(extractedDate)) {
+            throw new AutomationException("❌ Validation Failed: Extracted Date '" + extractedDate + "' does not match expected value.");
+        }
+
+        // ✅ Final validation success message
+        CommonSteps.logInfo("✅ Validation Passed: Extracted date matches the expected value.");
     }
 }

@@ -11,6 +11,7 @@ Feature: 6in1 probate form OC01 Feature
       | user-email                        | password  |
       | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
+
   Scenario: Open Estate
     When user opens "Sara Watt" Estate
     And user saves entered Estate information for "OC01" form
@@ -71,6 +72,12 @@ Feature: 6in1 probate form OC01 Feature
 
 #  Scenario: Reset the OC01 form
 #    When user resets the "OC01" form
+
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC01'
+    And verify all the fields entered are correctly reflected in the 'OC01' pdf
+
 
   @Setup
   Scenario:SETUP: Close Browser
