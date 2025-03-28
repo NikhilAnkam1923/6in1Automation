@@ -159,7 +159,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies text can be entered in the state relevant circumstances text fields")
-    public void userVerifiesTextCanBeEnteredInTheStateRelevantCircumstancesTextFields() throws AutomationException {
+    public void userVerifiesTextCanBeEnteredInTheStateRelevantCircumstancesTextFields() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that text can be entered in the state relevant circumstances text fields");
         PageFactory.probateFormsRW02Page().verifyTextCanBeEnteredInTheStateRelevantCircumstancesTextFields();
         CommonSteps.takeScreenshot();
@@ -172,7 +172,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies the text field is enabled and text can be entered")
-    public void userVerifiesTheTextFieldIsEnabledAndTextCanBeEntered() throws AutomationException {
+    public void userVerifiesTheTextFieldIsEnabledAndTextCanBeEntered() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that the text field is enabled and text can be entered");
         PageFactory.probateFormsRW02Page().verifyTextFieldIsEnabledAndTextCanBeEntered();
         CommonSteps.takeScreenshot();

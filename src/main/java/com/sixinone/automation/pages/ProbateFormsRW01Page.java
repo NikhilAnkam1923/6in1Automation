@@ -614,14 +614,21 @@ public class ProbateFormsRW01Page extends BasePage {
         expectedValues.put("SecondaryCoExecutorOrAdministratorLastName", "Clark");
     }
 
-    public void verifyAllFieldsInDownloadedPDF() throws IOException {
-        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
-                ? System.getProperty("user.dir") + "\\downloads\\"
-                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+    public void verifyAllFieldsInDownloadedPDF() throws IOException, AutomationException {
+        String pdfFilePath = System.getProperty("user.dir") +
+                (System.getProperty("os.name").toLowerCase().contains("win") ? "\\downloads\\" : "/downloads/")
+                + DownloadedFileName;
 
-        Map<String, String> extractedData = extractDataFromPDF(pdfFilePath);
-        verifyFields(extractedData);
+        try {
+            Map<String, String> extractedData = extractDataFromPDF(pdfFilePath);
+            verifyFields(extractedData);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (IOException e) {
+            throw new IOException("❌ PDF Read Error: " + e.getMessage(), e);
+        }
     }
+
+
 
 
     private Map<String, String> extractDataFromPDF(String filePath) throws IOException {

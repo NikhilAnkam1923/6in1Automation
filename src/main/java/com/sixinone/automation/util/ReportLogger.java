@@ -34,7 +34,7 @@ public class ReportLogger {
 		logger = Logger.getLogger(classname);
 	}
 
-	/**
+    /**
 	 * @FunctionName : log
 	 * @Description : Method logs information to log file.
 	 * @return : void

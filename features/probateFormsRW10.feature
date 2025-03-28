@@ -2,14 +2,11 @@
 Feature: 6in1 probate form RW10 Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
-    When user login using "<user-email>" and "<password>"
+    And user go to application "$6in1_url"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "Kris Warner" Estate
@@ -79,9 +76,14 @@ Feature: 6in1 probate form RW10 Feature
     When user click on the "RW 08" form
     Then user verifies Corporate Fiduciary and Person sections information is common for RW08 and RW10
 
-  Scenario: Verify, selection is cleared on clicking clear selection button.
+  Scenario: Verify form can be printed in pdf
     When user click on the "RW 10" form
-    And user clicks on Clear Selection buttons
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'Rw10'
+    And verify all the fields entered are correctly reflected in the 'Rw10' pdf
+
+  Scenario: Verify, selection is cleared on clicking clear selection button.
+    When user clicks on Clear Selection buttons
     Then user verifies selected contacts on "RW10" form are cleared
 
   Scenario: Reset the RW10 form

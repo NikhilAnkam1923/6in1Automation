@@ -4,15 +4,16 @@ Feature: 6in1 probate form OC01 Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
+    And user go to application "$6in1_url"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
+      | user-email                        | password  |
+      | nikhilankam@benchmarkit.solutions | Bits@1234 |
+
 
   Scenario: Open Estate
-    When user opens "William John" Estate
+    When user opens "Sara Watt" Estate
     And user saves entered Estate information for "OC01" form
 
   Scenario: Verify that the Estate Name and County fields, file no are preloaded and displayed correctly as read-only fields.
@@ -35,6 +36,47 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "11"
     Then user verifies the attorney details are synced with page 11 of same form
 
+  Scenario: Verify that Estate Name, and Date of Death fields are preloaded and non-editable.
+    When user navigates to page number: "2"
+    Then user verifies estate name and date of death fields display preloaded data and are non-editable
+
+  Scenario: Verify that clicking on the Petitioner field opens the sidebar and allows fiduciary selection.
+    When user click on Petitioner name field
+    Then user verifies a sidebar is opens and fiduciary contacts can be selected
+    And user verifies the selected fiduciaries populate in the Petitioner fields on the form
+
+  Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
+      #Verify, attachment.
+      #Verify, all the petitioner details are auto filled.
+    When user click on Petitioner name field
+    And user selects multiple fiduciary contacts
+    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment
+
+  Scenario: Verify, selected petitioner can be swapped and deleted.
+    When user click on Petitioner name field
+    And user swap the selected fiduciary contacts
+    Then user verifies swapped petitioner names are reflected on UI accordingly
+
+  Scenario: Verify that changes to the "Date of Will" and "Date of Codicil" fields update the estate record automatically.
+    When user modifies the 'Date of Will' and 'Date of Codicil' fields
+    Then user verifies the updated dates are reflected in the estate record
+
+#  Scenario: Verify that the decedent's name is preloaded from the estate record and displayed as non-editable.
+##    When user navigates to the probate forms tab
+##    And user click on the "OC 01" form
+#    And user navigates to page number: "3"
+#    Then user verifies decedent's name is displayed and is non-editable
+#
+#  Scenario: Verify, can add multiple children and DoB.
+#    Then user verifies multiple children and DoB can be added
+
+#  Scenario: Reset the OC01 form
+#    When user resets the "OC01" form
+
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC01'
+    And verify all the fields entered are correctly reflected in the 'OC01' pdf
 
 
   @Setup

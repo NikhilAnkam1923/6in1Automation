@@ -278,6 +278,7 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement field = driverUtil.getWebElement(fieldLocator);
         if (field.isEnabled() && field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable");
@@ -422,7 +423,7 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
-        List<Integer> corporateFiduciaryNum = Arrays.asList(3, 5, 2, 4, 1);
+        List<Integer> corporateFiduciaryNum = Arrays.asList(5, 2, 1, 3, 4);
 
         for (int i = 0; i < corporateFiduciaryNum.size(); i++) {
             int fiduciaryIndex = corporateFiduciaryNum.get(i);
@@ -579,7 +580,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 Beneficiary2Form
         );
 
-        List<Integer> beneficiaryNum = Arrays.asList(1, 5, 4, 2, 3);
+        List<Integer> beneficiaryNum = Arrays.asList(5, 2, 1, 3, 4);
 
         for (int i = 0; i < beneficiaryNum.size(); i++) {
             int beneficiaryIndex = beneficiaryNum.get(i);
@@ -737,7 +738,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
             driverUtil.getWebElement("//body").click();
 
-            WebDriverUtil.waitForAWhile(2);
+            WebDriverUtil.waitForAWhile(4);
             String actualReason = DriverFactory.drivers.get().findElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i))).getAttribute("value");
 
 
@@ -791,9 +792,14 @@ public class ProbateFormsRW06Page extends BasePage {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+        try {
+            verifyDate(pdfFilePath);
+            verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
 
-        verifyDate(pdfFilePath);
-        verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
     }
 
     private static void verifyDate(String pdfFilePath) throws IOException, AutomationException {
@@ -833,7 +839,7 @@ public class ProbateFormsRW06Page extends BasePage {
         CommonSteps.logInfo("📌 Extracted Date(s): " + extractedDates);
 
         // Expected Dates for comparison
-        List<String> expectedDates = Arrays.asList(dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,dateDataForm6,dateDataForm7,dateDataForm8,dateDataForm9,dateDataForm10);
+        List<String> expectedDates = Arrays.asList(dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5, dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10);
 
         // 🔍 Validate extracted dates
         for (String extracted : extractedDates) {

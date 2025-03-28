@@ -5,9 +5,11 @@ import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
 import com.sixinone.automation.util.FileUtil;
+import com.sixinone.automation.util.ReportLogger;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
@@ -15,6 +17,7 @@ import java.util.*;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +80,7 @@ public class ProbateFormsRW03Page extends BasePage {
     private static final String DECEDENT_SSN_FIELD = "//input[@name='decedentInfo.SSN']";
     private static final String SELECTED_MARITAL_STATUS = "//div[text()='Life Details']/following-sibling::div//input[@name='lifeDetails.ageAtDeath'] /ancestor::div[contains(@class, 'col-')]/following-sibling::div//label[contains(text(), 'Marital Status')] /following-sibling::div//div[contains(@class, 'select__single-value')]";
     private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
+    private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -193,9 +197,10 @@ public class ProbateFormsRW03Page extends BasePage {
 
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
+        WebDriverUtil.waitForAWhile();
         WebElement field = driverUtil.getWebElement(fieldLocator);
 
-        if (field.isEnabled() && field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
+        if (field.isEnabled() && field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable: " + fieldLocator);
         } else {
             CommonSteps.logInfo("Field is not editable: " + fieldLocator);
@@ -407,28 +412,36 @@ public class ProbateFormsRW03Page extends BasePage {
         String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+
         try {
-            verifyPrintNames(pdfFilePath);
-            //verifyCounty(pdfFilePath);
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isPrintNamesVerified = verifyPrintNames(pdfFilePath);
+            boolean isFieldsVerified1 = verifyFieldsInPDF(pdfFilePath,
                     "Commission.)",
                     "SS:",
                     enteredStreetAddress2Form,
                     "Witness2 Street Address");
-            verifyFieldsInPDF(pdfFilePath,
+
+            boolean isFieldsVerified2 = verifyFieldsInPDF(pdfFilePath,
                     "Deputy for Register of Wills",
                     "(Signature) Leo",
                     enteredStreetAddress1Form,
                     "Witness1 Street Address");
 
-            validateWitnessDetails(pdfFilePath);
+            boolean isWitnessDetailsVerified = validateWitnessDetails(pdfFilePath);
 
-        } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            // If any verification fails, throw an exception
+            if (!isPrintNamesVerified || !isFieldsVerified1 || !isFieldsVerified2 || !isWitnessDetailsVerified) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
-    public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
+
+    public static boolean verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
         List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John ,Deceased");
         String afterLine = "(each) a subscribing witness to";
 
@@ -479,8 +492,7 @@ public class ProbateFormsRW03Page extends BasePage {
 
             CommonSteps.logInfo("\n📌 Extracted Witness Names: " + names);
             if (names.isEmpty()) {
-                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
-                return;
+                throw new AutomationException("❌ Validation Failed: No names found between the specified lines.");
             }
 
             // Create a map of expected names
@@ -509,6 +521,7 @@ public class ProbateFormsRW03Page extends BasePage {
         } else {
             throw new AutomationException("❌ Before or after line not found!");
         }
+        return true;
     }
 
 
@@ -522,7 +535,7 @@ public class ProbateFormsRW03Page extends BasePage {
                 .trim(); // Trim spaces
     }
 
-    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -555,7 +568,7 @@ public class ProbateFormsRW03Page extends BasePage {
                 throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
             }
 
-            CommonSteps.logInfo("🔍 Comparing -> for "+ fieldName +" Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
 
             if (!expectedValue.equalsIgnoreCase(extractedValue)) {
                 throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
@@ -565,6 +578,7 @@ public class ProbateFormsRW03Page extends BasePage {
         } else {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
+        return true;
     }
 
     // **Updated Helper Method to Clean Names Properly**
@@ -576,7 +590,7 @@ public class ProbateFormsRW03Page extends BasePage {
                 .trim(); // Trim spaces
     }
 
-    public void validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
+    public boolean validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
         Map<String, String> extractedWitnessDetails = new LinkedHashMap<>();
         List<String> mismatchErrors = new ArrayList<>();
 
@@ -631,6 +645,7 @@ public class ProbateFormsRW03Page extends BasePage {
         if (!mismatchErrors.isEmpty()) {
             throw new AutomationException(String.join("\n", mismatchErrors));
         }
+        return true;
     }
 
     public void verifyAllTheInputFieldsInTheFormAreAutoSaved() throws AutomationException {
@@ -662,8 +677,22 @@ public class ProbateFormsRW03Page extends BasePage {
         }
     }
 
+    private void scrollToElementAndClick(String elementLocator) throws AutomationException {
+        WebElement element = driverUtil.getWebElement(elementLocator);
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+
+        element.click();
+    }
 
     public void userResetsTheRWForm() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+
         WebDriverUtil.waitForAWhile(2);
         clearField(WITNESS_NAME_1);
         clearField(WITNESS_NAME_2);
@@ -673,5 +702,8 @@ public class ProbateFormsRW03Page extends BasePage {
         DriverFactory.drivers.get().findElement(By.xpath(W2_CITY_STATE_ZIP)).clear();
         driverUtil.getWebElement(W2_CITY_STATE_ZIP).sendKeys(Keys.ENTER);
         WebDriverUtil.waitForAWhile();
+
+        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+        WebDriverUtil.waitForAWhile(2);
     }
 }

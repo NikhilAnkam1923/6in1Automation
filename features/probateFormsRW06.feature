@@ -2,14 +2,11 @@
 Feature: 6in1 probate form RW06 Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
-    When user login using "<user-email>" and "<password>"
+    And user go to application "$6in1_url"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "William John" Estate

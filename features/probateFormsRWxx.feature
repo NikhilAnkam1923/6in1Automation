@@ -2,14 +2,11 @@
 Feature: 6in1 probate form RWxx Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
-    When user login using "<user-email>" and "<password>"
+    And user go to application "$6in1_url"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "William John" Estate
@@ -17,7 +14,7 @@ Feature: 6in1 probate form RWxx Feature
 
   Scenario: Verify that the county, estate name, and "Also Known As" (AKA) values are auto-populated from the selected estate.
     When user navigates to the probate forms tab
-    And user click on the "RW xx" form
+    And user click on the "UWA" form
     Then user selects the aka checkbox
     Then user verifies the county, estate and aka names are auto-populated on the "RWxx" form
 

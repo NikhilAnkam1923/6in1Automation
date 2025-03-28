@@ -2,14 +2,11 @@
 Feature: 6in1 probate form RW03 Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
-    When user login using "<user-email>" and "<password>"
+    And user go to application "$6in1_url"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "William John" Estate
@@ -44,7 +41,6 @@ Feature: 6in1 probate form RW03 Feature
     And user click on the "RW 03" form
     Then user verifies all the input fields in the "RW03" form are auto saved
 
-
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'Rw03'
@@ -57,4 +53,3 @@ Feature: 6in1 probate form RW03 Feature
   Scenario:SETUP: Close Browser
     When user logged out from the application
     Then User close browser
-

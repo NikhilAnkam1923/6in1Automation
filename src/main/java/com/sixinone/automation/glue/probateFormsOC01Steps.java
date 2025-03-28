@@ -12,8 +12,8 @@ import java.io.IOException;
 public class probateFormsOC01Steps {
     @Then("user verifies estate name and county fields display preloaded data and are non-editable")
     public void userVerifiesEstateNameAndCountyFieldsDisplayPreloadedDataAndAreNonEditable() throws AutomationException {
-        CommonSteps.logInfo("Verified that estate name and county fields display preloaded data and are non-editable");
         PageFactory.probateFormsOC01Page().verifyEstateNameAndCountyFieldsDisplayPreloadedDataAndAreNonEditable();
+        CommonSteps.logInfo("Verified that estate name and county fields display preloaded data and are non-editable");
         CommonSteps.takeScreenshot();
     }
 
@@ -54,6 +54,85 @@ public class probateFormsOC01Steps {
     public void userVerifiesTheAttorneyDetailsAreSyncedWithPageOfSameForm() throws AutomationException {
         CommonSteps.logInfo("Verified that the attorney details are synced with page 11 of same form");
         PageFactory.probateFormsOC01Page().verifyAttorneyDetailsAreSyncedWithPageOfSameForm();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate name and date of death fields display preloaded data and are non-editable")
+    public void userVerifiesEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable() throws AutomationException {
+        PageFactory.probateFormsOC01Page().verifyEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable();
+        CommonSteps.logInfo("Verified that estate name and date of death fields display preloaded data and are non-editable");
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user click on Petitioner name field")
+    public void userClickOnPetitionerNameField() throws AutomationException {
+        CommonSteps.logInfo("user click on Petitioner name field");
+        PageFactory.probateFormsOC01Page().userClickOnPetitionerNameField();
+    }
+
+    @Then("user verifies a sidebar is opens and fiduciary contacts can be selected")
+    public void userVerifiesASidebarIsOpensAndFiduciaryContactsCanBeSelected() throws AutomationException {
+        CommonSteps.logInfo("Verified that a sidebar is opens and fiduciary contacts can be selected");
+        PageFactory.probateFormsOC01Page().verifySidebarIsOpensAndFiduciaryContactsCanBeSelected();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user verifies the selected fiduciaries populate in the Petitioner fields on the form")
+    public void userVerifiesTheSelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm() throws AutomationException, IOException, ParseException {
+        PageFactory.probateFormsOC01Page().verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm();
+        CommonSteps.logInfo("Verified that the selected fiduciaries populate in the Petitioner fields on the form");
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user selects multiple fiduciary contacts")
+    public void userSelectsMultipleFiduciaryContacts() throws AutomationException {
+        CommonSteps.logInfo("user selects multiple fiduciary contacts");
+        PageFactory.probateFormsOC01Page().userSelectsMultipleFiduciaryContacts();
+    }
+
+    @Then("user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment")
+    public void userVerifiesOutOfTheSelectedPetitionersOnlyAreVisibleOnTheFormAndRestAreOnTheAttachment() throws AutomationException, IOException, ParseException {
+        PageFactory.probateFormsOC01Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
+        CommonSteps.logInfo("Verified that out of the selected petitioners only 2 are visible on the form and rest are on the attachment");
+    }
+
+    @And("user swap the selected fiduciary contacts")
+    public void userSwapTheSelectedFiduciaryContacts() throws AutomationException {
+        CommonSteps.logInfo("user swap the selected fiduciary contacts");
+        PageFactory.probateFormsOC01Page().userSwapTheSelectedFiduciaryContacts();
+    }
+
+    @Then("user verifies swapped petitioner names are reflected on UI accordingly")
+    public void userVerifiesSwappedPetitionerNamesAreReflectedOnUIAccordingly() throws AutomationException, IOException, ParseException {
+        PageFactory.probateFormsOC01Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
+        CommonSteps.logInfo("Verified that swapped petitioner names are reflected on UI accordingly");
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user modifies the 'Date of Will' and 'Date of Codicil' fields")
+    public void userModifiesTheDateOfWillAndDateOfCodicilFields() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user modifies the 'Date of Will' and 'Date of Codicil' fields");
+        PageFactory.probateFormsOC01Page().userModifiesTheDateOfWillAndDateOfCodicilFields();
+    }
+
+    @Then("user verifies the updated dates are reflected in the estate record")
+    public void userVerifiesTheUpdatedDatesAreReflectedInTheEstateRecord() throws AutomationException {
+        CommonSteps.logInfo("Verified that the updated dates are reflected in the estate record");
+        PageFactory.probateFormsOC01Page().verifyUpdatedDatesAreReflectedInTheEstateRecord();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies decedent's name is displayed and is non-editable")
+    public void userVerifiesDecedentSNameIsDisplayedAndIsNonEditable() throws AutomationException {
+        PageFactory.probateFormsOC01Page().verifyDecedentSNameIsDisplayedAndIsNonEditable();
+        CommonSteps.logInfo("Verified that decedent's name is displayed and is non-editable");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies multiple children and DoB can be added")
+    public void userVerifiesMultipleChildrenAndDoBCanBeAdded() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that multiple children and DoB can be added");
+        PageFactory.probateFormsOC01Page().verifyMultipleChildrenAndDoBCanBeAdded();
         CommonSteps.takeScreenshot();
     }
 }
