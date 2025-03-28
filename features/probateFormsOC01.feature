@@ -60,14 +60,21 @@ Feature: 6in1 probate form OC01 Feature
     When user modifies the 'Date of Will' and 'Date of Codicil' fields
     Then user verifies the updated dates are reflected in the estate record
 
-#  Scenario: Verify that the decedent's name is preloaded from the estate record and displayed as non-editable.
-##    When user navigates to the probate forms tab
-##    And user click on the "OC 01" form
-#    And user navigates to page number: "3"
-#    Then user verifies decedent's name is displayed and is non-editable
-#
-#  Scenario: Verify, can add multiple children and DoB.
-#    Then user verifies multiple children and DoB can be added
+  Scenario: Verify that the decedent's name is preloaded from the estate record and displayed as non-editable.
+    When user navigates to the probate forms tab
+    And user click on the "OC 01" form
+    And user navigates to page number: "3"
+    Then user verifies decedent's name is displayed and is non-editable
+
+  Scenario: Verify, can add multiple children and DoB.
+    Then user verifies multiple children and DoB can be added
+
+  Scenario: Verify, "Name of Estate" from page 2 is auto fetched at the top of this and next page.
+    When user navigates to page number: "4"
+    Then user verifies Name of the Trust is auto fetched from page 2 on page 4
+    When user navigates to page number: "5"
+    Then user verifies Name of the Trust is auto fetched from page 2 on page 5
+
 
 #  Scenario: Reset the OC01 form
 #    When user resets the "OC01" form

@@ -96,6 +96,8 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String ESTATE_NAME_PAGE_3 = "//p[contains(text(),'Estate of')]//input";
     private static final String DATE_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].dateOfBirth']";
     private static final String CHILDREN_DETAILS_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].name']";
+    private static final String NAME_OF_TRUST_PAGE_4 = "//p[contains(text(),'Estate of')]//input";
+    private static final String NAME_OF_TRUST_PAGE_5 = "//p[contains(text(),'Estate of')]//input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -705,85 +707,63 @@ public class ProbateFormsOC01Page extends BasePage{
                 childrenDetailDataForm6, childrenDetailDataForm7, childrenDetailDataForm8, childrenDetailDataForm9, childrenDetailDataForm10
         );
 
-        Actions actions = new Actions(DriverFactory.drivers.get());
-
         for (int i = 0; i < 10; i++) {
             WebDriverUtil.waitForAWhile(2);
             scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-
-
-            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i)));
-
-            dateField.clear();
-//            Toolkit.getDefaultToolkit()
-//                    .getSystemClipboard()
-//                    .setContents(new StringSelection(dateDataForm.get(i)), null);
-//
-//            actions.moveToElement(dateField)
-//                    .click()
-//                    .keyDown(Keys.CONTROL)
-//                    .sendKeys("v")
-//                    .keyUp(Keys.CONTROL)
-//                    .build()
-//                    .perform();
-
-            for (char c : dateDataForm.get(i).toCharArray()) {
-                dateField.sendKeys(String.valueOf(c));
-                WebDriverUtil.waitForAWhile();
-            }
+            WebElement childrenDetailField = driverUtil.getWebElementAndScroll(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
+            childrenDetailField.sendKeys(Keys.TAB);
 
             WebDriverUtil.waitForAWhile();
-            WebElement childrenDetailField = driverUtil.getWebElementAndScroll(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-
-//            reasonField.sendKeys(Keys.SPACE);
-//            reasonField.sendKeys(Keys.BACK_SPACE);
-//            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
-//            driverUtil.getWebElement("//span[text()='7.']").click();
-//            actions.sendKeys(Keys.TAB);
-
-//            driverUtil.getWebElement("//body").click();
+            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i)));
+            dateField.click();
+            dateField.clear();
+            dateField.sendKeys(dateDataForm.get(i));
+            dateField.sendKeys(Keys.TAB);
 
             WebDriverUtil.waitForAWhile();
             String actualChildrenDetail = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).getAttribute("value");
-
-//            WebDriverUtil.waitForAWhile();
-
-
-            for (char c : childrenDetailDataForm.get(i).toCharArray()) {
-                childrenDetailField.sendKeys(String.valueOf(c));
-//                WebDriverUtil.waitForAWhile();
-            }
-//            driverUtil.getWebElement("//body").click();
-//            WebDriverUtil.waitForAWhile();
-//            dateField.sendKeys(dateDataForm.get(i));
-//            scrollToElement("//td[text()='Date of Birth:']");
-//            driverUtil.getWebElement("//td[text()='Date of Birth:']").click();
-
-//            WebDriverUtil.waitForAWhile();
-//            actions.sendKeys(Keys.TAB);
-
-//            driverUtil.getWebElement("//body").click();
-
-            WebDriverUtil.waitForAWhile();
             String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).getAttribute("value");
 
-//            if (!actualChildrenDetail.equals(childrenDetailDataForm.get(i))) {
-//                throw new AutomationException("Reason field did not accept the entered text correctly. Expected: " + childrenDetailDataForm.get(i) + ", Found: " + actualChildrenDetail);
-//            }
-//
-//            if (!actualDate.equals(dateDataForm.get(i))) {
-//                throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
-//            }
+            if (!actualChildrenDetail.equals(childrenDetailDataForm.get(i))) {
+                throw new AutomationException("Reason field did not accept the entered text correctly. Expected: " + childrenDetailDataForm.get(i) + ", Found: " + actualChildrenDetail);
+            }
+
+            if (!actualDate.equals(dateDataForm.get(i))) {
+                throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
+            }
         }
 
 
         //use in reset
         for (int i = 9; i >= 0; i--) {
+            WebDriverUtil.waitForAWhile(2);
             scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-//            clearField(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-//            clearField(String.format(DATE_FIELDS_PAGE_3, i));
-            DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).clear();
-            DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).clear();
+            clearField(String.format(DATE_FIELDS_PAGE_3, i));
+
+            WebElement fieldElement = driverUtil.getWebElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+            fieldElement.click();
+            fieldElement.sendKeys(Keys.CONTROL + "a");
+            fieldElement.sendKeys(Keys.BACK_SPACE);
+            fieldElement.sendKeys(Keys.TAB);
+        }
+    }
+
+    public void verifyNameOfTheTrustIsAutoFetchedFromPageOnPage4() throws AutomationException {
+        WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_PAGE_4);
+        String nameOfTrustPage4 = nameOfTrustField.getAttribute("value");
+
+        if(!nameOfTrustPage4.equals(estateNamePage2Form)){
+            throw new AutomationException("Name of Trust from page 2 is not fetched correctly on page 4. Expected: "+ estateNamePage2Form + " , Found: "+ nameOfTrustPage4);
+        }
+    }
+
+    public void verifyNameOfTheTrustIsAutoFetchedFromPageOnPage5() throws AutomationException {
+        WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_PAGE_5);
+        String nameOfTrustPage5 = nameOfTrustField.getAttribute("value");
+
+        if(!nameOfTrustPage5.equals(estateNamePage2Form)){
+            throw new AutomationException("Name of Trust from page 2 is not fetched correctly on page 5. Expected: "+ estateNamePage2Form + " , Found: "+ nameOfTrustPage5);
         }
     }
 }
