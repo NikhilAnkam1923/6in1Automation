@@ -98,6 +98,34 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "6"
     Then user verifies decedent's name is displayed and is not editable
 
+  Scenario: Verify the decedent's name is preloaded as read-only.
+    When user navigates to page number: "7"
+    Then user verifies the preloaded decedent's name is displayed and is read-only
+
+  Scenario: Verify that fiduciary fields appear when "Yes" is selected.
+    When user select 'Yes' for fiduciary status
+    Then user verifies additional fiduciary fields appear and are editable
+
+  Scenario: Verify that the decedent's name is preloaded as a read-only field from the estate details.
+    When user navigates to page number: "8"
+    Then user verifies the decedent's name is displayed and non-editable
+
+  Scenario: Verify that litigation-related fields are enabled only when litigation status is set to "Yes."
+    When user select 'Yes' for litigation status
+    Then user verifies text fields are enabled dynamically when litigation status is 'Yes'
+
+  Scenario: Verify that the decedent's name is preloaded as a read-only field.
+    When user navigates to page number: "9"
+    Then user verifies the decedent's name is displayed correctly and is non-editable
+
+  Scenario: Verify, trust's name is auto fetched.
+    When user navigates to page number: "10"
+    Then user verifies Estate's name is auto fetched and correctly displayed
+
+  Scenario: Verify, trust's name is auto fetched and correctly displayed.
+    When user navigates to page number: "11"
+    Then user verifies correct trust name is displayed on the form
+
 
 #  Scenario: Reset the OC01 form
 #    When user resets the "OC01" form

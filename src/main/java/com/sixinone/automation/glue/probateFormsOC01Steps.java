@@ -199,4 +199,65 @@ public class probateFormsOC01Steps {
         CommonSteps.logInfo("Verified that decedent's name is displayed and is not editable");
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies the preloaded decedent's name is displayed and is read-only")
+    public void userVerifiesThePreloadedDecedentSNameIsDisplayedAndIsReadOnly() throws AutomationException {
+        PageFactory.probateFormsOC01Page().verifyPreloadedDecedentSNameIsDisplayedAndIsReadOnly();
+        CommonSteps.logInfo("Verified that the preloaded decedent's name is displayed and is read-only");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies the decedent's name is displayed and non-editable")
+    public void userVerifiesTheDecedentSNameIsDisplayedAndNonEditable() throws AutomationException {
+        PageFactory.probateFormsOC01Page().verifyDecedentSNameIsDisplayedAndNonEditable();
+        CommonSteps.logInfo("Verified that the decedent's name is displayed and non-editable");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies the decedent's name is displayed correctly and is non-editable")
+    public void userVerifiesTheDecedentSNameIsDisplayedCorrectlyAndIsNonEditable() throws AutomationException {
+        PageFactory.probateFormsOC01Page().verifyDecedentSNameIsDisplayedCorrectlyAndIsNonEditable();
+        CommonSteps.logInfo("Verified that the decedent's name is displayed correctly and is non-editable");
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Estate's name is auto fetched and correctly displayed")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayed() throws AutomationException {
+        CommonSteps.logInfo("Verified that Estate's name is auto fetched and correctly displayed");
+        PageFactory.probateFormsOC01Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies correct trust name is displayed on the form")
+    public void userVerifiesCorrectTrustNameIsDisplayedOnTheForm() throws AutomationException {
+        CommonSteps.logInfo("Verified that correct trust name is displayed on the form");
+        PageFactory.probateFormsOC01Page().verifyCorrectTrustNameIsDisplayedOnTheForm();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user select 'Yes' for litigation status")
+    public void userSelectYesForLitigationStatus() {
+        CommonSteps.logInfo("user select 'Yes' for litigation status");
+        PageFactory.probateFormsOC01Page().userSelectYesForLitigationStatus();
+    }
+
+    @Then("user verifies text fields are enabled dynamically when litigation status is 'Yes'")
+    public void userVerifiesTextFieldsAreEnabledDynamicallyWhenLitigationStatusIsYes() throws AutomationException {
+        CommonSteps.logInfo("Verified that text fields are enabled dynamically when litigation status is 'Yes'");
+        PageFactory.probateFormsOC01Page().verifyTextFieldsAreEnabledDynamicallyWhenLitigationStatusIsYes();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user select 'Yes' for fiduciary status")
+    public void userSelectYesForFiduciaryStatus() {
+        CommonSteps.logInfo("user select 'Yes' for fiduciary status");
+        PageFactory.probateFormsOC01Page().userSelectYesForFiduciaryStatus();
+    }
+
+    @Then("user verifies additional fiduciary fields appear and are editable")
+    public void userVerifiesAdditionalFiduciaryFieldsAppearAndAreEditable() throws AutomationException {
+        CommonSteps.logInfo("Verified that additional fiduciary fields appear and are editable");
+        PageFactory.probateFormsOC01Page().verifyAdditionalFiduciaryFieldsAppearAndAreEditable();
+        CommonSteps.takeScreenshot();
+    }
 }

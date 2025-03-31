@@ -93,6 +93,8 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String DECEDENT_TAB = "//span[text()='Decedent']";
     private static final String ESTATE_NAME_PAGE_3 = "//p[contains(text(),'Estate of')]//input";
     private static final String ESTATE_NAME_PAGE_6 = "//p[contains(text(),'Estate of')]//input";
+    private static final String ESTATE_NAME_PAGE_7 = "//p[contains(text(),'Estate of')]//input";
+    private static final String ESTATE_NAME_PAGE_8 = "//p[contains(text(),'Estate of')]//input";
     private static final String DATE_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].dateOfBirth']";
     private static final String CHILDREN_DETAILS_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].name']";
     private static final String NAME_OF_TRUST_PAGE_4 = "//p[contains(text(),'Estate of')]//input";
@@ -104,6 +106,13 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllBenyOnAttachment']";
     private static final String MAIN_COUNT = "//div[@class='main_count blue-text']//span";
     private static final String ATTACHMENT_COUNT = "//div[@class='attached_count blue-text']//b";
+    private static final String ESTATE_NAME_PAGE_9 = "//p[contains(text(),'Estate of')]//input";
+    private static final String ESTATE_NAME_PAGE_10 = "//p[contains(text(),'Estate of')]//input";
+    private static final String ESTATE_NAME_PAGE_11 = "//p[contains(text(),'Estate of')]//input";
+    private static final String LITIGATION_YES_OPTION = "//input[@name='wasDecedentAPartyInLitigation' and @value='1']";
+    private static final String LITIGATION_TEXT_FIELD = "//textarea[@name='litigationDetails']";
+    private static final String FIDUCIARY_STATUS_YES_OPTION = "//input[@name='wasDecedentAFiduciaryOnDod' and @value='1']";
+    private static final String FIDUCIARY_TEXT_FIELD = "//textarea[@name='nameOfTheEstate']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -165,7 +174,11 @@ public class ProbateFormsOC01Page extends BasePage{
     static String childrenDetailDataForm10;
     static int expectedAttachmentCountForm;
     static String estateNameFormPage6;
-
+    static String estateNameFormPage7;
+    static String estateNameFormPage8;
+    static String estateNameFormPage9;
+    static String estateNameFormPage10;
+    static String estateNameFormPage11;
 
 
     @Override
@@ -941,5 +954,111 @@ public class ProbateFormsOC01Page extends BasePage{
         }
 
         verifyFieldIsNotEditable(ESTATE_NAME_PAGE_6);
+    }
+
+    public void verifyPreloadedDecedentSNameIsDisplayedAndIsReadOnly() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_7);
+        scrollToElement(ESTATE_NAME_PAGE_7);
+
+        estateNameFormPage7 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage7)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage7);
+        }
+
+        verifyFieldIsNotEditable(ESTATE_NAME_PAGE_7);
+    }
+
+    public void verifyDecedentSNameIsDisplayedAndNonEditable() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_8);
+        scrollToElement(ESTATE_NAME_PAGE_8);
+
+        estateNameFormPage8 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage8)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage8);
+        }
+
+        verifyFieldIsNotEditable(ESTATE_NAME_PAGE_8);
+    }
+
+    public void verifyDecedentSNameIsDisplayedCorrectlyAndIsNonEditable() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_9);
+        scrollToElement(ESTATE_NAME_PAGE_9);
+
+        estateNameFormPage9 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage9)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage9);
+        }
+
+        verifyFieldIsNotEditable(ESTATE_NAME_PAGE_9);
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_10);
+        scrollToElement(ESTATE_NAME_PAGE_10);
+
+        estateNameFormPage10 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage10)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage10);
+        }
+    }
+
+    public void verifyCorrectTrustNameIsDisplayedOnTheForm() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_11);
+        scrollToElement(ESTATE_NAME_PAGE_11);
+
+        estateNameFormPage11 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage11)){
+            throw new AutomationException("Trust name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage11);
+        }
+    }
+
+    public void userSelectYesForLitigationStatus() {
+        scrollToElement(LITIGATION_YES_OPTION);
+        DriverFactory.drivers.get().findElement(By.xpath(LITIGATION_YES_OPTION)).click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void verifyTextFieldsAreEnabledDynamicallyWhenLitigationStatusIsYes() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        WebElement TextField = driverUtil.getWebElement(LITIGATION_TEXT_FIELD);
+
+        if (!TextField.isEnabled() && TextField.getAttribute("disabled")!=null && TextField.getAttribute("readonly")!=null) {
+            throw new AutomationException("Text fields are not enabled dynamically when litigation status is 'Yes'");
+        }
+
+
+        //use in reset
+        scrollToElement(LITIGATION_YES_OPTION);
+        DriverFactory.drivers.get().findElement(By.xpath(LITIGATION_YES_OPTION)).click();
+    }
+
+    public void userSelectYesForFiduciaryStatus() {
+        scrollToElement(FIDUCIARY_STATUS_YES_OPTION);
+        DriverFactory.drivers.get().findElement(By.xpath(FIDUCIARY_STATUS_YES_OPTION)).click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void verifyAdditionalFiduciaryFieldsAppearAndAreEditable() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        WebElement TextField = driverUtil.getWebElement(FIDUCIARY_TEXT_FIELD);
+
+        if (!TextField.isDisplayed() && !TextField.isEnabled() && TextField.getAttribute("disabled")!=null && TextField.getAttribute("readonly")!=null) {
+            throw new AutomationException("Additional fiduciary fields are not appear or are not editable");
+        }
+
+
+        //use in reset
+        scrollToElement(FIDUCIARY_STATUS_YES_OPTION);
+        DriverFactory.drivers.get().findElement(By.xpath(FIDUCIARY_STATUS_YES_OPTION)).click();
     }
 }
