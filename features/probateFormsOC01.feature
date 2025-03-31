@@ -75,6 +75,29 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "5"
     Then user verifies Name of the Trust is auto fetched from page 2 on page 5
 
+  Scenario: Verify, rest of the selected beneficiaries are displayed as a part of attachment.
+    When user navigates to page number: "4"
+    And user saves selected beneficiaries details
+    Then user verifies rest of the selected beneficiaries are displayed on the attachment
+
+  Scenario: Verify, attachment is displayed on both the pages.
+    When user navigates to page number: "4"
+    Then user verifies attachment is displayed on page 4
+    When user navigates to page number: "5"
+    And user verifies same attachment is displayed on page 5
+
+  Scenario: Verify, if the display as attachment checkbox is checked then all the beneficiaries are displayed in attachment.
+    When user navigates to page number: "4"
+    And user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox
+    Then user verifies all the beny users are displayed as a part of attachment
+
+  Scenario: Verify correct count of main and attachment is displayed.
+    Then user verifies the Main's count is turn to zero and only Attachment count is displayed correctly
+
+  Scenario: Verify that the decedent's name is preloaded and displayed as read-only.
+    When user navigates to page number: "6"
+    Then user verifies decedent's name is displayed and is not editable
+
 
 #  Scenario: Reset the OC01 form
 #    When user resets the "OC01" form

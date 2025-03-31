@@ -15,10 +15,8 @@ import org.openqa.selenium.interactions.Actions;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
@@ -94,12 +92,22 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String DATE_OF_WILL_FORM = "//input[@name='dateOfWill']";
     private static final String DECEDENT_TAB = "//span[text()='Decedent']";
     private static final String ESTATE_NAME_PAGE_3 = "//p[contains(text(),'Estate of')]//input";
+    private static final String ESTATE_NAME_PAGE_6 = "//p[contains(text(),'Estate of')]//input";
     private static final String DATE_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].dateOfBirth']";
     private static final String CHILDREN_DETAILS_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].name']";
     private static final String NAME_OF_TRUST_PAGE_4 = "//p[contains(text(),'Estate of')]//input";
     private static final String NAME_OF_TRUST_PAGE_5 = "//p[contains(text(),'Estate of')]//input";
+    private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
+    private static final String BENE_DETAILS_FORM = "//p//div";
+    private static final String BENE_DETAILS_ATTACHMENT = "//div[@class='attachment-css border-0']//tr/td[textarea[contains(text(), ',')]]";
+    private static final String CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
+    private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllBenyOnAttachment']";
+    private static final String MAIN_COUNT = "//div[@class='main_count blue-text']//span";
+    private static final String ATTACHMENT_COUNT = "//div[@class='attached_count blue-text']//b";
 
     private final Map<String, String> estateInfo = new HashMap<>();
+
+    private static final List<String> beneDetails = new ArrayList<>();
 
     static String countyNameForm;
     static String estateNameForm;
@@ -155,6 +163,8 @@ public class ProbateFormsOC01Page extends BasePage{
     static String childrenDetailDataForm8;
     static String childrenDetailDataForm9;
     static String childrenDetailDataForm10;
+    static int expectedAttachmentCountForm;
+    static String estateNameFormPage6;
 
 
 
@@ -402,6 +412,7 @@ public class ProbateFormsOC01Page extends BasePage{
     public void verifyEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable() throws AutomationException {
         WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_2);
         WebElement decedentDiedOnField = driverUtil.getWebElement(DECEDENT_DIED_ON_FIELD);
+        scrollToElement(ESTATE_NAME_PAGE_2);
 
         estateNamePage2Form =  estateNameField.getAttribute("value");
         decedentDiedOnForm = decedentDiedOnField.getAttribute("value");
@@ -597,6 +608,25 @@ public class ProbateFormsOC01Page extends BasePage{
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+
+
+
+        //use in reset
+        userClickOnPetitionerNameField();
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
     }
 
     public static void clearField(String fieldXpath) throws AutomationException {
@@ -664,6 +694,7 @@ public class ProbateFormsOC01Page extends BasePage{
     public void verifyDecedentSNameIsDisplayedAndIsNonEditable() throws AutomationException {
         String enteredEstateName = getEstateValue("DisplayName");
         WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_3);
+        scrollToElement(ESTATE_NAME_PAGE_3);
 
         estateNameFormPage3 =  estateNameField.getAttribute("value");
 
@@ -751,6 +782,7 @@ public class ProbateFormsOC01Page extends BasePage{
 
     public void verifyNameOfTheTrustIsAutoFetchedFromPageOnPage4() throws AutomationException {
         WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_PAGE_4);
+        scrollToElement(NAME_OF_TRUST_PAGE_4);
         String nameOfTrustPage4 = nameOfTrustField.getAttribute("value");
 
         if(!nameOfTrustPage4.equals(estateNamePage2Form)){
@@ -760,10 +792,154 @@ public class ProbateFormsOC01Page extends BasePage{
 
     public void verifyNameOfTheTrustIsAutoFetchedFromPageOnPage5() throws AutomationException {
         WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_PAGE_5);
+        scrollToElement(NAME_OF_TRUST_PAGE_5);
         String nameOfTrustPage5 = nameOfTrustField.getAttribute("value");
 
         if(!nameOfTrustPage5.equals(estateNamePage2Form)){
             throw new AutomationException("Name of Trust from page 2 is not fetched correctly on page 5. Expected: "+ estateNamePage2Form + " , Found: "+ nameOfTrustPage5);
         }
+    }
+
+    public void userSavesSelectedBeneficiariesDetails() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> beneDetailsPage4Fields = driverUtil.getWebElements(BENE_DETAILS_FORM);
+
+        for(int i=0; i<2; i++){
+            beneDetails.add(beneDetailsPage4Fields.get(i).getText());
+        }
+
+        driverUtil.getWebElement(String.format(PAGE_NUMBER_DYNAMIC_XPATH, "5")).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneDetailsPage5Fields = driverUtil.getWebElements(BENE_DETAILS_FORM);
+
+        for(int i=0; i<2; i++){
+            beneDetails.add(beneDetailsPage5Fields.get(i).getText());
+        }
+
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneDetailsOnAttachmentFields = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+
+        for(int i=0; i<3; i++){
+            beneDetails.add(beneDetailsOnAttachmentFields.get(i).getText());
+        }
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+
+        //for debugging, will remove later
+//        System.out.println("All Bene Details");
+//        for (int i=0; i<beneDetails.size();i++){
+//            System.out.println("\nBene Detail "+i+": \n"+beneDetails.get(i));
+//        }
+    }
+
+    public void verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        if (beneDetails.size() <= 2) {
+            throw new AutomationException("There are no additional beneficiaries to verify in the attachment.");
+        }
+
+        List<WebElement> attachmentBeneficiaries = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+
+        for (int i = 4; i < beneDetails.size(); i++) {
+            String expectedBeneficiary = beneDetails.get(i);
+            boolean found = false;
+
+            for (WebElement attachmentBeneficiary : attachmentBeneficiaries) {
+                if (attachmentBeneficiary.getText().equals(expectedBeneficiary)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                throw new AutomationException("Beneficiary not found in attachment: " + expectedBeneficiary);
+            }
+        }
+
+        CommonSteps.takeScreenshot();
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void verifyAttachmentIsDisplayedOnPage4() throws AutomationException {
+        verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+    }
+
+    public void verifySameAttachmentIsDisplayedOnPage5() throws AutomationException {
+        verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+    }
+
+    public void userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox() throws AutomationException {
+        scrollToElement(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN);
+        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN)).click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> attachmentBeneficiaries = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+
+        for (String expectedBeneficiary : beneDetails) {
+            boolean found = false;
+
+            for (WebElement attachmentBeneficiary : attachmentBeneficiaries) {
+                if (attachmentBeneficiary.getText().equals(expectedBeneficiary)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                throw new AutomationException("Beneficiary not found in attachment: " + expectedBeneficiary);
+            }
+        }
+
+        expectedAttachmentCountForm = attachmentBeneficiaries.size();
+
+        CommonSteps.takeScreenshot();
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly() throws AutomationException {
+        WebElement mainCountElement = driverUtil.getWebElement(MAIN_COUNT);
+        WebElement attachmentCountElement = driverUtil.getWebElement(ATTACHMENT_COUNT);
+
+        int actualMainCount = Integer.parseInt(mainCountElement.getText().trim());
+        int actualAttachmentCount = Integer.parseInt(attachmentCountElement.getText().split(":")[1].trim());
+
+        if (actualMainCount != 0) {
+            throw new AutomationException("Mismatch in Main Count. Expected: 0 " + ", Found: " + actualMainCount);
+        }
+        if (actualAttachmentCount != expectedAttachmentCountForm) {
+            throw new AutomationException("Mismatch in Attachment Count. Expected: " + expectedAttachmentCountForm + ", Found: " + actualAttachmentCount);
+        }
+
+        //use in reset
+        userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox();
+    }
+
+    public void verifyDecedentSNameIsDisplayedAndIsNotEditable() throws AutomationException {
+        String enteredEstateName = getEstateValue("DisplayName");
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_6);
+        scrollToElement(ESTATE_NAME_PAGE_6);
+
+        estateNameFormPage6 =  estateNameField.getAttribute("value");
+
+        if(!enteredEstateName.equals(estateNameFormPage6)){
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage6);
+        }
+
+        verifyFieldIsNotEditable(ESTATE_NAME_PAGE_6);
     }
 }
