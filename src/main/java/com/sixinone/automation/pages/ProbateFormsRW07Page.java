@@ -614,8 +614,6 @@ public class ProbateFormsRW07Page extends BasePage {
             throw new AutomationException("Unable to select the fiduciary contact.");
         }
 
-        CommonSteps.takeScreenshot();
-
         driverUtil.getWebElement(SAVE_BTN).click();
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Individual Fiduciary updated successfully.")));
@@ -665,7 +663,6 @@ public class ProbateFormsRW07Page extends BasePage {
         if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
             selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
         }
-        System.out.println("expected name of person: "+selectedNameOfPerson);
     }
 
     public void verifySelectedContactsAreCleared() throws AutomationException {

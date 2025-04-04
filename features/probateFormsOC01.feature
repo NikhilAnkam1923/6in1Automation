@@ -86,9 +86,25 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "5"
     And user verifies same attachment is displayed on page 5
 
-  Scenario: Verify, if the display as attachment checkbox is checked then all the beneficiaries are displayed in attachment.
+  Scenario: Verify, if the initials are added then name address disappears, if initials are removed then name and address appears.
     When user navigates to page number: "4"
-    And user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox
+    And user adds initials
+    Then user verifies name and address gets disappear
+    When user removes initials
+    Then user verifies name and address of the beneficiaries is displayed
+
+  Scenario: Verify, comments can be added for that particular beneficiary.
+    When user adds comments
+    Then user verifies comments are added and auto saved
+
+  Scenario: Verify, relationship of the beneficiary with the given estate/trust is displayed under relationship section.
+    Then user verifies correct relationship is auto fetched and displayed under relationship section
+
+  Scenario: Verify, interest value for each beneficiary.
+    Then user verifies interest is auto fetched from beny worksheet
+
+  Scenario: Verify, if the display as attachment checkbox is checked then all the beneficiaries are displayed in attachment.
+    When user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox
     Then user verifies all the beny users are displayed as a part of attachment
 
   Scenario: Verify correct count of main and attachment is displayed.
@@ -98,9 +114,32 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "6"
     Then user verifies decedent's name is displayed and is not editable
 
+  Scenario: Verify that while adding new claimant if initials is empty then Name and Address fields should be required and vice versa for initials.
+    When user clicks on Add/Edit Claimants
+    And user clicks on Add New Claimant button
+    Then user verifies name and Address fields are required if initial field is empty
+    Then user verifies if initials exist then Name and Address are not required
+
+  Scenario: Verify that while adding claimant if Name and Address is there then initials is not required.
+    Then user verifies initials are not required if Name and Address is there
+
+  Scenario: Verify that a user can add a new claimant successfully.
+    And user adds multiple claimants
+    Then user verifies the claimant is added to the list and totals are updated dynamically
+
+  Scenario: Verify that claimants exceeding four are moved to the attachment.
+    Then user verifies first four claimants remain in the main table and additional claimants are displayed in the attachment
+
   Scenario: Verify the decedent's name is preloaded as read-only.
     When user navigates to page number: "7"
     Then user verifies the preloaded decedent's name is displayed and is read-only
+
+  Scenario: Verify, if both the checkboxes in point 11 is checked then only spouse field is enabled.
+    When user check both the checkboxes as yes
+    Then user verifies family exemption claimant‘s name field is enabled
+
+  Scenario: Verify, date, payment and interest can be added.
+    Then user verifies date, payment and interest can be added in correct format
 
   Scenario: Verify that fiduciary fields appear when "Yes" is selected.
     When user select 'Yes' for fiduciary status
@@ -118,17 +157,41 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "9"
     Then user verifies the decedent's name is displayed correctly and is non-editable
 
+  Scenario: Verify date, description and amount can be added in multiline
+    Then user verifies date, description and amount can be added in the receipts and disbursements table
+
+  Scenario: Verify, reserve request amount can be added.
+    Then user verifies Reserve request amount can be added
+
   Scenario: Verify, trust's name is auto fetched.
     When user navigates to page number: "10"
     Then user verifies Estate's name is auto fetched and correctly displayed
+
+  Scenario: Verify, only 1 fiduciary contact can be selected and all its details are displayed.
+    Then user verifies only one corporate fiduciary contact can be selected and its details are displayed correctly
+
+  Scenario: Verify, warning is displayed for selecting capacity.
+    When user clicks on name of petitioner field
+    Then user verifies warning is displayed for selecting capacity
+
+  Scenario: Verify, on the basis of capacity selected, contact can be selected and displayed on the form.
+    When user selects capacity as "Personal Representative"
+    And user clicks on name of petitioner field
+    Then user verifies "fiduciary" type of contacts are displayed and can be selected and its details are displayed correctly on form
+    When user selects capacity as "Counsel"
+    And user clicks on name of petitioner field
+    Then user verifies "attorney" type of contacts are displayed and can be selected and its details are displayed correctly on form
 
   Scenario: Verify, trust's name is auto fetched and correctly displayed.
     When user navigates to page number: "11"
     Then user verifies correct trust name is displayed on the form
 
+  Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
+    Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner
 
-#  Scenario: Reset the OC01 form
-#    When user resets the "OC01" form
+
+  Scenario: Reset the OC01 form
+    When user resets the "OC01" form
 
   @Setup
   Scenario:SETUP: Close Browser

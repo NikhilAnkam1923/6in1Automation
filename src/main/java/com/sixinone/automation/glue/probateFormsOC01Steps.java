@@ -1,11 +1,13 @@
 package com.sixinone.automation.glue;
 
+import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.json.simple.parser.ParseException;
+import org.openqa.selenium.By;
 
 import java.io.IOException;
 
@@ -258,6 +260,187 @@ public class probateFormsOC01Steps {
     public void userVerifiesAdditionalFiduciaryFieldsAppearAndAreEditable() throws AutomationException {
         CommonSteps.logInfo("Verified that additional fiduciary fields appear and are editable");
         PageFactory.probateFormsOC01Page().verifyAdditionalFiduciaryFieldsAppearAndAreEditable();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user adds initials")
+    public void userAddsInitials() throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("user adds initials");
+        PageFactory.probateFormsOC01Page().userAddsInitials();
+    }
+
+    @Then("user verifies name and address gets disappear")
+    public void userVerifiesNameAndAddressGetsDisappear() throws AutomationException {
+        CommonSteps.logInfo("Verified that name and address gets disappear");
+        PageFactory.probateFormsOC01Page().verifyNameAndAddressGetsDisappear();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user removes initials")
+    public void userRemovesInitials() throws AutomationException {
+        CommonSteps.logInfo("user removes initials");
+        PageFactory.probateFormsOC01Page().userRemovesInitials();
+    }
+
+    @Then("user verifies name and address of the beneficiaries is displayed")
+    public void userVerifiesNameAndAddressOfTheBeneficiariesIsDisplayed() throws AutomationException {
+        CommonSteps.logInfo("Verified that name and address of the beneficiaries is displayed");
+        PageFactory.probateFormsOC01Page().verifyNameAndAddressOfTheBeneficiariesIsDisplayed();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user adds comments")
+    public void userAddsComments() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user adds comments");
+        PageFactory.probateFormsOC01Page().userAddsComments();
+    }
+
+    @Then("user verifies comments are added and auto saved")
+    public void userVerifiesCommentsAreAddedAndAutoSaved() throws AutomationException {
+        CommonSteps.logInfo("Verified that comments are added and auto saved");
+        PageFactory.probateFormsOC01Page().verifyCommentsAreAddedAndAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies correct relationship is auto fetched and displayed under relationship section")
+    public void userVerifiesCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection() throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("Verified that correct relationship is auto fetched and displayed under relationship section");
+        PageFactory.probateFormsOC01Page().verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies interest is auto fetched from beny worksheet")
+    public void userVerifiesInterestIsAutoFetchedFromBenyWorksheet() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that interest is auto fetched from beny worksheet");
+        PageFactory.probateFormsOC01Page().verifyInterestIsAutoFetchedFromBenyWorksheet();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user check both the checkboxes as yes")
+    public void userCheckBothTheCheckboxesAsYes() {
+        CommonSteps.logInfo("user check both the checkboxes as yes");
+        PageFactory.probateFormsOC01Page().userCheckBothTheCheckboxesAsYes();
+    }
+
+    @Then("user verifies family exemption claimant‘s name field is enabled")
+    public void userVerifiesFamilyExemptionClaimantSNameFieldIsEnabled() throws AutomationException {
+        CommonSteps.logInfo("Verified that family exemption claimant‘s name field is enabled");
+        PageFactory.probateFormsOC01Page().verifyFamilyExemptionClaimantSNameFieldIsEnabled();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies date, payment and interest can be added in correct format")
+    public void userVerifiesDatePaymentAndInterestCanBeAddedInCorrectFormat() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that date, payment and interest can be added in correct format");
+        PageFactory.probateFormsOC01Page().verifyDatePaymentAndInterestCanBeAddedInCorrectFormat();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies date, description and amount can be added in the receipts and disbursements table")
+    public void userVerifiesDateDescriptionAndAmountCanBeAddedInTheReceiptsDisbursementsTable() throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("Verified that date, description and amount can be added in the receipts and disbursements table");
+        PageFactory.probateFormsOC01Page().verifyDateDescriptionAndAmountCanBeAddedInTheReceiptsDisbursementsTable();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Reserve request amount can be added")
+    public void userVerifiesReserveRequestAmountCanBeAdded() throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("Verified that Reserve request amount can be added");
+        PageFactory.probateFormsOC01Page().verifyReserveRequestAmountCanBeAdded();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner")
+    public void userVerifies1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner() throws AutomationException {
+        CommonSteps.logInfo("Verified that 1st individual petitioner selected on page 2 is displayed under individual petitioner");
+        PageFactory.probateFormsOC01Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies only one corporate fiduciary contact can be selected and its details are displayed correctly")
+    public void userVerifiesOnlyOneCorporateFiduciaryContactCanBeSelectedAndItsDetailsAreDisplayedCorrectly() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that only one corporate fiduciary contact can be selected and its details are displayed correctly");
+        PageFactory.probateFormsOC01Page().verifyAnyOneOfTheFiduciaryContactsCanBeSelected();;
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user clicks on name of petitioner field")
+    public void userClicksOnNameOfPetitionerField() throws AutomationException {
+        CommonSteps.logInfo("user clicks on name of petitioner field");
+        PageFactory.probateFormsOC01Page().userClicksOnNameOfPetitionerField();
+    }
+
+    @Then("^user verifies \"([^\"]*)\" type of contacts are displayed and can be selected and its details are displayed correctly on form$")
+    public void userVerifiesTypeOfContactsAreDisplayedAndCanBeSelectedAndItsDetailsAreDisplayedCorrectlyOnForm(String contactType) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user verifies "+contactType+" type of contacts are displayed and can be selected and its details are displayed correctly on form");
+        switch (contactType){
+            case "fiduciary":
+                PageFactory.probateFormsOC01Page().verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            case "attorney":
+                PageFactory.probateFormsOC01Page().verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected();
+                break;
+            default:
+                throw new AutomationException("Unsupported type : " + contactType);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies warning is displayed for selecting capacity")
+    public void userVerifiesWarningIsDisplayedForSelectingCapacity() throws AutomationException {
+        CommonSteps.logInfo("Verified that warning is displayed for selecting capacity");
+        PageFactory.probateFormsOC01Page().verifyWarningIsDisplayedForSelectingCapacity();;
+    }
+
+    @When("^user clicks on Add\\/Edit Claimants$")
+    public void userClicksOnAddEditClaimants() throws AutomationException {
+        CommonSteps.logInfo("user clicks on Add/Edit Claimants");
+        PageFactory.probateFormsOC01Page().userClicksOnAddEditClaimants();
+    }
+
+    @And("user clicks on Add New Claimant button")
+    public void userClicksOnAddNewClaimantButton() throws AutomationException {
+        CommonSteps.logInfo("user clicks on Add New Claimant button");
+        PageFactory.probateFormsOC01Page().userClicksOnAddNewClaimantButton();
+    }
+
+    @And("user adds multiple claimants")
+    public void userAddsMultipleClaimants() throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("user adds multiple claimants");
+        PageFactory.probateFormsOC01Page().userAddsMultipleClaimants();
+    }
+
+    @Then("user verifies the claimant is added to the list and totals are updated dynamically")
+    public void userVerifiesTheClaimantIsAddedToTheListAndTotalsAreUpdatedDynamically() throws AutomationException {
+        CommonSteps.logInfo("Verified that the claimant is added to the list and totals are updated dynamically");
+        PageFactory.probateFormsOC01Page().verifyClaimantIsAddedToTheListAndTotalsAreUpdatedDynamically();;
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies first four claimants remain in the main table and additional claimants are displayed in the attachment")
+    public void userVerifiesFirstFourClaimantsRemainInTheMainTableAndAdditionalClaimantsAreDisplayedInTheAttachment() throws AutomationException {
+        CommonSteps.logInfo("Verified that first four claimants remain in the main table and additional claimants are displayed in the attachment");
+        PageFactory.probateFormsOC01Page().verifyFirstFourClaimantsRemainInTheMainTableAndAdditionalClaimantsAreDisplayedInTheAttachment();;
+    }
+
+    @Then("user verifies name and Address fields are required if initial field is empty")
+    public void userVerifiesNameAndAddressFieldsAreRequiredIfInitialFieldIsEmpty() throws AutomationException {
+        CommonSteps.logInfo("Verified that name and Address fields are required if initial field is empty");
+        PageFactory.probateFormsOC01Page().verifyNameAndAddressFieldsAreRequiredIfInitialFieldIsEmpty();;
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies if initials exist then Name and Address are not required")
+    public void userVerifiesIfInitialsExistThenNameAndAddressAreNotRequired() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that if initials exist then Name and Address are not required");
+        PageFactory.probateFormsOC01Page().verifyIfInitialsExistThenNameAndAddressAreNotRequired();;
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies initials are not required if Name and Address is there")
+    public void userVerifiesInitialsAreNotRequiredIfNameAndAddressIsThere() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that initials are not required if Name and Address is there");
+        PageFactory.probateFormsOC01Page().verifyInitialsAreNotRequiredIfNameAndAddressIsThere();;
         CommonSteps.takeScreenshot();
     }
 }
