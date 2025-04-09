@@ -130,6 +130,10 @@ Feature: 6in1 probate form OC01 Feature
   Scenario: Verify that claimants exceeding four are moved to the attachment.
     Then user verifies first four claimants remain in the main table and additional claimants are displayed in the attachment
 
+  Scenario: Verify that totals for "Above" and "Attachment" update dynamically.
+      #Verify that totals for "Above" and "Attachment" update in real-time while editing in the sidebar.
+    Then user verifies the totals displayed correctly for 'Above' and 'Attachment'
+
   Scenario: Verify the decedent's name is preloaded as read-only.
     When user navigates to page number: "7"
     Then user verifies the preloaded decedent's name is displayed and is read-only
@@ -167,6 +171,17 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to page number: "10"
     Then user verifies Estate's name is auto fetched and correctly displayed
 
+  Scenario: Verify, if displayed on checkbox is checked, then the contacts are displayed on the form.
+    When user checks the Display checkbox for beneficiaries
+      #Verify, if proportion entered in the income part is displayed on the form
+    And user enters proportion for beneficiaries
+    Then user verifies the contacts for which the checkbox is checked are displayed on the form
+    And user verifies entered proportion values are correctly displayed on the form
+
+  Scenario: Verify, all the contacts are moved to attachment if the display all bene in attachment checkbox is checked.
+    When user checks 'Display ALL INCOME Distributees on attachment' checkbox
+    Then user verifies all the beneficiary contacts are moved to the attachment
+
   Scenario: Verify, only 1 fiduciary contact can be selected and all its details are displayed.
     Then user verifies only one corporate fiduciary contact can be selected and its details are displayed correctly
 
@@ -189,9 +204,37 @@ Feature: 6in1 probate form OC01 Feature
   Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
     Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner
 
+  Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
+    Then user verifies all the remaining petitioners are displayed as a part of attachment
+
+  Scenario: Verify, if the notification if the selected contact is removed from the estate.
+    When user navigates to Estate Contacts tab
+    Then user verifies notification is displayed when the contact selected as the petitioner is removed from the estate contacts
+      #Verify, notification popup is shown for removal of contact already in use.
+    Then user verifies notification is displayed when the beneficiary contact is removed from the estate contacts
+    Then user verifies notification is displayed when the corporate fiduciary and attorney contacts are removed from the estate contacts
+
+  Scenario: Verify, if the contact is removed, it is removed from the form as well.
+    When user navigates to the probate forms tab
+    And user click on the "OC 01" form
+    And user navigates to page number: "2"
+    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the form
+
+  Scenario: Verify, if for a user role of beny is removed.
+    When user navigates to page number: "4"
+    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the form
+  
+  Scenario: Verify, if for a user role of beny, fiduciary, attorney is removed.
+    When user navigates to page number: "10"
+    Then user verifies removed corporate fiduciary and attorney contacts from the estate contacts are also gets removed from the form
+
+  Scenario: Reset Roles of Removed Contacts
+    When user resets roles of removed contacts from the Estate Contacts
 
   Scenario: Reset the OC01 form
-    When user resets the "OC01" form
+    When user navigates to the probate forms tab
+    And user click on the "OC 01" form
+    Then user resets the "OC01" form
 
   @Setup
   Scenario:SETUP: Close Browser
