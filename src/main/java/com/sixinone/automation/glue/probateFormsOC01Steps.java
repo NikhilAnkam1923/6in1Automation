@@ -135,4 +135,18 @@ public class probateFormsOC01Steps {
         PageFactory.probateFormsOC01Page().verifyMultipleChildrenAndDoBCanBeAdded();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies Name of the Trust is auto fetched from page 2 on page 4")
+    public void userVerifiesNameOfTheTrustIsAutoFetchedFromPageOnPage4() throws AutomationException {
+        CommonSteps.logInfo("Verified that Name of the Trust is auto fetched from page 2 on page 4");
+        PageFactory.probateFormsOC01Page().verifyNameOfTheTrustIsAutoFetchedFromPageOnPage4();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Name of the Trust is auto fetched from page 2 on page 5")
+    public void userVerifiesNameOfTheTrustIsAutoFetchedFromPageOnPage5() throws AutomationException {
+        CommonSteps.logInfo("Verified that Name of the Trust is auto fetched from page 2 on page 5");
+        PageFactory.probateFormsOC01Page().verifyNameOfTheTrustIsAutoFetchedFromPageOnPage5();
+        CommonSteps.takeScreenshot();
+    }
 }

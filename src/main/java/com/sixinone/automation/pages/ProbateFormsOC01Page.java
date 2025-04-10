@@ -15,21 +15,20 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
-public class ProbateFormsOC01Page extends BasePage{
+public class ProbateFormsOC01Page extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -102,6 +101,8 @@ public class ProbateFormsOC01Page extends BasePage{
     private static final String ESTATE_NAME_PAGE_3 = "//p[contains(text(),'Estate of')]//input";
     private static final String DATE_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].dateOfBirth']";
     private static final String CHILDREN_DETAILS_FIELDS_PAGE_3 = "//input[@name='childrenDetails[%s].name']";
+    private static final String NAME_OF_TRUST_PAGE_4 = "//p[contains(text(),'Estate of')]//input";
+    private static final String NAME_OF_TRUST_PAGE_5 = "//p[contains(text(),'Estate of')]//input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -161,7 +162,6 @@ public class ProbateFormsOC01Page extends BasePage{
     static String childrenDetailDataForm8;
     static String childrenDetailDataForm9;
     static String childrenDetailDataForm10;
-
 
 
     @Override
@@ -240,7 +240,7 @@ public class ProbateFormsOC01Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         WebElement field = driverUtil.getWebElement(fieldLocator);
 
-        if (field.isEnabled() && field.getAttribute("disabled")==null && field.getAttribute("readonly")==null) {
+        if (field.isEnabled() && field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
             throw new AutomationException("Field is editable: " + fieldLocator);
         } else {
             CommonSteps.logInfo("Field is not editable: " + fieldLocator);
@@ -252,16 +252,16 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME);
 
         countyNameForm = countyNameField.getAttribute("value");
-        estateNameForm =  estateNameField.getAttribute("value");
+        estateNameForm = estateNameField.getAttribute("value");
 
         String enteredCountyName = getEstateValue("DomicileCountry");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredCountyName.equals(countyNameForm)){
+        if (!enteredCountyName.equals(countyNameForm)) {
             throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm);
         }
 
-        if(!enteredEstateName.equals(estateNameForm)){
+        if (!enteredEstateName.equals(estateNameForm)) {
             throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameForm);
         }
 
@@ -272,7 +272,7 @@ public class ProbateFormsOC01Page extends BasePage{
     public void verifyFileNumberFieldIsEditable() throws AutomationException, IOException, ParseException {
         WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
 
-        if(!fileNumberField.isEnabled()){
+        if (!fileNumberField.isEnabled()) {
             throw new AutomationException("File number field is not editable.");
         }
 
@@ -285,7 +285,7 @@ public class ProbateFormsOC01Page extends BasePage{
 
         fileNumberForm = fileNumberField.getAttribute("value");
 
-        if(!fileNumberForm.equals(newFileNumber) && fileNumberForm.equals(initialFileNumber)){
+        if (!fileNumberForm.equals(newFileNumber) && fileNumberForm.equals(initialFileNumber)) {
             throw new AutomationException("File number not updated correctly. Expected: " + newFileNumber + " ,Found: " + fileNumberForm);
         }
 
@@ -313,18 +313,18 @@ public class ProbateFormsOC01Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
-        if(!modalHeader.getText().contains("Attorney")){
+        if (!modalHeader.getText().contains("Attorney")) {
             throw new AutomationException("Sidebar is not displayed for attorney contact.");
         }
 
-        selectedAttorney = attorneyFirstName+" "+attorneyMiddleName+" "+attorneyLastName+", "+attorneySuffix;
+        selectedAttorney = attorneyFirstName + " " + attorneyMiddleName + " " + attorneyLastName + ", " + attorneySuffix;
 
         WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, selectedAttorney));
 
         WebDriverUtil.waitForAWhile();
         attorneyToSelect.click();
 
-        if(!attorneyToSelect.isSelected()){
+        if (!attorneyToSelect.isSelected()) {
             throw new AutomationException("Unable to select the attorney contact.");
         }
 
@@ -340,7 +340,7 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement nameOfCounselField = driverUtil.getWebElement(NAME_OF_COUNSEL_FIELD);
 
         nameOfCounselForm = nameOfCounselField.getAttribute("value");
-        if(!nameOfCounselForm.equals(selectedAttorney)){
+        if (!nameOfCounselForm.equals(selectedAttorney)) {
             throw new AutomationException("Attorney details not populated correctly in 'Name of Counsel' field. Expected: " + selectedAttorney + " ,Found: " + nameOfCounselForm);
         }
     }
@@ -400,7 +400,7 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement signOfCounselField = driverUtil.getWebElement(SIGN_OF_COUNSEL_PAGE_11);
         signOfCounselPage11Form = signOfCounselField.getAttribute("value");
 
-        if(!selectedAttorney.equals(signOfCounselPage11Form)){
+        if (!selectedAttorney.equals(signOfCounselPage11Form)) {
             throw new AutomationException("Attorney details are not synced with page 11. Expected: " + selectedAttorney + " ,Found: " + signOfCounselPage11Form);
         }
     }
@@ -409,17 +409,17 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_2);
         WebElement decedentDiedOnField = driverUtil.getWebElement(DECEDENT_DIED_ON_FIELD);
 
-        estateNamePage2Form =  estateNameField.getAttribute("value");
+        estateNamePage2Form = estateNameField.getAttribute("value");
         decedentDiedOnForm = decedentDiedOnField.getAttribute("value");
 
         String enteredEstateName = getEstateValue("DisplayName");
         String enteredDateOfDeathName = getEstateValue("DateOfDeath");
 
-        if(!enteredEstateName.equals(estateNamePage2Form)){
+        if (!enteredEstateName.equals(estateNamePage2Form)) {
             throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNamePage2Form);
         }
 
-        if(!enteredDateOfDeathName.equals(decedentDiedOnForm)){
+        if (!enteredDateOfDeathName.equals(decedentDiedOnForm)) {
             throw new AutomationException("County name not fetched correctly. Expected: " + enteredDateOfDeathName + " ,Found: " + decedentDiedOnForm);
         }
 
@@ -439,7 +439,7 @@ public class ProbateFormsOC01Page extends BasePage{
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
-        if(!modalHeader.getText().contains("Select Contact")){
+        if (!modalHeader.getText().contains("Select Contact")) {
             throw new AutomationException("Sidebar is not displayed for fiduciary contact.");
         }
 
@@ -478,7 +478,7 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
 
         nameOfPetitionerForm = nameOfPetitionerField.getAttribute("value");
-        if(!nameOfPetitionerForm.equals(Fiduciary1Form)){
+        if (!nameOfPetitionerForm.equals(Fiduciary1Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitionerForm);
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
@@ -486,7 +486,7 @@ public class ProbateFormsOC01Page extends BasePage{
 
 
         nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
-        if(!nameOfPetitioner2Form.equals(Fiduciary2Form)){
+        if (!nameOfPetitioner2Form.equals(Fiduciary2Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitioner2Form);
         }
         verifyPetitionerOnForm(petitioner2AddressLine1Form);
@@ -592,14 +592,14 @@ public class ProbateFormsOC01Page extends BasePage{
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
 
         nameOfPetitionerForm = nameOfPetitionerField.getAttribute("value");
-        if(!nameOfPetitionerForm.equals(Fiduciary2Form)){
+        if (!nameOfPetitionerForm.equals(Fiduciary2Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitionerForm);
         }
         verifyPetitionerOnForm(petitioner2AddressLine1Form);
         verifyPetitionerOnForm(petitioner2CityStateCodeZipForm);
 
         nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
-        if(!nameOfPetitioner2Form.equals(Fiduciary1Form)){
+        if (!nameOfPetitioner2Form.equals(Fiduciary1Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitioner2Form);
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
@@ -672,9 +672,9 @@ public class ProbateFormsOC01Page extends BasePage{
         String enteredEstateName = getEstateValue("DisplayName");
         WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_3);
 
-        estateNameFormPage3 =  estateNameField.getAttribute("value");
+        estateNameFormPage3 = estateNameField.getAttribute("value");
 
-        if(!enteredEstateName.equals(estateNameFormPage3)){
+        if (!enteredEstateName.equals(estateNameFormPage3)) {
             throw new AutomationException("Estate name not fetched correctly. Expected: " + enteredEstateName + " ,Found: " + estateNameFormPage3);
         }
 
@@ -714,85 +714,63 @@ public class ProbateFormsOC01Page extends BasePage{
                 childrenDetailDataForm6, childrenDetailDataForm7, childrenDetailDataForm8, childrenDetailDataForm9, childrenDetailDataForm10
         );
 
-        Actions actions = new Actions(DriverFactory.drivers.get());
-
         for (int i = 0; i < 10; i++) {
             WebDriverUtil.waitForAWhile(2);
             scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-
-
-            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i)));
-
-            dateField.clear();
-//            Toolkit.getDefaultToolkit()
-//                    .getSystemClipboard()
-//                    .setContents(new StringSelection(dateDataForm.get(i)), null);
-//
-//            actions.moveToElement(dateField)
-//                    .click()
-//                    .keyDown(Keys.CONTROL)
-//                    .sendKeys("v")
-//                    .keyUp(Keys.CONTROL)
-//                    .build()
-//                    .perform();
-
-            for (char c : dateDataForm.get(i).toCharArray()) {
-                dateField.sendKeys(String.valueOf(c));
-                WebDriverUtil.waitForAWhile();
-            }
+            WebElement childrenDetailField = driverUtil.getWebElementAndScroll(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
+            childrenDetailField.sendKeys(Keys.TAB);
 
             WebDriverUtil.waitForAWhile();
-            WebElement childrenDetailField = driverUtil.getWebElementAndScroll(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-
-//            reasonField.sendKeys(Keys.SPACE);
-//            reasonField.sendKeys(Keys.BACK_SPACE);
-//            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
-//            driverUtil.getWebElement("//span[text()='7.']").click();
-//            actions.sendKeys(Keys.TAB);
-
-//            driverUtil.getWebElement("//body").click();
+            WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i)));
+            dateField.click();
+            dateField.clear();
+            dateField.sendKeys(dateDataForm.get(i));
+            dateField.sendKeys(Keys.TAB);
 
             WebDriverUtil.waitForAWhile();
             String actualChildrenDetail = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).getAttribute("value");
-
-//            WebDriverUtil.waitForAWhile();
-
-
-            for (char c : childrenDetailDataForm.get(i).toCharArray()) {
-                childrenDetailField.sendKeys(String.valueOf(c));
-//                WebDriverUtil.waitForAWhile();
-            }
-//            driverUtil.getWebElement("//body").click();
-//            WebDriverUtil.waitForAWhile();
-//            dateField.sendKeys(dateDataForm.get(i));
-//            scrollToElement("//td[text()='Date of Birth:']");
-//            driverUtil.getWebElement("//td[text()='Date of Birth:']").click();
-
-//            WebDriverUtil.waitForAWhile();
-//            actions.sendKeys(Keys.TAB);
-
-//            driverUtil.getWebElement("//body").click();
-
-            WebDriverUtil.waitForAWhile();
             String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).getAttribute("value");
 
-//            if (!actualChildrenDetail.equals(childrenDetailDataForm.get(i))) {
-//                throw new AutomationException("Reason field did not accept the entered text correctly. Expected: " + childrenDetailDataForm.get(i) + ", Found: " + actualChildrenDetail);
-//            }
-//
-//            if (!actualDate.equals(dateDataForm.get(i))) {
-//                throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
-//            }
+            if (!actualChildrenDetail.equals(childrenDetailDataForm.get(i))) {
+                throw new AutomationException("Reason field did not accept the entered text correctly. Expected: " + childrenDetailDataForm.get(i) + ", Found: " + actualChildrenDetail);
+            }
+
+            if (!actualDate.equals(dateDataForm.get(i))) {
+                throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
+            }
         }
 
 
         //use in reset
-        for (int i = 9; i >= 0; i--) {
-            scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-//            clearField(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+//        for (int i = 9; i >= 0; i--) {
+//            WebDriverUtil.waitForAWhile(2);
+//            scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
 //            clearField(String.format(DATE_FIELDS_PAGE_3, i));
-            DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).clear();
-            DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i))).clear();
+//
+//            WebElement fieldElement = driverUtil.getWebElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
+//            fieldElement.click();
+//            fieldElement.sendKeys(Keys.CONTROL + "a");
+//            fieldElement.sendKeys(Keys.BACK_SPACE);
+//            fieldElement.sendKeys(Keys.TAB);
+//        }
+    }
+
+    public void verifyNameOfTheTrustIsAutoFetchedFromPageOnPage4() throws AutomationException {
+        WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_PAGE_4);
+        String nameOfTrustPage4 = nameOfTrustField.getAttribute("value");
+
+        if (!nameOfTrustPage4.equals(estateNamePage2Form)) {
+            throw new AutomationException("Name of Trust from page 2 is not fetched correctly on page 4. Expected: " + estateNamePage2Form + " , Found: " + nameOfTrustPage4);
+        }
+    }
+
+    public void verifyNameOfTheTrustIsAutoFetchedFromPageOnPage5() throws AutomationException {
+        WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_PAGE_5);
+        String nameOfTrustPage5 = nameOfTrustField.getAttribute("value");
+
+        if (!nameOfTrustPage5.equals(estateNamePage2Form)) {
+            throw new AutomationException("Name of Trust from page 2 is not fetched correctly on page 5. Expected: " + estateNamePage2Form + " , Found: " + nameOfTrustPage5);
         }
     }
 
@@ -838,72 +816,570 @@ public class ProbateFormsOC01Page extends BasePage{
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyDateLettersGranted(pdfFilePath);
+            verifyFieldsInPDF(pdfFilePath,
+                    "ORPHANS' COURT DIVISION",
+                    "PETITION FOR ADJUDICATION /",
+                    "22-23-1234",
+                    "file number");
+
+//
+//            verifyFieldsInPDF(pdfFilePath,
+//                    "Petitioner: Petitioner:",
+//                    "Address: Oak Street Pine Street",
+//                    nameOfPetitionerForm,
+//                    "Petitioner1 Name");
+
+//            verifyFieldsInPDF(pdfFilePath,
+//                    "Petitioner: Petitioner:",
+//                    "Address: Oak Street Pine Street",
+//                    nameOfPetitioner2Form,
+//                    "petitioner2 Name");
+
+
+            Map<String, String> expectedCounselDetails = new HashMap<>();
+            expectedCounselDetails.put("Name of Counsel", "Ethan Benjamin Walker, Jr.");
+            expectedCounselDetails.put("Name of Law Firm", "sigmaConsulting");
+            expectedCounselDetails.put("Address", "Riverside Drive Kansas City, MO 64101");
+            expectedCounselDetails.put("Telephone 1", "(816) 555-4321");
+            expectedCounselDetails.put("Telephone 2", "(816) 888-6543");
+            expectedCounselDetails.put("Email", "ethan.walker@business.com");
+
+            verifyCounselDetails(pdfFilePath, expectedCounselDetails);
+
+
+            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
+            expectedPetitioners.put("Michael Andrew Smith, Sr.", "Oak Street Atlanta, GA 30305");
+            expectedPetitioners.put("David James Clark, Jr.", "Pine Street San Francisco, CA 94102");
+
+            validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
+
+            verifyFieldsInPDF(pdfFilePath,
+                    "Letters Testamentary or  Letters of Administration were granted to Petitioner(s) on",
+                    "Date(s) of Codicil(s) (if applicable): 02/17/2023 02/20/2023 02/26/2023",
+                    dateOfWillForm,
+                    "Date of Will");
+
+            Map<String, String> expectedCodicilValues = new HashMap<>();
+            expectedCodicilValues.put("Codicil Date1", codicilDate1Form);
+            expectedCodicilValues.put("Codicil Date2", codicilDate2Form);
+            expectedCodicilValues.put("Codicil Date3", codicilDate3Form);
+
+            boolean isverifiedCodicilDates = verifyCodicilDates(pdfFilePath,
+                    "Date of Will (if applicable): 10/26/2015",
+                    "Date of probate (if different from date Letters granted):",
+                    expectedCodicilValues,
+                    "Codicil Dates");
+
+            Map<String, String> expectedValues = new HashMap<>();
+            expectedValues.put("additionalPetitioner1 Name", "Emily Ann Wilson, Sr.");
+            expectedValues.put("additionalPetitioner1 Address", "Cedar Lane New York, NY 10001");
+            expectedValues.put("additionalPetitioner2 Name", "Daniel Robert Harris, Sr.");
+            expectedValues.put("additionalPetitioner2 Address", "Willow Drive Dallas, TX 75201");
+
+            verifyAdditionalPetitioners(pdfFilePath,
+                    "(Additional Petitioner)",               // beforeLine
+                    "PETITION FOR ADJUDICATION", // afterLine
+                    expectedValues
+            );
+
+            Map<String, String> expectedChildren = new LinkedHashMap<>();
+            expectedChildren.put("Alice Johnson", "03/01/2024");
+            expectedChildren.put("Bob Smith", "03/02/2024");
+            expectedChildren.put("Charlie Brown", "03/03/2024");
+            expectedChildren.put("David Wilson", "03/04/2024");
+            expectedChildren.put("Emma Davis", "03/05/2024");
+            expectedChildren.put("Fiona White", "03/06/2024");
+            expectedChildren.put("George Hall", "03/07/2024");
+            expectedChildren.put("Hannah Lee", "03/08/2024");
+            expectedChildren.put("Isaac Martin", "03/09/2024");
+
+            verifyChildrenNamesAndDOBs(
+                    pdfFilePath,
+                    "If yes, give names and dates of birth:",
+                    "7. Was a request for a statement of claim, as required by the Medical",
+                    expectedChildren
+            );
+
+
+
+
+
+
+
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
 
-    private static void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "To the Register:";  // The next line after the date
-
+    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
-        // Split the entire PDF content into lines
         String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
 
-        CommonSteps.logInfo("📄 **Full PDF Content (All Lines):**");
+        // 🔍 Log Full PDF Content with Line Numbers
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
         for (int i = 0; i < allLines.length; i++) {
-            CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
         }
 
-        String extractedDate = null;
-        boolean beforeLineFound = false;
-
+        // Find the start and end indexes
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
-            // Find the first occurrence of "To the Register:"
-            if (trimmedLine.equalsIgnoreCase(beforeLine)) {
-                beforeLineFound = true;
-                if (i > 0) {
-                    extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
-                    extractedDate = ( "Date Letters Granted"); // Clean the extracted value
-
-                    if (!extractedDate.isEmpty()) {
-                        break;  // Stop after the first valid extraction
-                    }
-                }
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
             }
         }
 
-        // Log a warning if beforeLine is missing
-        if (!beforeLineFound) {
-            CommonSteps.logInfo("⚠️ Warning: 'To the Register:' not found in the PDF.");
+        // Extract and validate the field value
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = cleanFields(currentLine, fieldName);
+                    break; // Assuming only one line needs to be extracted
+                }
+            }
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
-
-        if (extractedDate == null || extractedDate.isEmpty()) {
-            throw new AutomationException("❌ Validation Failed: No Date field found before 'To the Register:'.");
-        }
-
-        // 📌 Log the extracted date
-        CommonSteps.logInfo("📌 Extracted Date Letters Granted: '" + extractedDate + "'");
-
-        // Expected Date for comparison (assuming it holds only one expected date)
-        String expectedDate = attorneyEmailForm;
-
-        // 🔍 Validate extracted date
-        CommonSteps.logInfo("🔍 Comparing -> Expected: '" + expectedDate + "', Extracted: '" + extractedDate + "'");
-
-        if (!expectedDate.equalsIgnoreCase(extractedDate)) {
-            throw new AutomationException("❌ Validation Failed: Extracted Date '" + extractedDate + "' does not match expected value.");
-        }
-
-        // ✅ Final validation success message
-        CommonSteps.logInfo("✅ Validation Passed: Extracted date matches the expected value.");
     }
+
+    private static void verifyCounselDetails(String pdfFilePath, Map<String, String> expectedDetails) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        Map<String, String> extractedDetails = new HashMap<>();
+        String addressLine1 = "";
+        String addressLine2 = "";
+
+        boolean nameOfCounselFound = false;
+        boolean nameOfLawFirmFound = false;
+        boolean addressFound = false;
+        boolean telephoneFound = false;
+        boolean faxFound = false;
+        boolean emailFound = false;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+
+            // Check for "Name of Counsel" only once
+            if (!nameOfCounselFound && line.startsWith("Name of Counsel:")) {
+                extractedDetails.put("Name of Counsel", clean(line.replace("Name of Counsel:", "").trim()));
+                nameOfCounselFound = true;
+            }
+            // Check for "Name of Law Firm" only once
+            else if (!nameOfLawFirmFound && line.startsWith("Name of Law Firm:")) {
+                extractedDetails.put("Name of Law Firm", clean(line.replace("Name of Law Firm:", "").trim()));
+                nameOfLawFirmFound = true;
+            }
+            // Check for "Address" only once
+            else if (!addressFound && line.startsWith("Address:")) {
+                addressLine1 = clean(line.replace("Address:", "").trim());
+                if (i + 1 < allLines.length) {
+                    addressLine2 = clean(allLines[i + 1].trim()); // Next line contains city/state/zip
+                }
+                addressFound = true;
+            }
+            // Check for "Telephone" only once
+            else if (!telephoneFound && line.startsWith("Telephone:")) {
+                extractedDetails.put("Telephone 1", clean(line.replace("Telephone:", "").trim()));
+                telephoneFound = true;
+            }
+            // Check for "Fax" only once
+            else if (!faxFound && line.startsWith("Fax:")) {
+                extractedDetails.put("Telephone 2", clean(line.replace("Fax:", "").trim()));
+                faxFound = true;
+            }
+            // Check for "Email" only once
+            else if (!emailFound && line.startsWith("Email:")) {
+                extractedDetails.put("Email", clean(line.replace("Email:", "").trim()));
+                emailFound = true;
+            }
+        }
+
+        // Combine address lines if both are found
+        if (!addressLine1.isEmpty() && !addressLine2.isEmpty()) {
+            extractedDetails.put("Address", addressLine1 + " " + addressLine2);
+        } else if (!addressLine1.isEmpty()) {
+            extractedDetails.put("Address", addressLine1);
+        } else if (!addressLine2.isEmpty()) {
+            extractedDetails.put("Address", addressLine2);
+        }
+
+        // Validate extracted details
+        for (Map.Entry<String, String> entry : expectedDetails.entrySet()) {
+            String field = entry.getKey();
+            String expectedValue = entry.getValue();
+            String extractedValue = extractedDetails.get(field);
+
+            // Clean both the expected and extracted values before comparing
+            expectedValue = clean(expectedValue);
+            extractedValue = clean(extractedValue);
+
+            CommonSteps.logInfo("🔍 Comparing -> " + field + " | Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (extractedValue == null || extractedValue.isEmpty()) {
+                throw new AutomationException("⚠️ Warning: '" + field + "' not found in document.");
+            }
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("⚠️ Warning: '" + field + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + field + "' processed successfully.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: Counsel details successfully verified.");
+    }
+
+
+    // Utility method to clean the string, removing unwanted characters or spaces
+    private static String clean(String value) {
+        if (value != null) {
+            // Remove unwanted punctuation like commas, periods, etc. and trim spaces
+            value = value.replaceAll("[,\\.]", "").trim();
+        }
+        return value;
+    }
+
+
+    private static String cleanFields(String rawText, String fieldType) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
+
+        String cleanedText = rawText.trim();
+
+        switch (fieldType.toLowerCase()) {
+            case "file number":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(No.  )\\b", "").trim();
+                break;
+
+            case "date of will":
+                cleanedText = cleanedText.replaceAll("(?i)date of will\\s*\\(if applicable\\):?\\s*", "").trim();
+                break;
+
+            case "codicil dates":
+                cleanedText = cleanedText.replaceAll("(?i)^date\\(s\\) of codicil\\(s\\) \\(if applicable\\):\\s*", "").trim();
+                break;
+
+            default:
+                // Generic cleanup for any other case
+                cleanedText = cleanedText.replaceAll("[:,\\.\\s]+$", "").trim();
+                break;
+        }
+        return cleanedText;
+    }
+
+
+    public static void validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
+            throws IOException, AutomationException {
+        Map<String, String> extractedMap = extractPetitionerAddressMapping(pdfFilePath);
+
+        int index = 1;
+        for (Map.Entry<String, String> expectedEntry : expectedNameAddressMap.entrySet()) {
+            String expectedName = expectedEntry.getKey().trim();
+            String expectedAddress = expectedEntry.getValue().trim();
+
+            String extractedName = "";
+            String extractedAddress = "";
+
+            // Extract values based on index order
+            List<String> extractedNames = new ArrayList<>(extractedMap.keySet());
+            List<String> extractedAddresses = new ArrayList<>(extractedMap.values());
+
+            if (index - 1 < extractedNames.size()) {
+                extractedName = extractedNames.get(index - 1);
+                extractedAddress = extractedAddresses.get(index - 1);
+            }
+
+            String petitionerLabel = "petitioner" + index;
+
+            // 🔍 Compare Name
+            CommonSteps.logInfo("🔍 Comparing -> for " + petitionerLabel + " Name Expected: '" + expectedName + "', Extracted: '" + extractedName + "'");
+            if (expectedName.equalsIgnoreCase(extractedName)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + petitionerLabel + " Name' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Name' mismatch. Expected: '" + expectedName + "', Found: '" + extractedName + "'");
+            }
+
+            // 🔍 Compare Address
+            CommonSteps.logInfo("🔍 Comparing -> for " + petitionerLabel + " Address Expected: '" + expectedAddress + "', Extracted: '" + extractedAddress + "'");
+            if (expectedAddress.equalsIgnoreCase(extractedAddress)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + petitionerLabel + " Address' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Address' mismatch. Expected: '" + expectedAddress + "', Found: '" + extractedAddress + "'");
+            }
+
+            index++;
+        }
+    }
+
+    public static Map<String, String> extractPetitionerAddressMapping(String pdfFilePath) throws IOException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] lines = pdfText.split("\\r?\\n");
+        List<String> trimmedLines = Arrays.stream(lines).map(String::trim).collect(Collectors.toList());
+
+        Map<String, String> nameAddressMap = new LinkedHashMap<>();
+
+        for (int i = 0; i < trimmedLines.size(); i++) {
+            String line = trimmedLines.get(i);
+            if (line.startsWith("Name:") && i + 2 < trimmedLines.size()) {
+                String namesLine = trimmedLines.get(i).replace("Name:", "").trim();
+                String addressLine = trimmedLines.get(i + 1).replace("Address:", "").trim();
+                String cityStateLine = trimmedLines.get(i + 2).trim();
+
+                // Split by Jr./Sr. endings or two spaces
+                List<String> names = Arrays.asList(namesLine.split("(?<=, (Jr\\.|Sr\\.|II|III|IV|V))\\s+"));
+                List<String> streets = Arrays.asList(addressLine.split("\\s{2,}|(?<=Street|Avenue|Road|Lane|Drive)\\s+"));
+                List<String> cities = Arrays.asList(cityStateLine.split("(?<=\\d{5})\\s*"));
+
+                for (int j = 0; j < names.size(); j++) {
+                    String name = names.get(j).trim();
+                    String street = j < streets.size() ? streets.get(j).trim() : "";
+                    String cityState = j < cities.size() ? cities.get(j).trim() : "";
+
+                    String fullAddress = (street + " " + cityState).trim();
+                    nameAddressMap.put(name, fullAddress);
+
+                    CommonSteps.logInfo("✅ " + name + " -> " + fullAddress);
+                }
+                break; // Done once we parse the first "Name:" block
+            }
+        }
+
+        return nameAddressMap;
+    }
+
+    private static boolean verifyCodicilDates(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1, endIndex = -1;
+        List<String> extractedValues = new ArrayList<>();
+
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    String cleaned = cleanFields(currentLine, fieldName);
+                    if (!cleaned.isEmpty()) {
+                        String[] splitDates = cleaned.split("\\s+"); // Split multiple dates by spaces
+                        extractedValues.addAll(Arrays.asList(splitDates));
+                    }
+                }
+            }
+
+            if (extractedValues.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            // Check extracted values against expected values from the map
+            for (Map.Entry<String, String> entry : expectedValues.entrySet()) {
+                String expectedKey = entry.getKey();  // e.g., "Codicil Date1"
+                String expectedValue = entry.getValue(); // e.g., "02/17/2023"
+                boolean matchFound = false;
+
+                for (String extracted : extractedValues) {
+                    if (expectedValue.equalsIgnoreCase(extracted)) {
+                        CommonSteps.logInfo("Expected " + " (" + expectedKey + "): [" + expectedValue + "] Extracted: [" + extracted + "] ✅ Matched!");
+                        matchFound = true;
+                        break; // Move to the next expected value
+                    }
+                }
+
+                if (!matchFound) {
+                    CommonSteps.logInfo("Expected " + " (" + expectedKey + "): [" + expectedValue + "] ❌ Not Found!");
+                    throw new AutomationException("❌ Validation Failed: Expected '" + expectedKey + "' value not found in extracted values.");
+                }
+            }
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+        return true;
+    }
+
+    private static boolean verifyAdditionalPetitioners(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1, endIndex = -1;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].trim().equalsIgnoreCase(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (allLines[i].trim().equalsIgnoreCase(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1) {
+            throw new AutomationException("❌ 'Before' or 'After' line not found for Additional Petitioners.");
+        }
+
+        List<String> extractedNames = new ArrayList<>();
+        List<String> extractedAddresses = new ArrayList<>();
+
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+
+            if (line.equalsIgnoreCase("Name:") && i + 1 < endIndex) {
+                extractedNames.add(allLines[i + 1].trim());
+            }
+
+            if (line.equalsIgnoreCase("Address:") && i + 2 < endIndex) {
+                String line1 = allLines[i + 1].trim();
+                String line2 = allLines[i + 2].trim();
+                extractedAddresses.add(line1 + " " + line2);
+            }
+        }
+
+        // ✅ Build expected sets
+        Set<String> expectedNames = new HashSet<>();
+        Set<String> expectedAddresses = new HashSet<>();
+
+        for (Map.Entry<String, String> entry : expectedValues.entrySet()) {
+            if (entry.getKey().toLowerCase().contains("name")) {
+                expectedNames.add(entry.getValue().trim().toLowerCase());
+            } else if (entry.getKey().toLowerCase().contains("address")) {
+                expectedAddresses.add(entry.getValue().trim().toLowerCase());
+            }
+        }
+
+        // ✅ Build extracted sets
+        Set<String> extractedNamesSet = extractedNames.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        Set<String> extractedAddressesSet = extractedAddresses.stream().map(String::toLowerCase).collect(Collectors.toSet());
+
+        // 🔍 Log comparisons
+        for (int i = 0; i < extractedNames.size(); i++) {
+            String name = extractedNames.get(i);
+            String address = (i < extractedAddresses.size()) ? extractedAddresses.get(i) : "Address Not Found";
+
+            CommonSteps.logInfo("O] ✅ " + name + " -> " + address);
+        }
+
+        CommonSteps.logInfo("🔍 Comparing extracted names set with expected names set...");
+        if (!expectedNames.equals(extractedNamesSet)) {
+            throw new AutomationException("❌ Validation Failed: Extracted names do not match expected names.");
+        } else {
+            CommonSteps.logInfo("✅ Validation Passed: All names matched expected values.");
+        }
+
+        CommonSteps.logInfo("🔍 Comparing extracted addresses set with expected addresses set...");
+        if (!expectedAddresses.equals(extractedAddressesSet)) {
+            throw new AutomationException("❌ Validation Failed: Extracted addresses do not match expected addresses.");
+        } else {
+            CommonSteps.logInfo("✅ Validation Passed: All addresses matched expected values.");
+        }
+
+        return true;
+    }
+
+    private static boolean verifyChildrenNamesAndDOBs(String pdfFilePath,
+                                                      String beforeLine,
+                                                      String afterLine,
+                                                      Map<String, String> expectedNameDobMap) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1;
+        int endIndex = -1;
+
+        // Find start and end index using beforeLine and afterLine
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.equalsIgnoreCase(beforeLine.trim())) {
+                startIndex = i;
+            } else if (line.equalsIgnoreCase(afterLine.trim())) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+            throw new AutomationException("❌ Could not find valid range between beforeLine and afterLine.");
+        }
+
+        // Extract children name + DOB pairs
+        Map<String, String> extractedMap = new LinkedHashMap<>();
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (line.isEmpty() || line.contains("Name:") || line.contains("Date of Birth:")) continue;
+
+            String[] tokens = line.trim().split("\\s+");
+            if (tokens.length >= 2) {
+                String dob = tokens[tokens.length - 1];
+                String name = line.replace(dob, "").trim();
+                extractedMap.put(name, dob);
+            }
+        }
+
+        // ✅ Compare with expected map
+        for (Map.Entry<String, String> expectedEntry : expectedNameDobMap.entrySet()) {
+            String expectedName = expectedEntry.getKey().trim();
+            String expectedDob = expectedEntry.getValue().trim();
+
+            if (!extractedMap.containsKey(expectedName)) {
+                throw new AutomationException("❌ Child name not found in PDF: " + expectedName);
+            }
+
+            String actualDob = extractedMap.get(expectedName).trim();
+            if (!actualDob.equals(expectedDob)) {
+                throw new AutomationException("❌ DOB mismatch for '" + expectedName + "' → Expected: " + expectedDob + ", Found: " + actualDob);
+            }
+
+            CommonSteps.logInfo("✅ Verified: " + expectedName + " → DOB: " + actualDob);
+        }
+        return true;
+    }
+
 }

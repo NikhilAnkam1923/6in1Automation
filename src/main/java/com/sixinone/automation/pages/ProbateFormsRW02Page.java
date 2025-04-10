@@ -16,6 +16,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
+import javax.security.sasl.AuthenticationException;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
@@ -1294,7 +1295,6 @@ public class ProbateFormsRW02Page extends BasePage {
             expectedPropertyValues.put("Codicil Date2", rwCodicilDate2Form);
             expectedPropertyValues.put("Codicil Date3", rwCodicilDate3Form);
 
-
             boolean isverifiedCodicilDates = verifyCodicilDates(pdfFilePath,
                     "Petitioner(s) aver(s) he/she/they is/are the Executor(s) named in the Last Will of the Decedent, dated  12/09/2023 and Codicil(s)",
                     "Original Executor renounced.",
@@ -1305,14 +1305,61 @@ public class ProbateFormsRW02Page extends BasePage {
             expectedStateRelevantCircumstances.put("State Relevant Circumstance 1", stateRelevantCircumstances1Form); // Expected: "Original Executor renounced."
             expectedStateRelevantCircumstances.put("State Relevant Circumstance 2", stateRelevantCircumstances2Form); // Expected: "Named Executor is deceased."
 
-            boolean isverifiedStateRelevantCircumstances =  verifyStateRelevantCircumstances(pdfFilePath,
+            boolean isverifiedStateRelevantCircumstances = verifyStateRelevantCircumstances(pdfFilePath,
                     "thereto dated 02/17/2023 02/20/2023 02/26/2023",
                     "Estimate of value of decedents property at death:",
                     expectedStateRelevantCircumstances,
                     "State Relevant Circumstances");
 
+            boolean isverifiedexceptionTextForm = verifyFieldsInPDF(pdfFilePath,
+                    "adopted; and Decedent was neither the victim of a killing nor ever adjudicated an incapacitated person.",
+                    "B. Petition for Grant of Letters of Administration (If applicable)",
+                    exceptionTextForm,
+                    "Exception Text Form");
 
-            if (!isverifiedAKANames && !isverifiedPropertyAmount && !isverifiedAddressDetails && !isverifiedCodicilDates && !isverifiedStateRelevantCircumstances) {
+            List<String> expectedPetitionerNames = Arrays.asList(
+                    "Michael Andrew Smith, Sr.",
+                    "Jessica Marie Brown, Jr.",
+                    "David James Clark, Jr.",
+                    "Emily Ann Wilson, Sr."
+            );
+
+            boolean isverifyPetitionerNames = verifyPetitionerNames(pdfFilePath, expectedPetitionerNames);
+
+            Map<String, String> expectedFeesValues = new HashMap<>();
+            expectedFeesValues.put("letterFees", letterFeesForm);
+            expectedFeesValues.put("shortCertificateFees", shortCertificateFeesForm);
+            expectedFeesValues.put("renunciationFees", renunciationFeesForm);
+            expectedFeesValues.put("codicilFees", codicilFeesForm);
+            expectedFeesValues.put("affidavitFees", affidavitFeesForm);
+            expectedFeesValues.put("bondFees", bondFeesForm);
+            expectedFeesValues.put("commissionFees", commissionFeesForm);
+            expectedFeesValues.put("otherFees1", otherFees1Form);
+            expectedFeesValues.put("otherFees2", otherFees2Form);
+            expectedFeesValues.put("otherFees3", otherFees3Form);
+            expectedFeesValues.put("otherFees4", otherFees4Form);
+            expectedFeesValues.put("otherFees5", otherFees5Form);
+            expectedFeesValues.put("automationFees", automationFeesForm);
+            expectedFeesValues.put("jcsFees", jcsFeesForm);
+            expectedFeesValues.put("totalFees", totalFeesForm);
+
+            boolean isverifiedeFeesDetails = extractAndValidateFees(pdfFilePath,expectedFeesValues);
+
+            boolean isverifiedprintedName = verifyFieldsInPDF(pdfFilePath,
+                    "Attorney Signature:",
+                    "Supreme Court",
+                    selectedAttorneyContactForm,
+                    "Printed name");
+
+            Map<String, String> expectedAttorneyValues = new HashMap<>();
+            expectedAttorneyValues.put("Firm Name", attorneyFirmNameForm);
+            expectedAttorneyValues.put("Address", attorneyAddressLine1Form + " " + attorneyAddressLine2Form + " " + attorneyCityStateZipForm);
+            expectedAttorneyValues.put("Phone", attorneyPhoneForm);
+            expectedAttorneyValues.put("Fax", attorneyFaxForm);
+
+            boolean isverifiedeAttorneyDetails = extractAndValidateAttorneyDetails(pdfFilePath, expectedAttorneyValues);
+
+            if (!isverifiedAKANames && !isverifiedPropertyAmount && !isverifiedAddressDetails && !isverifiedCodicilDates && !isverifiedStateRelevantCircumstances && !isverifiedexceptionTextForm && !isverifyPetitionerNames && !isverifiedeFeesDetails && !isverifiedprintedName && !isverifiedeAttorneyDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -1323,12 +1370,11 @@ public class ProbateFormsRW02Page extends BasePage {
 
 
     public static boolean verifyAKANames(String pdfFilePath, List<String> expectedAKANames) throws IOException, AutomationException {
-
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
-        // Define markers
+        // Define start and end markers
         String beforeLine = "Name: William John  File No: 22-23-1234";
         String afterLine = "Date of Death: 12/05/2020  Age at Death: 70";
 
@@ -1354,11 +1400,9 @@ public class ProbateFormsRW02Page extends BasePage {
             // Extract AKA names
             if (startIndex != -1) {
                 if (trimmedLine.startsWith("a/k/a:")) {
-                    // If line starts with a/k/a:, extract normally
                     extractedAKANames.addAll(extractAKANames(trimmedLine));
                     captureNextLine = true;  // Enable flag to capture next line
                 } else if (captureNextLine) {
-                    // If previous line was a/k/a, process this as a continuation
                     extractedAKANames.addAll(extractAKANames(trimmedLine));
                     captureNextLine = false;  // Reset flag after capturing
                 }
@@ -1366,9 +1410,7 @@ public class ProbateFormsRW02Page extends BasePage {
         }
 
         // Log extracted names
-        for (String extractedName : extractedAKANames) {
-            CommonSteps.logInfo("Expected AKA Names: " + expectedAKANames + " Extracted AKA Names: [" + extractedName + "] found");
-        }
+        CommonSteps.logInfo("🔍 Extracted AKA Names: " + extractedAKANames + "🎯 Expected AKA Names: " + expectedAKANames);
 
         // Validate extracted values
         if (extractedAKANames.isEmpty()) {
@@ -1388,7 +1430,7 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     /**
-     * Extracts AKA names while handling edge cases like SSNs and parentheses.
+     * Extracts AKA names while handling edge cases like SSNs, unnecessary text, and multi-word names.
      */
     private static Set<String> extractAKANames(String rawText) {
         Set<String> akaNames = new HashSet<>();
@@ -1396,17 +1438,33 @@ public class ProbateFormsRW02Page extends BasePage {
         // ✅ Remove "a/k/a:" prefix if present
         String cleanedText = rawText.replace("a/k/a:", "").trim();
 
-        // ✅ Remove unnecessary suffixes (like "(Assigned by Register)")
-        cleanedText = cleanedText.replaceAll("\\(.*?\\)", "").trim();  // Removes anything inside parentheses
+        // ✅ Remove anything inside parentheses (e.g., "(Assigned by Register)")
+        cleanedText = cleanedText.replaceAll("\\(.*?\\)", "").trim();
 
-        // ✅ Ignore SSNs (if they exist in the text)
-        if (!cleanedText.matches(".*\\d{3}-\\d{2}-\\d{4}.*")) {
-            akaNames.addAll(Arrays.asList(cleanedText.split("\\s+"))); // Split by spaces for multi-word names
+        // ✅ Remove known extra text like "Social Security No:"
+        cleanedText = cleanedText.replaceAll("Social Security No:.*", "").trim();
+
+        // ✅ Ignore SSNs entirely
+        cleanedText = cleanedText.replaceAll("\\d{3}-\\d{2}-\\d{4}", "").trim();
+
+        // ✅ Handle multi-word names properly (preserve names but remove unwanted characters)
+        String[] nameParts = cleanedText.split("\\s+");
+        StringBuilder finalName = new StringBuilder();
+        for (String part : nameParts) {
+            if (!part.isEmpty()) {
+                finalName.append(part).append(" ");
+            }
+        }
+
+        // ✅ Add cleaned name to set
+        if (!finalName.toString().trim().isEmpty()) {
+            akaNames.add(finalName.toString().trim());
         }
 
         return akaNames;
     }
-    
+
+
     public static boolean verifyPropertyAmounts(String pdfFilePath, Map<String, String> expectedValues) throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -1498,6 +1556,7 @@ public class ProbateFormsRW02Page extends BasePage {
             }
         }
     }
+
     public static boolean verifyAddressDetails(String pdfFilePath, Map<String, String> expectedValues) throws AutomationException {
         // Define the expected keys
         String streetKey = "Street address, Post Office and Zip Code";
@@ -1584,8 +1643,6 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
 
-
-
     private static boolean verifyCodicilDates(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
@@ -1652,6 +1709,9 @@ public class ProbateFormsRW02Page extends BasePage {
             case "codicil dates":
                 cleanedText = cleanedText.replaceAll("(?i)\\b(thereto dated )\\b", "").trim();
                 break;
+            case "printed name":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(Printed Name: )\\b", "").trim();
+                break;
         }
         return cleanedText;
     }
@@ -1709,6 +1769,284 @@ public class ProbateFormsRW02Page extends BasePage {
         }
         return true;
     }
+
+    public static boolean extractAndValidateFees(String pdfPath, Map<String, String> expectedFeesValues) throws AutomationException {
+        try (PDDocument document = PDDocument.load(new File(pdfPath))) {
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            String pdfContent = pdfStripper.getText(document);
+
+            String beforeLine = "TOTAL";  // Extract fees data before this line
+            String afterLine = "Automation Fee";  // Stop extracting after this line
+
+            // Extract values from the PDF content
+            Map<String, String> extractedValues = extractFeesFromText(pdfContent, beforeLine, afterLine);
+
+            // Validate extracted values
+            return validateExtractedValues(extractedValues, expectedFeesValues);
+
+        } catch (IOException | AutomationException e) {
+            throw new AutomationException("❌ Error occurred: " + e.getMessage());
+        }
+    }
+
+    private static Map<String, String> extractFeesFromText(String text, String beforeLine, String afterLine) {
+        Map<String, String> extractedValues = new HashMap<>();
+        StringBuilder extractedText = new StringBuilder();
+
+        boolean capture = false;
+        for (String line : text.split("\n")) {
+            if (line.contains(beforeLine)) capture = true;
+            if (capture) extractedText.append(line).append("\n");
+            if (line.contains(afterLine)) break;
+        }
+
+        for (String line : extractedText.toString().split("\n")) {
+            // Extract numerical values within parentheses, if present
+            String quantity = line.replaceAll(".*\\((\\d*)\\).*", "$1").trim();
+            if (quantity.equals(line.trim())) quantity = ""; // Handle cases where there is no number
+
+            // Extract fee values after '-'
+            String[] parts = line.split("-");
+            if (parts.length == 2) {
+                String fieldName = parts[0].trim().replaceAll("[^a-zA-Z()]", "");
+                String value = parts[1].trim();
+                String formField = convertToFormField(fieldName);
+
+                // Store extracted values in the map
+                extractedValues.put(formField, value.isEmpty() ? "0.00" : value); // Default empty fees to "0.00"
+
+                // Store extracted count (if available) in a separate field
+                if (!quantity.isEmpty()) {
+                    extractedValues.put(formField + "Count", quantity);
+                }
+            }
+        }
+
+        return extractedValues;
+    }
+
+    private static String convertToFormField(String fieldName) {
+        return fieldName.toLowerCase().replaceAll("[()]", "") + "Form";
+    }
+
+    private static boolean validateExtractedValues(Map<String, String> extracted, Map<String, String> expectedFeesValues) throws AutomationException {
+        boolean allMatched = true;
+
+        for (String key : expectedFeesValues.keySet()) {
+            String expectedValue = expectedFeesValues.get(key);
+            String extractedValue = extracted.getOrDefault(key, "0.00"); // Default missing fields to "0.00"
+
+            if (expectedValue != null && expectedValue.equals(extractedValue)) {
+                CommonSteps.logInfo("✅ " + key + " matched: " + extractedValue);
+            } else {
+                throw new AutomationException("❌ " + key + " mismatch! Expected: " + expectedValue + ", Extracted: " + extractedValue);
+            }
+        }
+        return allMatched;
+    }
+
+
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
+
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = clean(currentLine, fieldName);
+                    break; // Assuming only one line needs to be extracted
+                }
+            }
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+        return true;
+    }
+
+    public static boolean verifyPetitionerNames(String pdfFilePath, List<String> expectedPetitionerNames) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Define start and end markers
+        String beforeLine = "Petitioner(s) named below, who is/are 18 years of age or older, apply(ies) for Letters as specified below, and in support thereof aver(s) the following and respectfully request(s) the grant of Letters in the appropriate form:";
+        String afterLine = "Oath of Personal Representative from page 2";
+
+        Set<String> extractedPetitionerNames = new LinkedHashSet<>();
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        boolean captureNames = false;
+        StringBuilder nameBuilder = new StringBuilder();  // Buffer to handle multi-line names
+
+        for (String line : allLines) {
+            String trimmedLine = line.trim();
+
+            if (trimmedLine.contains(beforeLine)) {
+                captureNames = true;
+                continue;
+            }
+
+            if (captureNames && trimmedLine.contains(afterLine)) {
+                break;
+            }
+
+            if (captureNames) {
+                if (!trimmedLine.isBlank()) {
+                    nameBuilder.append(trimmedLine).append(" ");
+                } else if (nameBuilder.length() > 0) {
+                    // Process the accumulated name line when encountering a blank line
+                    extractedPetitionerNames.addAll(extractPetitionerNames(nameBuilder.toString().trim()));
+                    nameBuilder.setLength(0);  // Reset buffer
+                }
+            }
+        }
+
+        // Process remaining names in buffer
+        if (nameBuilder.length() > 0) {
+            extractedPetitionerNames.addAll(extractPetitionerNames(nameBuilder.toString().trim()));
+        }
+
+        // Log extracted names
+        CommonSteps.logInfo("🔍 Extracted Petitioner Names: " + extractedPetitionerNames + " 🎯 Expected Petitioner Names: " + expectedPetitionerNames);
+
+        if (extractedPetitionerNames.isEmpty()) {
+            throw new AutomationException("❌ No Petitioner Names found in the PDF.");
+        }
+
+        // Convert expected names to a Set for better comparison
+        Set<String> expectedPetitionerSet = new LinkedHashSet<>(expectedPetitionerNames);
+
+        if (!expectedPetitionerSet.equals(extractedPetitionerNames)) {
+            throw new AutomationException("❌ Validation Failed: Extracted Petitioner Names '" + extractedPetitionerNames
+                    + "' do not match expected values '" + expectedPetitionerSet + "'.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: All extracted Petitioner Names match expected values.");
+        return true;
+    }
+
+    /**
+     * Extracts petitioner names while handling multi-word names and suffixes.
+     */
+    private static Set<String> extractPetitionerNames(String rawText) {
+        Set<String> petitionerNames = new LinkedHashSet<>();
+
+        // Split names by commas but ensure suffixes (Jr., Sr.) remain attached
+        String[] parts = rawText.split(",");
+        StringBuilder nameBuilder = new StringBuilder();
+
+        for (String part : parts) {
+            String trimmedPart = part.trim();
+
+            // Append if it contains a suffix, otherwise add the previous name to the set
+            if (trimmedPart.matches("^(Jr\\.|Sr\\.|II|III|IV)$")) {
+                nameBuilder.append(", ").append(trimmedPart);
+            } else {
+                if (nameBuilder.length() > 0) {
+                    petitionerNames.add(nameBuilder.toString().trim());
+                }
+                nameBuilder.setLength(0);  // Reset buffer
+                nameBuilder.append(trimmedPart);
+            }
+        }
+
+        // Add the last processed name
+        if (nameBuilder.length() > 0) {
+            petitionerNames.add(nameBuilder.toString().trim());
+        }
+
+        return petitionerNames;
+    }
+
+    public static boolean extractAndValidateAttorneyDetails(String pdfFilePath, Map<String, String> expectedValues) throws IOException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Define start and end markers
+        String beforeLine = "ID Number:";  // Start extracting after this line
+        String afterLine = "Official Use Only";  // Stop extracting at this line
+
+        Map<String, String> extractedValues = extractAttorneyDetails(pdfText, beforeLine, afterLine);
+
+        // Log extracted values
+        CommonSteps.logInfo("🔍 Extracted Attorney Details: " + extractedValues + " 🎯 Expected Attorney Details: " + expectedValues);
+
+        // Validate extracted values
+        if (!expectedValues.equals(extractedValues)) {
+            throw new RuntimeException("❌ Validation Failed: Extracted values " + extractedValues + " do not match expected values " + expectedValues);
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: All extracted attorney details match expected values.");
+        return true;
+    }
+
+    private static Map<String, String> extractAttorneyDetails(String pdfText, String beforeLine, String afterLine) {
+        Map<String, String> extractedData = new LinkedHashMap<>();
+        String[] lines = pdfText.split("\\r?\\n");
+
+        boolean captureData = false;
+        String lastKey = null;
+
+        for (String line : lines) {
+            String trimmedLine = line.trim();
+
+            if (trimmedLine.equals(beforeLine)) {
+                captureData = true;
+                continue;  // Skip the beforeLine itself
+            }
+
+            if (trimmedLine.equals(afterLine)) {
+                captureData = false;
+                break;
+            }
+
+            if (captureData && !trimmedLine.isEmpty()) {
+                if (trimmedLine.contains(":")) {
+                    String[] parts = trimmedLine.split(":", 2);
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+                    extractedData.put(key, value);
+                    lastKey = key;
+                } else if (lastKey != null) {
+                    // Handle multi-line values (e.g., address spanning multiple lines)
+                    extractedData.put(lastKey, extractedData.get(lastKey) + " " + trimmedLine);
+                }
+            }
+        }
+
+        return extractedData;
+    }
+
 
 
     public void userResetsTheRWForm() throws AutomationException {
