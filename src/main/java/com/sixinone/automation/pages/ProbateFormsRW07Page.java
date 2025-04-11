@@ -62,7 +62,7 @@ public class ProbateFormsRW07Page extends BasePage {
     private static final String ESTATE_TAB = "//button[@role='tab' and text()='Estate']";
     private static final String RW_INPUT_FIELD_XPATH = "//input[@type='text' and @value='%s']";
     private static final String USE_4_DIGIT_YEAR_CHECKBOX = "//span[contains(text(),'Use 4 digit year')]/preceding-sibling::span//input[@type='checkbox' and @value='2']";
-    private static final String FILE_NUMBER_FIELD = "//p[text()='File Number:']//span//input[@readonly]";
+    private static final String FILE_NUMBER_FIELD = "//span[contains(text(),'File Number:')]//span//input[@readonly]";
     private static final String BENE_ADDRESS_FIELD = "//td[@colspan='2']//textarea";
     private static final String DRAG_CONTACT_XPATH = "//div[@class='drag-names-list']//div[@aria-roledescription='sortable']";
     private static final String DROP_CONTACT_FIELD_XPATH = "//div[@class='right-droppable']//div[@class='drag-names-list drop-box h-100']";
@@ -153,7 +153,7 @@ public class ProbateFormsRW07Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
+//        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));

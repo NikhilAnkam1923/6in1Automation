@@ -119,7 +119,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @And("user checks Option A checkbox")
-    public void userChecksOptionACheckbox() {
+    public void userChecksOptionACheckbox() throws AutomationException {
         CommonSteps.logInfo("user checks Option A checkbox");
         PageFactory.probateFormsRW02Page().userChecksOptionACheckbox();
     }

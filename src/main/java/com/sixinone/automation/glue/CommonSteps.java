@@ -62,8 +62,8 @@ public class CommonSteps {
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     private static final String CAPACITY_REPRESENTATIVE = "//input[@name='capacity' and @value='1']";
     private static final String CAPACITY_COUNSEL = "//input[@name='capacity' and @value='2']";
-    private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
-    private static final String PERSON_CLEAR_SELECTION_BTN = "//p[contains(text(),'Capacity')]/following-sibling::div//button[text()='Clear Selection']";
+    private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::div//p//input";
+    private static final String PERSON_CLEAR_SELECTION_BTN = "//div[@id='nameOfPersonCheckboxSection']/following-sibling::div//button[text()='Clear Selection']";
     private static final String CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN = "//p[contains(text(),'Corporate Fiduciary (if applicable)')]//button[text()='Clear Selection']";
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
@@ -487,6 +487,9 @@ public class CommonSteps {
             case "OC01":
                 PageFactory.probateFormsOC01Page().userSavesEstateInfo();
                 break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -808,9 +811,11 @@ public class CommonSteps {
     @When("user clicks on Clear Selection buttons")
     public void userClicksOnClearSelectionButton() throws AutomationException {
         CommonSteps.logInfo("user clicks on Clear Selection buttons");
-        driverUtil.getWebElement(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN).click();
+        scrollToElementAndClick(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN);
+//        driverUtil.getWebElement(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN).click();
         WebDriverUtil.waitForAWhile(2);
-        driverUtil.getWebElement(PERSON_CLEAR_SELECTION_BTN).click();
+        scrollToElementAndClick(PERSON_CLEAR_SELECTION_BTN);
+//        driverUtil.getWebElement(PERSON_CLEAR_SELECTION_BTN).click();
         WebDriverUtil.waitForAWhile(2);
     }
 

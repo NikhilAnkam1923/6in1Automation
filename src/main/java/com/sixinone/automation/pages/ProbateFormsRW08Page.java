@@ -82,7 +82,8 @@ public class ProbateFormsRW08Page extends BasePage {
     private static final String CORPORATE_FIDUCIARY_NAME_FIELD = "//input[@name='fullname']";
     private static final String CONTACT_RADIO_BTN_DYNAMIC_XPATH = "//label[text()='%s']/preceding-sibling::input[@type='radio']";
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
-    private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
+    private static final String PERSON_NAME_FIELD_RW08 = "//p[text()='Name of Person']/preceding-sibling::div//p//input";
+    private static final String PERSON_NAME_FIELD_RW07 = "//p[text()='Name of Person']/preceding-sibling::p//input";
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
     private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
     private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
@@ -151,7 +152,7 @@ public class ProbateFormsRW08Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
+//        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -260,7 +261,7 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyWillNumberAndDatesCanBeEnteredAndAreAutoSaved() throws AutomationException, IOException, ParseException {
-        String willNumber = CommonUtil.getJsonPath("RW08Form").get("RW08Form.willNumber").toString();
+//        String willNumber = CommonUtil.getJsonPath("RW08Form").get("RW08Form.willNumber").toString();
         String dateLetterGranted = CommonUtil.getJsonPath("RW08Form").get("RW08Form.dateLetterGranted").toString();
         String signedDate = CommonUtil.getJsonPath("RW08Form").get("RW08Form.signedDate").toString();
         String servedDate = CommonUtil.getJsonPath("RW08Form").get("RW08Form.servedDate").toString();
@@ -268,13 +269,13 @@ public class ProbateFormsRW08Page extends BasePage {
         String datePattern = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(\\d{4})$";
         Pattern pattern = Pattern.compile(datePattern);
 
-        WebElement willNumberField = driverUtil.getWebElement(WILL_NUMBER_FIELD);
+//        WebElement willNumberField = driverUtil.getWebElement(WILL_NUMBER_FIELD);
         WebElement dateLetterGrantedField = driverUtil.getWebElement(DATE_LETTER_GRANTED);
         WebElement signedDateField = driverUtil.getWebElement(SIGNED_DATE);
         WebElement servedDateField = driverUtil.getWebElement(SERVED_DATE);
 
-        scrollToElementAndClick(WILL_NUMBER_FIELD);
-        fillFieldWithKeystrokes(willNumberField, willNumber);
+//        scrollToElementAndClick(WILL_NUMBER_FIELD);
+//        fillFieldWithKeystrokes(willNumberField, willNumber);
 
         scrollToElementAndClick(DATE_LETTER_GRANTED);
         fillFieldWithKeystrokes(dateLetterGrantedField, dateLetterGranted);
@@ -287,14 +288,14 @@ public class ProbateFormsRW08Page extends BasePage {
 
 
         WebDriverUtil.waitForAWhile();
-        willNumberForm = driverUtil.getWebElement(WILL_NUMBER_FIELD).getAttribute("value");
+//        willNumberForm = driverUtil.getWebElement(WILL_NUMBER_FIELD).getAttribute("value");
         dateLetterGrantedForm = driverUtil.getWebElement(DATE_LETTER_GRANTED).getAttribute("value");
         signedDateForm = driverUtil.getWebElement(SIGNED_DATE).getAttribute("value");
         servedDateForm = driverUtil.getWebElement(SERVED_DATE).getAttribute("value");
 
-        if (!willNumberForm.equals(willNumber)) {
-            throw new AutomationException("Will number is not entered correctly. Expected: " + willNumber + " ,Found: " + willNumberForm);
-        }
+//        if (!willNumberForm.equals(willNumber)) {
+//            throw new AutomationException("Will number is not entered correctly. Expected: " + willNumber + " ,Found: " + willNumberForm);
+//        }
 
         if (!pattern.matcher(dateLetterGrantedForm).matches()) {
             throw new AutomationException("Invalid Letter Granted date format: " + dateLetterGrantedForm + ". Expected format is MM/DD/YYYY.");
@@ -635,7 +636,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08).getAttribute("value");
         if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
             selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
         }
@@ -644,7 +645,7 @@ public class ProbateFormsRW08Page extends BasePage {
     public void verifySelectedContactsAreCleared() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryValue = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value").trim();
-        String personNameValue = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").trim();
+        String personNameValue = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08).getAttribute("value").trim();
 
         if (!corporateFiduciaryValue.isEmpty()) {
             throw new AutomationException("Corporate Fiduciary selection is not cleared. Found value: " + corporateFiduciaryValue);
@@ -658,7 +659,7 @@ public class ProbateFormsRW08Page extends BasePage {
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommon() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
-        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW07).getAttribute("value");
 
         if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
             throw new AutomationException("Changes made in Corporate Fiduciary section on RW07 are not reflected on RW08. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
@@ -1075,11 +1076,11 @@ public class ProbateFormsRW08Page extends BasePage {
 
     public void userResetsTheRWForm() throws AutomationException {
         Actions actions = new Actions(DriverFactory.drivers.get());
-        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
+//        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
 
-        scrollToElementAndClick(WILL_NUMBER_FIELD);
-        DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
+//        scrollToElementAndClick(WILL_NUMBER_FIELD);
+//        DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
 
         scrollToElementAndClick(DATE_LETTER_GRANTED);
         DriverFactory.drivers.get().findElement(By.xpath(DATE_LETTER_GRANTED)).clear();

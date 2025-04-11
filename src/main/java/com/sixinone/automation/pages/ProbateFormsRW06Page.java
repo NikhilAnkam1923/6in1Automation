@@ -69,7 +69,7 @@ public class ProbateFormsRW06Page extends BasePage {
     private static final String HEADER_COUNTY_FIELD_XPATH = "//p[contains(text(),'%s')]";
     private static final String DATE_FIELD = "//input[@name='formItems[%s].signedDate']";
     private static final String LETTERS_ISSUED_TO_FIELD = "//input[@name='formItems[%s].letterIssuedTo']";
-    private static final String CORPORATE_FIDUCIARY_SIGN_FIELD = "//div[@id='id_2_1']//p[contains(text(),'Name or Corporate Fiduciary (if applicable)')]/preceding-sibling::p//input";
+    private static final String CORPORATE_FIDUCIARY_SIGN_FIELD = "//div[@id='fiduciarySection']//p//input";
     private static final String DRAG_CONTACT_XPATH = "//div[@class='drag-names-list']//div[@aria-roledescription='sortable']";
     private static final String DROP_CONTACT_FIELD_XPATH = "//div[@class='right-droppable']//div[@class='drag-names-list drop-box h-100']";
     private static final String SAVE_BTN = "//button[text()='Save']";
@@ -207,7 +207,6 @@ public class ProbateFormsRW06Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -423,7 +422,7 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
-        List<Integer> corporateFiduciaryNum = Arrays.asList(5, 2, 1, 3, 4);
+        List<Integer> corporateFiduciaryNum = Arrays.asList(3, 5, 4, 1, 2);
 
         for (int i = 0; i < corporateFiduciaryNum.size(); i++) {
             int fiduciaryIndex = corporateFiduciaryNum.get(i);
@@ -580,7 +579,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 Beneficiary2Form
         );
 
-        List<Integer> beneficiaryNum = Arrays.asList(5, 2, 1, 3, 4);
+        List<Integer> beneficiaryNum = Arrays.asList(1, 4, 5, 3, 2);
 
         for (int i = 0; i < beneficiaryNum.size(); i++) {
             int beneficiaryIndex = beneficiaryNum.get(i);
