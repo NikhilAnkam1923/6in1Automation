@@ -208,6 +208,11 @@ Feature: 6in1 probate form OC01 Feature
   Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
     Then user verifies all the remaining petitioners are displayed as a part of attachment
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC01'
+    And verify all the fields entered are correctly reflected in the 'OC01' pdf
+
   Scenario: Verify, if the notification if the selected contact is removed from the estate.
     When user navigates to Estate Contacts tab
     Then user verifies notification is displayed when the contact selected as the petitioner is removed from the estate contacts
@@ -224,7 +229,7 @@ Feature: 6in1 probate form OC01 Feature
   Scenario: Verify, if for a user role of beny is removed.
     When user navigates to page number: "4"
     Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the form
-  
+
   Scenario: Verify, if for a user role of beny, fiduciary, attorney is removed.
     When user navigates to page number: "10"
     Then user verifies removed corporate fiduciary and attorney contacts from the estate contacts are also gets removed from the form
@@ -236,12 +241,6 @@ Feature: 6in1 probate form OC01 Feature
     When user navigates to the probate forms tab
     And user click on the "OC 01" form
     Then user resets the "OC01" form
-
-  Scenario: Verify form can be printed in pdf
-    When user click on print form button
-    Then verify form can be printed in pdf with name as 'OC01'
-    And verify all the fields entered are correctly reflected in the 'OC01' pdf
-
 
   @Setup
   Scenario:SETUP: Close Browser
