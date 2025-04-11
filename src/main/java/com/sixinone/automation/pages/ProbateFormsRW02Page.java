@@ -264,7 +264,6 @@ public class ProbateFormsRW02Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -539,7 +538,7 @@ public class ProbateFormsRW02Page extends BasePage {
     private void fillField(String fieldLocator, String data) throws AutomationException {
         waitForVisibleElement(By.xpath(fieldLocator));
         WebElement field = DriverFactory.drivers.get().findElement(By.xpath(fieldLocator));
-        field.click();
+        scrollToElementAndClick(fieldLocator);
         field.sendKeys(data);
 
         driverUtil.getWebElement("//body").click();
@@ -601,7 +600,7 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void userChecksUsePrincipalResidenceCheckbox() throws AutomationException {
-        DriverFactory.drivers.get().findElement(By.xpath(USE_PRINCIPAL_RESIDENCE)).click();
+        scrollToElementAndClick(USE_PRINCIPAL_RESIDENCE);
     }
 
     public void verifyAddressFromPrincipalResidenceAtFieldIsCopiedToRealEstateInPennsylvaniaSituatedAtField() throws AutomationException {
@@ -705,8 +704,8 @@ public class ProbateFormsRW02Page extends BasePage {
         CommonSteps.takeScreenshot();
     }
 
-    public void userChecksOptionACheckbox() {
-        DriverFactory.drivers.get().findElement(By.xpath(OPTION_A_CHECKBOX)).click();
+    public void userChecksOptionACheckbox() throws AutomationException {
+        scrollToElementAndClick(OPTION_A_CHECKBOX);
     }
 
     public void verifyOptionARemainsSelectedAndOptionBIsUnaffected() throws AutomationException {
@@ -913,21 +912,21 @@ public class ProbateFormsRW02Page extends BasePage {
         verifyBeneContactInTable("None");
         verifyBeneContactInTable("None");
 
-        verifyBeneContactInTable(BeneContactAddress5Form);
-        verifyBeneContactInTable(BeneContactAddress2Form);
         verifyBeneContactInTable(BeneContactAddress1Form);
+        verifyBeneContactInTable(BeneContactAddress4Form);
+        verifyBeneContactInTable(BeneContactAddress5Form);
         verifyBeneContactInTable(BeneContactAddress3Form);
     }
 
     public void verifyContactsAreTransferredToAttachment() throws AutomationException, IOException, ParseException {
-        String beneficiary4AddressLine1 = CommonUtil.getJsonPath("beneficiary4").get("beneficiary4.addressLine1").toString();
+        String beneficiary2AddressLine1 = CommonUtil.getJsonPath("beneficiary2").get("beneficiary2.addressLine1").toString();
 
         driverUtil.getWebElement(BENE_VIEW_ATTACHMENT).click();
         WebDriverUtil.waitForAWhile();
 
         verifyBeneContactOnAttachment(BeneContact2Form);
         verifyBeneContactAddressAndRelationOnAttachment("None");
-        verifyBeneContactAddressAndRelationOnAttachment(beneficiary4AddressLine1);
+        verifyBeneContactAddressAndRelationOnAttachment(beneficiary2AddressLine1);
 
         CommonSteps.takeScreenshot();
 
@@ -2067,7 +2066,7 @@ public class ProbateFormsRW02Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
-        DriverFactory.drivers.get().findElement(By.xpath(OPTION_A_CHECKBOX)).click();
+        scrollToElementAndClick(OPTION_A_CHECKBOX);
 
         DriverFactory.drivers.get().findElement(By.xpath(RW_AKA_FIELD2)).clear();
         DriverFactory.drivers.get().findElement(By.xpath(RW_AKA_FIELD3)).clear();

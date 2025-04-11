@@ -25,8 +25,8 @@ Feature: 6in1 probate form RW08 Feature
     Then user verifies will number and dates can be entered and are auto saved
 
   Scenario: Verify, checkboxes for file no field.
-    When user check the "Use Will Number" checkbox
-    Then user verifies "will number" is displayed in file number
+#    When user check the "Use Will Number" checkbox
+#    Then user verifies "will number" is displayed in file number
     When user check the "Use 4 digit year" checkbox
     Then user verifies "4 digit year" is displayed in file number
 

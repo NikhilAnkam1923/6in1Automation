@@ -2211,6 +2211,7 @@ public class ProbateFormsOC01Page extends BasePage {
         clearField(CONTACT_NAME_FILTER);
         driverUtil.getWebElement(CONTACT_NAME_FILTER).sendKeys(contactName);
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
     }
 
     public String getEstateContactName(String fullName) {
