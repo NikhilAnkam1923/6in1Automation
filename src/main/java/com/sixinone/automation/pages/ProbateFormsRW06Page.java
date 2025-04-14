@@ -1005,7 +1005,6 @@ public class ProbateFormsRW06Page extends BasePage {
                         .replaceAll("[,\\.\\s]+$", "")
                         .trim();
 
-
             case "Corporate Name":
                 return rawText.replaceAll("[,\\.\\s]+$", "").trim();
 

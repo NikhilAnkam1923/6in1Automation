@@ -606,10 +606,10 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final Map<String, String> expectedValues = new HashMap<>();
 
     static {
-        expectedValues.put("Last Name", "Walker");
-        expectedValues.put("ExecutorOrAdministratorLastName", "Smith");
-        expectedValues.put("CoExecutorOrAdministratorLastName", "Brown");
-        expectedValues.put("SecondaryCoExecutorOrAdministratorLastName", "Clark");
+        expectedValues.put("Last Name", attorneyLastNameForm);
+        expectedValues.put("ExecutorOrAdministratorLastName", executorLastNameForm);
+        expectedValues.put("CoExecutorOrAdministratorLastName", coExecutorLastNameForm);
+        expectedValues.put("SecondaryCoExecutorOrAdministratorLastName", secondaryCoExecutorLastNameForm);
     }
 
     public void verifyAllFieldsInDownloadedPDF() throws IOException, AutomationException {

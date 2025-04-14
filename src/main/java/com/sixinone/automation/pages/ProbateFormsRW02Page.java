@@ -1326,11 +1326,15 @@ public class ProbateFormsRW02Page extends BasePage {
             boolean isverifyPetitionerNames = verifyPetitionerNames(pdfFilePath, expectedPetitionerNames);
 
             Map<String, String> expectedFeesValues = new HashMap<>();
-            expectedFeesValues.put("letterFees", letterFeesForm);
-            expectedFeesValues.put("shortCertificateFees", shortCertificateFeesForm);
-            expectedFeesValues.put("renunciationFees", renunciationFeesForm);
-            expectedFeesValues.put("codicilFees", codicilFeesForm);
-            expectedFeesValues.put("affidavitFees", affidavitFeesForm);
+            expectedFeesValues.put("letterFees", letterFeesForm);                     // e.g., "$50"
+            expectedFeesValues.put("shortCertificateFees", shortCertificateFeesForm); // e.g., "$10"
+            expectedFeesValues.put("shortcertificatesFormCount", "2");
+            expectedFeesValues.put("renunciationFees", renunciationFeesForm);         // e.g., "$5"
+            expectedFeesValues.put("renunciationsFormCount", "1");
+            expectedFeesValues.put("codicilFees", codicilFeesForm);                   // e.g., "$15"
+            expectedFeesValues.put("codicilsFormCount", "3");
+            expectedFeesValues.put("affidavitFees", affidavitFeesForm);               // e.g., "$25"
+            expectedFeesValues.put("affidavitsFormCount", "11");
             expectedFeesValues.put("bondFees", bondFeesForm);
             expectedFeesValues.put("commissionFees", commissionFeesForm);
             expectedFeesValues.put("otherFees1", otherFees1Form);
@@ -1342,7 +1346,8 @@ public class ProbateFormsRW02Page extends BasePage {
             expectedFeesValues.put("jcsFees", jcsFeesForm);
             expectedFeesValues.put("totalFees", totalFeesForm);
 
-            boolean isverifiedeFeesDetails = extractAndValidateFees(pdfFilePath,expectedFeesValues);
+
+            boolean isverifiedeFeesDetails = extractAndValidateFees(pdfFilePath, expectedFeesValues);
 
             boolean isverifiedprintedName = verifyFieldsInPDF(pdfFilePath,
                     "Attorney Signature:",
@@ -1769,79 +1774,60 @@ public class ProbateFormsRW02Page extends BasePage {
         return true;
     }
 
-    public static boolean extractAndValidateFees(String pdfPath, Map<String, String> expectedFeesValues) throws AutomationException {
-        try (PDDocument document = PDDocument.load(new File(pdfPath))) {
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            String pdfContent = pdfStripper.getText(document);
+    public boolean extractAndValidateFees(String pdfFilePath, Map<String, String> expectedFeesValues) throws AutomationException {
+        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            String fullText = stripper.getText(document);
+            CommonSteps.logInfo("📄 Extracted PDF Text:\n" + fullText);
 
-            String beforeLine = "TOTAL";  // Extract fees data before this line
-            String afterLine = "Automation Fee";  // Stop extracting after this line
+            // Define before and after markers for the fee section
+            String beforeLine = "FEES:";
+            String afterLine = "To the Register of Wills";
 
-            // Extract values from the PDF content
-            Map<String, String> extractedValues = extractFeesFromText(pdfContent, beforeLine, afterLine);
+            // Extract only the fee section
+            String feeSection = extractTextBetween(fullText, beforeLine, afterLine);
 
-            // Validate extracted values
-            return validateExtractedValues(extractedValues, expectedFeesValues);
+            for (Map.Entry<String, String> entry : expectedFeesValues.entrySet()) {
+                String key = entry.getKey();
+                String expectedValue = entry.getValue();
+                String label = formatKeyToLabel(key);
 
-        } catch (IOException | AutomationException e) {
-            throw new AutomationException("❌ Error occurred: " + e.getMessage());
-        }
-    }
-
-    private static Map<String, String> extractFeesFromText(String text, String beforeLine, String afterLine) {
-        Map<String, String> extractedValues = new HashMap<>();
-        StringBuilder extractedText = new StringBuilder();
-
-        boolean capture = false;
-        for (String line : text.split("\n")) {
-            if (line.contains(beforeLine)) capture = true;
-            if (capture) extractedText.append(line).append("\n");
-            if (line.contains(afterLine)) break;
-        }
-
-        for (String line : extractedText.toString().split("\n")) {
-            // Extract numerical values within parentheses, if present
-            String quantity = line.replaceAll(".*\\((\\d*)\\).*", "$1").trim();
-            if (quantity.equals(line.trim())) quantity = ""; // Handle cases where there is no number
-
-            // Extract fee values after '-'
-            String[] parts = line.split("-");
-            if (parts.length == 2) {
-                String fieldName = parts[0].trim().replaceAll("[^a-zA-Z()]", "");
-                String value = parts[1].trim();
-                String formField = convertToFormField(fieldName);
-
-                // Store extracted values in the map
-                extractedValues.put(formField, value.isEmpty() ? "0.00" : value); // Default empty fees to "0.00"
-
-                // Store extracted count (if available) in a separate field
-                if (!quantity.isEmpty()) {
-                    extractedValues.put(formField + "Count", quantity);
+                // Match count entries (like "( 2 )", "( 3 )") OR fee entries (like "$ 30.00")
+                if (!feeSection.contains(expectedValue)) {
+                    System.out.printf("❌ Mismatch or Missing -> %s: Expected '%s'%n", label, expectedValue);
+                    throw new AutomationException("Validation failed for: " + label);
+                } else {
+                    CommonSteps.logInfo("✅ Verified -> %s: '%s'%n", label, expectedValue);
                 }
             }
-        }
 
-        return extractedValues;
+            CommonSteps.logInfo("✅ All fee details have been successfully verified.");
+            return true;
+
+        } catch (IOException e) {
+            throw new AutomationException("PDF Read Error: " + e.getMessage());
+        }
     }
 
-    private static String convertToFormField(String fieldName) {
-        return fieldName.toLowerCase().replaceAll("[()]", "") + "Form";
+
+    private String extractTextBetween(String text, String startLine, String endLine) {
+        boolean start = false;
+        StringBuilder result = new StringBuilder();
+
+        for (String line : text.split("\\r?\\n")) {
+            if (line.contains(endLine)) break;
+            if (start) result.append(line).append("\n");
+            if (line.contains(startLine)) start = true;
+        }
+
+        return result.toString();
     }
 
-    private static boolean validateExtractedValues(Map<String, String> extracted, Map<String, String> expectedFeesValues) throws AutomationException {
-        boolean allMatched = true;
 
-        for (String key : expectedFeesValues.keySet()) {
-            String expectedValue = expectedFeesValues.get(key);
-            String extractedValue = extracted.getOrDefault(key, "0.00"); // Default missing fields to "0.00"
-
-            if (expectedValue != null && expectedValue.equals(extractedValue)) {
-                CommonSteps.logInfo("✅ " + key + " matched: " + extractedValue);
-            } else {
-                throw new AutomationException("❌ " + key + " mismatch! Expected: " + expectedValue + ", Extracted: " + extractedValue);
-            }
-        }
-        return allMatched;
+    private String formatKeyToLabel(String key) {
+        if (key.endsWith("FormCount")) return key.replace("FormCount", " Count");
+        if (key.endsWith("Form")) return key.replace("Form", "");
+        return key.replaceAll("([a-z])([A-Z])", "$1 $2");
     }
 
 
@@ -2045,7 +2031,6 @@ public class ProbateFormsRW02Page extends BasePage {
 
         return extractedData;
     }
-
 
 
     public void userResetsTheRWForm() throws AutomationException {
