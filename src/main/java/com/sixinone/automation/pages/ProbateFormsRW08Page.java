@@ -673,27 +673,27 @@ public class ProbateFormsRW08Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyDateLettersGranted(pdfFilePath);
+            boolean isVerifiedDateLettersGranted = verifyDateLettersGranted(pdfFilePath);
 
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isVerifiedServedDate = verifyFieldsInPDF(pdfFilePath,
                     "Date of Death: 12/05/2023 File Number:22-2023-1234",
                     "See Attachment",
                     servedDateForm,
                     "Served Date");
 
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isVerifiedSignedDate = verifyFieldsInPDF(pdfFilePath,
                     "Rules was served on or mailed to the following beneficiaries of the above-captioned estate on",
                     "Corporate Fiduciary (if applicable)",
                     signedDateForm,
                     "Signed Date");
 
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
                     "a/k/a Krish",
                     "02/25/2025 :",
                     fourDigitFileNumberForm,
                     "File Number");
 
-            verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+            boolean isverifiedCorporateFiduciaryAndPersonDetails = verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
 
             List<String> expectedNames = Arrays.asList(
                     Beneficiary1Form,
@@ -715,14 +715,18 @@ public class ProbateFormsRW08Page extends BasePage {
                     beneAddress2Form
             );
 
-            verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
+            boolean isVerifiedAllNamesAndAddresses = verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
+
+            if (!isVerifiedDateLettersGranted || isVerifiedServedDate || isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails || !isVerifiedAllNamesAndAddresses) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
-    private static void verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
+    private static boolean verifyDateLettersGranted(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "To the Register:";  // The next line after the date
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -781,10 +785,11 @@ public class ProbateFormsRW08Page extends BasePage {
 
         // ✅ Final validation success message
         CommonSteps.logInfo("✅ Validation Passed: Extracted date matches the expected value.");
+        return true;
     }
 
 
-    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -824,12 +829,13 @@ public class ProbateFormsRW08Page extends BasePage {
             }
 
             CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+            return true;
         } else {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
     }
 
-    private static void verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws IOException, AutomationException {
+    private static boolean verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -906,11 +912,11 @@ public class ProbateFormsRW08Page extends BasePage {
         if (corporateFiduciary == null && personName == null) {
             throw new AutomationException("❌ Validation Failed: Neither Corporate Fiduciary nor Name of Person was found.");
         }
-
         CommonSteps.logInfo("✅ Validation Passed: Corporate Fiduciary and Name of Person details successfully matched.");
+        return true;
     }
 
-    private static void verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
+    private static boolean verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
             throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -950,7 +956,11 @@ public class ProbateFormsRW08Page extends BasePage {
             CommonSteps.logInfo("🔍 Comparing Expected Name: " + expectedNames.get(i) + " and Address : " + expectedAddresses.get(i) +
                     ". Extracted -> Name: " + extractedNames.get(i) + " and Address : " + extractedAddresses.get(i));
         }
+
+        // Return true if all validations pass
+        return true;
     }
+
 
     private static List<String> extractDataAfterThirdOccurrence(String text, String beforeLine, String afterLine) {
         List<String> extractedData = new ArrayList<>();

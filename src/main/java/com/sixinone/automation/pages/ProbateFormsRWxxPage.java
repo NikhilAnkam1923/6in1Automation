@@ -347,12 +347,16 @@ public class ProbateFormsRWxxPage extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyReviewerName(pdfFilePath);
+            boolean isVerifiedReviewerName = verifyReviewerName(pdfFilePath);
+            boolean isVerifiedReviewerDesignation = verifyPDFSection(pdfFilePath, "Reviewer Designation", "I, Louis Pat ,being duly sworn according to law", "Harry and Steve ,", enteredReviewerDesignation);
+            boolean isVerifiedWitnessNames = verifyWitnessNames(pdfFilePath);
+            boolean isVerifiedReason = verifyPDFSection(pdfFilePath, "Reviewer Reason", "is/are not readily available to prove the signature of the Testator by reason of", "Sworn to or affirmed and subscribed", enteredReason);
+            boolean isVerifiedReviewerSign = verifyReviewerSign(pdfFilePath);
 
-            verifyPDFSection(pdfFilePath, "Reviewer Designation", "I, Louis Pat ,being duly sworn according to law", "Harry and Steve ,", enteredReviewerDesignation);
-            verifyWitnessNames(pdfFilePath);
-            verifyPDFSection(pdfFilePath, "Reviewer Reason", "is/are not readily available to prove the signature of the Testator by reason of", "Sworn to or affirmed and subscribed", enteredReason);
-            verifyReviewerSign(pdfFilePath);
+            if (!isVerifiedReviewerName || !isVerifiedReviewerDesignation || !isVerifiedWitnessNames || !isVerifiedReason || !isVerifiedReviewerSign) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
@@ -360,7 +364,7 @@ public class ProbateFormsRWxxPage extends BasePage {
     }
 
 
-    public static void verifyReviewerName(String pdfFilePath) throws IOException, AutomationException {
+    private static boolean verifyReviewerName(String pdfFilePath) throws IOException, AutomationException {
         List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John , Deceased");
         String afterLine = "depose and say that I, the Deputy Register of Wills in the above-referenced estate, declare that";
 
@@ -379,7 +383,7 @@ public class ProbateFormsRWxxPage extends BasePage {
 
         int startIndex = -1, endIndex = -1;
 
-        //Find Start and End Lines
+        // Find Start and End Lines
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
 
@@ -406,13 +410,12 @@ public class ProbateFormsRWxxPage extends BasePage {
             CommonSteps.logInfo("\n📌 Extracted reviewer Name: " + names);
             if (names.isEmpty()) {
                 CommonSteps.logInfo("❌ Validation Failed: No reviewer found between the specified lines.");
-                return;
+                throw new AutomationException("❌ Validation Failed: No reviewer found between the specified lines.");
             }
 
             // Create a map of expected names
             Map<String, String> expectedNames = new LinkedHashMap<>();
             expectedNames.put("Reviewer Name", cleanReviewerName(enteredReviewerName));
-
 
             boolean allMatch = true;
             for (int i = 0; i < expectedNames.size(); i++) {
@@ -428,14 +431,16 @@ public class ProbateFormsRWxxPage extends BasePage {
             }
 
             if (allMatch) {
-                CommonSteps.logInfo("✅ Validation Passed: reviewer name match as expected.");
+                CommonSteps.logInfo("✅ Validation Passed: reviewer name matches as expected.");
+                return true; // Return true if all match
             } else {
-                throw new AutomationException("❌ Validation Failed: reviewer name do not match the expected values.");
+                throw new AutomationException("❌ Validation Failed: reviewer names do not match the expected values.");
             }
         } else {
             throw new AutomationException("❌ Before or after line not found!");
         }
     }
+
 
     private static String cleanReviewerName(String rawName) {
         if (rawName == null || rawName.trim().isEmpty()) return "";
@@ -447,7 +452,7 @@ public class ProbateFormsRWxxPage extends BasePage {
                 .trim(); // Trim spaces at the beginning and end
     }
 
-    public static void verifyPDFSection(String pdfFilePath, String sectionType, String beforeLine, String afterLine, String expectedValue) throws IOException, AutomationException {
+    private static boolean verifyPDFSection(String pdfFilePath, String sectionType, String beforeLine, String afterLine, String expectedValue) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -491,6 +496,7 @@ public class ProbateFormsRWxxPage extends BasePage {
 
         if (expectedCleanedValue.equalsIgnoreCase(finalExtractedText)) {
             CommonSteps.logInfo("✅ Validation Passed: " + sectionType + " matches expected.");
+            return true;
         } else {
             throw new AutomationException("❌ Validation Failed: " + sectionType + " does not match expected value.");
         }
@@ -519,7 +525,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         }
     }
 
-    public void verifyWitnessNames(String pdfFilePath) throws IOException, AutomationException {
+    private static boolean verifyWitnessNames(String pdfFilePath) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -561,6 +567,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         }
 
         CommonSteps.logInfo("✅ Witness names verified successfully: " + extractedWitness1 + " and " + extractedWitness2);
+        return true;
     }
 
     // Helper method for cleaning text
@@ -574,7 +581,7 @@ public class ProbateFormsRWxxPage extends BasePage {
     }
 
 
-    private static void verifyReviewerSign(String pdfFilePath) throws IOException, AutomationException {
+    private static boolean verifyReviewerSign(String pdfFilePath) throws IOException, AutomationException {
         String beforeLine = "UNAVAILABLE WITNESS AFFIDAVIT";  // The next line after the date
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -615,6 +622,7 @@ public class ProbateFormsRWxxPage extends BasePage {
 
         if (expectedReviewerSignature.equalsIgnoreCase(extractedReviewerSignature)) {
             CommonSteps.logInfo("✅ Validation Passed: Extracted Reviewer Signature matches expected.");
+        return true;
         } else {
             throw new AutomationException("❌ Validation Failed: Extracted Reviewer Signature does not match expected value.");
         }

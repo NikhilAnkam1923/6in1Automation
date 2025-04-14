@@ -793,16 +793,20 @@ public class ProbateFormsRW06Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyDate(pdfFilePath);
-            verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
+            boolean isVerifiedDate = verifyDate(pdfFilePath);
+            boolean isVerifiedDateFiduciaryBeneficiaryDetails = verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
 
+
+            if (!isVerifiedDate || !isVerifiedDateFiduciaryBeneficiaryDetails ) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
-    private static void verifyDate(String pdfFilePath) throws IOException, AutomationException {
+    private static boolean verifyDate(String pdfFilePath) throws IOException, AutomationException {
         String targetLine = "(Date)";
         List<String> extractedDates = new ArrayList<>();
         List<String> expectedDates = Arrays.asList(
@@ -848,16 +852,23 @@ public class ProbateFormsRW06Page extends BasePage {
 
         // Validate each extracted date
         for (String extracted : extractedDates) {
-            CommonSteps.logInfo("🔍 Comparing -> Expected: " + expectedDates + ", Extracted: '" + extracted + "'");
-            if (expectedDates.stream().noneMatch(expected -> expected.equalsIgnoreCase(extracted))) {
+            boolean dateMatched = expectedDates.stream()
+                    .anyMatch(expected -> expected.equalsIgnoreCase(extracted));
+
+            if (dateMatched) {
+                CommonSteps.logInfo("✅ Date Matched: '" + extracted + "' matches expected values.");
+            } else {
+                CommonSteps.logInfo("❌ Date Mismatch: Extracted date '" + extracted + "' does not match any expected value.");
                 throw new AutomationException("❌ Validation Failed: Extracted Date '" + extracted + "' does not match any expected value.");
             }
         }
 
+        // If all dates are validated successfully, return true
         CommonSteps.logInfo("✅ Validation Passed: All extracted dates match expected values.");
+        return true;
     }
 
-    public static void verifyFiduciaryBeneficiaryDetailsForm(String pdfFilePath) throws IOException, AutomationException {
+    public static boolean verifyFiduciaryBeneficiaryDetailsForm(String pdfFilePath) throws IOException, AutomationException {
         // Define expected values dynamically
         Map<String, List<String>> fiduciaryFields = new HashMap<>();
 
@@ -889,7 +900,6 @@ public class ProbateFormsRW06Page extends BasePage {
         fiduciaryFields.put("Beneficiary Address", Arrays.asList(
                 beneficiary1AddressForm, beneficiary2AddressForm, beneficiary3AddressForm, beneficiary4AddressForm, beneficiary5AddressForm));
 
-
         // Define mapping of before and after lines
         Map<String, String[]> fieldMarkers = new HashMap<>();
 
@@ -903,15 +913,15 @@ public class ProbateFormsRW06Page extends BasePage {
 
         fieldMarkers.put("Signature of Officer/Representative", new String[]{
                 "Representative",
-                "Address"}); //first 5 is ok
+                "Address"});
 
         fieldMarkers.put("Fiduciary Address", new String[]{
                 "Title of Officer/Representative",
-                "Address"});  //first 5 correct
+                "Address"});
 
         fieldMarkers.put("City, State, Zip", new String[]{
                 "Address",
-                "City, State, Zip"});  // alternate
+                "City, State, Zip"});
 
         fieldMarkers.put("Telephone", new String[]{
                 "City, State, Zip",
@@ -923,7 +933,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
         fieldMarkers.put("Beneficiary Address", new String[]{
                 "Representative",
-                "Address"});   // last 5
+                "Address"});
 
         // Iterate over all fields and validate dynamically
         for (Map.Entry<String, List<String>> entry : fiduciaryFields.entrySet()) {
@@ -932,11 +942,17 @@ public class ProbateFormsRW06Page extends BasePage {
             String beforeLine = fieldMarkers.get(fieldName)[0];
             String afterLine = fieldMarkers.get(fieldName)[1];
 
-            verifyFieldInPDF(pdfFilePath, beforeLine, afterLine, expectedValues, fieldName);
+            boolean validationResult = verifyFieldInPDF(pdfFilePath, beforeLine, afterLine, expectedValues, fieldName);
+            if (!validationResult) {
+                return false; // If any validation fails, return false
+            }
         }
+
+        // All validations passed, return true
+        return true;
     }
 
-    public static void verifyFieldInPDF(String pdfFilePath, String beforeLine, String afterLine, List<String> expectedValues, String fieldName) throws IOException, AutomationException {
+    private static boolean verifyFieldInPDF(String pdfFilePath, String beforeLine, String afterLine, List<String> expectedValues, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -975,7 +991,6 @@ public class ProbateFormsRW06Page extends BasePage {
 
                 if (fieldName.equals("Beneficiary Address") && extractedValues.size() > 5) {
                     extractedValues = extractedValues.subList(extractedValues.size() - 5, extractedValues.size());
-                    //for last 5 occurences
                 }
             }
         }
@@ -998,7 +1013,11 @@ public class ProbateFormsRW06Page extends BasePage {
 
         // ✅ Final validation success message
         CommonSteps.logInfo("✅ Validation Passed: All occurrences of '" + fieldName + "' match expected values.");
+
+        // Return true to indicate successful validation
+        return true;
     }
+
 
     private static String cleanExtractedValue(String rawText, String fieldName) {
         if (rawText == null || rawText.trim().isEmpty()) return "";

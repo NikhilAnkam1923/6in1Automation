@@ -728,7 +728,7 @@ public class ProbateFormsRW07Page extends BasePage {
                     "Matthew Joseph White, Sr. Main Street, Office 45B Seattle, WA 98101"
             );
 
-            verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
+            boolean isVerifiedBeneficiaryDetails = verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
 
             List<String> expectedNames = Arrays.asList(
                     FiduciaryName1Form, FiduciaryName2Form, FiduciaryName3Form, FiduciaryName4Form, FiduciaryName5Form
@@ -742,8 +742,12 @@ public class ProbateFormsRW07Page extends BasePage {
                     FiduciaryTelephone1Form, FiduciaryTelephone2Form, FiduciaryTelephone3Form, FiduciaryTelephone4Form, FiduciaryTelephone5Form
             );
 
-            verifyAllNamesAddressesTelephone(pdfFilePath, expectedNames, expectedAddresses, expectedTelephones);
-            verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+            boolean isVerifyAllNamesAddressesTelephone = verifyAllNamesAddressesTelephone(pdfFilePath, expectedNames, expectedAddresses, expectedTelephones);
+            boolean isVerifyCorporateFiduciaryAndPersonDetails = verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
+
+            if (!isVerifiedBeneficiaryDetails || isVerifyAllNamesAddressesTelephone || isVerifyCorporateFiduciaryAndPersonDetails) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
 
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
@@ -751,7 +755,7 @@ public class ProbateFormsRW07Page extends BasePage {
         }
     }
 
-    public static void verifyBeneficiaryDetails(String pdfFilePath, List<String> expectedBeneficiaryDetails)
+    private static boolean verifyBeneficiaryDetails(String pdfFilePath, List<String> expectedBeneficiaryDetails)
             throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -809,7 +813,9 @@ public class ProbateFormsRW07Page extends BasePage {
         }
 
         CommonSteps.logInfo("✅ Validation Passed: All extracted beneficiary details match expected values.");
+        return true; // Return true if everything passes
     }
+
 
     // Improved method to clean extracted values
     private static String cleanBeneficiaryDetails(String rawText) {
@@ -822,8 +828,8 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
 
-    private static void verifyAllNamesAddressesTelephone(String pdfFilePath, List<String> expectedNames,
-                                                         List<String> expectedAddresses, List<String> expectedTelephones)
+    private static boolean verifyAllNamesAddressesTelephone(String pdfFilePath, List<String> expectedNames,
+                                                            List<String> expectedAddresses, List<String> expectedTelephones)
             throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -888,6 +894,7 @@ public class ProbateFormsRW07Page extends BasePage {
         }
 
         CommonSteps.logInfo("✅ Validation Completed: Names, Addresses, and Telephones processed.");
+        return true;
     }
 
 
@@ -943,7 +950,7 @@ public class ProbateFormsRW07Page extends BasePage {
         CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' processed.");
     }
 
-    private static void verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws
+    private static boolean verifyCorporateFiduciaryAndPersonDetails(String pdfFilePath) throws
             IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
@@ -1022,6 +1029,7 @@ public class ProbateFormsRW07Page extends BasePage {
         }
 
         CommonSteps.logInfo("✅ Validation Passed: Corporate Fiduciary and Name of Person details successfully matched.");
+        return true;
     }
 
     private static String clean(String rawText) {
