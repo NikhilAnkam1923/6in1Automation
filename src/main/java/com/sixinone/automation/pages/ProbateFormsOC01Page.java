@@ -391,7 +391,6 @@ public class ProbateFormsOC01Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-//        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -2336,6 +2335,8 @@ public class ProbateFormsOC01Page extends BasePage {
         String petitioner = getEstateContactName(nameOFPetitionerPage10Form);
 
         filterByContactName(nameOfCorporateFiduciary);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, nameOfCorporateFiduciary)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
@@ -2346,6 +2347,8 @@ public class ProbateFormsOC01Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
 
         filterByContactName(petitioner);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, petitioner)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
@@ -2364,6 +2367,8 @@ public class ProbateFormsOC01Page extends BasePage {
         String petitioner2 = getEstateContactName(nameOfPetitioner2Form);
 
         filterByContactName(petitioner1);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, petitioner1)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
@@ -2372,6 +2377,8 @@ public class ProbateFormsOC01Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
 
         filterByContactName(petitioner2);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, petitioner2)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
@@ -2383,6 +2390,8 @@ public class ProbateFormsOC01Page extends BasePage {
         String beneficiaryContact = getEstateContactName(fullName);
 
         filterByContactName(beneficiaryContact);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, beneficiaryContact)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
@@ -2398,6 +2407,8 @@ public class ProbateFormsOC01Page extends BasePage {
         String petitioner = getEstateContactName(nameOFPetitionerPage10Form);
 
         filterByContactName(nameOfCorporateFiduciary);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, nameOfCorporateFiduciary)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
@@ -2406,6 +2417,8 @@ public class ProbateFormsOC01Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
 
         filterByContactName(petitioner);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, petitioner)).click();
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();

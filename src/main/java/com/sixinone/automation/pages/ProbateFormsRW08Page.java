@@ -152,7 +152,6 @@ public class ProbateFormsRW08Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-//        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -261,7 +260,6 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyWillNumberAndDatesCanBeEnteredAndAreAutoSaved() throws AutomationException, IOException, ParseException {
-//        String willNumber = CommonUtil.getJsonPath("RW08Form").get("RW08Form.willNumber").toString();
         String dateLetterGranted = CommonUtil.getJsonPath("RW08Form").get("RW08Form.dateLetterGranted").toString();
         String signedDate = CommonUtil.getJsonPath("RW08Form").get("RW08Form.signedDate").toString();
         String servedDate = CommonUtil.getJsonPath("RW08Form").get("RW08Form.servedDate").toString();
@@ -269,13 +267,9 @@ public class ProbateFormsRW08Page extends BasePage {
         String datePattern = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(\\d{4})$";
         Pattern pattern = Pattern.compile(datePattern);
 
-//        WebElement willNumberField = driverUtil.getWebElement(WILL_NUMBER_FIELD);
         WebElement dateLetterGrantedField = driverUtil.getWebElement(DATE_LETTER_GRANTED);
         WebElement signedDateField = driverUtil.getWebElement(SIGNED_DATE);
         WebElement servedDateField = driverUtil.getWebElement(SERVED_DATE);
-
-//        scrollToElementAndClick(WILL_NUMBER_FIELD);
-//        fillFieldWithKeystrokes(willNumberField, willNumber);
 
         scrollToElementAndClick(DATE_LETTER_GRANTED);
         fillFieldWithKeystrokes(dateLetterGrantedField, dateLetterGranted);
@@ -288,14 +282,9 @@ public class ProbateFormsRW08Page extends BasePage {
 
 
         WebDriverUtil.waitForAWhile();
-//        willNumberForm = driverUtil.getWebElement(WILL_NUMBER_FIELD).getAttribute("value");
         dateLetterGrantedForm = driverUtil.getWebElement(DATE_LETTER_GRANTED).getAttribute("value");
         signedDateForm = driverUtil.getWebElement(SIGNED_DATE).getAttribute("value");
         servedDateForm = driverUtil.getWebElement(SERVED_DATE).getAttribute("value");
-
-//        if (!willNumberForm.equals(willNumber)) {
-//            throw new AutomationException("Will number is not entered correctly. Expected: " + willNumber + " ,Found: " + willNumberForm);
-//        }
 
         if (!pattern.matcher(dateLetterGrantedForm).matches()) {
             throw new AutomationException("Invalid Letter Granted date format: " + dateLetterGrantedForm + ". Expected format is MM/DD/YYYY.");
@@ -310,47 +299,17 @@ public class ProbateFormsRW08Page extends BasePage {
         }
     }
 
-    public void userCheckTheCheckbox(String checkboxToSelect) throws AutomationException {
-        switch (checkboxToSelect) {
-            case "Use Will Number":
-                DriverFactory.drivers.get().findElement(By.xpath(USE_WILL_NUM_CHECKBOX)).click();
-                break;
-            case "Use 4 digit year":
-                DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
-                break;
-            default:
-                throw new AutomationException("Unsupported checkbox : " + checkboxToSelect);
-        }
+    public void userCheckTheCheckbox() throws AutomationException {
+        DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
     }
 
-    private void verify4DigitFileNumber() throws AutomationException {
+    public void verifyDisplayedFileNumber() throws AutomationException {
         fourDigitFileNumberForm = driverUtil.getWebElement(FILE_NUMBER_FIELD).getAttribute("value");
 
         String expectedFourDigitFileNumber = initialFileNumberForm.replaceFirst("-(\\d{2})-", "-20$1-");
 
         if (!fourDigitFileNumberForm.equals(expectedFourDigitFileNumber)) {
             throw new AutomationException("File number did not update correctly. Expected: " + expectedFourDigitFileNumber + ", Found: " + fourDigitFileNumberForm);
-        }
-    }
-
-    private void verifyWillNumber() throws AutomationException {
-        String willNumberInFileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD).getAttribute("value");
-
-        if (!willNumberInFileNumberField.equals(willNumberForm)) {
-            throw new AutomationException("File number did not update correctly. Expected: " + willNumberForm + ", Found: " + willNumberInFileNumberField);
-        }
-    }
-
-    public void verifyDisplayedFileNumber(String displayedFileNumber) throws AutomationException {
-        switch (displayedFileNumber) {
-            case "will number":
-                verifyWillNumber();
-                break;
-            case "4 digit year":
-                verify4DigitFileNumber();
-                break;
-            default:
-                throw new AutomationException("Unsupported value : " + displayedFileNumber);
         }
     }
 
@@ -568,10 +527,10 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
-        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
-        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
-        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
+        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString() + ",";
+        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
+        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
@@ -581,6 +540,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
         String fiduciaryContactToSelect = fiduciaryFirstName + " " + fiduciaryMiddleName + " " + fiduciaryLastName + " " + fiduciarySuffix;
 
+        WebDriverUtil.waitForAWhile();
         WebElement fiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, fiduciaryContactToSelect));
 
         WebDriverUtil.waitForAWhile();
@@ -1075,13 +1035,6 @@ public class ProbateFormsRW08Page extends BasePage {
     }
 
     public void userResetsTheRWForm() throws AutomationException {
-        Actions actions = new Actions(DriverFactory.drivers.get());
-//        actions.moveToElement(driverUtil.getWebElement(PRINTFORM_BUTTON), -50, -50).perform();
-//        WebDriverUtil.waitForInvisibleElement(By.xpath(PRINT_FORM_TOOLTIP));
-
-//        scrollToElementAndClick(WILL_NUMBER_FIELD);
-//        DriverFactory.drivers.get().findElement(By.xpath(WILL_NUMBER_FIELD)).clear();
-
         scrollToElementAndClick(DATE_LETTER_GRANTED);
         DriverFactory.drivers.get().findElement(By.xpath(DATE_LETTER_GRANTED)).clear();
 

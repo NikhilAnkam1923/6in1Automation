@@ -506,6 +506,8 @@ public class CommonSteps {
     @And("^user click on the \"([^\"]*)\" form$")
     public void userClickOnTheRW(String formToSelect) throws AutomationException {
         CommonSteps.logInfo("user click on the " + formToSelect + " form");
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(RW_FORM_XPATH, formToSelect)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
@@ -812,10 +814,8 @@ public class CommonSteps {
     public void userClicksOnClearSelectionButton() throws AutomationException {
         CommonSteps.logInfo("user clicks on Clear Selection buttons");
         scrollToElementAndClick(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN);
-//        driverUtil.getWebElement(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN).click();
         WebDriverUtil.waitForAWhile(2);
         scrollToElementAndClick(PERSON_CLEAR_SELECTION_BTN);
-//        driverUtil.getWebElement(PERSON_CLEAR_SELECTION_BTN).click();
         WebDriverUtil.waitForAWhile(2);
     }
 

@@ -78,11 +78,12 @@ public class ProbateFormsRW10Page extends BasePage {
     private static final String CORPORATE_FIDUCIARY_NAME_FIELD = "//input[@name='fullname']";
     private static final String CONTACT_RADIO_BTN_DYNAMIC_XPATH = "//label[text()='%s']/preceding-sibling::input[@type='radio']";
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
-    private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
+    private static final String PERSON_NAME_FIELD_RW08_RW10 = "//p[text()='Name of Person']/preceding-sibling::div//p//input";
     private static final String SAVE_BTN = "//button[text()='Save']";
     public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
+    private static final String PERSON_NAME_FIELD_RW07 = "//p[text()='Name of Person']/preceding-sibling::p//input";
 
-    private final Map<String, String> estateInfo = new HashMap<>();
+    private final Map<String, String> estateInfo = new HashMap<>();//p[text()='Name of Person']/preceding-sibling::div//p//input
 
     static String downloadedFileName;
     static String enteredReasonForm;
@@ -127,7 +128,6 @@ public class ProbateFormsRW10Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -411,10 +411,10 @@ public class ProbateFormsRW10Page extends BasePage {
     }
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
-        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
-        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
-        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
+        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString() + ",";
+        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
+        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
@@ -478,7 +478,7 @@ public class ProbateFormsRW10Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08_RW10).getAttribute("value");
         if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
             selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
         }
@@ -487,7 +487,7 @@ public class ProbateFormsRW10Page extends BasePage {
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor7And10() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
-        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW07).getAttribute("value");
 
         if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
             throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW07. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
@@ -501,7 +501,7 @@ public class ProbateFormsRW10Page extends BasePage {
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor8And10() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
-        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08_RW10).getAttribute("value");
 
         if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
             throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW08. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
@@ -515,7 +515,7 @@ public class ProbateFormsRW10Page extends BasePage {
     public void verifySelectedContactsAreCleared() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryValue = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value").trim();
-        String personNameValue = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").trim();
+        String personNameValue = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08_RW10).getAttribute("value").trim();
 
         if (!corporateFiduciaryValue.isEmpty()) {
             throw new AutomationException("Corporate Fiduciary selection is not cleared. Found value: " + corporateFiduciaryValue);

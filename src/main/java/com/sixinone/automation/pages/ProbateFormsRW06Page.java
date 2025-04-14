@@ -729,6 +729,7 @@ public class ProbateFormsRW06Page extends BasePage {
             String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i))).getAttribute("value");
 
             WebDriverUtil.waitForAWhile();
+            WebDriverUtil.waitForVisibleElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i)));
             WebElement reasonField = driverUtil.getWebElementAndScroll(String.format(LETTERS_ISSUED_TO_FIELD, i));
 
             reasonField.sendKeys(Keys.SPACE);
@@ -802,54 +803,57 @@ public class ProbateFormsRW06Page extends BasePage {
     }
 
     private static void verifyDate(String pdfFilePath) throws IOException, AutomationException {
-        String beforeLine = "(Date)";  // The next line after the date
+        String targetLine = "(Date)";
+        List<String> extractedDates = new ArrayList<>();
+        List<String> expectedDates = Arrays.asList(
+                dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,
+                dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10
+        );
 
+        // Load PDF content
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
-        // Split the entire PDF content into lines
+        // Split by line and log full PDF
         String[] allLines = pdfText.split("\\r?\\n");
-
         CommonSteps.logInfo("📄 **Full PDF Content (All Lines):**");
         for (int i = 0; i < allLines.length; i++) {
-            CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]); // Log every line
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + allLines[i]);
         }
 
-        List<String> extractedDates = new ArrayList<>();
+        // Regex pattern for MM/dd/yyyy
+        Pattern datePattern = Pattern.compile("^\\d{2}/\\d{2}/\\d{4}$");
 
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
+        // Extract dates (previous line before each "(Date)" tag)
+        for (int i = 1; i < allLines.length; i++) {
+            if (allLines[i].trim().equalsIgnoreCase(targetLine)) {
+                String possibleDate = allLines[i - 1].trim();
 
-            // Find every occurrence of "(Date)"
-            if (trimmedLine.equalsIgnoreCase(beforeLine) && i > 0) {
-                String extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
-                if (!extractedDate.isEmpty()) {
-                    extractedDates.add(extractedDate);
+                // Check against date pattern
+                if (datePattern.matcher(possibleDate).matches()) {
+                    extractedDates.add(possibleDate);
+                } else {
+                    CommonSteps.logInfo("⚠️ Skipped non-date line before (Date): '" + possibleDate + "'");
                 }
             }
         }
 
-        if (extractedDates.isEmpty()) {
-            throw new AutomationException("❌ Validation Failed: No Date field found before (Date).");
-        }
-
-        // 📌 Log all extracted dates
+        // Log extracted dates
         CommonSteps.logInfo("📌 Extracted Date(s): " + extractedDates);
 
-        // Expected Dates for comparison
-        List<String> expectedDates = Arrays.asList(dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5, dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10);
+        if (extractedDates.isEmpty()) {
+            throw new AutomationException("❌ Validation Failed: No valid date found before (Date).");
+        }
 
-        // 🔍 Validate extracted dates
+        // Validate each extracted date
         for (String extracted : extractedDates) {
             CommonSteps.logInfo("🔍 Comparing -> Expected: " + expectedDates + ", Extracted: '" + extracted + "'");
-
             if (expectedDates.stream().noneMatch(expected -> expected.equalsIgnoreCase(extracted))) {
                 throw new AutomationException("❌ Validation Failed: Extracted Date '" + extracted + "' does not match any expected value.");
             }
         }
 
-        // ✅ Final validation success message
         CommonSteps.logInfo("✅ Validation Passed: All extracted dates match expected values.");
     }
 
