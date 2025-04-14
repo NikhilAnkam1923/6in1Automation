@@ -729,6 +729,7 @@ public class ProbateFormsRW06Page extends BasePage {
             String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELD, i))).getAttribute("value");
 
             WebDriverUtil.waitForAWhile();
+            WebDriverUtil.waitForVisibleElement(By.xpath(String.format(LETTERS_ISSUED_TO_FIELD, i)));
             WebElement reasonField = driverUtil.getWebElementAndScroll(String.format(LETTERS_ISSUED_TO_FIELD, i));
 
             reasonField.sendKeys(Keys.SPACE);

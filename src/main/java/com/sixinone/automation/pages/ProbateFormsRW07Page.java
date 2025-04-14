@@ -592,10 +592,10 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
-        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
-        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
-        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
+        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString() + ",";
+        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
+        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
