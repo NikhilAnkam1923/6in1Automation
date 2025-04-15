@@ -736,6 +736,7 @@ public class ProbateFormsRW07Page extends BasePage {
                     FiduciaryName1Form, FiduciaryName2Form, FiduciaryName3Form, FiduciaryName4Form, FiduciaryName5Form
             );
 
+
             List<String> expectedAddresses = Arrays.asList(
                     FiduciaryAddress1Form, FiduciaryAddress2Form, FiduciaryAddress3Form, FiduciaryAddress4Form, FiduciaryAddress5Form
             );

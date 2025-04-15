@@ -697,12 +697,12 @@ public class ProbateFormsRW08Page extends BasePage {
 
             List<String> expectedNames = Arrays.asList(
                     Beneficiary1Form,
-                    Beneficiary2Form,
-                    Beneficiary3Form,
                     Beneficiary4Form,
-                    Beneficiary5Form,
                     Beneficiary6Form,
-                    Beneficiary7Form
+                    Beneficiary7Form,
+                    Beneficiary3Form,
+                    Beneficiary5Form,
+                    Beneficiary2Form
             );
 
             List<String> expectedAddresses = Arrays.asList(

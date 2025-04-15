@@ -847,7 +847,8 @@ public class ProbateFormsRW02Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_BENE_XPATH);
 
-        BeneContact1Form = driverUtil.getWebElement(DRAG_BENE).getText();
+        BeneContact1Form =
+                driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
         BeneContact2Form = driverUtil.getWebElement(DRAG_BENE).getText();
