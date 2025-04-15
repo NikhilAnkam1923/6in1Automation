@@ -912,6 +912,7 @@ public class ProbateFormsRW08Page extends BasePage {
         if (corporateFiduciary == null && personName == null) {
             throw new AutomationException("❌ Validation Failed: Neither Corporate Fiduciary nor Name of Person was found.");
         }
+
         CommonSteps.logInfo("✅ Validation Passed: Corporate Fiduciary and Name of Person details successfully matched.");
         return true;
     }
@@ -936,7 +937,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
         // Extracting names and addresses
         for (String line : extractedLines) {
-            int firstCommaIndex = line.indexOf(",");
+            int firstCommaIndex = line.indexOf(".");
             if (firstCommaIndex != -1) {
                 String name = line.substring(0, firstCommaIndex).trim();
                 String address = line.substring(firstCommaIndex + 1).trim();
@@ -953,14 +954,12 @@ public class ProbateFormsRW08Page extends BasePage {
         }
 
         for (int i = 0; i < expectedNames.size(); i++) {
-            CommonSteps.logInfo("🔍 Comparing Expected Name: " + expectedNames.get(i) + " and Address : " + expectedAddresses.get(i) +
+            CommonSteps.logInfo("🔍Comparing Expected Name: " + expectedNames.get(i) + " and Address : " + expectedAddresses.get(i) +
                     ". Extracted -> Name: " + extractedNames.get(i) + " and Address : " + extractedAddresses.get(i));
-        }
 
-        // Return true if all validations pass
+        }
         return true;
     }
-
 
     private static List<String> extractDataAfterThirdOccurrence(String text, String beforeLine, String afterLine) {
         List<String> extractedData = new ArrayList<>();

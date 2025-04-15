@@ -728,6 +728,8 @@ public class ProbateFormsRW07Page extends BasePage {
                     "Matthew Joseph White, Sr. Main Street, Office 45B Seattle, WA 98101"
             );
 
+            //beneficiary1NameAddressForm
+
             boolean isVerifiedBeneficiaryDetails = verifyBeneficiaryDetails(pdfFilePath, expectedBeneficiaryDetails);
 
             List<String> expectedNames = Arrays.asList(
