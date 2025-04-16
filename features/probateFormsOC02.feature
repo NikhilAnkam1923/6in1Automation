@@ -33,8 +33,22 @@ Feature: 6in1 probate form OC02 Feature
   Scenario: Verify, the name entered is visible on all the pages.
     Then user verifies entered name of decedent is displayed on all the OC02 pages
 
+  Scenario: Verify, file no can be edited.
+    When user navigates to page number: "1"
+    Then user verified file number field is editable
 
+  Scenario: Verify that the sidebar appears and allows attorney selection.
+    When user click on Name of Counsel field
+    Then user verify a sidebar appears and attorney can be selected
+    And user verify selected attorney’s details are populated in the 'Name of Counsel' field
 
+  Scenario: Verify, correct attorney details are fetched in the subsequent fields.
+    Then user verify attorney details are auto fetched and correctly displayed
+    
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC02'
+    And verify all the fields entered are correctly reflected in the 'OC02' pdf
 
   @Setup
   Scenario:SETUP: Close Browser

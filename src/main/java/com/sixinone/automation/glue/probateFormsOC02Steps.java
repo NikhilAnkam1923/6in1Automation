@@ -65,4 +65,37 @@ public class probateFormsOC02Steps {
         PageFactory.probateFormsOC02Page().verifyEnteredNameOfDecedentIsDisplayedOnAllTheOCPages();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verified file number field is editable")
+    public void userVerifiesFileNumberFieldIsEditable() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that file number field is editable");
+        PageFactory.probateFormsOC02Page().verifyFileNumberFieldIsEditable();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user click on Name of Counsel field")
+    public void userClickOnNameOfCounselField() throws AutomationException {
+        CommonSteps.logInfo("user clicks on Name of Counsel field");
+        PageFactory.probateFormsOC02Page().userClicksOnNameOfCounselField();
+    }
+
+    @Then("user verify a sidebar appears and attorney can be selected")
+    public void userVerifyASidebarAppearsAndAttorneyCanBeSelected() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that a sidebar appears and attorney can be selected");
+        PageFactory.probateFormsOC02Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+    }
+
+    @And("user verify selected attorney’s details are populated in the 'Name of Counsel' field")
+    public void userVerifySelectedAttorneySDetailsArePopulatedInTheField() throws AutomationException {
+        CommonSteps.logInfo("Verified that selected attorney’s details are populated in the 'Name of Counsel' field");
+        PageFactory.probateFormsOC02Page().verifySelectedAttorneySDetailsArePopulatedInTheField();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verify attorney details are auto fetched and correctly displayed")
+    public void userVerifyAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed() throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("Verified that attorney details are auto fetched and correctly displayed");
+        PageFactory.probateFormsOC02Page().verifyAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed();
+        CommonSteps.takeScreenshot();
+    }
 }
