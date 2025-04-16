@@ -8,6 +8,7 @@ import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -87,8 +88,14 @@ public class ProbateFormsRW08Page extends BasePage {
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
     private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
     private static final String PRINT_FORM_TOOLTIP = "//div[@role='tooltip']";
+    private static final String SELECTED_BENE_NAMES = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
 
     private final Map<String, String> estateInfo = new HashMap<>();
+
+    JSONObject jsonData = CommonUtil.getFullJsonObject();
+
+    private static final List<String> beneDetails = new ArrayList<>();
+    private static final List<String> beneficiaryKeys = new ArrayList<>();
 
     static String downloadedFileName;
 
@@ -133,6 +140,9 @@ public class ProbateFormsRW08Page extends BasePage {
 
 
     static String enteredCityStateZipForm;
+
+    public ProbateFormsRW08Page() throws IOException, ParseException {
+    }
 
     private static String getFieldValue(String locator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
@@ -313,6 +323,27 @@ public class ProbateFormsRW08Page extends BasePage {
         }
     }
 
+    public static String findBeneficiaryKeyByName(String fullName, JSONObject jsonData) {
+        for (Object keyObj : jsonData.keySet()) {
+            String key = keyObj.toString();
+            if (key.startsWith("beneficiary")) {
+                JSONObject beneData = (JSONObject) jsonData.get(key);
+
+                String jsonFullName = beneData.getOrDefault("firstName", "") + " " +
+                        beneData.getOrDefault("middleName", "") + " " +
+                        beneData.getOrDefault("lastName", "") + ", " +
+                        beneData.getOrDefault("suffix", "");
+
+                jsonFullName = jsonFullName.trim().replaceAll(" +", " ");
+
+                if (fullName.equalsIgnoreCase(jsonFullName)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
     public void verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
@@ -322,71 +353,103 @@ public class ProbateFormsRW08Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
 
-        Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary6Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Beneficiary7Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+
+        WebDriverUtil.waitForAWhile(2);
+        List<WebElement> beneNames = driverUtil.getWebElements(SELECTED_BENE_NAMES);
+
+        for(int i=0; i<beneNames.size(); i++){
+            String name = beneNames.get(i).getText().trim();
+            beneDetails.add(name);
+            switch (i) {
+                case 0:
+                    Beneficiary1Form = name;
+                    break;
+                case 1:
+                    Beneficiary2Form = name;
+                    break;
+                case 2:
+                    Beneficiary3Form = name;
+                    break;
+                case 3:
+                    Beneficiary4Form = name;
+                    break;
+                case 4:
+                    Beneficiary5Form = name;
+                    break;
+                case 5:
+                    Beneficiary6Form = name;
+                    break;
+                case 6:
+                    Beneficiary7Form = name;
+                    break;
+            }
+        }
 
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Additional beneficiaries will be added to an attachment.")));
 
-        verifyBeneficiariesDisplayedCorrectlyOnForm();
+        for (String detail : beneDetails) {
+            String matchedKey = findBeneficiaryKeyByName(detail, jsonData);
 
+            if (matchedKey != null) {
+                beneficiaryKeys.add(matchedKey);
+            } else {
+                throw new AutomationException("Beneficiary key not found for full name: " + detail);
+            }
+        }
 
-        for (int i = 1; i <= 7; i++) {
-            String beneficiaryPrefix = "beneficiary" + i;
+        for (int i = 0; i < beneficiaryKeys.size(); i++) {
+            String beneficiaryKey = beneficiaryKeys.get(i);
 
-            String beneficiaryCity = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".city").toString();
-            String beneficiaryState = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".stateCode").toString();
-            String beneficiaryZip = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".zip").toString();
-            String beneficiaryAddress = CommonUtil.getJsonPath(beneficiaryPrefix).get(beneficiaryPrefix + ".addressLine1").toString();
+            String beneficiaryCity = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".city").toString();
+            String beneficiaryState = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".stateCode").toString();
+            String beneficiaryZip = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".zip").toString();
+            String beneficiaryAddress = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString();
 
             String beneficiaryCityStateZip = beneficiaryCity + ", " + beneficiaryState + " " + beneficiaryZip;
             String beneAddressForm = beneficiaryAddress + ", " + beneficiaryCityStateZip;
 
             switch (i) {
-                case 1:
+                case 0:
                     beneAddress1Form = beneAddressForm;
                     break;
-                case 2:
+                case 1:
                     beneAddress2Form = beneAddressForm;
                     break;
-                case 3:
+                case 2:
                     beneAddress3Form = beneAddressForm;
                     break;
-                case 4:
+                case 3:
                     beneAddress4Form = beneAddressForm;
                     break;
-                case 5:
+                case 4:
                     beneAddress5Form = beneAddressForm;
                     break;
-                case 6:
+                case 5:
                     beneAddress6Form = beneAddressForm;
                     break;
-                case 7:
+                case 6:
                     beneAddress7Form = beneAddressForm;
                     break;
             }
         }
 
+        verifyBeneficiariesDisplayedCorrectlyOnForm();
 
     }
 
@@ -396,12 +459,12 @@ public class ProbateFormsRW08Page extends BasePage {
 
         List<String> selectedBeneficiaries = Arrays.asList(
                 Beneficiary1Form,
-                Beneficiary4Form,
-                Beneficiary6Form,
-                Beneficiary7Form,
-                Beneficiary5Form,
                 Beneficiary2Form,
-                Beneficiary3Form
+                Beneficiary3Form,
+                Beneficiary4Form,
+                Beneficiary5Form,
+                Beneficiary6Form,
+                Beneficiary7Form
         );
 
         selectedContactsCount = selectedBeneficiaries.size();
@@ -428,8 +491,8 @@ public class ProbateFormsRW08Page extends BasePage {
         for (int row = 0; row < nameOnAttachment.size(); row++) {
             String actualName = nameOnAttachment.get(row).getAttribute("value").trim();
 
-            if (!actualName.equals(Beneficiary3Form)) {
-                throw new AutomationException("Mismatch in Name at Row " + (row + 1) + ",Expected: " + Beneficiary3Form + " ,Found: " + actualName);
+            if (!actualName.equals(Beneficiary7Form)) {
+                throw new AutomationException("Mismatch in Name at Row " + (row + 1) + ",Expected: " + Beneficiary7Form + " ,Found: " + actualName);
             }
         }
 
@@ -461,12 +524,12 @@ public class ProbateFormsRW08Page extends BasePage {
     public void verifyAllTheBeneficiariesAreTransferredToAttachment() throws AutomationException {
         List<String> selectedBeneficiaries = Arrays.asList(
                 Beneficiary1Form,
-                Beneficiary4Form,
-                Beneficiary6Form,
-                Beneficiary7Form,
-                Beneficiary5Form,
                 Beneficiary2Form,
-                Beneficiary3Form
+                Beneficiary3Form,
+                Beneficiary4Form,
+                Beneficiary5Form,
+                Beneficiary6Form,
+                Beneficiary7Form
         );
 
         scrollToElementAndClick(VIEW_ATTACHMENT_BTN);
@@ -499,11 +562,13 @@ public class ProbateFormsRW08Page extends BasePage {
         String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
         String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
         String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
-        fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        String fiduciaryAddressLineForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        String fiduciaryAddressLine2Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine2").toString();
         fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
         fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
 
         fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
+        fiduciaryAddressLine1Form = fiduciaryAddressLineForm + ", " + fiduciaryAddressLine2Form;
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
@@ -697,22 +762,22 @@ public class ProbateFormsRW08Page extends BasePage {
 
             List<String> expectedNames = Arrays.asList(
                     Beneficiary1Form,
-                    Beneficiary4Form,
-                    Beneficiary6Form,
-                    Beneficiary7Form,
+                    Beneficiary2Form,
                     Beneficiary3Form,
+                    Beneficiary4Form,
                     Beneficiary5Form,
-                    Beneficiary2Form
+                    Beneficiary6Form,
+                    Beneficiary7Form
             );
 
             List<String> expectedAddresses = Arrays.asList(
                     beneAddress1Form,
-                    beneAddress4Form,
-                    beneAddress6Form,
-                    beneAddress7Form,
+                    beneAddress2Form,
                     beneAddress3Form,
+                    beneAddress4Form,
                     beneAddress5Form,
-                    beneAddress2Form
+                    beneAddress6Form,
+                    beneAddress7Form
             );
 
             boolean isVerifiedAllNamesAndAddresses = verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
@@ -752,7 +817,8 @@ public class ProbateFormsRW08Page extends BasePage {
                 beforeLineFound = true;
                 if (i > 0) {
                     extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
-                    extractedDate = clean(extractedDate, "Date Letters Granted"); // Clean the extracted value
+                    extractedDate = clean(extractedDate, "Date Letters G" +
+                            "ranted"); // Clean the extracted value
 
                     if (!extractedDate.isEmpty()) {
                         break;  // Stop after the first valid extraction

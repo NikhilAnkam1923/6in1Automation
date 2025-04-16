@@ -153,7 +153,7 @@ public class CommonSteps {
 
 
     @Given("^User launched \"([^\"]*)\"$")
-    public void launchBrowser(String browser) throws AutomationException, IOException {
+    public void launchBrowser(String browser) throws AutomationException, IOException, ParseException {
         logInfo("User launched " + browser);
         if (DriverFactory.drivers.get() == null) {
             WebDriver driver = DriverFactory.getInstance().initDriver(browser);
