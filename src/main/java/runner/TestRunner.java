@@ -9,7 +9,7 @@ import java.io.IOException;
 @CucumberOptions(
 
 
-        features = {"features/probateFormsRW08.feature"},
+        features = {"features/probateFormsRW02.feature"},
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )
