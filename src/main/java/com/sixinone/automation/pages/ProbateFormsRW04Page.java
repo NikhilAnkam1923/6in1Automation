@@ -507,7 +507,7 @@ public class ProbateFormsRW04Page extends BasePage {
     }
 
     private static boolean verifyPrintNames(String pdfFilePath) throws IOException {
-        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William Arik John Jr. , Deceased");
+        List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John , Deceased");
         String afterLine = "(Print Name/s) (Print Name/s)";
 
         List<String> names = new ArrayList<>();

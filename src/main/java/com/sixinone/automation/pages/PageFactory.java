@@ -1,5 +1,7 @@
 package com.sixinone.automation.pages;
 
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 
 public class PageFactory {
@@ -21,7 +23,7 @@ public class PageFactory {
     public ProbateFormsOC01Page probateFormsOC01Page;
     public ProbateFormsOC02Page probateFormsOC02Page;
 
-    private PageFactory() throws IOException {
+    private PageFactory() throws IOException, ParseException {
 
         loginPage = new LoginPage();
         globalContactPage = new GlobalContactPage();
@@ -41,7 +43,7 @@ public class PageFactory {
         probateFormsOC02Page =new ProbateFormsOC02Page();
     }
 
-    public static void init() throws IOException {
+    public static void init() throws IOException, ParseException {
         if (factory.get() == null) {
             PageFactory pageFactory = new PageFactory();
             factory.set(pageFactory);

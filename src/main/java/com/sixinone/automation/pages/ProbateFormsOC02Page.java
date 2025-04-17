@@ -452,7 +452,7 @@ public class ProbateFormsOC02Page extends BasePage {
             Map<String, String> expectedCounselDetails = new HashMap<>();
             expectedCounselDetails.put("Name of Counsel", "Ethan Benjamin Walker, Jr.");
             expectedCounselDetails.put("Name of Law Firm", "sigmaConsulting");
-            expectedCounselDetails.put("Address", "Riverside Drive Kansas City, MO 64101");
+            expectedCounselDetails.put("Address", "Riverside Drive Suite 101 Kansas City, MO 64101");
             expectedCounselDetails.put("Telephone 1", "(816) 555-4321");
             expectedCounselDetails.put("Telephone 2", "(816) 888-6543");
             expectedCounselDetails.put("Email", "ethan.walker@business.com");
@@ -535,7 +535,7 @@ public class ProbateFormsOC02Page extends BasePage {
 
         switch (fieldType.toLowerCase()) {
             case "file number":
-                cleanedText = cleanedText.replaceAll("(?i)\\b(No.  )\\b", "").trim();
+                cleanedText = cleanedText.replaceAll("(?i)\\b(No. )\\b", "").trim();
                 break;
 
             default:
@@ -598,8 +598,8 @@ public class ProbateFormsOC02Page extends BasePage {
                 faxFound = true;
             }
             // Check for "Email" only once
-            else if (!emailFound && line.startsWith("Email:")) {
-                extractedDetails.put("Email", clean(line.replace("Email:", "").trim()));
+            else if (!emailFound && line.startsWith("E-mail:")) {
+                extractedDetails.put("Email", clean(line.replace("E-mail:", "").trim()));
                 emailFound = true;
             }
         }
