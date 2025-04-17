@@ -71,10 +71,10 @@ public class EstateContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @And("user verifies that the newly created contact is selected by default")
-    public void userVerifiesThatTheNewlyCreatedContactIsSelectedByDefault() throws AutomationException {
+    @And("^user verifies that the newly created \"([^\"]*)\" contact is selected by default$")
+    public void userVerifiesThatTheNewlyCreatedContactIsSelectedByDefault(String contactType) throws AutomationException {
         CommonSteps.logInfo("Verified that the newly created contact is selected by default.");
-        PageFactory.estateContactsPage().verifyNewlyCreatedContactIsSelectedByDefault();
+        PageFactory.estateContactsPage().verifyNewlyCreatedContactIsSelectedByDefault(contactType);
         CommonSteps.takeScreenshot();
     }
 

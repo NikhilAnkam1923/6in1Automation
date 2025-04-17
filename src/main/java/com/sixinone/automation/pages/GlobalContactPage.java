@@ -137,10 +137,6 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(EDIT_BUTTON).click();
     }
 
-    public void clickButtonSelectAndProceed() throws AutomationException {
-        driverUtil.getWebElement(SELECT_AND_PROCEED_BTN).click();
-    }
-
     public static void clickButtonClose() throws AutomationException {
         driverUtil.getWebElement(CLOSE_BUTTON).click();
     }
@@ -380,8 +376,6 @@ public class GlobalContactPage extends BasePage {
                 fillField(MIDDLE_NAME_FIELD, "Edit.middleName");
                 clearField(LAST_NAME_FIELD);
                 fillField(LAST_NAME_FIELD, "Edit.lastName");
-                clearField(MAIDEN_NAME_FIELD);
-                fillField(MAIDEN_NAME_FIELD, "Edit.maidenName");
                 clearField(EMAIL_ADDRESS_FIELD);
                 fillField(EMAIL_ADDRESS_FIELD, "Edit.emailId");
                 clearField(PTIN_FIELD);
@@ -639,19 +633,6 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-    public void verifyMatchingRecordsForIndividualGlobalContact() throws AutomationException, IOException, ParseException {
-        String lastName = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.lastName").toString();
-        String firstName = CommonUtil.getJsonPath("GlobalContactVerification").get("GlobalContactVerification.firstName").toString();
-        String expectedContactName = lastName + ", " + firstName;
-        List<String> displayedContactNames = getAllDisplayedContactNames();
-        boolean allMatch = displayedContactNames.stream()
-                .allMatch(name -> name.equalsIgnoreCase(expectedContactName));
-        if (!allMatch) {
-            throw new AutomationException("Not all displayed contact names match the expected name'");
-        }
-        CommonSteps.logInfo("Verified all displayed contact names match the expected name: '" + expectedContactName + "'.");
-    }
-
     @Override
     String getName() {
         return "";
@@ -790,14 +771,6 @@ public class GlobalContactPage extends BasePage {
         actions.moveToElement(EINField).click().sendKeys(baseEIN).build().perform();
     }
 
-    public void clickButtonInFooter(String btn) throws AutomationException {
-        WebElement FooterBtn = driverUtil.getWebElement(String.format(BUTTON_IN_FOOTER, btn));
-        if (FooterBtn == null) {
-            throw new AutomationException("Button is not found.");
-        }
-        FooterBtn.click();
-    }
-
     public void validateSSNAndEINFormat() throws AutomationException {
 
         String SSNField = driverUtil.getWebElementAndScroll(SSN_FIELD).getAttribute("value");
@@ -894,7 +867,6 @@ public class GlobalContactPage extends BasePage {
         fillFieldWithKeyStrokes(FIRST_NAME_FIELD, "Create.firstName");
         fillFieldWithKeyStrokes(MIDDLE_NAME_FIELD, "Create.middleName");
         fillFieldWithKeyStrokes(LAST_NAME_FIELD, "Create.lastName");
-        fillFieldWithKeyStrokes(MAIDEN_NAME_FIELD, "Create.maidenName");
         fillFieldWithKeyStrokes(EMAIL_ADDRESS_FIELD, "Create.emailId");
         fillFieldWithKeyStrokes(PTIN_FIELD, "Create.ptin");
         fillFieldWithKeyStrokes(PINEFILE_FIELD, "Create.pinEFile");
@@ -1036,7 +1008,6 @@ public class GlobalContactPage extends BasePage {
         String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
         String expectedLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
         String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
-        String expectedMaidenName = CommonUtil.getJsonPath("Create").get("Create.maidenName").toString();
         String expectedPhone = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
         String expectedWorkPhone = CommonUtil.getJsonPath("Create").get("Create.workNumber").toString();
         String expectedEmailAddress = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
@@ -1060,7 +1031,6 @@ public class GlobalContactPage extends BasePage {
         String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
         String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");
         String actualSuffix = getFieldValue(SELECTED_SUFFIX, "text");
-        String actualMaidenName = getFieldValue(MAIDEN_NAME_FIELD, "value");
 
         String actualPhone = getFieldValue(PHONE_NUMBER_FIELD, "value");
         String actualWorkPhone = getFieldValue(WORK_NUMBER_FIELD, "value");
@@ -1078,7 +1048,6 @@ public class GlobalContactPage extends BasePage {
         verifyField("Middle Name", expectedMiddleName, actualMiddleName);
         verifyField("Last Name", expectedLastName, actualLastName);
         verifyField("Suffix", expectedSuffix, actualSuffix);
-        verifyField("Maiden Name",expectedMaidenName,actualMaidenName);
         verifyField("Phone",expectedPhone,actualPhone);
         verifyField("Work Phone",expectedWorkPhone,actualWorkPhone);
         verifyField("Email Address",expectedEmailAddress,actualEmailAddress);
