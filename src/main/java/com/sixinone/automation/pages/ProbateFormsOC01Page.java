@@ -152,7 +152,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String RAD_AMOUNT_FIELDS = "//input[@name='additionalRADs[%s].payment']";
     private static final String RESERVE_REQUEST_AMOUNT = "//input[@name='reserveRequestedAmount']";
     private static final String SIGN_OF_PETITIONER_PAGE_11 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
-    private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of Petitioner')]//input";
+    private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]";
     private static final String SAVE_BTN = "//button[text()='Save']";
     private static final String NAME_OF_CORPORATE_FIDUCIARY = "//input[@name='fullname']";
     private static final String NAME_OF_REPRESENTATIVE = "//input[@name='contact_fullname_title']";
@@ -189,11 +189,12 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String CONTACT_USED_IN_OC01_FORM_NOTIFICATION = "//div[@class='modal-inner-content']//li[text()='ProbateOC01']";
     private static final String NO_ROLES_SAVE_BTN = "//button[@class='btn btn-danger' and text()='Save']";
     private static final String SELECT_RELATIONSHIP_BTN = "//button[@aria-label='Select Relationship']";
-    private static final String SPOUSE_RELATIONSHIP_OPTION = "//label[@class='form-check-label' and text()='Spouse']/preceding-sibling::input";
+    private static final String RELATIONSHIP_OPTION = "//label[@class='form-check-label' and text()='%s']/preceding-sibling::input";
     private static final String SHARE_OF_ESTATE_IN_WORDS = "//tr//td//span[contains(text(),'%s')]/ancestor::td/ancestor::tr//td[position()='4']//input";
     private static final String AMOUNT_OF_ESTATE = "//tr//td//span[contains(text(),'%s')]/ancestor::td/ancestor::tr//td[position()='5']//input";
     private static final String BENEFICIAL_INTEREST = "//tr//td//span[contains(text(),'%s')]/ancestor::td/ancestor::tr//td[position()='6']//input";
     private static final String BENY_WORKSHEET_TAB = "//a//span[text()='Beny Worksheet']";
+    private static final String SELECTED_PETITIONER_NAMES = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -211,6 +212,9 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final List<String> selectedContactNamesPage10 = new ArrayList<>();
     private static final List<String> beneDetailsAfterRoleRemoved = new ArrayList<>();
     private static final List<String> beneficiaryKeys = new ArrayList<>();
+    private static final List<String> selectedPetitioner = new ArrayList<>();
+    private static final List<String> Fiduciaries = new ArrayList<>();
+    private static final List<String> corporateFiduciaries = new ArrayList<>();
 
     static String[] enteredProportionValues;
 
@@ -382,6 +386,15 @@ public class ProbateFormsOC01Page extends BasePage {
             return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
         } else {
             throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
+
+    private static String getFieldValue(WebElement field) throws AutomationException {
+        if (field != null) {
+            String value = field.getAttribute("value");
+            return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
+        } else {
+            throw new AutomationException("WebElement is null.");
         }
     }
 
@@ -874,10 +887,27 @@ public class ProbateFormsOC01Page extends BasePage {
             throw new AutomationException("Not enough contacts in the drop section to perform a swap.");
         }
 
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
+
+        List<WebElement> selectedContacts = driverUtil.getWebElements(SELECTED_PETITIONER_NAMES);
+        for (WebElement selectedContact : selectedContacts) {
+            String petitioner = selectedContact.getText().trim();
+            selectedPetitioner.add(petitioner);
+
+            if (isIndividualFiduciary(petitioner)) {
+                Fiduciaries.add(petitioner);
+            } else {
+                corporateFiduciaries.add(petitioner);
+            }
+        }
+
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+    }
+
+    private boolean isIndividualFiduciary(String name) {
+        return name.contains(",");
     }
 
     public void verifySwappedPetitionerNamesAreReflectedOnUIAccordingly() throws AutomationException, IOException, ParseException {
@@ -1825,9 +1855,10 @@ public class ProbateFormsOC01Page extends BasePage {
     public void verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner() throws AutomationException {
         WebElement signOfPetitionerField = driverUtil.getWebElement(SIGN_OF_PETITIONER_PAGE_11);
         String petitionerNamePage11 = signOfPetitionerField.getAttribute("value");
+        String expectedPetitionerName = Fiduciaries.get(0);
 
-        if (!petitionerNamePage11.equals(nameOfPetitionerForm)) {
-            throw new AutomationException("1st individual petitioner selected on page 2 is not displayed under individual petitioner. Expected: " + nameOfPetitionerForm + " ,Found: " + petitionerNamePage11);
+        if (!petitionerNamePage11.equals(expectedPetitionerName)) {
+            throw new AutomationException("1st individual petitioner selected on page 2 is not displayed under individual petitioner. Expected: " + expectedPetitionerName + " ,Found: " + petitionerNamePage11);
         }
     }
 
@@ -2370,21 +2401,48 @@ public class ProbateFormsOC01Page extends BasePage {
         driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
         WebDriverUtil.waitForAWhile();
 
+        List<String> expectedPetitionersOnAttachment = new ArrayList<>();
+        List<String> expectedFiduciary = new ArrayList<>();
+        List<String> expectedCorporateFiduciary =new ArrayList<>();
 
-        List<String> expectedPetitionersOnAttachment = Arrays.asList(nameOfPetitioner2Form, Fiduciary3Form);
+        for(int i=0; i<Fiduciaries.size(); i++){
+            if(i!=0){
+                expectedFiduciary.add(Fiduciaries.get(i));
+            }
+        }
+
+        for(int i=0; i<corporateFiduciaries.size(); i++){
+            if(i!=0){
+                expectedCorporateFiduciary.add(corporateFiduciaries.get(i));
+            }
+        }
+
+        expectedPetitionersOnAttachment.addAll(expectedFiduciary);
+        expectedPetitionersOnAttachment.addAll(expectedCorporateFiduciary);
+
+        //dubbuggging
+        for (String petitioner : expectedPetitionersOnAttachment) {
+            System.out.println("Petitioner on attachment: " + petitioner);
+        }
+
 
         List<WebElement> petitionerOnAttachmentFields = driverUtil.getWebElements(SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11);
         List<String> actualPetitionersOnAttachment = new ArrayList<>();
 
         for (WebElement element : petitionerOnAttachmentFields) {
-            actualPetitionersOnAttachment.add(element.getAttribute("value"));
+            actualPetitionersOnAttachment.add(getFieldValue(element));
+        }
+
+        //deubuggibg
+        for (String name : actualPetitionersOnAttachment){
+            System.out.println("Petitioner actual: "+name);
         }
 
         for (int i = 0; i < expectedPetitionersOnAttachment.size(); i++) {
             String expected = expectedPetitionersOnAttachment.get(i);
             String actual = actualPetitionersOnAttachment.get(i);
 
-            if (!expected.equals(actual)) {
+            if (!actual.contains(expected)) {
                 throw new AutomationException("Petitioner mismatch at sign " + (i + 1) +
                         "\nExpected: " + expected + "\nActual: " + actual);
             }
@@ -2618,6 +2676,8 @@ public class ProbateFormsOC01Page extends BasePage {
 
         String fullName = extractFullName(beneDetails.get(0));
         String beneficiaryContact = getEstateContactName(fullName);
+        String beneKey = beneficiaryKeys.get(0);
+        String relationship = CommonUtil.getJsonPath(beneKey).get(beneKey + ".Relationship").toString();
 
         filterByContactName(beneficiaryContact);
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
@@ -2630,7 +2690,7 @@ public class ProbateFormsOC01Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
         driverUtil.getWebElement(SELECT_RELATIONSHIP_BTN).click();
         WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(SPOUSE_RELATIONSHIP_OPTION).click();
+        driverUtil.getWebElement(String.format(RELATIONSHIP_OPTION,relationship)).click();
         driverUtil.getWebElement(SAVE_BTN).click();
         WebDriverUtil.waitForAWhile();
 
@@ -2659,7 +2719,6 @@ public class ProbateFormsOC01Page extends BasePage {
 //send data through json here
 //        String fullName = extractFullName(beneDetails.get(0));
 //        String beneficiaryContact = getEstateContactName(fullName);
-        String beneKey = beneficiaryKeys.get(0);
         String shareOfEstateInWord = CommonUtil.getJsonPath(beneKey).get(beneKey + ".ShareOfEstate").toString();
         String amountOfEstate = CommonUtil.getJsonPath(beneKey).get(beneKey + ".AmountOfEstate").toString();
         String beneficialInterest = CommonUtil.getJsonPath(beneKey).get(beneKey + ".BeneficialInterest").toString();

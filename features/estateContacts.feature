@@ -4,12 +4,12 @@ Feature: 6in1 estate contacts Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
+    And user go to application "$6in1_url"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
+      | user-email                        | password  |
+      | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
   Scenario:Verify add estate contact appears on clicking add button
     When user navigates to the estate contacts tab
@@ -48,7 +48,7 @@ Feature: 6in1 estate contacts Feature
     And user click on Next button
     Then user verifies global contact saved successful message
       #Verify roles can be assigned for newly added contact.
-    And user verifies that the newly created contact is selected by default
+    And user verifies that the newly created "Entity" contact is selected by default
     Then user click on Select Role button for Contact
     And user selects the Role for Contact
     Then user verifies the "Entity" contact is visible in the Estate Contacts list
@@ -71,7 +71,7 @@ Feature: 6in1 estate contacts Feature
     And user click on Next button
     Then user verifies global contact created successful message
       #Verify roles can be assigned for newly added contact.
-    And user verifies that the newly created contact is selected by default
+    And user verifies that the newly created "Individual" contact is selected by default
     Then user click on Select Role button for Contact
     And user selects the Role for Contact
     Then user verifies the "Individual" contact is visible in the Estate Contacts list
