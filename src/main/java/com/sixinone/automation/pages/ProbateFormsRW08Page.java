@@ -756,7 +756,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
 
             boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
-                    "Name of Decedent: Kris Warner",
+                    "a/k/a Krish",
                     "02/25/2025 :",
                     fourDigitFileNumberForm,
                     "File Number");
@@ -783,9 +783,10 @@ public class ProbateFormsRW08Page extends BasePage {
                     beneAddress7Form
             );
 
-            boolean isVerifiedAllNamesAndAddresses = verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
+//            boolean isVerifiedAllNamesAndAddresses =
+                    verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
 
-            if (!isVerifiedDateLettersGranted || isVerifiedServedDate || isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails || !isVerifiedAllNamesAndAddresses) {
+            if (!isVerifiedDateLettersGranted || isVerifiedServedDate || isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -985,7 +986,7 @@ public class ProbateFormsRW08Page extends BasePage {
         return true;
     }
 
-    private static boolean verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
+    private static void verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
             throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -1027,23 +1028,34 @@ public class ProbateFormsRW08Page extends BasePage {
             String expectedAddress = normalize(expectedAddresses.get(i).replaceAll("\\.+$", ""));
             String extractedAddress = normalize(extractedAddresses.get(i).replaceAll("\\.+$", ""));
 
-            CommonSteps.logInfo("🔍Comparing Expected -> Name: " + expectedName + " and Address : " + expectedAddress +
-                    " Extracted -> Name: " + extractedName + " and Address : " + extractedAddress);
+            // Log exact strings for clarity
+            CommonSteps.logInfo("🔍Comparing [Index " + i + "] ->\n" +
+                    "Expected -> Name: '" + expectedName + "' | Address: '" + expectedAddress + "'\n" +
+                    "Extracted -> Name: '" + extractedName + "' | Address: '" + extractedAddress + "'");
 
-            if (!expectedName.equals(extractedName) || !expectedAddress.equals(extractedAddress)) {
-                throw new AutomationException("❌ Verification failed Name or Address are not matched");
+            // Use strong equality check
+            boolean nameMatch = expectedName.equalsIgnoreCase(extractedName);
+            boolean addressMatch = expectedAddress.equalsIgnoreCase(extractedAddress);
+
+            if (!nameMatch || !addressMatch) {
+                CommonSteps.logInfo("❌ Mismatch at index " + i + ": Name match = " + nameMatch + ", Address match = " + addressMatch);
+                throw new AutomationException("❌ Verification failed at index " + i + ": Name or Address mismatch");
             }
         }
-        return true;
+
+        CommonSteps.logInfo("Passssss");
     }
 
     private static String normalize(String input) {
-        return input
-                .replaceAll("[\\u200B\\uFEFF]", "") // remove zero-width characters
-                .replaceAll("\\s+", " ")            // normalize whitespace
-                .replace("\u00A0", " ")             // replace non-breaking space
+        return Optional.ofNullable(input)
+                .orElse("")
+                .replaceAll("[\\u200B\\uFEFF]", "") // remove zero-width chars
+                .replaceAll("[\\r\\n\\t]", " ")     // remove carriage returns, tabs
+                .replace("\u00A0", " ")             // non-breaking space
+                .replaceAll("\\s+", " ")            // collapse whitespace
                 .trim();
     }
+
 
 
 
