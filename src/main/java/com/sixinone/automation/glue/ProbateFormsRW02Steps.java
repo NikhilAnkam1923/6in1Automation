@@ -199,7 +199,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies multiple beneficiaries can be added")
-    public void userVerifiesMultipleBeneficiariesCanBeAdded() throws AutomationException {
+    public void userVerifiesMultipleBeneficiariesCanBeAdded() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that multiple beneficiaries can be added");
         PageFactory.probateFormsRW02Page().verifyMultipleBeneficiariesCanBeAdded();
         CommonSteps.takeScreenshot();
@@ -225,7 +225,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @And("user checks 'Display ALL heirs on attachment' checkbox")
-    public void userChecksDisplayALLHeirsOnAttachmentCheckbox() {
+    public void userChecksDisplayALLHeirsOnAttachmentCheckbox() throws AutomationException {
         CommonSteps.logInfo("user checks 'Display ALL heirs on attachment' checkbox");
         PageFactory.probateFormsRW02Page().userChecksDisplayALLHeirsOnAttachmentCheckbox();
     }

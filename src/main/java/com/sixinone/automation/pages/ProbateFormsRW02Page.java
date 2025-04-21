@@ -159,10 +159,14 @@ public class ProbateFormsRW02Page extends BasePage {
     private static final String PAGE_2_COUNTY = "//p[contains(text(),'COUNTY OF')]//input";
     private static final String PRINTFORM_BUTTON = "//*[local-name()='svg' and contains(@class, 'cursor')]";
     private static final String SELECTED_CONTACT = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
+    private static final String SELECTED_BENE_NAMES = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
     JSONObject jsonData = CommonUtil.getFullJsonObject();
+
+    private static final List<String> beneDetails = new ArrayList<>();
+    private static final List<String> beneficiaryKeys = new ArrayList<>();
 
     static String personalPropertyForm;
     static String pennsylvaniaPropertyForm;
@@ -861,7 +865,28 @@ public class ProbateFormsRW02Page extends BasePage {
         }
     }
 
-    public void verifyMultipleBeneficiariesCanBeAdded() throws AutomationException {
+    public static String findBeneficiaryKeyByName(String fullName, JSONObject jsonData) {
+        for (Object keyObj : jsonData.keySet()) {
+            String key = keyObj.toString();
+            if (key.startsWith("beneficiary")) {
+                JSONObject beneData = (JSONObject) jsonData.get(key);
+
+                String jsonFullName = beneData.getOrDefault("firstName", "") + " " +
+                        beneData.getOrDefault("middleName", "") + " " +
+                        beneData.getOrDefault("lastName", "") + ", " +
+                        beneData.getOrDefault("suffix", "");
+
+                jsonFullName = jsonFullName.trim().replaceAll(" +", " ");
+
+                if (fullName.equalsIgnoreCase(jsonFullName)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void verifyMultipleBeneficiariesCanBeAdded() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
 
         actions.sendKeys(Keys.PAGE_DOWN).perform();
@@ -871,52 +896,82 @@ public class ProbateFormsRW02Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_BENE_XPATH);
 
-        BeneContact1Form = driverUtil.getWebElement(DRAG_BENE).getText();
+
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact2Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact3Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact4Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        BeneContact5Form = driverUtil.getWebElement(DRAG_BENE).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_BENE), dropHereSection).perform();
+
+        WebDriverUtil.waitForAWhile(2);
+        List<WebElement> beneNames = driverUtil.getWebElements(SELECTED_BENE_NAMES);
+
+        for(int i=0; i<beneNames.size(); i++){
+            String name = beneNames.get(i).getText().trim();
+            beneDetails.add(name);
+            switch (i) {
+                case 0:
+                    BeneContact1Form = name;
+                    break;
+                case 1:
+                    BeneContact2Form = name;
+                    break;
+                case 2:
+                    BeneContact3Form = name;
+                    break;
+                case 3:
+                    BeneContact4Form = name;
+                    break;
+                case 4:
+                    BeneContact5Form = name;
+                    break;
+            }
+        }
+
+        for (String detail : beneDetails) {
+            String matchedKey = findBeneficiaryKeyByName(detail, jsonData);
+
+            if (matchedKey != null) {
+                beneficiaryKeys.add(matchedKey);
+            } else {
+                throw new AutomationException("Beneficiary key not found for full name: " + detail);
+            }
+        }
     }
 
     public void userClicksOnAcceptButton() throws AutomationException {
-
         driverUtil.getWebElement(ACCEPT_BTN).click();
     }
 
     public void verifyCorrectBeneficiaryNameRelationshipAndAddressIsDisplayed() throws AutomationException, IOException, ParseException {
-        String beneficiary1AddressLine1 = CommonUtil.getJsonPath("beneficiary1").get("beneficiary1.addressLine1").toString();
-        String beneficiary1City = CommonUtil.getJsonPath("beneficiary1").get("beneficiary1.city").toString();
-        String beneficiary1StateCode = CommonUtil.getJsonPath("beneficiary1").get("beneficiary1.stateCode").toString();
-        String beneficiary1Zip = CommonUtil.getJsonPath("beneficiary1").get("beneficiary1.zip").toString();
+        String beneficiary1AddressLine1 = CommonUtil.getJsonPath(beneficiaryKeys.get(0)).get(beneficiaryKeys.get(0)+".addressLine1").toString();
+        String beneficiary1City = CommonUtil.getJsonPath(beneficiaryKeys.get(0)).get(beneficiaryKeys.get(0)+".city").toString();
+        String beneficiary1StateCode = CommonUtil.getJsonPath(beneficiaryKeys.get(0)).get(beneficiaryKeys.get(0)+".stateCode").toString();
+        String beneficiary1Zip = CommonUtil.getJsonPath(beneficiaryKeys.get(0)).get(beneficiaryKeys.get(0)+".zip").toString();
 
-        String beneficiary2AddressLine1 = CommonUtil.getJsonPath("beneficiary2").get("beneficiary2.addressLine1").toString();
-        String beneficiary2City = CommonUtil.getJsonPath("beneficiary2").get("beneficiary2.city").toString();
-        String beneficiary2StateCode = CommonUtil.getJsonPath("beneficiary2").get("beneficiary2.stateCode").toString();
-        String beneficiary2Zip = CommonUtil.getJsonPath("beneficiary2").get("beneficiary2.zip").toString();
+        String beneficiary2AddressLine1 = CommonUtil.getJsonPath(beneficiaryKeys.get(1)).get(beneficiaryKeys.get(1)+".addressLine1").toString();
+        String beneficiary2City = CommonUtil.getJsonPath(beneficiaryKeys.get(1)).get(beneficiaryKeys.get(1)+".city").toString();
+        String beneficiary2StateCode = CommonUtil.getJsonPath(beneficiaryKeys.get(1)).get(beneficiaryKeys.get(1)+".stateCode").toString();
+        String beneficiary2Zip = CommonUtil.getJsonPath(beneficiaryKeys.get(1)).get(beneficiaryKeys.get(1)+".zip").toString();
 
-        String beneficiary3AddressLine1 = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.addressLine1").toString();
-        String beneficiary3City = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.city").toString();
-        String beneficiary3StateCode = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.stateCode").toString();
-        String beneficiary3Zip = CommonUtil.getJsonPath("beneficiary3").get("beneficiary3.zip").toString();
+        String beneficiary3AddressLine1 = CommonUtil.getJsonPath(beneficiaryKeys.get(2)).get(beneficiaryKeys.get(2)+".addressLine1").toString();
+        String beneficiary3City = CommonUtil.getJsonPath(beneficiaryKeys.get(2)).get(beneficiaryKeys.get(2)+".city").toString();
+        String beneficiary3StateCode = CommonUtil.getJsonPath(beneficiaryKeys.get(2)).get(beneficiaryKeys.get(2)+".stateCode").toString();
+        String beneficiary3Zip = CommonUtil.getJsonPath(beneficiaryKeys.get(2)).get(beneficiaryKeys.get(2)+".zip").toString();
 
-        String beneficiary4AddressLine1 = CommonUtil.getJsonPath("beneficiary4").get("beneficiary4.addressLine1").toString();
-        String beneficiary4City = CommonUtil.getJsonPath("beneficiary4").get("beneficiary4.city").toString();
-        String beneficiary4StateCode = CommonUtil.getJsonPath("beneficiary4").get("beneficiary4.stateCode").toString();
-        String beneficiary4Zip = CommonUtil.getJsonPath("beneficiary4").get("beneficiary4.zip").toString();
+        String beneficiary4AddressLine1 = CommonUtil.getJsonPath(beneficiaryKeys.get(3)).get(beneficiaryKeys.get(3)+".addressLine1").toString();
+        String beneficiary4City = CommonUtil.getJsonPath(beneficiaryKeys.get(3)).get(beneficiaryKeys.get(3)+".city").toString();
+        String beneficiary4StateCode = CommonUtil.getJsonPath(beneficiaryKeys.get(3)).get(beneficiaryKeys.get(3)+".stateCode").toString();
+        String beneficiary4Zip = CommonUtil.getJsonPath(beneficiaryKeys.get(3)).get(beneficiaryKeys.get(3)+".zip").toString();
 
-        String beneficiary5AddressLine1 = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.addressLine1").toString();
-        String beneficiary5City = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.city").toString();
-        String beneficiary5StateCode = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.stateCode").toString();
-        String beneficiary5Zip = CommonUtil.getJsonPath("beneficiary5").get("beneficiary5.zip").toString();
+        String beneficiary5AddressLine1 = CommonUtil.getJsonPath(beneficiaryKeys.get(4)).get(beneficiaryKeys.get(4)+".addressLine1").toString();
+        String beneficiary5City = CommonUtil.getJsonPath(beneficiaryKeys.get(4)).get(beneficiaryKeys.get(4)+".city").toString();
+        String beneficiary5StateCode = CommonUtil.getJsonPath(beneficiaryKeys.get(4)).get(beneficiaryKeys.get(4)+".stateCode").toString();
+        String beneficiary5Zip = CommonUtil.getJsonPath(beneficiaryKeys.get(4)).get(beneficiaryKeys.get(4)+".zip").toString();
 
         BeneContactAddress1Form = beneficiary1AddressLine1 + ", " + beneficiary1City + ", " + beneficiary1StateCode + " " + beneficiary1Zip;
         BeneContactAddress2Form = beneficiary2AddressLine1 + ", " + beneficiary2City + ", " + beneficiary2StateCode + " " + beneficiary2Zip;
@@ -927,9 +982,9 @@ public class ProbateFormsRW02Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Bene/Heirs updated successfully.")));
 
         verifyBeneContactInTable(BeneContact1Form);
-        verifyBeneContactInTable(BeneContact4Form);
-        verifyBeneContactInTable(BeneContact5Form);
+        verifyBeneContactInTable(BeneContact2Form);
         verifyBeneContactInTable(BeneContact3Form);
+        verifyBeneContactInTable(BeneContact4Form);
 
         verifyBeneContactInTable("None");
         verifyBeneContactInTable("None");
@@ -937,27 +992,27 @@ public class ProbateFormsRW02Page extends BasePage {
         verifyBeneContactInTable("None");
 
         verifyBeneContactInTable(BeneContactAddress1Form);
-        verifyBeneContactInTable(BeneContactAddress4Form);
-        verifyBeneContactInTable(BeneContactAddress5Form);
+        verifyBeneContactInTable(BeneContactAddress2Form);
         verifyBeneContactInTable(BeneContactAddress3Form);
+        verifyBeneContactInTable(BeneContactAddress4Form);
     }
 
     public void verifyContactsAreTransferredToAttachment() throws AutomationException, IOException, ParseException {
-        String beneficiary2AddressLine1 = CommonUtil.getJsonPath("beneficiary2").get("beneficiary2.addressLine1").toString();
+        String beneficiaryAddressLine1 = CommonUtil.getJsonPath(beneficiaryKeys.get(4)).get(beneficiaryKeys.get(4)+".addressLine1").toString();
 
         driverUtil.getWebElement(BENE_VIEW_ATTACHMENT).click();
         WebDriverUtil.waitForAWhile();
 
-        verifyBeneContactOnAttachment(BeneContact2Form);
+        verifyBeneContactOnAttachment(BeneContact5Form);
         verifyBeneContactAddressAndRelationOnAttachment("None");
-        verifyBeneContactAddressAndRelationOnAttachment(beneficiary2AddressLine1);
+        verifyBeneContactAddressAndRelationOnAttachment(beneficiaryAddressLine1);
 
         CommonSteps.takeScreenshot();
-
-        driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
     }
 
-    public void userChecksDisplayALLHeirsOnAttachmentCheckbox() {
+    public void userChecksDisplayALLHeirsOnAttachmentCheckbox() throws AutomationException {
+        driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
+        WebDriverUtil.waitForAWhile();
         DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_HEIRS_ON_ATTACHMENT_CHKBX)).click();
     }
 
