@@ -399,6 +399,7 @@ public class ProbateFormsRW10Page extends BasePage {
 
         WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
+        WebDriverUtil.waitForAWhile();
         corporateFiduciaryToSelect.click();
 
         if (!corporateFiduciaryToSelect.isSelected()) {

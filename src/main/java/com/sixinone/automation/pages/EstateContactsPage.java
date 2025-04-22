@@ -238,6 +238,7 @@ public class EstateContactsPage extends BasePage {
 
     public void selectGenderOption() throws AutomationException, IOException, ParseException {
         String genderValue = CommonUtil.getJsonPath("Create").get("Create.gender").toString();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebElement genderDropdown = driverUtil.getWebElement(String.format(DROPDOWN_LABEL, "Gender"));
         genderDropdown.click();
         WebElement genderOption = driverUtil.getWebElement(String.format(SELECT_OPTION, genderValue));

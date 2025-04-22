@@ -269,7 +269,9 @@ public class ProbateFormsRW08Page extends BasePage {
         driverUtil.getWebElement("//body").click();
     }
 
-    public void verifyWillNumberAndDatesCanBeEnteredAndAreAutoSaved() throws AutomationException, IOException, ParseException {
+    public void
+
+    verifyWillNumberAndDatesCanBeEnteredAndAreAutoSaved() throws AutomationException, IOException, ParseException {
         String dateLetterGranted = CommonUtil.getJsonPath("RW08Form").get("RW08Form.dateLetterGranted").toString();
         String signedDate = CommonUtil.getJsonPath("RW08Form").get("RW08Form.signedDate").toString();
         String servedDate = CommonUtil.getJsonPath("RW08Form").get("RW08Form.servedDate").toString();
