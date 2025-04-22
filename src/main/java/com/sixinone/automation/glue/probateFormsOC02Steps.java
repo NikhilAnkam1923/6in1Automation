@@ -65,4 +65,62 @@ public class probateFormsOC02Steps {
         PageFactory.probateFormsOC02Page().verifyEnteredNameOfDecedentIsDisplayedOnAllTheOCPages();
         CommonSteps.takeScreenshot();
     }
+
+    @And("user selects two petitioners")
+    public void userSelectsTwoPetitioners() throws AutomationException {
+        CommonSteps.logInfo("user selects multiple petitioners");
+        PageFactory.probateFormsOC02Page().userSelectsTwoPetitioners();
+    }
+
+    @Then("user verifies selected names of petitioner are displayed with address")
+    public void userVerifiesSelectedNamesOfPetitionerAreDisplayedWithAddress() throws AutomationException {
+        CommonSteps.logInfo("Verified that selected names of petitioner are displayed with address");
+        PageFactory.probateFormsOC02Page().verifySelectedNamesOfPetitionerAreDisplayedWithAddress();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user selects multiple petitioners")
+    public void userSelectsMultiplePetitioners() throws AutomationException {
+        CommonSteps.logInfo("user selects multiple petitioners");
+        PageFactory.probateFormsOC02Page().userSelectsMultiplePetitioners();
+    }
+
+    @Then("user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment")
+    public void userVerifiesAttachmentIconIsVisibleAndThePetitionerDetailsAreCorrectlyVisibleOnTheAttachment() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that attachment icon is visible and the petitioner details are correctly visible on the attachment");
+        PageFactory.probateFormsOC02Page().verifyAttachmentIconIsVisibleAndThePetitionerDetailsAreCorrectlyVisibleOnTheAttachment();
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("user swap the selected petitioner contacts")
+    public void userSwapTheSelectedPetitionerContacts() throws AutomationException {
+        CommonSteps.logInfo("user swap the selected petitioner contacts");
+        PageFactory.probateFormsOC02Page().userSwapTheSelectedPetitionerContacts();
+    }
+
+    @And("user select Testamentary option")
+    public void userSelectTestamentaryOption() {
+        CommonSteps.logInfo("user select Testamentary option");
+        PageFactory.probateFormsOC02Page().userSelectTestamentaryOption();
+    }
+
+    @When("user select Inter Vivos option")
+    public void userSelectInterVivosOption() {
+        CommonSteps.logInfo("user select Inter Vivos option");
+        PageFactory.probateFormsOC02Page().userSelectInterVivosOption();
+    }
+
+    @Then("user verifies Testamentary trust section is enabled and inter vivos trust section is disabled")
+    public void userVerifiesTestamentaryTrustSectionIsEnabledAndInterVivosTrustSectionIsDisabled() throws AutomationException {
+        CommonSteps.logInfo("Verified that Testamentary trust section is enabled and inter vivos trust section is disabled");
+        PageFactory.probateFormsOC02Page().verifyTestamentaryTrustSectionIsEnabledAndInterVivosTrustSectionIsDisabled();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Inter Vivos trust section is enabled and Testamentary trust section is disabled")
+    public void userVerifiesInterVivosTrustSectionIsEnabledAndTestamentaryTrustSectionIsDisabled() throws AutomationException {
+        CommonSteps.logInfo("Verified that Inter Vivos trust section is enabled and Testamentary trust section is disabled");
+        PageFactory.probateFormsOC02Page().verifyInterVivosTrustSectionIsEnabledAndTestamentaryTrustSectionIsDisabled();
+        CommonSteps.takeScreenshot();
+    }
 }

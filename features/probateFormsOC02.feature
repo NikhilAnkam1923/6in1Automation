@@ -33,7 +33,42 @@ Feature: 6in1 probate form OC02 Feature
   Scenario: Verify, the name entered is visible on all the pages.
     Then user verifies entered name of decedent is displayed on all the OC02 pages
 
+  Scenario: Verify, file no can be edited.
+    When user navigates to page number: "1"
+    Then user verifies for "OC02" form file number field is editable
 
+  Scenario: Verify that the sidebar appears and allows attorney selection.
+    When user clicks on Name of Counsel field
+    Then user verifies for "OC02" form a sidebar appears and attorney can be selected
+    And user verifies for "OC02" form selected attorney’s details are populated in the 'Name of Counsel' field
+
+  Scenario: Verify, correct attorney details are fetched in the subsequent fields.
+    Then user verifies for "OC02" form attorney details are auto fetched and correctly displayed
+
+  Scenario: Verify, petitioner can be selected from the side bar.
+    When user navigates to page number: "2"
+    And user click on Petitioner name field
+    And user selects two petitioners
+    Then user verifies selected names of petitioner are displayed with address
+
+  Scenario: Verify, attachment.
+    When user click on Petitioner name field
+    And user selects multiple petitioners
+    Then user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment
+
+  Scenario: Verify, selected petitioner can be swapped and deleted.
+    When user click on Petitioner name field
+    And user swap the selected petitioner contacts
+    Then user verifies for "OC02" form swapped petitioner names are reflected on UI accordingly
+
+  Scenario: Verify, Testamentary trust section is enabled on selecting the radio button with the same name.
+    When user navigates to page number: "3"
+    And user select Testamentary option
+    Then user verifies Testamentary trust section is enabled and inter vivos trust section is disabled
+
+  Scenario: Verify, Inter vivos section is enabled if the checkbox with the same name is selected.
+    When user select Inter Vivos option
+    Then user verifies Inter Vivos trust section is enabled and Testamentary trust section is disabled
 
 
   @Setup
