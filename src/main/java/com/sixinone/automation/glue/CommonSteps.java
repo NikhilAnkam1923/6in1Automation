@@ -68,6 +68,7 @@ public class CommonSteps {
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     private static final String NAME_OF_COUNSEL_FIELD = "//p//span[text()='Name of Counsel:']/following-sibling::span//input";
     private static final String PETITIONER_NAME_FIELD = "//td[@class='tr5 td9']//input";
+    private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllBenyOnAttachment']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -1033,5 +1034,73 @@ public class CommonSteps {
         }
         CommonSteps.logInfo("Verified that for "+formName+" form swapped petitioner names are reflected on UI accordingly");
         CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user saves selected beneficiaries details for \"([^\"]*)\" form$")
+    public void userSavesSelectedBeneficiariesDetails(String formName) throws AutomationException {
+        CommonSteps.logInfo("user saves selected beneficiaries details for "+formName+" form");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().userSavesSelectedBeneficiariesDetails();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().userSavesSelectedBeneficiariesDetails();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form rest of the selected beneficiaries are displayed on the attachment$")
+    public void userVerifiesRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that for "+formName+" form rest of the selected beneficiaries are displayed on the attachment");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @And("user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox")
+    public void userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox() throws AutomationException {
+        CommonSteps.logInfo("user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox");
+        scrollToElement(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN);
+        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN)).click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form all the beny users are displayed as a part of attachment$")
+    public void userVerifiesAllTheBenyUsersAreDisplayedAsAPartOfAttachment(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that for "+formName+" form all the beny users are displayed as a part of attachment");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form the Main's count is turn to zero and only Attachment count is displayed correctly$")
+    public void userVerifiesTheMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that for "+formName+" form the Main's count is turn to zero and only Attachment count is displayed correctly");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
     }
 }

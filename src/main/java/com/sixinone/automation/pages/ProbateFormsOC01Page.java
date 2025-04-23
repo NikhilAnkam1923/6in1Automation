@@ -67,7 +67,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String FILE_NUMBER_PART_2 = "//input[@name='fileNumberPart2']";
     private static final String FILE_NUMBER_PART_3 = "//input[@name='fileNumberPart3']";
     private static final String ESTATE_TAB = "//button[@role='tab' and text()='Estate']";
-    private static final String HEADER_COUNTY_NAME = "//input[contains(@class,'county')]";
+    private static final String HEADER_COUNTY_NAME = "//td[@class='tr1 td2']//p[contains(., 'COUNTY, PENNSYLVANIA')]//input";
     private static final String ESTATE_NAME = "//p//span[contains(text(),'ESTATE OF')]/following-sibling::input";
     private static final String FILE_NUMBER_FIELD = "//input[@name='fileNumberPA']";
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
@@ -152,7 +152,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String RAD_AMOUNT_FIELDS = "//input[@name='additionalRADs[%s].payment']";
     private static final String RESERVE_REQUEST_AMOUNT = "//input[@name='reserveRequestedAmount']";
     private static final String SIGN_OF_PETITIONER_PAGE_11 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
-    private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]";
+    private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]//span//*[self::input or self::textarea]";
     private static final String SAVE_BTN = "//button[text()='Save']";
     private static final String NAME_OF_CORPORATE_FIDUCIARY = "//input[@name='fullname']";
     private static final String NAME_OF_REPRESENTATIVE = "//input[@name='contact_fullname_title']";

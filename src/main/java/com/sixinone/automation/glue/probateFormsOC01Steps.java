@@ -108,18 +108,6 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user saves selected beneficiaries details")
-    public void userSavesSelectedBeneficiariesDetails() throws AutomationException {
-        CommonSteps.logInfo("user saves selected beneficiaries details");
-        PageFactory.probateFormsOC01Page().userSavesSelectedBeneficiariesDetails();
-    }
-
-    @Then("user verifies rest of the selected beneficiaries are displayed on the attachment")
-    public void userVerifiesRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment() throws AutomationException {
-        CommonSteps.logInfo("Verified that rest of the selected beneficiaries are displayed on the attachment");
-        PageFactory.probateFormsOC01Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
-    }
-
     @Then("user verifies attachment is displayed on page 4")
     public void userVerifiesAttachmentIsDisplayedOnPage() throws AutomationException {
         CommonSteps.logInfo("Verified that attachment is displayed on page 4");
@@ -130,24 +118,6 @@ public class probateFormsOC01Steps {
     public void userVerifiesSameAttachmentIsDisplayedOnPage() throws AutomationException {
         CommonSteps.logInfo("Verified that same attachment is displayed on page 5");
         PageFactory.probateFormsOC01Page().verifySameAttachmentIsDisplayedOnPage5();
-    }
-
-    @And("user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox")
-    public void userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox() throws AutomationException {
-        CommonSteps.logInfo("user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox");
-        PageFactory.probateFormsOC01Page().userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox();
-    }
-
-    @Then("user verifies all the beny users are displayed as a part of attachment")
-    public void userVerifiesAllTheBenyUsersAreDisplayedAsAPartOfAttachment() throws AutomationException {
-        CommonSteps.logInfo("Verified that all the beny users are displayed as a part of attachment");
-        PageFactory.probateFormsOC01Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
-    }
-
-    @Then("user verifies the Main's count is turn to zero and only Attachment count is displayed correctly")
-    public void userVerifiesTheMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly() throws AutomationException {
-        CommonSteps.logInfo("Verified that the Main's count is turn to zero and only Attachment count is displayed correctly");
-        PageFactory.probateFormsOC01Page().verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly();
     }
 
     @Then("user verifies decedent's name is displayed and is not editable")

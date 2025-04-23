@@ -750,6 +750,17 @@
   },
   "OC02Form": {
     "nameOfDecedent": "Julie Stephen",
-    "fileNumber": "12-24-2001"
+    "fileNumber": "12-24-2001",
+    "codicilDate1": "02/17/2023",
+    "codicilDate2": "02/20/2023",
+    "codicilDate3": "02/26/2023",
+    "dateOfTrust": "01/10/2020",
+    "amendmentDate1": "03/15/2021",
+    "amendmentDate2": "06/22/2021",
+    "amendmentDate3": "09/10/2021",
+    "amendmentDate4": "12/01/2021",
+    "advertisingDate1": "02/05/2022",
+    "advertisingDate2": "04/18/2022",
+    "advertisingDate3": "07/30/2022"
   }
 }

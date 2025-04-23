@@ -78,8 +78,8 @@ Feature: 6in1 probate form OC01 Feature
 
   Scenario: Verify, rest of the selected beneficiaries are displayed as a part of attachment.
     When user navigates to page number: "4"
-    And user saves selected beneficiaries details
-    Then user verifies rest of the selected beneficiaries are displayed on the attachment
+    And user saves selected beneficiaries details for "OC01" form
+    Then user verifies for "OC01" form rest of the selected beneficiaries are displayed on the attachment
 
   Scenario: Verify, attachment is displayed on both the pages.
     When user navigates to page number: "4"
@@ -106,10 +106,10 @@ Feature: 6in1 probate form OC01 Feature
 
   Scenario: Verify, if the display as attachment checkbox is checked then all the beneficiaries are displayed in attachment.
     When user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox
-    Then user verifies all the beny users are displayed as a part of attachment
+    Then user verifies for "OC01" form all the beny users are displayed as a part of attachment
 
   Scenario: Verify correct count of main and attachment is displayed.
-    Then user verifies the Main's count is turn to zero and only Attachment count is displayed correctly
+    Then user verifies for "OC01" form the Main's count is turn to zero and only Attachment count is displayed correctly
 
   Scenario: Verify that the decedent's name is preloaded and displayed as read-only.
     When user navigates to page number: "6"
