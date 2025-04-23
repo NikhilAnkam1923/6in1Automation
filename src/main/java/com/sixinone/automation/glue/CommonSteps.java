@@ -66,6 +66,8 @@ public class CommonSteps {
     private static final String PERSON_CLEAR_SELECTION_BTN = "//div[@id='nameOfPersonCheckboxSection']/following-sibling::div//button[text()='Clear Selection']";
     private static final String CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN = "//p[contains(text(),'Corporate Fiduciary (if applicable)')]//button[text()='Clear Selection']";
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
+    private static final String NAME_OF_COUNSEL_FIELD = "//p//span[text()='Name of Counsel:']/following-sibling::span//input";
+    private static final String PETITIONER_NAME_FIELD = "//td[@class='tr5 td9']//input";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -935,5 +937,107 @@ public class CommonSteps {
         CommonSteps.logInfo("user navigates to page number: " + pageNumber);
         driverUtil.getWebElement(String.format(PAGE_NUMBER_DYNAMIC_XPATH, pageNumber)).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form file number field is editable$")
+    public void userVerifiesFileNumberFieldIsEditable(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that for "+formName+" form file number field is editable");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifyFileNumberFieldIsEditable();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyFileNumberFieldIsEditable();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    private void scrollToElement(String elementLocator) {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(elementLocator));
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+    }
+
+    @When("user clicks on Name of Counsel field")
+    public void userClicksOnNameOfCounselField() throws AutomationException {
+        CommonSteps.logInfo("user clicks on Name of Counsel field");
+        scrollToElement(NAME_OF_COUNSEL_FIELD);
+        driverUtil.getWebElement(NAME_OF_COUNSEL_FIELD).click();
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form a sidebar appears and attorney can be selected$")
+    public void userVerifiesASidebarAppearsAndAttorneyCanBeSelected(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that for "+formName+" form a sidebar appears and attorney can be selected");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @And("^user verifies for \"([^\"]*)\" form selected attorney’s details are populated in the 'Name of Counsel' field$")
+    public void userVerifiesSelectedAttorneySDetailsArePopulatedInTheField(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that for "+formName+" form selected attorney’s details are populated in the 'Name of Counsel' field");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifySelectedAttorneySDetailsArePopulatedInTheField();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifySelectedAttorneySDetailsArePopulatedInTheField();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form attorney details are auto fetched and correctly displayed$")
+    public void userVerifiesAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed(String formName) throws IOException, ParseException, AutomationException {
+        CommonSteps.logInfo("Verified that "+formName+" form attorney details are auto fetched and correctly displayed");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifyAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user click on Petitioner name field")
+    public void userClickOnPetitionerNameField() throws AutomationException {
+        CommonSteps.logInfo("user click on Petitioner name field");
+        scrollToElement(PETITIONER_NAME_FIELD);
+        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+    }
+
+    @Then("^user verifies for \"([^\"]*)\" form swapped petitioner names are reflected on UI accordingly$")
+    public void userVerifiesSwappedPetitionerNamesAreReflectedOnUIAccordingly(String formName) throws AutomationException, IOException, ParseException {
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
+                break;
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.logInfo("Verified that for "+formName+" form swapped petitioner names are reflected on UI accordingly");
+        CommonSteps.takeScreenshot();
     }
 }

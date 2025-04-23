@@ -22,15 +22,15 @@ Feature: 6in1 probate form OC01 Feature
     Then user verifies estate name and county fields display preloaded data and are non-editable
 
   Scenario: Verify, file no can be edited.
-    Then user verifies file number field is editable
+    Then user verifies for "OC01" form file number field is editable
 
   Scenario: Verify that the sidebar appears and allows attorney selection.
     When user clicks on Name of Counsel field
-    Then user verifies a sidebar appears and attorney can be selected
-    And user verifies selected attorney’s details are populated in the 'Name of Counsel' field
+    Then user verifies for "OC01" form a sidebar appears and attorney can be selected
+    And user verifies for "OC01" form selected attorney’s details are populated in the 'Name of Counsel' field
 
   Scenario: Verify, correct attorney details are fetched in the subsequent fields.
-    Then user verifies attorney details are auto fetched and correctly displayed
+    Then user verifies for "OC01" form attorney details are auto fetched and correctly displayed
 
   Scenario: Verify that selecting an attorney updates the attorney details in related forms.
     When user navigates to page number: "11"
@@ -55,7 +55,7 @@ Feature: 6in1 probate form OC01 Feature
   Scenario: Verify, selected petitioner can be swapped and deleted.
     When user click on Petitioner name field
     And user swap the selected fiduciary contacts
-    Then user verifies swapped petitioner names are reflected on UI accordingly
+    Then user verifies for "OC01" form swapped petitioner names are reflected on UI accordingly
 
   Scenario: Verify that changes to the "Date of Will" and "Date of Codicil" fields update the estate record automatically.
     When user modifies the 'Date of Will' and 'Date of Codicil' fields

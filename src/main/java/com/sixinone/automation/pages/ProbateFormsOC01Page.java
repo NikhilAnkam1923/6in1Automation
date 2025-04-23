@@ -236,7 +236,6 @@ public class ProbateFormsOC01Page extends BasePage {
     static String Fiduciary2Form;
     static String Fiduciary3Form;
     static String Fiduciary4Form;
-    static String Fiduciary5Form;
     static String nameOfPetitionerForm;
     static String nameOfPetitioner2Form;
     static String petitioner1AddressLine1Form;
@@ -513,11 +512,6 @@ public class ProbateFormsOC01Page extends BasePage {
         }
 
         driverUtil.getWebElement(CLOSE_TOASTER_BTN).click();
-    }
-
-    public void userClicksOnNameOfCounselField() throws AutomationException {
-        scrollToElement(NAME_OF_COUNSEL_FIELD);
-        driverUtil.getWebElement(NAME_OF_COUNSEL_FIELD).click();
     }
 
     public void verifySidebarAppearsAndAttorneyCanBeSelected() throws AutomationException, IOException, ParseException {

@@ -21,39 +21,6 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user verifies file number field is editable")
-    public void userVerifiesFileNumberFieldIsEditable() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that file number field is editable");
-        PageFactory.probateFormsOC01Page().verifyFileNumberFieldIsEditable();
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("user clicks on Name of Counsel field")
-    public void userClicksOnNameOfCounselField() throws AutomationException {
-        CommonSteps.logInfo("user clicks on Name of Counsel field");
-        PageFactory.probateFormsOC01Page().userClicksOnNameOfCounselField();
-    }
-
-    @Then("user verifies a sidebar appears and attorney can be selected")
-    public void userVerifiesASidebarAppearsAndAttorneyCanBeSelected() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that a sidebar appears and attorney can be selected");
-        PageFactory.probateFormsOC01Page().verifySidebarAppearsAndAttorneyCanBeSelected();
-    }
-
-    @And("user verifies selected attorney’s details are populated in the 'Name of Counsel' field")
-    public void userVerifiesSelectedAttorneySDetailsArePopulatedInTheField() throws AutomationException {
-        CommonSteps.logInfo("Verified that selected attorney’s details are populated in the 'Name of Counsel' field");
-        PageFactory.probateFormsOC01Page().verifySelectedAttorneySDetailsArePopulatedInTheField();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies attorney details are auto fetched and correctly displayed")
-    public void userVerifiesAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed() throws IOException, ParseException, AutomationException {
-        CommonSteps.logInfo("Verified that attorney details are auto fetched and correctly displayed");
-        PageFactory.probateFormsOC01Page().verifyAttorneyDetailsAreAutoFetchedAndCorrectlyDisplayed();
-        CommonSteps.takeScreenshot();
-    }
-
     @Then("user verifies the attorney details are synced with page 11 of same form")
     public void userVerifiesTheAttorneyDetailsAreSyncedWithPageOfSameForm() throws AutomationException {
         CommonSteps.logInfo("Verified that the attorney details are synced with page 11 of same form");
@@ -66,12 +33,6 @@ public class probateFormsOC01Steps {
         PageFactory.probateFormsOC01Page().verifyEstateNameAndDateOfDeathFieldsDisplayPreloadedDataAndAreNonEditable();
         CommonSteps.logInfo("Verified that estate name and date of death fields display preloaded data and are non-editable");
         CommonSteps.takeScreenshot();
-    }
-
-    @When("user click on Petitioner name field")
-    public void userClickOnPetitionerNameField() throws AutomationException {
-        CommonSteps.logInfo("user click on Petitioner name field");
-        PageFactory.probateFormsOC01Page().userClickOnPetitionerNameField();
     }
 
     @Then("user verifies a sidebar is opens and fiduciary contacts can be selected")
@@ -104,13 +65,6 @@ public class probateFormsOC01Steps {
     public void userSwapTheSelectedFiduciaryContacts() throws AutomationException {
         CommonSteps.logInfo("user swap the selected fiduciary contacts");
         PageFactory.probateFormsOC01Page().userSwapTheSelectedFiduciaryContacts();
-    }
-
-    @Then("user verifies swapped petitioner names are reflected on UI accordingly")
-    public void userVerifiesSwappedPetitionerNamesAreReflectedOnUIAccordingly() throws AutomationException, IOException, ParseException {
-        PageFactory.probateFormsOC01Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
-        CommonSteps.logInfo("Verified that swapped petitioner names are reflected on UI accordingly");
-        CommonSteps.takeScreenshot();
     }
 
     @When("user modifies the 'Date of Will' and 'Date of Codicil' fields")
