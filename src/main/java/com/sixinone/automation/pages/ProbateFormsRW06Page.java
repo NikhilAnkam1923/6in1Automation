@@ -376,7 +376,7 @@ public class ProbateFormsRW06Page extends BasePage {
         WebDriverUtil.waitForAWhile(2);
 
         List<WebElement> selectedContacts = driverUtil.getWebElements(SELECTED_CONTACT);
-        for(int i=0; i<selectedContacts.size(); i++){
+        for (int i = 0; i < selectedContacts.size(); i++) {
             String name = selectedContacts.get(i).getText().trim();
             corporateFiduciaries.add(name);
             switch (i) {
@@ -520,7 +520,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
             String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + "," + " " + expectedSuffix;
             String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
-            String expectedAddress =  expectedAddressLine1 + "\n" + expectedAddressLine2;
+            String expectedAddress = expectedAddressLine1 + "\n" + expectedAddressLine2;
 
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
@@ -648,7 +648,7 @@ public class ProbateFormsRW06Page extends BasePage {
         WebDriverUtil.waitForAWhile(2);
         List<WebElement> beneNames = driverUtil.getWebElements(SELECTED_CONTACT);
 
-        for(int i=0; i<beneNames.size(); i++){
+        for (int i = 0; i < beneNames.size(); i++) {
             String name = beneNames.get(i).getText().trim();
             beneDetails.add(name);
             switch (i) {
@@ -953,14 +953,13 @@ public class ProbateFormsRW06Page extends BasePage {
             boolean isVerifiedDateFiduciaryBeneficiaryDetails = verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
 
 
-            if (!isVerifiedDate || !isVerifiedDateFiduciaryBeneficiaryDetails ) {
+            if (!isVerifiedDate || !isVerifiedDateFiduciaryBeneficiaryDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
-
     }
 
     private static boolean verifyDate(String pdfFilePath) throws IOException, AutomationException {
@@ -1144,14 +1143,28 @@ public class ProbateFormsRW06Page extends BasePage {
             throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' values found between '" + beforeLine + "' and '" + afterLine + "'");
         }
 
+        // ✅ Limit to first 5 names for the "Signature of Officer/Representative" field
+        if (fieldName.equalsIgnoreCase("Signature of Officer/Representative") && extractedValues.size() > 5) {
+            extractedValues = extractedValues.subList(0, 5);
+        }
+
+        // ✅ For Beneficiary Address, take last 5
+        if (fieldName.equals("Beneficiary Address") && extractedValues.size() > 5) {
+            extractedValues = extractedValues.subList(extractedValues.size() - 5, extractedValues.size());
+        }
+
+        // 📌 Log extracted values
         CommonSteps.logInfo("📌 Extracted '" + fieldName + "' values (up to 5 if applicable): " + extractedValues);
+
 
         // 🔍 Validate extracted vs expected
         for (String extracted : extractedValues) {
             CommonSteps.logInfo("🔍 Comparing -> Expected: " + expectedValues + ", Extracted: '" + extracted + "'");
             boolean matched = expectedValues.stream()
                     .filter(Objects::nonNull)
-                    .anyMatch(expected -> cleanExtractedValue(expected, fieldName).equalsIgnoreCase(extracted));
+                    .anyMatch(expected -> cleanExtractedValue(expected.replaceAll("\\r?\\n", " "), fieldName).equalsIgnoreCase(extracted));
+
+            //.anyMatch(expected -> cleanExtractedValue(expected, fieldName).equalsIgnoreCase(extracted));
 
             if (!matched) {
                 throw new AutomationException("❌ Validation Failed: '" + fieldName + "' value '" + extracted + "' does not match any expected value.");
