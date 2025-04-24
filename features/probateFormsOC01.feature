@@ -193,10 +193,10 @@ Feature: 6in1 probate form OC01 Feature
   Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
     Then user verifies all the remaining petitioners are displayed as a part of attachment
 
-#  Scenario: Verify form can be printed in pdf
-#    When user click on print form button
-#    Then verify form can be printed in pdf with name as 'OC01'
-#    And verify all the fields entered are correctly reflected in the 'OC01' pdf
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC01'
+    And verify all the fields entered are correctly reflected in the 'OC01' pdf
 
   Scenario: Verify, if the notification if the selected contact is removed from the estate.
     When user navigates to Estate Contacts tab

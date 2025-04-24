@@ -162,6 +162,14 @@ public class ProbateFormsOC02Page extends BasePage{
     static String codicilDate3Form;
     static String nameOfTrustPage2;
     static int expectedAttachmentCountForm;
+    static String dateOfTrust;
+    static String amendmentDate1;
+    static String amendmentDate2;
+    static String amendmentDate3;
+    static String amendmentDate4;
+    static String advertisingDate1;
+    static String advertisingDate2;
+    static String advertisingDate3;
 
     public ProbateFormsOC02Page() throws IOException, ParseException {
     }
@@ -853,14 +861,14 @@ public class ProbateFormsOC02Page extends BasePage{
     }
 
     public void verifyAllTheDetailsCanBeEnteredAndAutoSaved() throws AutomationException, IOException, ParseException {
-        String dateOfTrust = CommonUtil.getJsonPath("OC02Form").get("OC02Form.dateOfTrust").toString();
-        String amendmentDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate1").toString();
-        String amendmentDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate2").toString();
-        String amendmentDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate3").toString();
-        String amendmentDate4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate4").toString();
-        String advertisingDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate1").toString();
-        String advertisingDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate2").toString();
-        String advertisingDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate3").toString();
+        dateOfTrust = CommonUtil.getJsonPath("OC02Form").get("OC02Form.dateOfTrust").toString();
+        amendmentDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate1").toString();
+        amendmentDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate2").toString();
+        amendmentDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate3").toString();
+        amendmentDate4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate4").toString();
+        advertisingDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate1").toString();
+        advertisingDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate2").toString();
+        advertisingDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate3").toString();
 
         List<String> fieldXpaths = Arrays.asList(
                 DATE_OF_TRUST, DATE_OF_AMENDMENT_1, DATE_OF_AMENDMENT_2, DATE_OF_AMENDMENT_3,
