@@ -4,7 +4,10 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
@@ -13,8 +16,16 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
@@ -58,7 +69,7 @@ public class ProbateFormsOC02Page extends BasePage{
     private static final String ESTATE_TAB = "//button[@role='tab' and text()='Estate']";
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     private static final String FIRST_PAGE_ACTIVE_XPATH = "//a[@role='tab' and text()='1' and @class='nav-link active']";
-    private static final String COUNTY_PAGE_1_XPATH = "//p[text()='COURT OF COMMON PLEAS OF']/following-sibling::p//span//input";
+    private static final String COUNTY_PAGE_1_XPATH = "//div[@class='county-title']//span[@class='county-name']";
     private static final String TRUST_UNDER_WILL_RADIO_BTN = "//input[@name='trustIsUnderType' and @value='1']";
     private static final String TRUST_UNDER_DEED_RADIO_BTN = "//input[@name='trustIsUnderType' and @value='2']";
     private static final String TRUST_UNDER_WILL_TEXT_FIELD = "//p[contains(text(),'(TRUST UNDER WILL OF')]//input[@name='descendantName']";
@@ -171,6 +182,8 @@ public class ProbateFormsOC02Page extends BasePage{
     static String advertisingDate2;
     static String advertisingDate3;
 
+    static String downloadedFileName;
+
     public ProbateFormsOC02Page() throws IOException, ParseException {
     }
 
@@ -254,8 +267,8 @@ public class ProbateFormsOC02Page extends BasePage{
     public void verifyByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm() throws AutomationException {
         WebElement page1 = driverUtil.getWebElement(FIRST_PAGE_ACTIVE_XPATH);
         WebElement countyName = driverUtil.getWebElement(COUNTY_PAGE_1_XPATH);
-        String enteredCountyName = getEstateValue("DomicileCountry");
-        countyNameForm = countyName.getAttribute("value");
+        String enteredCountyName = getEstateValue("DomicileCountry").toUpperCase();
+        countyNameForm = countyName.getText();
 
         if(!page1.isDisplayed()){
             throw new AutomationException("On clicking OC02, page 1 is not opened by default.");
@@ -705,22 +718,6 @@ public class ProbateFormsOC02Page extends BasePage{
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
-
-
-        //use in reset
-        scrollToElement(PETITIONER_NAME_FIELD);
-        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(ACCEPT_BTN).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
     }
 
     public void userSelectTestamentaryOption() {
@@ -1106,4 +1103,274 @@ public class ProbateFormsOC02Page extends BasePage{
 
         userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox();
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+
+        try {
+
+            boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
+                    "DATED",
+                    "PETITION FOR ADJUDICATION /",
+                    fileNumberForm,
+                    "file number");
+
+            Map<String, String> expectedCounselDetails = new HashMap<>();
+            expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
+            expectedCounselDetails.put("Name of Law Firm", nameOfLawFirmForm);
+            String attorneyAddressLineForm = attorneyAddressLine1Form+" "+attorneyAddressLine2Form;
+            expectedCounselDetails.put("Address", attorneyAddressLineForm);
+            expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
+            expectedCounselDetails.put("Fax", attorneyFaxForm);
+            expectedCounselDetails.put("Email", attorneyEmailForm);
+
+            boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
+
+
+            // If any verification fails, throw an exception
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
+    }
+
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String
+            expectedValue, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
+
+        // 🔍 Log Full PDF Content with Line Numbers
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+        }
+
+        // Find the start and end indexes
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        // Extract and validate the field value
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = cleanFields(currentLine, fieldName);
+                    break; // Assuming only one line needs to be extracted
+                }
+            }
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+            return true;
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+    }
+
+    private static String cleanFields(String rawText, String fieldType) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
+
+        String cleanedText = rawText.trim();
+
+        switch (fieldType.toLowerCase()) {
+            case "file number":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(No. )\\b", "").trim();
+                break;
+
+            default:
+                // Generic cleanup for any other case
+                cleanedText = cleanedText.replaceAll("[:,\\.\\s]+$", "").trim();
+                break;
+        }
+        return cleanedText;
+    }
+
+
+    private static boolean verifyCounselDetails(String pdfFilePath, Map<String, String> expectedDetails) throws
+            IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        Map<String, String> extractedDetails = new HashMap<>();
+        String addressLine1 = "";
+        String addressLine2 = "";
+
+        boolean nameOfCounselFound = false;
+        boolean nameOfLawFirmFound = false;
+        boolean addressFound = false;
+        boolean telephoneFound = false;
+        boolean faxFound = false;
+        boolean emailFound = false;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+
+            // Check for "Name of Counsel" only once
+            if (!nameOfCounselFound && line.startsWith("Name of Counsel:")) {
+                extractedDetails.put("Name of Counsel", clean(line.replace("Name of Counsel:", "").trim()));
+                nameOfCounselFound = true;
+            }
+            // Check for "Name of Law Firm" only once
+            else if (!nameOfLawFirmFound && line.startsWith("Name of Law Firm:")) {
+                extractedDetails.put("Name of Law Firm", clean(line.replace("Name of Law Firm:", "").trim()));
+                nameOfLawFirmFound = true;
+            }
+            // Check for "Address" only once
+            else if (!addressFound && line.startsWith("Address:")) {
+                addressLine1 = clean(line.replace("Address:", "").trim());
+                if (i + 1 < allLines.length) {
+                    addressLine2 = clean(allLines[i + 1].trim()); // Next line contains city/state/zip
+                }
+                addressFound = true;
+            }
+            // Check for "Telephone" only once
+            else if (!telephoneFound && line.startsWith("Telephone:")) {
+                extractedDetails.put("Telephone", clean(line.replace("Telephone:", "").trim()));
+                telephoneFound = true;
+            }
+            // Check for "Fax" only once
+            else if (!faxFound && line.startsWith("Fax:")) {
+                extractedDetails.put("Fax", clean(line.replace("Fax:", "").trim()));
+                faxFound = true;
+            }
+            // Check for "Email" only once
+            else if (!emailFound && line.startsWith("E-mail:")) {
+                extractedDetails.put("Email", clean(line.replace("E-mail:", "").trim()));
+                emailFound = true;
+            }
+        }
+
+        // Combine address lines if both are found
+        if (!addressLine1.isEmpty() && !addressLine2.isEmpty()) {
+            extractedDetails.put("Address", addressLine1 + " " + addressLine2);
+        } else if (!addressLine1.isEmpty()) {
+            extractedDetails.put("Address", addressLine1);
+        } else if (!addressLine2.isEmpty()) {
+            extractedDetails.put("Address", addressLine2);
+        }
+
+        // Validate extracted details
+        for (Map.Entry<String, String> entry : expectedDetails.entrySet()) {
+            String field = entry.getKey();
+            String expectedValue = entry.getValue();
+            String extractedValue = extractedDetails.get(field);
+
+            // Clean both the expected and extracted values before comparing
+            expectedValue = clean(expectedValue);
+            extractedValue = clean(extractedValue);
+
+            CommonSteps.logInfo("🔍 Comparing -> " + field + " | Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (extractedValue == null || extractedValue.isEmpty()) {
+                throw new AutomationException("⚠️ Warning: '" + field + "' not found in document.");
+            }
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("⚠️ Warning: '" + field + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + field + "' processed successfully.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: Counsel details successfully verified.");
+        return true;
+    }
+
+
+    // Utility method to clean the string, removing unwanted characters or spaces
+    private static String clean(String value) {
+        if (value != null) {
+            // Remove unwanted punctuation like commas, periods, etc. and trim spaces
+            value = value.replaceAll("[,\\.]", "").trim();
+        }
+        return value;
+    }
+
+    public void userResetsTheRWForm() throws AutomationException {
+        //Page 2
+        switchToPage(2);
+        scrollToElement(PETITIONER_NAME_FIELD);
+        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+    }
 }
+

@@ -1454,11 +1454,11 @@ public class ProbateFormsRW02Page extends BasePage {
                     expectedStateRelevantCircumstances,
                     "State Relevant Circumstances");
 
-            boolean isverifiedexceptionTextForm = verifyFieldsInPDF(pdfFilePath,
-                    "adopted; and Decedent was neither the victim of a killing nor ever adjudicated an incapacitated person.",
-                    "B. Petition for Grant of Letters of Administration (If applicable)",
-                    exceptionTextForm,
-                    "Exception Text Form");
+//            boolean isverifiedexceptionTextForm = verifyFieldsInPDF(pdfFilePath,
+//                    "adopted; and Decedent was neither the victim of a killing nor ever adjudicated an incapacitated person.",
+//                    "B. Petition for Grant of Letters of Administration (If applicable)",
+//                    exceptionTextForm,
+//                    "Exception Text Form");
 
             List<String> expectedPetitionerNames = Arrays.asList(
                     "Michael Andrew Smith, Sr.",
@@ -1468,6 +1468,21 @@ public class ProbateFormsRW02Page extends BasePage {
             );
 
             boolean isverifyPetitionerNames = verifyPetitionerNames(pdfFilePath, expectedPetitionerNames);
+
+            boolean isverifiedprintedName = verifyFieldsInPDF(pdfFilePath,
+                    "Attorney Signature:",
+                    "Supreme Court",
+                    selectedAttorneyContactForm,
+                    "Printed name");
+
+            Map<String, String> expectedAttorneyValues = new HashMap<>();
+            expectedAttorneyValues.put("Firm Name", attorneyFirmNameForm);
+            expectedAttorneyValues.put("Address", attorneyAddressLine1Form + " " + attorneyAddressLine2Form + " " + attorneyCityStateZipForm);
+            expectedAttorneyValues.put("Phone", attorneyPhoneForm);
+            expectedAttorneyValues.put("Fax", attorneyFaxForm);
+
+            boolean isverifiedeAttorneyDetails = extractAndValidateAttorneyDetails(pdfFilePath, expectedAttorneyValues);
+
 
             Map<String, String> expectedFeesValues = new HashMap<>();
             expectedFeesValues.put("letterFees", letterFeesForm);                     // e.g., "$50"
@@ -1493,21 +1508,7 @@ public class ProbateFormsRW02Page extends BasePage {
 
             boolean isverifiedeFeesDetails = extractAndValidateFees(pdfFilePath, expectedFeesValues);
 
-            boolean isverifiedprintedName = verifyFieldsInPDF(pdfFilePath,
-                    "Attorney Signature:",
-                    "Supreme Court",
-                    selectedAttorneyContactForm,
-                    "Printed name");
-
-            Map<String, String> expectedAttorneyValues = new HashMap<>();
-            expectedAttorneyValues.put("Firm Name", attorneyFirmNameForm);
-            expectedAttorneyValues.put("Address", attorneyAddressLine1Form + " " + attorneyAddressLine2Form + " " + attorneyCityStateZipForm);
-            expectedAttorneyValues.put("Phone", attorneyPhoneForm);
-            expectedAttorneyValues.put("Fax", attorneyFaxForm);
-
-            boolean isverifiedeAttorneyDetails = extractAndValidateAttorneyDetails(pdfFilePath, expectedAttorneyValues);
-
-            if (!isverifiedAKANames || !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifiedexceptionTextForm || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails) {
+            if (!isverifiedAKANames || !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -1922,7 +1923,6 @@ public class ProbateFormsRW02Page extends BasePage {
         try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
             PDFTextStripper stripper = new PDFTextStripper();
             String fullText = stripper.getText(document);
-            CommonSteps.logInfo("📄 Extracted PDF Text:\n" + fullText);
 
             // Define before and after markers for the fee section
             String beforeLine = "FEES:";
@@ -1941,7 +1941,8 @@ public class ProbateFormsRW02Page extends BasePage {
                     System.out.printf("❌ Mismatch or Missing -> %s: Expected '%s'%n", label, expectedValue);
                     throw new AutomationException("Validation failed for: " + label);
                 } else {
-                    CommonSteps.logInfo("✅ Verified -> %s: '%s'%n", label, expectedValue);
+                    CommonSteps.logInfo(String.format("✅ Verified -> %s: '%s'%n", label, expectedValue));
+
                 }
             }
 

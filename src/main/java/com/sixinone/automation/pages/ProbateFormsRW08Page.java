@@ -372,7 +372,7 @@ public class ProbateFormsRW08Page extends BasePage {
         WebDriverUtil.waitForAWhile(2);
         List<WebElement> beneNames = driverUtil.getWebElements(SELECTED_BENE_NAMES);
 
-        for(int i=0; i<beneNames.size(); i++){
+        for (int i = 0; i < beneNames.size(); i++) {
             String name = beneNames.get(i).getText().trim();
             beneDetails.add(name);
             switch (i) {
@@ -424,7 +424,8 @@ public class ProbateFormsRW08Page extends BasePage {
             String beneficiaryAddress = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".addressLine1").toString();
 
             String beneficiaryCityStateZip = beneficiaryCity + ", " + beneficiaryState + " " + beneficiaryZip;
-            String beneAddressForm = beneficiaryAddress + ", " + beneficiaryCityStateZip;
+            String beneAddressForm = (beneficiaryAddress + ", " + beneficiaryCityStateZip).replaceAll("\\.+$", "");
+
 
             switch (i) {
                 case 0:
@@ -480,6 +481,7 @@ public class ProbateFormsRW08Page extends BasePage {
             }
         }
     }
+
 
     public void verifyBeneficiaryContactsSelectedBeyond6AreDisplayedOnTheAttachment() throws AutomationException {
         scrollToElementAndClick(VIEW_ATTACHMENT_BTN);
@@ -754,6 +756,7 @@ public class ProbateFormsRW08Page extends BasePage {
                     signedDateForm,
                     "Signed Date");
 
+
             boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
                     "a/k/a Krish",
                     "02/25/2025 :",
@@ -782,9 +785,10 @@ public class ProbateFormsRW08Page extends BasePage {
                     beneAddress7Form
             );
 
-            boolean isVerifiedAllNamesAndAddresses = verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
+//            boolean isVerifiedAllNamesAndAddresses =
+                    verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
 
-            if (!isVerifiedDateLettersGranted || isVerifiedServedDate || isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails || !isVerifiedAllNamesAndAddresses) {
+            if (!isVerifiedDateLettersGranted || isVerifiedServedDate || isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -819,8 +823,7 @@ public class ProbateFormsRW08Page extends BasePage {
                 beforeLineFound = true;
                 if (i > 0) {
                     extractedDate = allLines[i - 1].trim();  // Extract date from the previous line
-                    extractedDate = clean(extractedDate, "Date Letters G" +
-                            "ranted"); // Clean the extracted value
+                    extractedDate = clean(extractedDate, "Date Letters Granted"); // Clean the extracted value
 
                     if (!extractedDate.isEmpty()) {
                         break;  // Stop after the first valid extraction
@@ -985,7 +988,7 @@ public class ProbateFormsRW08Page extends BasePage {
         return true;
     }
 
-    private static boolean verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
+    private static void verifyAllNamesAndAddresses(String pdfFilePath, List<String> expectedNames, List<String> expectedAddresses)
             throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -1005,10 +1008,10 @@ public class ProbateFormsRW08Page extends BasePage {
 
         // Extracting names and addresses
         for (String line : extractedLines) {
-            int firstCommaIndex = line.indexOf(".");
-            if (firstCommaIndex != -1) {
-                String name = line.substring(0, firstCommaIndex).trim();
-                String address = line.substring(firstCommaIndex + 1).trim();
+            int lastDotIndex = line.lastIndexOf(". ");
+            if (lastDotIndex != -1) {
+                String name = line.substring(0, lastDotIndex + 1).trim();
+                String address = line.substring(lastDotIndex + 2).trim(); // Skip dot and space
 
                 extractedNames.add(name);
                 extractedAddresses.add(address);
@@ -1022,12 +1025,41 @@ public class ProbateFormsRW08Page extends BasePage {
         }
 
         for (int i = 0; i < expectedNames.size(); i++) {
-            CommonSteps.logInfo("🔍Comparing Expected Name: " + expectedNames.get(i) + " and Address : " + expectedAddresses.get(i) +
-                    ". Extracted -> Name: " + extractedNames.get(i) + " and Address : " + extractedAddresses.get(i));
+            String expectedName = normalize(expectedNames.get(i));
+            String extractedName = normalize(extractedNames.get(i));
+            String expectedAddress = normalize(expectedAddresses.get(i).replaceAll("\\.+$", ""));
+            String extractedAddress = normalize(extractedAddresses.get(i).replaceAll("\\.+$", ""));
 
+            // Log exact strings for clarity
+            CommonSteps.logInfo("🔍Comparing [Index " + i + "] ->\n" +
+                    "Expected -> Name: '" + expectedName + "' | Address: '" + expectedAddress + "'\n" +
+                    "Extracted -> Name: '" + extractedName + "' | Address: '" + extractedAddress + "'");
+
+            // Use strong equality check
+            boolean nameMatch = expectedName.equalsIgnoreCase(extractedName);
+            boolean addressMatch = expectedAddress.equalsIgnoreCase(extractedAddress);
+
+            if (!nameMatch || !addressMatch) {
+                CommonSteps.logInfo("❌ Mismatch at index " + i + ": Name match = " + nameMatch + ", Address match = " + addressMatch);
+                throw new AutomationException("❌ Verification failed at index " + i + ": Name or Address mismatch");
+            }
         }
-        return true;
+
+        CommonSteps.logInfo("Passssss");
     }
+
+    private static String normalize(String input) {
+        return Optional.ofNullable(input)
+                .orElse("")
+                .replaceAll("[\\u200B\\uFEFF]", "") // remove zero-width chars
+                .replaceAll("[\\r\\n\\t]", " ")     // remove carriage returns, tabs
+                .replace("\u00A0", " ")             // non-breaking space
+                .replaceAll("\\s+", " ")            // collapse whitespace
+                .trim();
+    }
+
+
+
 
     private static List<String> extractDataAfterThirdOccurrence(String text, String beforeLine, String afterLine) {
         List<String> extractedData = new ArrayList<>();
@@ -1056,6 +1088,7 @@ public class ProbateFormsRW08Page extends BasePage {
         }
         return extractedData;
     }
+
 
     private static void validateField(String fieldName, String extracted, String expected) throws AutomationException {
         CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + extracted + "'");

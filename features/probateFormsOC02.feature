@@ -11,7 +11,6 @@ Feature: 6in1 probate form OC02 Feature
       | user-email                        | password  |
       | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
-
   Scenario: Open Estate
     When user opens "Sara Watt" Estate
     And user saves entered Estate information for "OC02" form
@@ -89,7 +88,7 @@ Feature: 6in1 probate form OC02 Feature
 
   Scenario: Verify, Input fields in inter vivos trust are editable and auto saved.
     Then user verifies all the details can be entered and auto saved
-  
+
   Scenario: Verify, "Name of Trust" from page 2 is auto fetched at the top of this and next page.
     When user navigates to page number: "6"
     Then user verifies Name of the Trust is auto fetched from page 2
@@ -112,6 +111,13 @@ Feature: 6in1 probate form OC02 Feature
   Scenario: Verify correct count of main and attachment is displayed.
     Then user verifies for "OC02" form the Main's count is turn to zero and only Attachment count is displayed correctly
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC02'
+    And verify all the fields entered are correctly reflected in the 'OC02' pdf
+
+  Scenario: Reset the OC02 form
+    Then user resets the "OC02" form
 
   @Setup
   Scenario:SETUP: Close Browser

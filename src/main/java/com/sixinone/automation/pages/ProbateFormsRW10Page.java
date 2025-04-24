@@ -385,7 +385,11 @@ public class ProbateFormsRW10Page extends BasePage {
         String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
         String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
         String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
-        fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+
+        String addressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        String addressLine2Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine2").toString();
+        fiduciaryAddressLine1Form = addressLine1Form + ", " + addressLine2Form;
+
         fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
         fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
 

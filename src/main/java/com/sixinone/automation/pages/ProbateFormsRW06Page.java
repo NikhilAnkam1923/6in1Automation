@@ -376,7 +376,7 @@ public class ProbateFormsRW06Page extends BasePage {
         WebDriverUtil.waitForAWhile(2);
 
         List<WebElement> selectedContacts = driverUtil.getWebElements(SELECTED_CONTACT);
-        for(int i=0; i<selectedContacts.size(); i++){
+        for (int i = 0; i < selectedContacts.size(); i++) {
             String name = selectedContacts.get(i).getText().trim();
             corporateFiduciaries.add(name);
             switch (i) {
@@ -520,7 +520,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
             String expectedFullName = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName + "," + " " + expectedSuffix;
             String expectedCityStateZip = expectedCity + ", " + expectedState + " " + expectedZip;
-            String expectedAddress =  expectedAddressLine1 + "\n" + expectedAddressLine2;
+            String expectedAddress = expectedAddressLine1 + "\n" + expectedAddressLine2;
 
 
             List<WebElement> nameFields = driverUtil.getWebElements(SIGN_OF_REPRESENTATIVE);
@@ -648,7 +648,7 @@ public class ProbateFormsRW06Page extends BasePage {
         WebDriverUtil.waitForAWhile(2);
         List<WebElement> beneNames = driverUtil.getWebElements(SELECTED_CONTACT);
 
-        for(int i=0; i<beneNames.size(); i++){
+        for (int i = 0; i < beneNames.size(); i++) {
             String name = beneNames.get(i).getText().trim();
             beneDetails.add(name);
             switch (i) {
@@ -953,7 +953,7 @@ public class ProbateFormsRW06Page extends BasePage {
             boolean isVerifiedDateFiduciaryBeneficiaryDetails = verifyFiduciaryBeneficiaryDetailsForm(pdfFilePath);
 
 
-            if (!isVerifiedDate || !isVerifiedDateFiduciaryBeneficiaryDetails ) {
+            if (!isVerifiedDate || !isVerifiedDateFiduciaryBeneficiaryDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -1115,62 +1115,63 @@ public class ProbateFormsRW06Page extends BasePage {
 
         String[] allLines = pdfText.split("\\r?\\n");
         List<String> extractedValues = new ArrayList<>();
-        int startIndex = -1;
+        boolean insideBlock = false;
+        StringBuilder currentValue = new StringBuilder();
 
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
+        for (String line : allLines) {
+            String trimmedLine = line.trim();
 
-            // Find start index
             if (trimmedLine.equals(beforeLine.trim())) {
-                startIndex = i;
+                insideBlock = true;
+                currentValue.setLength(0); // Reset
+                continue;
             }
 
-            // Find end index and extract data
-            if (startIndex != -1 && trimmedLine.equals(afterLine.trim())) {
-                StringBuilder extractedValue = new StringBuilder();
-                for (int j = startIndex + 1; j < i; j++) {
-                    String currentLine = allLines[j].trim();
-                    if (!currentLine.isBlank()) {
-                        extractedValue.append(currentLine).append(" ");
-                    }
+            if (insideBlock && trimmedLine.equals(afterLine.trim())) {
+                if (currentValue.length() > 0) {
+                    extractedValues.add(cleanExtractedValue(currentValue.toString().trim(), fieldName));
                 }
-                if (extractedValue.length() > 0) {
-                    extractedValues.add(cleanExtractedValue(extractedValue.toString().trim(), fieldName));
-                }
-                startIndex = -1; // Reset for next occurrences
-
-                // ✅ Limit to first 5 occurrences for specific fields
-                if ((fieldName.equals("Signature of Officer/Representative") || fieldName.equals("Fiduciary Address") || fieldName.equals("Name or Corporate Name"))
-                        && extractedValues.size() == 5) {
-                    break; // Stop extracting after 5 occurrences
-                }
-
-                if (fieldName.equals("Beneficiary Address") && extractedValues.size() > 5) {
-                    extractedValues = extractedValues.subList(extractedValues.size() - 5, extractedValues.size());
+                insideBlock = false;
+            } else if (insideBlock) {
+                if (!trimmedLine.isEmpty()) {
+                    currentValue.append(trimmedLine).append(" ");
                 }
             }
         }
 
         if (extractedValues.isEmpty()) {
-            throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found in the document.");
+            throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' values found between '" + beforeLine + "' and '" + afterLine + "'");
         }
 
-        // 📌 Log all extracted values
+        // ✅ Limit to first 5 names for the "Signature of Officer/Representative" field
+        if (fieldName.equalsIgnoreCase("Signature of Officer/Representative") && extractedValues.size() > 5) {
+            extractedValues = extractedValues.subList(0, 5);
+        }
+
+        // ✅ For Beneficiary Address, take last 5
+        if (fieldName.equals("Beneficiary Address") && extractedValues.size() > 5) {
+            extractedValues = extractedValues.subList(extractedValues.size() - 5, extractedValues.size());
+        }
+
+        // 📌 Log extracted values
         CommonSteps.logInfo("📌 Extracted '" + fieldName + "' values (up to 5 if applicable): " + extractedValues);
 
-        // 🔍 Validate extracted values against expected ones
+
+        // 🔍 Validate extracted vs expected
         for (String extracted : extractedValues) {
             CommonSteps.logInfo("🔍 Comparing -> Expected: " + expectedValues + ", Extracted: '" + extracted + "'");
+            boolean matched = expectedValues.stream()
+                    .filter(Objects::nonNull)
+                    .anyMatch(expected -> cleanExtractedValue(expected.replaceAll("\\r?\\n", " "), fieldName).equalsIgnoreCase(extracted));
 
-            if (expectedValues.stream().noneMatch(expected -> expected.equalsIgnoreCase(extracted))) {
+            //.anyMatch(expected -> cleanExtractedValue(expected, fieldName).equalsIgnoreCase(extracted));
+
+            if (!matched) {
                 throw new AutomationException("❌ Validation Failed: '" + fieldName + "' value '" + extracted + "' does not match any expected value.");
             }
         }
 
-        // ✅ Final validation success message
-        CommonSteps.logInfo("✅ Validation Passed: All occurrences of '" + fieldName + "' match expected values.");
-
-        // Return true to indicate successful validation
+        CommonSteps.logInfo("✅ Validation Passed: All '" + fieldName + "' values matched.");
         return true;
     }
 
