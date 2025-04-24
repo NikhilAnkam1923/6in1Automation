@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class ProbateFormsOC02Page extends BasePage {
@@ -70,7 +71,7 @@ public class ProbateFormsOC02Page extends BasePage {
     private static final String ESTATE_TAB = "//button[@role='tab' and text()='Estate']";
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     private static final String FIRST_PAGE_ACTIVE_XPATH = "//a[@role='tab' and text()='1' and @class='nav-link active']";
-    private static final String COUNTY_PAGE_1_XPATH = "//p[text()='COURT OF COMMON PLEAS OF']/following-sibling::p//span//input";
+    private static final String COUNTY_PAGE_1_XPATH = "//div[@class='county-title']//span[@class='county-name']";
     private static final String TRUST_UNDER_WILL_RADIO_BTN = "//input[@name='trustIsUnderType' and @value='1']";
     private static final String TRUST_UNDER_DEED_RADIO_BTN = "//input[@name='trustIsUnderType' and @value='2']";
     private static final String TRUST_UNDER_WILL_TEXT_FIELD = "//p[contains(text(),'(TRUST UNDER WILL OF')]//input[@name='descendantName']";
@@ -105,6 +106,30 @@ public class ProbateFormsOC02Page extends BasePage {
     private static final String INTER_VIVOS_OPTION = "//input[@name='typeOfTrust' and @value='2']";
     private static final String TESTAMENTARY_TRUST_FIELD = "//span[text()='Date of Decedent‘s Will:']/following-sibling::span//input";
     private static final String INTER_VIVOS_FIELD = "//input[@name='dateOfTrust']";
+    private static final String DECEDENT_DATE_OF_DEATH = "//span[text()='Decedent‘s date of death:']/following-sibling::span//input";
+    private static final String FETCHED_CODICIL_DATE_1 = "//input[@name='codicilDate1']";
+    private static final String FETCHED_CODICIL_DATE_2 = "//input[@name='codicilDate2']";
+    private static final String FETCHED_CODICIL_DATE_3 = "//input[@name='codicilDate3']";
+    private static final String DECEDENT_TAB = "//span[text()='Decedent']";
+    private static final String JUDICIAL_COUNTY_FIELD = "//span[text()='Judicial District or County where Letters were issued:']/following-sibling::span//input";
+    private static final String DATE_OF_TRUST = "//input[@name='dateOfTrust']";
+    private static final String DATE_OF_AMENDMENT_1 = "//input[@name='amendmentDate1']";
+    private static final String DATE_OF_AMENDMENT_2 = "//input[@name='amendmentDate2']";
+    private static final String DATE_OF_AMENDMENT_3 = "//input[@name='amendmentDate3']";
+    private static final String DATE_OF_AMENDMENT_4 = "//input[@name='amendmentDate4']";
+    private static final String ADVERTISING_DATE_1 = "//input[@name='advertisingDate1']";
+    private static final String ADVERTISING_DATE_2 = "//input[@name='advertisingDate2']";
+    private static final String ADVERTISING_DATE_3 = "//input[@name='advertisingDate3']";
+    private static final String BENE_DETAILS_FORM = "//p//div";
+    private static final String BENE_DETAILS_ATTACHMENT = "//div[@class='attachment-css border-0']//tr/td[textarea[contains(text(), ',')]]";
+    private static final String BENE_RELATIONSHIP_FORM = "//td[@class='borderNewLeft2']//p[@class='p8-1 ft27-2 newstyle']//input";
+    private static final String BENE_INTEREST_FORM = "//td[@class='borderNewLeft2 borderNewBottom2']//p[@class='p8-1 ft27-2 newstyle']//input";
+    private static final String BENE_RELATIONSHIP_ATTACHMENT = "//div[@class='modal-body']//table/tbody/tr/td[position()=3]/textarea";
+    private static final String BENE_INTEREST_ATTACHMENT = "//div[@class='modal-body']//table/tbody/tr/td[position()=4]/textarea";
+    private static final String CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
+    private static final String MAIN_COUNT = "//div[@class='main_count blue-text']//span";
+    private static final String ATTACHMENT_COUNT = "//div[@class='attached_count blue-text']//b";
+    private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllBenyOnAttachment']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -113,6 +138,10 @@ public class ProbateFormsOC02Page extends BasePage {
     private static final List<String> selectedPetitioner = new ArrayList<>();
     private static final List<String> Fiduciaries = new ArrayList<>();
     private static final List<String> corporateFiduciaries = new ArrayList<>();
+    private static final List<String> beneDetails = new ArrayList<>();
+    private static final List<String> beneRelationship = new ArrayList<>();
+    private static final List<String> beneInterest = new ArrayList<>();
+    private static final List<String> beneficiaryKeys = new ArrayList<>();
 
     static String countyNameForm;
     static String enteredDecedentNameForm;
@@ -140,6 +169,20 @@ public class ProbateFormsOC02Page extends BasePage {
     static String petitioner3CityStateCodeZipForm;
     static String petitioner4AddressLine1Form;
     static String petitioner4CityStateCodeZipForm;
+    static String decedentDateOfDeath;
+    static String codicilDate1Form;
+    static String codicilDate2Form;
+    static String codicilDate3Form;
+    static String nameOfTrustPage2;
+    static int expectedAttachmentCountForm;
+    static String dateOfTrust;
+    static String amendmentDate1;
+    static String amendmentDate2;
+    static String amendmentDate3;
+    static String amendmentDate4;
+    static String advertisingDate1;
+    static String advertisingDate2;
+    static String advertisingDate3;
 
     static String downloadedFileName;
 
@@ -174,7 +217,7 @@ public class ProbateFormsOC02Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-//        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
+        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -226,14 +269,14 @@ public class ProbateFormsOC02Page extends BasePage {
     public void verifyByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm() throws AutomationException {
         WebElement page1 = driverUtil.getWebElement(FIRST_PAGE_ACTIVE_XPATH);
         WebElement countyName = driverUtil.getWebElement(COUNTY_PAGE_1_XPATH);
-        String enteredCountyName = getEstateValue("DomicileCountry");
-        countyNameForm = countyName.getAttribute("value");
+        String enteredCountyName = getEstateValue("DomicileCountry").toUpperCase();
+        countyNameForm = countyName.getText();
 
-        if (!page1.isDisplayed()) {
+        if(!page1.isDisplayed()){
             throw new AutomationException("On clicking OC02, page 1 is not opened by default.");
         }
 
-        if (!countyNameForm.equals(enteredCountyName)) {
+        if(!countyNameForm.equals(enteredCountyName)){
             throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm);
         }
     }
@@ -247,7 +290,7 @@ public class ProbateFormsOC02Page extends BasePage {
     public void verifyTrustUnderWillFieldIsEnabled() throws AutomationException {
         WebElement trustOfWillField = driverUtil.getWebElement(TRUST_UNDER_WILL_TEXT_FIELD);
 
-        if (!trustOfWillField.isEnabled() && trustOfWillField.getAttribute("disabled") != null && trustOfWillField.getAttribute("readonly") != null) {
+        if(!trustOfWillField.isEnabled() && trustOfWillField.getAttribute("disabled") != null && trustOfWillField.getAttribute("readonly") != null){
             throw new AutomationException("Trust under Will text field is not gets enabled");
         }
     }
@@ -261,7 +304,7 @@ public class ProbateFormsOC02Page extends BasePage {
     public void verifyTrustUnderDeedFieldIsEnabled() throws AutomationException {
         WebElement trustOfDeedField = driverUtil.getWebElement(TRUST_UNDER_DEED_TEXT_FIELD);
 
-        if (!trustOfDeedField.isEnabled() && trustOfDeedField.getAttribute("disabled") != null && trustOfDeedField.getAttribute("readonly") != null) {
+        if(!trustOfDeedField.isEnabled() && trustOfDeedField.getAttribute("disabled") != null && trustOfDeedField.getAttribute("readonly") != null){
             throw new AutomationException("Trust under deed text field is not gets enabled");
         }
     }
@@ -275,13 +318,13 @@ public class ProbateFormsOC02Page extends BasePage {
         trustUnderWillField.sendKeys(Keys.TAB);
 
         String trustUnderWillName = trustUnderWillField.getAttribute("value");
-        if (!trustUnderWillName.equals(nameOfDecedent)) {
+        if(!trustUnderWillName.equals(nameOfDecedent)){
             throw new AutomationException("Entered name is not displayed on the form against the Trust under will field");
         }
 
         String otherFieldText = driverUtil.getWebElement(TRUST_UNDER_DEED_TEXT_FIELD).getAttribute("value");
-        if (!otherFieldText.isEmpty()) {
-            throw new AutomationException("Other field is not empty. Found text: " + otherFieldText);
+        if(!otherFieldText.isEmpty()){
+            throw new AutomationException("Other field is not empty. Found text: "+otherFieldText);
         }
 
     }
@@ -295,30 +338,33 @@ public class ProbateFormsOC02Page extends BasePage {
         trustUnderDeedField.sendKeys(Keys.TAB);
 
         String trustUnderDeedName = trustUnderDeedField.getAttribute("value");
-        if (!trustUnderDeedName.equals(nameOfDecedent)) {
+        if(!trustUnderDeedName.equals(nameOfDecedent)){
             throw new AutomationException("Entered name is not displayed on the form against the Trust under deed field");
         }
 
         String otherFieldText = driverUtil.getWebElement(TRUST_UNDER_WILL_TEXT_FIELD).getAttribute("value");
-        if (!otherFieldText.isEmpty()) {
-            throw new AutomationException("Other field is not empty. Found text: " + otherFieldText);
+        if(!otherFieldText.isEmpty()){
+            throw new AutomationException("Other field is not empty. Found text: "+otherFieldText);
         }
 
         enteredDecedentNameForm = trustUnderDeedField.getAttribute("value");
     }
 
     public void verifyEnteredNameOfDecedentIsDisplayedOnAllTheOCPages() throws AutomationException {
-        for (int i = 2; i <= 11; i++) {
+        for(int i=2; i<=11; i++){
             switchToPage(i);
             String actualNameOfTrust;
-            if (i == 2 || i == 4) {
+            if(i==2 || i==4){
                 actualNameOfTrust = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_2_AND_4_PAGE).getAttribute("value");
+                if(i==2){
+                    nameOfTrustPage2 = actualNameOfTrust;
+                }
             } else {
                 actualNameOfTrust = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES).getAttribute("value");
             }
 
-            if (!actualNameOfTrust.equals(enteredDecedentNameForm)) {
-                throw new AutomationException("Decedent Name is not reflected on page: " + i + ". Expected: " + enteredDecedentNameForm + " ,Found: " + actualNameOfTrust);
+            if(!actualNameOfTrust.equals(enteredDecedentNameForm)){
+                throw new AutomationException("Decedent Name is not reflected on page: "+i+". Expected: "+enteredDecedentNameForm+" ,Found: "+actualNameOfTrust);
             }
         }
     }
@@ -674,22 +720,6 @@ public class ProbateFormsOC02Page extends BasePage {
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
-
-
-        //use in reset
-        scrollToElement(PETITIONER_NAME_FIELD);
-        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(ACCEPT_BTN).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
     }
 
     public void userSelectTestamentaryOption() {
@@ -730,6 +760,350 @@ public class ProbateFormsOC02Page extends BasePage {
         if (testamentaryTrustField.isEnabled()) {
             throw new AutomationException("Testamentary Trust section is not disabled.");
         }
+    }
+
+    public void verifyDateOfDeathIsAutoFetchedFromTheDecedentInfo() throws AutomationException {
+        WebElement decedentDateOfDeathField = driverUtil.getWebElement(DECEDENT_DATE_OF_DEATH);
+        scrollToElement(DECEDENT_DATE_OF_DEATH);
+
+        decedentDateOfDeath = decedentDateOfDeathField.getAttribute("value");
+
+        String enteredDateOfDeathName = getEstateValue("DateOfDeath");
+
+        if (!enteredDateOfDeathName.equals(decedentDateOfDeath)) {
+            throw new AutomationException("County name not fetched correctly. Expected: " + enteredDateOfDeathName + " ,Found: " + decedentDateOfDeath);
+        }
+    }
+
+    public void verifyCodicilDatesAreAutoFetchedFromDecedentTab() throws AutomationException {
+        String codicilDate1 = driverUtil.getWebElement(FETCHED_CODICIL_DATE_1).getAttribute("value");
+        String codicilDate2 = driverUtil.getWebElement(FETCHED_CODICIL_DATE_2).getAttribute("value");
+        String codicilDate3 = driverUtil.getWebElement(FETCHED_CODICIL_DATE_3).getAttribute("value");
+
+        String expectedCodicilDate1 = getEstateValue("CodicilDate1");
+        String expectedCodicilDate2 = getEstateValue("CodicilDate2");
+        String expectedCodicilDate3 = getEstateValue("CodicilDate3");
+
+        if (!codicilDate1.equals(expectedCodicilDate1)) {
+            throw new AutomationException("Codicil date 1 is not auto fetched");
+        }
+        if (!codicilDate2.equals(expectedCodicilDate2)) {
+            throw new AutomationException("Codicil date 2 is not auto fetched");
+        }
+        if (!codicilDate3.equals(expectedCodicilDate3)) {
+            throw new AutomationException("Codicil date 3 is not auto fetched");
+        }
+    }
+
+    public static void clearField(String fieldXpath) throws AutomationException {
+        WebElement fieldElement = driverUtil.getWebElement(fieldXpath);
+        fieldElement.sendKeys(Keys.CONTROL + "a");
+        fieldElement.sendKeys(Keys.BACK_SPACE);
+    }
+
+    public void userModifiesTheCodicilDates() throws IOException, ParseException, AutomationException {
+        String codicilDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.codicilDate1").toString();
+        String codicilDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.codicilDate2").toString();
+        String codicilDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.codicilDate3").toString();
+
+        WebElement codicilDate1Field = driverUtil.getWebElement(FETCHED_CODICIL_DATE_1);
+        WebElement codicilDate2Field = driverUtil.getWebElement(FETCHED_CODICIL_DATE_2);
+        WebElement codicilDate3Field = driverUtil.getWebElement(FETCHED_CODICIL_DATE_3);
+
+        scrollToElement(FETCHED_CODICIL_DATE_1);
+
+        clearField(FETCHED_CODICIL_DATE_1);
+        codicilDate1Field.sendKeys(codicilDate1);
+        clearField(FETCHED_CODICIL_DATE_2);
+        codicilDate2Field.sendKeys(codicilDate2);
+        clearField(FETCHED_CODICIL_DATE_3);
+        codicilDate3Field.sendKeys(codicilDate3);
+        codicilDate3Field.sendKeys(Keys.TAB);
+
+        WebDriverUtil.waitForAWhile();
+
+        codicilDate1Form = codicilDate1Field.getAttribute("value");
+        codicilDate2Form = codicilDate2Field.getAttribute("value");
+        codicilDate3Form = codicilDate3Field.getAttribute("value");
+    }
+
+    public void verifyUpdatedCodicilDatesAreReflectedInTheDecedentTab() throws AutomationException {
+        waitForVisibleElement(By.xpath(DECEDENT_TAB));
+        driverUtil.getWebElement(DECEDENT_TAB).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
+
+        driverUtil.getWebElement(ESTATE_TAB).click();
+        WebDriverUtil.waitForAWhile();
+
+        if (!driverUtil.getWebElement(CODICILE_DATE_1).getAttribute("value").equals(codicilDate1Form)) {
+            throw new AutomationException("Updated codicil date 1 is not reflected");
+        }
+
+        if (!driverUtil.getWebElement(CODICILE_DATE_2).getAttribute("value").equals(codicilDate2Form)) {
+            throw new AutomationException("Updated codicil date 2 is not reflected");
+        }
+
+        if (!driverUtil.getWebElement(CODICILE_DATE_3).getAttribute("value").equals(codicilDate3Form)) {
+            throw new AutomationException("Updated codicil date 3 is not reflected");
+        }
+    }
+
+    public void verifyJudicialCountyIsAutoFetchedFromTheDecedentInfoTab() throws AutomationException {
+        WebElement judicialCountyField = driverUtil.getWebElement(JUDICIAL_COUNTY_FIELD);
+
+        String actualJudicialCounty = judicialCountyField.getAttribute("value");
+        String enteredJudicialCounty = getEstateValue("DomicileCountry");
+
+        if(!actualJudicialCounty.contains(enteredJudicialCounty)){
+            throw new AutomationException("Judicial county is not fetched correctly. Expected: "+enteredJudicialCounty+" ,Found: "+actualJudicialCounty);
+        }
+    }
+
+    public void verifyAllTheDetailsCanBeEnteredAndAutoSaved() throws AutomationException, IOException, ParseException {
+        dateOfTrust = CommonUtil.getJsonPath("OC02Form").get("OC02Form.dateOfTrust").toString();
+        amendmentDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate1").toString();
+        amendmentDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate2").toString();
+        amendmentDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate3").toString();
+        amendmentDate4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate4").toString();
+        advertisingDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate1").toString();
+        advertisingDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate2").toString();
+        advertisingDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate3").toString();
+
+        List<String> fieldXpaths = Arrays.asList(
+                DATE_OF_TRUST, DATE_OF_AMENDMENT_1, DATE_OF_AMENDMENT_2, DATE_OF_AMENDMENT_3,
+                DATE_OF_AMENDMENT_4, ADVERTISING_DATE_1, ADVERTISING_DATE_2, ADVERTISING_DATE_3
+        );
+
+        List<String> Dates = Arrays.asList(
+                dateOfTrust, amendmentDate1, amendmentDate2, amendmentDate3,
+                amendmentDate4, advertisingDate1, advertisingDate2, advertisingDate3
+        );
+
+        List<String> enteredDates = new ArrayList<>();
+
+        for (int i = 0; i < fieldXpaths.size(); i++) {
+            String xpath = fieldXpaths.get(i);
+            String Date = Dates.get(i);
+
+            WebElement field = driverUtil.getWebElement(xpath);
+            field.click();
+            field.sendKeys(Keys.BACK_SPACE);
+            for (char c : Date.toCharArray()) {
+                field.sendKeys(String.valueOf(c));
+            }
+
+            driverUtil.getWebElement("//body").click();
+
+            WebDriverUtil.waitForAWhile();
+
+            String actualValue = driverUtil.getWebElement(xpath).getAttribute("value");
+            enteredDates.add(actualValue);
+        }
+
+        switchToPage(4);
+        WebDriverUtil.waitForAWhile();
+        switchToPage(3);
+        WebDriverUtil.waitForAWhile();
+
+        for (int i = 0; i < fieldXpaths.size(); i++) {
+            String xpath = fieldXpaths.get(i);
+            String enteredDate = enteredDates.get(i);
+            String actualDate = driverUtil.getWebElement(xpath).getAttribute("value");
+
+            if(!enteredDate.equals(actualDate)){
+                throw new AutomationException("Entered date is not auto saved. Expected: "+enteredDate+" ,Found: "+actualDate);
+            }
+        }
+
+
+        //use in reset
+        for (String fieldXpath : fieldXpaths) {
+            DriverFactory.drivers.get().findElement(By.xpath(fieldXpath)).clear();
+        }
+    }
+
+    public void verifyNameOfTheTrustIsAutoFetchedFromPage() throws AutomationException {
+        WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String actualNameOfTrust = nameOfTrustField.getAttribute("value");
+
+        if(!actualNameOfTrust.equals(nameOfTrustPage2)){
+            throw new AutomationException("Name of Trust is not fetched from Page 2. Expected: "+nameOfTrustPage2+" ,Found: "+actualNameOfTrust);
+        }
+    }
+
+    public static String findBeneficiaryKeyByName(String fullName, JSONObject jsonData) {
+        for (Object keyObj : jsonData.keySet()) {
+            String key = keyObj.toString();
+            if (key.startsWith("beneficiary")) {
+                JSONObject beneData = (JSONObject) jsonData.get(key);
+
+                String jsonFullName = beneData.getOrDefault("firstName", "") + " " +
+                        beneData.getOrDefault("middleName", "") + " " +
+                        beneData.getOrDefault("lastName", "") + ", " +
+                        beneData.getOrDefault("suffix", "");
+
+                jsonFullName = jsonFullName.trim().replaceAll(" +", " ");
+
+                if (fullName.equalsIgnoreCase(jsonFullName)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String extractFullName(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return "";
+        }
+        String[] lines = input.split("\\r?\\n");
+        return lines.length > 0 ? lines[0].trim() : "";
+    }
+
+    public void userSavesSelectedBeneficiariesDetails() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> beneDetailsPage4Fields = driverUtil.getWebElements(BENE_DETAILS_FORM);
+        List<WebElement> beneRelationshipPage4Fields = driverUtil.getWebElements(BENE_RELATIONSHIP_FORM);
+        List<WebElement> beneInterestPage4Fields = driverUtil.getWebElements(BENE_INTEREST_FORM);
+
+        for (int i = 0; i < 2; i++) {
+            beneDetails.add(beneDetailsPage4Fields.get(i).getText());
+            beneRelationship.add(beneRelationshipPage4Fields.get(i).getAttribute("value"));
+            beneInterest.add(beneInterestPage4Fields.get(i).getAttribute("value"));
+        }
+
+        switchToPage(7);
+
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneDetailsPage5Fields = driverUtil.getWebElements(BENE_DETAILS_FORM);
+        List<WebElement> beneRelationshipPage5Fields = driverUtil.getWebElements(BENE_RELATIONSHIP_FORM);
+        List<WebElement> beneInterestPage5Fields = driverUtil.getWebElements(BENE_INTEREST_FORM);
+
+        for (int i = 0; i < 2; i++) {
+            beneDetails.add(beneDetailsPage5Fields.get(i).getText());
+            beneRelationship.add(beneRelationshipPage5Fields.get(i).getAttribute("value"));
+            beneInterest.add(beneInterestPage5Fields.get(i).getAttribute("value"));
+        }
+
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneDetailsOnAttachmentFields = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+        List<WebElement> beneRelationshipOnAttachmentFields = driverUtil.getWebElements(BENE_RELATIONSHIP_ATTACHMENT);
+        List<WebElement> beneInterestOnAttachmentFields = driverUtil.getWebElements(BENE_INTEREST_ATTACHMENT);
+
+        for (int i = 0; i < 3; i++) {
+            beneDetails.add(beneDetailsOnAttachmentFields.get(i).getText());
+            beneRelationship.add(beneRelationshipOnAttachmentFields.get(i).getText());
+            beneInterest.add(beneInterestOnAttachmentFields.get(i).getText());
+        }
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+
+        for (String detail : beneDetails) {
+            String fullName = extractFullName(detail); // Your custom logic to get full name
+            String matchedKey = findBeneficiaryKeyByName(fullName, jsonData);
+
+            if (matchedKey != null) {
+                beneficiaryKeys.add(matchedKey);
+            } else {
+                throw new AutomationException("Beneficiary key not found for full name: " + fullName);
+            }
+        }
+    }
+
+    public void verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        if (beneDetails.size() <= 2) {
+            throw new AutomationException("There are no additional beneficiaries to verify in the attachment.");
+        }
+
+        List<WebElement> attachmentBeneficiaries = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+
+        for (int i = 4; i < beneDetails.size(); i++) {
+            String expectedBeneficiary = beneDetails.get(i);
+            boolean found = false;
+
+            for (WebElement attachmentBeneficiary : attachmentBeneficiaries) {
+                if (attachmentBeneficiary.getText().equals(expectedBeneficiary)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                throw new AutomationException("Beneficiary not found in attachment: " + expectedBeneficiary);
+            }
+        }
+
+        CommonSteps.takeScreenshot();
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void verifyAttachmentIsDisplayedOnPage6() throws AutomationException {
+        verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+    }
+
+    public void verifySameAttachmentIsDisplayedOnPage7() throws AutomationException {
+        verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+    }
+
+    public void verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> attachmentBeneficiaries = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+
+        for (String expectedBeneficiary : beneDetails) {
+            boolean found = false;
+
+            for (WebElement attachmentBeneficiary : attachmentBeneficiaries) {
+                if (attachmentBeneficiary.getText().equals(expectedBeneficiary)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                throw new AutomationException("Beneficiary not found in attachment: " + expectedBeneficiary);
+            }
+        }
+
+        expectedAttachmentCountForm = attachmentBeneficiaries.size();
+
+        CommonSteps.takeScreenshot();
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox() throws AutomationException {
+        scrollToElement(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN);
+        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN)).click();
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly() throws AutomationException {
+        WebElement mainCountElement = driverUtil.getWebElement(MAIN_COUNT);
+        WebElement attachmentCountElement = driverUtil.getWebElement(ATTACHMENT_COUNT);
+
+        int actualMainCount = Integer.parseInt(mainCountElement.getText().trim());
+        int actualAttachmentCount = Integer.parseInt(attachmentCountElement.getText().split(":")[1].trim());
+
+        if (actualMainCount != 0) {
+            throw new AutomationException("Mismatch in Main Count. Expected: 0 " + ", Found: " + actualMainCount);
+        }
+        if (actualAttachmentCount != expectedAttachmentCountForm) {
+            throw new AutomationException("Mismatch in Attachment Count. Expected: " + expectedAttachmentCountForm + ", Found: " + actualAttachmentCount);
+        }
+
+        CommonSteps.takeScreenshot();
+
+        userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox();
     }
 
     public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
@@ -990,6 +1364,24 @@ public class ProbateFormsOC02Page extends BasePage {
             value = value.replaceAll("[,\\.]", "").trim();
         }
         return value;
+    }
+
+    public void userResetsTheRWForm() throws AutomationException {
+        //Page 2
+        switchToPage(2);
+        scrollToElement(PETITIONER_NAME_FIELD);
+        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
     }
 
     public static boolean validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)

@@ -123,4 +123,64 @@ public class probateFormsOC02Steps {
         PageFactory.probateFormsOC02Page().verifyInterVivosTrustSectionIsEnabledAndTestamentaryTrustSectionIsDisabled();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies Date of death is auto fetched from the decedent info")
+    public void userVerifiesDateOfDeathIsAutoFetchedFromTheDecedentInfo() throws AutomationException {
+        CommonSteps.logInfo("Verified that Date of death is auto fetched from the decedent info");
+        PageFactory.probateFormsOC02Page().verifyDateOfDeathIsAutoFetchedFromTheDecedentInfo();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Codicil dates are auto fetched from decedent tab")
+    public void userVerifiesCodicilDatesAreAutoFetchedFromDecedentTab() throws AutomationException {
+        CommonSteps.logInfo("Verified that Codicil dates are auto fetched from decedent tab");
+        PageFactory.probateFormsOC02Page().verifyCodicilDatesAreAutoFetchedFromDecedentTab();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user modifies the codicil dates")
+    public void userModifiesTheCodicilDates() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user modifies the codicil dates");
+        PageFactory.probateFormsOC02Page().userModifiesTheCodicilDates();
+    }
+
+    @Then("user verifies updated codicil dates are reflected in the decedent tab")
+    public void userVerifiesUpdatedCodicilDatesAreReflectedInTheDecedentTab() throws AutomationException {
+        CommonSteps.logInfo("Verified that updated codicil dates are reflected in the decedent tab");
+        PageFactory.probateFormsOC02Page().verifyUpdatedCodicilDatesAreReflectedInTheDecedentTab();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Judicial county is auto fetched from the decedent info tab")
+    public void userVerifiesJudicialCountyIsAutoFetchedFromTheDecedentInfoTab() throws AutomationException {
+        CommonSteps.logInfo("Verified that Judicial county is auto fetched from the decedent info tab");
+        PageFactory.probateFormsOC02Page().verifyJudicialCountyIsAutoFetchedFromTheDecedentInfoTab();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies all the details can be entered and auto saved")
+    public void userVerifiesAllTheDetailsCanBeEnteredAndAutoSaved() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that all the details can be entered and auto saved");
+        PageFactory.probateFormsOC02Page().verifyAllTheDetailsCanBeEnteredAndAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies Name of the Trust is auto fetched from page 2")
+    public void userVerifiesNameOfTheTrustIsAutoFetchedFromPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that Name of the Trust is auto fetched from page 2");
+        PageFactory.probateFormsOC02Page().verifyNameOfTheTrustIsAutoFetchedFromPage();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies attachment is displayed on page 6")
+    public void userVerifiesAttachmentIsDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that attachment is displayed on page 6");
+        PageFactory.probateFormsOC02Page().verifyAttachmentIsDisplayedOnPage6();
+    }
+
+    @And("user verifies same attachment is displayed on page 7")
+    public void userVerifiesSameAttachmentIsDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that same attachment is displayed on page 7");
+        PageFactory.probateFormsOC02Page().verifySameAttachmentIsDisplayedOnPage7();
+    }
 }

@@ -11,7 +11,6 @@ Feature: 6in1 probate form OC02 Feature
       | user-email                        | password  |
       | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
-
   Scenario: Open Estate
     When user opens "Sara Watt" Estate
     And user saves entered Estate information for "OC02" form
@@ -66,14 +65,59 @@ Feature: 6in1 probate form OC02 Feature
     And user select Testamentary option
     Then user verifies Testamentary trust section is enabled and inter vivos trust section is disabled
 
+  Scenario: Verify, "Decedent date of death" is fetched from the decedent info.
+    When user select Testamentary option
+    Then user verifies Date of death is auto fetched from the decedent info
+
+  Scenario: Verify, "Date of Codicil" is fetched from the decedent tab.
+    Then user verifies Codicil dates are auto fetched from decedent tab
+
+  Scenario: Verify, codicil dates changed are reflected in the decedent tab as well.
+    When user modifies the codicil dates
+    Then user verifies updated codicil dates are reflected in the decedent tab
+
+  Scenario: Verify, Judicial County is auto fetched from the decedent.
+    When user navigates to the probate forms tab
+    And user click on the "OC 02" form
+    And user navigates to page number: "3"
+    Then user verifies Judicial county is auto fetched from the decedent info tab
+
   Scenario: Verify, Inter vivos section is enabled if the checkbox with the same name is selected.
     When user select Inter Vivos option
     Then user verifies Inter Vivos trust section is enabled and Testamentary trust section is disabled
+
+  Scenario: Verify, Input fields in inter vivos trust are editable and auto saved.
+    Then user verifies all the details can be entered and auto saved
+
+  Scenario: Verify, "Name of Trust" from page 2 is auto fetched at the top of this and next page.
+    When user navigates to page number: "6"
+    Then user verifies Name of the Trust is auto fetched from page 2
+
+  Scenario: Verify, rest of the  beneficiaries are displayed as a part of attachment.
+    When user saves selected beneficiaries details for "OC02" form
+    Then user verifies for "OC02" form rest of the selected beneficiaries are displayed on the attachment
+
+  Scenario: Verify, attachment is displayed on both the pages.
+    When user navigates to page number: "6"
+    Then user verifies attachment is displayed on page 6
+    When user navigates to page number: "7"
+    And user verifies same attachment is displayed on page 7
+
+  Scenario: Verify, if the display as attachment checkbox is checked then all the beneficiaries are displayed in attachment.
+    When user navigates to page number: "6"
+    And user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox
+    Then user verifies for "OC02" form all the beny users are displayed as a part of attachment
+
+  Scenario: Verify correct count of main and attachment is displayed.
+    Then user verifies for "OC02" form the Main's count is turn to zero and only Attachment count is displayed correctly
 
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'OC02'
     And verify all the fields entered are correctly reflected in the 'OC02' pdf
+
+  Scenario: Reset the OC02 form
+    Then user resets the "OC02" form
 
   @Setup
   Scenario:SETUP: Close Browser
