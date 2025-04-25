@@ -126,7 +126,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String INITIALS_FIELD = "//input[@name='beneficiaries[0].initials']";
     private static final String COMMENTS_FIELD_XPATH = "//textarea[@name='beneficiaries[%s].comments']";
     private static final String BENE_RELATIONSHIP_FORM = "//td[@class='borderNewLeft2']//p[@class='p8-1 ft27-2 newstyle']//input";
-    private static final String BENE_INTEREST_FORM = "//td[@class='borderNewLeft2 borderNewBottom2']//p[@class='p8-1 ft27-2 newstyle']//input";
+    private static final String BENE_INTEREST_FORM = "//td[@class='borderNewLeft2 borderNewBottom2']//p[@class='p8-1 ft27-2 newstyle']//textarea";
     private static final String BENE_RELATIONSHIP_ATTACHMENT = "//div[@class='modal-body']//table/tbody/tr/td[position()=3]/textarea";
     private static final String BENE_INTEREST_ATTACHMENT = "//div[@class='modal-body']//table/tbody/tr/td[position()=4]/textarea";
     private static final String CLAIMANT_INITIALS_FIELD = "//input[@class='yellowbg no-bords']";
@@ -1058,7 +1058,7 @@ public class ProbateFormsOC01Page extends BasePage {
         for (int i = 0; i < 2; i++) {
             beneDetails.add(beneDetailsPage4Fields.get(i).getText());
             beneRelationship.add(beneRelationshipPage4Fields.get(i).getAttribute("value"));
-            beneInterest.add(beneInterestPage4Fields.get(i).getAttribute("value"));
+            beneInterest.add(beneInterestPage4Fields.get(i).getText());
         }
 
         switchToPage(5);
@@ -1071,7 +1071,7 @@ public class ProbateFormsOC01Page extends BasePage {
         for (int i = 0; i < 2; i++) {
             beneDetails.add(beneDetailsPage5Fields.get(i).getText());
             beneRelationship.add(beneRelationshipPage5Fields.get(i).getAttribute("value"));
-            beneInterest.add(beneInterestPage5Fields.get(i).getAttribute("value"));
+            beneInterest.add(beneInterestPage5Fields.get(i).getText());
         }
 
         scrollToElement(VIEW_ATTACHMENT_BTN);
@@ -1144,6 +1144,7 @@ public class ProbateFormsOC01Page extends BasePage {
     public void userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox() throws AutomationException {
         scrollToElement(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN);
         DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForAWhile();
     }
 
@@ -1400,7 +1401,6 @@ public class ProbateFormsOC01Page extends BasePage {
     public void verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection() throws IOException, ParseException, AutomationException {
         for (int i = 0; i < 7; i++) {
             String key = beneficiaryKeys.get(i);
-            System.out.println("bene keys: "+key);
             String expectedRelationship = CommonUtil.getJsonPath(key).get(key + ".Relationship").toString();
             String actualRelationship = beneRelationship.get(i).trim();
 
@@ -1413,7 +1413,6 @@ public class ProbateFormsOC01Page extends BasePage {
     public void verifyInterestIsAutoFetchedFromBenyWorksheet() throws AutomationException, IOException, ParseException {
         for (int i = 0; i < 7; i++) {
             String key = beneficiaryKeys.get(i);
-            System.out.println("bene keys: "+key);
             String expectedBeneficialInterest = CommonUtil.getJsonPath(key).get(key + ".BeneficialInterest").toString();
             String actualBeneficialInterest = beneInterest.get(i).trim();
 
@@ -1586,7 +1585,7 @@ public class ProbateFormsOC01Page extends BasePage {
             amountField.sendKeys(radAmountForm.get(i));
             amountField.sendKeys(Keys.TAB);
 
-            WebDriverUtil.waitForAWhile(3);
+            WebDriverUtil.waitForAWhile(4);
             String actualDate = DriverFactory.drivers.get().findElement(By.xpath(String.format(RAD_DATE_FIELDS, i))).getAttribute("value");
             String actualDescription = DriverFactory.drivers.get().findElement(By.xpath(String.format(RAD_DESCRIPTION_FIELDS, i))).getAttribute("value");
             String actualAmount = DriverFactory.drivers.get().findElement(By.xpath(String.format(RAD_AMOUNT_FIELDS, i))).getAttribute("value");
@@ -1631,7 +1630,7 @@ public class ProbateFormsOC01Page extends BasePage {
         }
 
         if (!element.getAttribute("value").isEmpty()) {
-            System.out.println("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
+            CommonSteps.logInfo("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
         }
     }
 
@@ -2355,11 +2354,11 @@ public class ProbateFormsOC01Page extends BasePage {
         }
 
         CommonSteps.takeScreenshot();
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
     public void userNavigatesToEstateContactsTab() throws AutomationException {
-        driverUtil.getWebElement(CLOSE_BTN).click();
-
         waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
         driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
         waitForInvisibleElement(By.xpath(SPINNER));
@@ -2460,9 +2459,6 @@ public class ProbateFormsOC01Page extends BasePage {
     public void verifyNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
         String petitioner1 = getEstateContactName(nameOfPetitionerForm);
         String petitioner2 = getEstateContactName(nameOfPetitioner2Form);
-
-        System.out.println("Petitioner 1 name: "+petitioner1);
-        System.out.println("Petitioner 2 name: "+petitioner2);
 
         filterByContactName(petitioner1);
         driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, petitioner1)).click();

@@ -155,13 +155,6 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user verifies correct trust name is displayed on the form")
-    public void userVerifiesCorrectTrustNameIsDisplayedOnTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that correct trust name is displayed on the form");
-        PageFactory.probateFormsOC01Page().verifyCorrectTrustNameIsDisplayedOnTheForm();
-        CommonSteps.takeScreenshot();
-    }
-
     @When("user select 'Yes' for litigation status")
     public void userSelectYesForLitigationStatus() {
         CommonSteps.logInfo("user select 'Yes' for litigation status");
@@ -188,32 +181,6 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user adds initials")
-    public void userAddsInitials() throws IOException, ParseException, AutomationException {
-        CommonSteps.logInfo("user adds initials");
-        PageFactory.probateFormsOC01Page().userAddsInitials();
-    }
-
-    @Then("user verifies name and address gets disappear")
-    public void userVerifiesNameAndAddressGetsDisappear() throws AutomationException {
-        CommonSteps.logInfo("Verified that name and address gets disappear");
-        PageFactory.probateFormsOC01Page().verifyNameAndAddressGetsDisappear();
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("user removes initials")
-    public void userRemovesInitials() throws AutomationException {
-        CommonSteps.logInfo("user removes initials");
-        PageFactory.probateFormsOC01Page().userRemovesInitials();
-    }
-
-    @Then("user verifies name and address of the beneficiaries is displayed")
-    public void userVerifiesNameAndAddressOfTheBeneficiariesIsDisplayed() throws AutomationException {
-        CommonSteps.logInfo("Verified that name and address of the beneficiaries is displayed");
-        PageFactory.probateFormsOC01Page().verifyNameAndAddressOfTheBeneficiariesIsDisplayed();
-        CommonSteps.takeScreenshot();
-    }
-
     @When("user adds comments")
     public void userAddsComments() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user adds comments");
@@ -224,20 +191,6 @@ public class probateFormsOC01Steps {
     public void userVerifiesCommentsAreAddedAndAutoSaved() throws AutomationException {
         CommonSteps.logInfo("Verified that comments are added and auto saved");
         PageFactory.probateFormsOC01Page().verifyCommentsAreAddedAndAutoSaved();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies correct relationship is auto fetched and displayed under relationship section")
-    public void userVerifiesCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection() throws IOException, ParseException, AutomationException {
-        CommonSteps.logInfo("Verified that correct relationship is auto fetched and displayed under relationship section");
-        PageFactory.probateFormsOC01Page().verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies interest is auto fetched from beny worksheet")
-    public void userVerifiesInterestIsAutoFetchedFromBenyWorksheet() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that interest is auto fetched from beny worksheet");
-        PageFactory.probateFormsOC01Page().verifyInterestIsAutoFetchedFromBenyWorksheet();
         CommonSteps.takeScreenshot();
     }
 
@@ -272,13 +225,6 @@ public class probateFormsOC01Steps {
     public void userVerifiesReserveRequestAmountCanBeAdded() throws IOException, ParseException, AutomationException {
         CommonSteps.logInfo("Verified that Reserve request amount can be added");
         PageFactory.probateFormsOC01Page().verifyReserveRequestAmountCanBeAdded();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner")
-    public void userVerifies1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner() throws AutomationException {
-        CommonSteps.logInfo("Verified that 1st individual petitioner selected on page 2 is displayed under individual petitioner");
-        PageFactory.probateFormsOC01Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
         CommonSteps.takeScreenshot();
     }
 
@@ -376,23 +322,10 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user checks the Display checkbox for beneficiaries")
-    public void userChecksTheDisplayCheckboxForBeneficiaries() throws AutomationException {
-        CommonSteps.logInfo("user checks the Display checkbox for beneficiaries");
-        PageFactory.probateFormsOC01Page().userChecksTheDisplayCheckboxForBeneficiaries();
-    }
-
     @And("user enters proportion for beneficiaries")
     public void userEntersProportionForBeneficiaries() throws AutomationException {
         CommonSteps.logInfo("user enters proportion for beneficiaries");
         PageFactory.probateFormsOC01Page().userEntersProportionForBeneficiaries();
-    }
-
-    @Then("user verifies the contacts for which the checkbox is checked are displayed on the form")
-    public void userVerifiesTheContactsForWhichTheCheckboxIsCheckedAreDisplayedOnTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that the contacts for which the checkbox is checked are displayed on the form");
-        PageFactory.probateFormsOC01Page().userVerifiesDisplayedContactsOnForm();;
-        CommonSteps.takeScreenshot();
     }
 
     @And("user verifies entered proportion values are correctly displayed on the form")
@@ -402,60 +335,10 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user checks 'Display ALL INCOME Distributees on attachment' checkbox")
-    public void userChecksDisplayALLINCOMEDistributeesOnAttachmentCheckbox() {
-        CommonSteps.logInfo("user checks 'Display ALL INCOME Distributees on attachment' checkbox");
-        PageFactory.probateFormsOC01Page().userChecksDisplayALLINCOMEDistributeesOnAttachmentCheckbox();
-    }
-
-    @Then("user verifies all the beneficiary contacts are moved to the attachment")
-    public void userVerifiesAllTheBeneficiaryContactsAreMovedToTheAttachment() throws AutomationException {
-        CommonSteps.logInfo("Verified that all the beneficiary contacts are moved to the attachment");
-        PageFactory.probateFormsOC01Page().verifyAllTheBeneficiaryContactsAreMovedToTheAttachment();
-    }
-
-    @Then("user verifies all the remaining petitioners are displayed as a part of attachment")
-    public void userVerifiesAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment() throws AutomationException {
-        CommonSteps.logInfo("Verified that all the remaining petitioners are displayed as a part of attachment");
-        PageFactory.probateFormsOC01Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
-    }
-
-    @When("user navigates to Estate Contacts tab")
-    public void userNavigatesToEstateContactsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigates to Estate Contacts tab");
-        PageFactory.probateFormsOC01Page().userNavigatesToEstateContactsTab();
-    }
-
-    @And("user verifies notification is displayed when the contact selected as the petitioner is removed from the estate contacts")
-    public void userVerifiesNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that notification is displayed when the contact selected as the petitioner is removed from the estate contacts");
-        PageFactory.probateFormsOC01Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts();
-    }
-
-    @Then("user verifies notification is displayed when the beneficiary contact is removed from the estate contacts")
-    public void userVerifiesNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that notification is displayed when the beneficiary contact is removed from the estate contacts");
-        PageFactory.probateFormsOC01Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
-    }
-
     @Then("user verifies notification is displayed when the corporate fiduciary and attorney contacts are removed from the estate contacts")
     public void userVerifiesNotificationIsDisplayedWhenTheCorporateFiduciaryAndAttorneyContactsAreRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that notification is displayed when the corporate fiduciary and attorney contacts are removed from the estate contacts");
         PageFactory.probateFormsOC01Page().verifyNotificationIsDisplayedWhenTheCorporateFiduciaryAndAttorneyContactsAreRemovedFromTheEstateContacts();
-    }
-
-    @Then("user verifies removed petitioner contacts from the estate contacts is also gets removed from the form")
-    public void userVerifiesRemovedPetitionerContactsFromTheEstateContactsIsAlsoRemovedFromTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that removed petitioner contacts from the estate contacts is also gets removed from the form");
-        PageFactory.probateFormsOC01Page().verifyRemovedPetitionerContactsFromTheEstateContactsIsAlsoRemovedFromTheForm();;
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies removed beneficiary contact from the estate contacts is also gets removed from the form")
-    public void userVerifiesRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that removed beneficiary contact from the estate contacts is also gets removed from the form");
-        PageFactory.probateFormsOC01Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();;
-        CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies removed corporate fiduciary and attorney contacts from the estate contacts are also gets removed from the form")
@@ -463,11 +346,5 @@ public class probateFormsOC01Steps {
         CommonSteps.logInfo("Verified that removed corporate fiduciary and attorney contacts from the estate contacts are also gets removed from the form");
         PageFactory.probateFormsOC01Page().verifyRemovedCorporateFiduciaryAndAttorneyContactsFromTheEstateContactsAreAlsoGetsRemovedFromTheForm();;
         CommonSteps.takeScreenshot();
-    }
-
-    @When("user resets roles of removed contacts from the Estate Contacts")
-    public void userResetsRolesOfRemovedContactsFromTheEstateContacts() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user resets roles of removed contacts from the Estate Contacts");
-        PageFactory.probateFormsOC01Page().resetRolesOfContacts();
     }
 }

@@ -761,6 +761,24 @@
     "amendmentDate4": "12/01/2021",
     "advertisingDate1": "02/05/2022",
     "advertisingDate2": "04/18/2022",
-    "advertisingDate3": "07/30/2022"
+    "advertisingDate3": "07/30/2022",
+    "PrincipalCommissionAmountForm1": "1,000.00",
+    "PrincipalCommissionAmountForm2": "2,500.50",
+    "PrincipalCommissionAmountForm3": "3,750.00",
+    "PrincipalCommissionAmountForm4": "4,200.25",
+    "PrincipalCommissionAmountForm5": "5,999.99",
+    "PrincipalCommissionAmountForm6": "600.00",
+    "PrincipalCommissionAmountForm7": "7,000.75",
+    "PrincipalCommissionAmountForm8": "8,800.80",
+    "PrincipalCommissionDateForm1": "01/15/2025",
+    "PrincipalCommissionDateForm2": "02/20/2025",
+    "PrincipalCommissionDateForm3": "03/10/2025",
+    "PrincipalCommissionDateForm4": "04/25/2025",
+    "PrincipalCommissionDateForm5": "05/05/2025",
+    "PrincipalCommissionDateForm6": "06/30/2025",
+    "PrincipalCommissionDateForm7": "07/07/2025",
+    "PrincipalCommissionDateForm8": "08/18/2025",
+    "reserveAmount": "15,000.00",
+    "reservePurpose": "To cover anticipated legal fees related to ongoing litigation."
   }
 }

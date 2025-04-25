@@ -183,4 +183,39 @@ public class probateFormsOC02Steps {
         CommonSteps.logInfo("Verified that same attachment is displayed on page 7");
         PageFactory.probateFormsOC02Page().verifySameAttachmentIsDisplayedOnPage7();
     }
+
+    @Then("user verifies correct trust name is displayed on page 8 and is not editable")
+    public void userVerifiesCorrectTrustNameIsDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that correct trust name is displayed on page 8 and is not editable");
+        PageFactory.probateFormsOC02Page().verifyCorrectTrustNameIsDisplayedOnPage();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies correct trust name is displayed on page 9 and is not editable")
+    public void userVerifiesCorrectTrustNameIsDisplayedOnPage9() throws AutomationException {
+        CommonSteps.logInfo("Verified that correct trust name is displayed on page 9 and is not editable");
+        PageFactory.probateFormsOC02Page().verifyCorrectTrustNameIsDisplayedOnPage9();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies principal amount and date can be added")
+    public void userVerifiesPrincipalAmountAndDateCanBeAdded() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that principal amount and date can be added");
+        PageFactory.probateFormsOC02Page().verifyPrincipalAmountAndDateCanBeAdded();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayed() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed");
+        PageFactory.probateFormsOC02Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies both the fields are editable and accept values")
+    public void userVerifiesBothTheFieldsAreEditableAndAcceptValues() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that both the fields are editable and accept values");
+        PageFactory.probateFormsOC02Page().verifyBothTheFieldsAreEditableAndAcceptValues();
+        CommonSteps.takeScreenshot();
+    }
 }

@@ -89,20 +89,20 @@ Feature: 6in1 probate form OC01 Feature
 
   Scenario: Verify, if the initials are added then name address disappears, if initials are removed then name and address appears.
     When user navigates to page number: "4"
-    And user adds initials
-    Then user verifies name and address gets disappear
-    When user removes initials
-    Then user verifies name and address of the beneficiaries is displayed
+    And user adds initials for "OC01"
+    Then user verifies name and address gets disappear for "OC01"
+    When user removes initials for "OC01"
+    Then user verifies name and address of the beneficiaries is displayed for "OC01"
 
   Scenario: Verify, comments can be added for that particular beneficiary.
     When user adds comments
     Then user verifies comments are added and auto saved
 
   Scenario: Verify, relationship of the beneficiary with the given estate/trust is displayed under relationship section.
-    Then user verifies correct relationship is auto fetched and displayed under relationship section
+    Then user verifies correct relationship is auto fetched and displayed under relationship section for "OC01" form
 
   Scenario: Verify, interest value for each beneficiary.
-    Then user verifies interest is auto fetched from beny worksheet
+    Then user verifies interest is auto fetched from beny worksheet for "OC01" form
 
   Scenario: Verify, if the display as attachment checkbox is checked then all the beneficiaries are displayed in attachment.
     When user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox
@@ -173,25 +173,25 @@ Feature: 6in1 probate form OC01 Feature
     Then user verifies Estate's name is auto fetched and correctly displayed
 
   Scenario: Verify, if displayed on checkbox is checked, then the contacts are displayed on the form.
-    When user checks the Display checkbox for beneficiaries
+    When user checks the Display checkbox for beneficiaries of "OC01" form
       #Verify, if proportion entered in the income part is displayed on the form
     And user enters proportion for beneficiaries
-    Then user verifies the contacts for which the checkbox is checked are displayed on the form
+    Then user verifies the contacts for which the checkbox is checked are displayed on the "OC01" form
     And user verifies entered proportion values are correctly displayed on the form
 
   Scenario: Verify, all the contacts are moved to attachment if the display all bene in attachment checkbox is checked.
     When user checks 'Display ALL INCOME Distributees on attachment' checkbox
-    Then user verifies all the beneficiary contacts are moved to the attachment
+    Then user verifies all the beneficiary contacts are moved to the attachment for "OC01" form
 
   Scenario: Verify, trust's name is auto fetched and correctly displayed.
     When user navigates to page number: "11"
-    Then user verifies correct trust name is displayed on the form
+    Then user verifies correct trust name is displayed on the "OC01" form
 
   Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
-    Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner
+    Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner on "OC01" form
 
   Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
-    Then user verifies all the remaining petitioners are displayed as a part of attachment
+    Then user verifies all the remaining petitioners are displayed as a part of attachment for "OC01" form
 
   Scenario: Verify form can be printed in pdf
     When user click on print form button
@@ -200,22 +200,22 @@ Feature: 6in1 probate form OC01 Feature
 
   Scenario: Verify, if the notification if the selected contact is removed from the estate.
     When user navigates to Estate Contacts tab
-    Then user verifies notification is displayed when the contact selected as the petitioner is removed from the estate contacts
+    Then user verifies for "OC01" form notification is displayed when the contact selected as the petitioner is removed from the estate contacts
       #Verify, notification popup is shown for removal of contact already in use.
-    Then user verifies notification is displayed when the beneficiary contact is removed from the estate contacts
+    Then user verifies for "OC01" form notification is displayed when the beneficiary contact is removed from the estate contacts
 
   Scenario: Verify, if the contact is removed, it is removed from the form as well.
     When user navigates to the probate forms tab
     And user click on the "OC 01" form
     And user navigates to page number: "2"
-    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the form
+    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the "OC01" form
 
   Scenario: Verify, if for a user role of beny is removed.
     When user navigates to page number: "4"
-    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the form
+    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the "OC01" form
 
   Scenario: Reset Roles of Removed Contacts
-    When user resets roles of removed contacts from the Estate Contacts
+    When user resets roles of removed contacts from the Estate Contacts of "OC01" form
 
   Scenario: Reset the OC01 form
     When user navigates to the probate forms tab
