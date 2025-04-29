@@ -1374,6 +1374,15 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void clickOnPrintFormButton() throws AutomationException, AWTException, InterruptedException {
+        File[] files = null;
+        files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS)) ? System.getProperty("user.dir") + "\\downloads" : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+        for (File file : files) {
+            File existingFile = new File(String.valueOf(file));
+            if (file.exists()) {
+                existingFile.delete();
+            }
+        }
+
         WebElement printButton = driverUtil.getWebElementAndScroll(PRINTFORM_BUTTON);
         ((JavascriptExecutor) DriverFactory.drivers.get()).executeScript("arguments[0].scrollIntoView({block: 'center'});", printButton);
         waitForVisibleElement(By.xpath(PRINTFORM_BUTTON));
