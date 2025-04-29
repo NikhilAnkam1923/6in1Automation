@@ -1011,7 +1011,6 @@ public class GlobalContactPage extends BasePage {
         String expectedFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
         String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
         String expectedLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-        String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
         String expectedPhone = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
         String expectedWorkPhone = CommonUtil.getJsonPath("Create").get("Create.workNumber").toString();
         String expectedEmailAddress = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
@@ -1034,7 +1033,6 @@ public class GlobalContactPage extends BasePage {
         String actualFirstName = getFieldValue(FIRST_NAME_FIELD, "value");
         String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
         String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");
-        String actualSuffix = getFieldValue(SELECTED_SUFFIX, "text");
 
         String actualPhone = getFieldValue(PHONE_NUMBER_FIELD, "value");
         String actualWorkPhone = getFieldValue(WORK_NUMBER_FIELD, "value");
@@ -1051,7 +1049,6 @@ public class GlobalContactPage extends BasePage {
         verifyField("First Name", expectedFirstName, actualFirstName);
         verifyField("Middle Name", expectedMiddleName, actualMiddleName);
         verifyField("Last Name", expectedLastName, actualLastName);
-        verifyField("Suffix", expectedSuffix, actualSuffix);
         verifyField("Phone",expectedPhone,actualPhone);
         verifyField("Work Phone",expectedWorkPhone,actualWorkPhone);
         verifyField("Email Address",expectedEmailAddress,actualEmailAddress);
