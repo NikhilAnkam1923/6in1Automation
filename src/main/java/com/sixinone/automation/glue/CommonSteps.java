@@ -519,6 +519,7 @@ public class CommonSteps {
     @Then("user selects the aka checkbox")
     public void userSelectsTheAkaCheckbox() throws AutomationException {
         CommonSteps.logInfo("user selects the aka checkbox");
+        scrollToElement(SHOW_AKA_CHECkBOX);
         DriverFactory.drivers.get().findElement(By.xpath(SHOW_AKA_CHECkBOX)).click();
     }
 

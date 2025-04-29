@@ -126,7 +126,7 @@ public class ProbateFormsRW08Page extends BasePage {
     static String corporateFiduciaryFirm;
     static String fiduciaryPhoneForm;
     static String fiduciaryEmailForm;
-    static String attorneyAddressLine1Form;
+    static String attorneyAddressLineForm;
     static String attorneyPhoneForm;
     static String attorneyEmailForm;
     static String attorneyCityStateCodeZip;
@@ -348,6 +348,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
     public void verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
+
 
         scrollToElementAndClick(BENE_NAME_FIELD);
 
@@ -635,7 +636,7 @@ public class ProbateFormsRW08Page extends BasePage {
         String attorneyCityForm = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
         String attorneyStateForm = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
         String attorneyZipForm = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
-        attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        attorneyAddressLineForm = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString() +", "+CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine2").toString();
         attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
         attorneyEmailForm = CommonUtil.getJsonPath("attorney2").get("attorney2.emailId").toString();
 
@@ -788,7 +789,7 @@ public class ProbateFormsRW08Page extends BasePage {
 //            boolean isVerifiedAllNamesAndAddresses =
                     verifyAllNamesAndAddresses(pdfFilePath, expectedNames, expectedAddresses);
 
-            if (!isVerifiedDateLettersGranted || isVerifiedServedDate || isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails) {
+            if (!isVerifiedDateLettersGranted || !isVerifiedServedDate || !isVerifiedSignedDate || !isVerifiedFileNumber || !isverifiedCorporateFiduciaryAndPersonDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -974,7 +975,7 @@ public class ProbateFormsRW08Page extends BasePage {
         // Validate Name of Person Details (2nd occurrence)
         if (personName != null) {
             validateField("Name of Person", personName, selectedNameOfPerson);
-            validateField("Person Address", personAddress, attorneyAddressLine1Form);
+            validateField("Person Address", personAddress, attorneyAddressLineForm);
             validateField("Person City, State, Zip", personCityStateZip, attorneyCityStateCodeZip);
             validateField("Person Telephone", personTelephone, attorneyPhoneForm);
             validateField("Person Email", personEmail, attorneyEmailForm);

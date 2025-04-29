@@ -477,6 +477,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary contacts updated successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary contacts updated successfully.")));
 
         WebDriverUtil.waitForAWhile();
@@ -495,14 +496,14 @@ public class ProbateFormsRW06Page extends BasePage {
 
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
         scrollToElementAndClick(SHOW_AKA_CHECkBOX);
         WebDriverUtil.waitForAWhile(2);
     }
 
-    public void
-    verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
+    public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
         for (int i = 0; i < corporateFiduciariesKey.size(); i++) {
             String fiduciaryKey = corporateFiduciariesKey.get(i);
 

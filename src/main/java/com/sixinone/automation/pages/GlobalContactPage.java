@@ -744,26 +744,6 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-    public List<String> getAllDisplayedContactNames() throws AutomationException {
-        List<String> contactNames = new ArrayList<>();
-        while (true) {
-            List<WebElement> contactNameElements = driverUtil.getWebElements(CONTACT_NAMES_COLUMN);
-            for (WebElement nameElement : contactNameElements) {
-                String nameText = nameElement.getText().trim();
-                if (!nameText.isEmpty()) {
-                    contactNames.add(nameText);
-                }
-            }
-            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
-                break;
-            }
-            nextPageButton.click();
-            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        }
-        return contactNames;
-    }
-
     public void enterExistedEIN() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
         WebElement EINField = driverUtil.getWebElement(ENTITY_EIN_FIELD);
@@ -889,11 +869,13 @@ public class GlobalContactPage extends BasePage {
         verifyAutoFetchedFields();
         clickButtonSave();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         fillAddressInfo();
         verifyAutoFetchedFields();
         clickButtonSave();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
     }
 
