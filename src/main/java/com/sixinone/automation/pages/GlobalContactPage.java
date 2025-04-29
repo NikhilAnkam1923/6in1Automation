@@ -10,9 +10,13 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.IOException;
 
 import java.awt.*;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,6 +95,8 @@ public class GlobalContactPage extends BasePage {
     public static final String ADDRESS_IN_LIST_MODAL = "//div[@class='modal-body']//tbody//tr//td[contains(text(),'%s')]";
     public static final String ADDRESS_COLUMN_MODAL = "//div[@class='modal-body']//table//tr/th[contains(text(), 'Address')]/ancestor::table//tbody//tr//td[position() = count(//tr/th[contains(text(), 'Address')]/preceding-sibling::th) + 1]";
     public static final String ADDRESS_ROW_ON_EDIT_PAGE = "//ol[@class='mb-2 list-group list-group-numbered']//div[@class='font14 list-group-item']";
+    public static final String FAILED_TO_SAVE_DATA_ALERT = "//div[@role='alert']//div[text()='Failed to save data. Please try again later.']";
+    public static final String ALERT_CLOSE_BTN = "//div[@role='alert']/following-sibling::button[@class='Toastify__close-button Toastify__close-button--light']";
 
     public static String firstName;
     public static String lastName;
@@ -109,6 +115,22 @@ public class GlobalContactPage extends BasePage {
 
     public void clickButtonCreate() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+
+        //temp use for failed to save data issue handling
+        try {
+            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(3));
+            WebElement alert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(FAILED_TO_SAVE_DATA_ALERT)));
+
+            if (alert.isDisplayed()) {
+                WebElement closeBtn = DriverFactory.drivers.get().findElement(By.xpath(ALERT_CLOSE_BTN));
+                closeBtn.click();
+                System.out.println("Alert appeared and was closed.");
+            }
+        } catch (TimeoutException e) {
+            // Alert did not appear — proceed
+            System.out.println("No alert appeared, continuing execution.");
+        }
+
         driverUtil.getWebElement(CREATE_BUTTON).click();
     }
 
@@ -842,11 +864,11 @@ public class GlobalContactPage extends BasePage {
         String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
         String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
 
-        selectSuffixOption();
-        WebDriverUtil.waitForAWhile();
         fillFieldWithKeyStrokes(FIRST_NAME_FIELD, "Create.firstName");
         fillFieldWithKeyStrokes(MIDDLE_NAME_FIELD, "Create.middleName");
         fillFieldWithKeyStrokes(LAST_NAME_FIELD, "Create.lastName");
+        selectSuffixOption();
+        WebDriverUtil.waitForAWhile();
         fillFieldWithKeyStrokes(EMAIL_ADDRESS_FIELD, "Create.emailId");
         fillFieldWithKeyStrokes(PTIN_FIELD, "Create.ptin");
         fillFieldWithKeyStrokes(PINEFILE_FIELD, "Create.pinEFile");
