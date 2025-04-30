@@ -2295,6 +2295,7 @@ public class ProbateFormsOC01Page extends BasePage {
     }
 
     public void verifyAllTheBeneficiaryContactsAreMovedToTheAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
         driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
         WebDriverUtil.waitForAWhile(2);
 

@@ -1489,7 +1489,7 @@ public class ProbateFormsOC02Page extends BasePage{
     }
 
     public void verifyNameAndAddressGetsDisappear() throws AutomationException {
-        WebDriverUtil.waitForAWhile();
+        WebDriverUtil.waitForAWhile(2);
         WebElement nameAndAddressField = DriverFactory.drivers.get().findElement(By.xpath(BENE_DETAILS_FORM));
 
         if (!nameAndAddressField.getText().isEmpty()) {
