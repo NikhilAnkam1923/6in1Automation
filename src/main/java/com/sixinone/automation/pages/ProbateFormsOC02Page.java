@@ -1864,6 +1864,7 @@ public class ProbateFormsOC02Page extends BasePage{
 
     public void checkTheFiduciaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleFiduciary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -1871,6 +1872,7 @@ public class ProbateFormsOC02Page extends BasePage{
 
     public void uncheckTheFiduciaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleFiduciary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -1878,6 +1880,7 @@ public class ProbateFormsOC02Page extends BasePage{
 
     public void checkTheBeneficiaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleBeneficiary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -1885,20 +1888,7 @@ public class ProbateFormsOC02Page extends BasePage{
 
     public void uncheckTheBeneficiaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleBeneficiary").toString();
-        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
-        driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
-        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
-    }
-
-    public void checkTheAttorneyRole() throws AutomationException, IOException, ParseException {
-        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAttorney").toString();
-        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
-        driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
-        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
-    }
-
-    public void uncheckTheAttorneyRole() throws AutomationException, IOException, ParseException {
-        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAttorney").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();

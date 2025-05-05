@@ -1065,7 +1065,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 "Name or Corporate Fiduciary (if applicable)"});
 
         fieldMarkers.put("Issued To", new String[]{
-                "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully request",
+                "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully",
                 "(Name or Corporate Name)"});
 
         fieldMarkers.put("Signature of Officer/Representative", new String[]{
@@ -1182,7 +1182,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
         switch (fieldName) {
             case "Issued To":
-                return rawText.replaceAll("(?i)\\b(that Letters be issued to )\\b", "")
+                return rawText.replaceAll("(?i)\\b(request that Letters be issued to )\\b", "")
                         .replaceAll("[,\\.\\s]+$", "")
                         .trim();
 

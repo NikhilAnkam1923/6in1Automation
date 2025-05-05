@@ -348,7 +348,7 @@ public class ProbateFormsRWxxPage extends BasePage {
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
             boolean isVerifiedReviewerName = verifyReviewerName(pdfFilePath);
-            boolean isVerifiedReviewerDesignation = verifyPDFSection(pdfFilePath, "Reviewer Designation", "I, Louis Pat ,being duly sworn according to law", "Harry and Steve ,", enteredReviewerDesignation);
+            boolean isVerifiedReviewerDesignation = verifyPDFSection(pdfFilePath, "Reviewer Designation", "I, Louis Pat , being duly sworn according to law,", "Harry and Steve ,", enteredReviewerDesignation);
             boolean isVerifiedWitnessNames = verifyWitnessNames(pdfFilePath);
             boolean isVerifiedReason = verifyPDFSection(pdfFilePath, "Reviewer Reason", "is/are not readily available to prove the signature of the Testator by reason of", "Sworn to or affirmed and subscribed", enteredReason);
             boolean isVerifiedReviewerSign = verifyReviewerSign(pdfFilePath);
@@ -531,7 +531,7 @@ public class ProbateFormsRWxxPage extends BasePage {
         document.close();
 
         String beforeLine = "depose and say that I, the Deputy Register of Wills in the above-referenced estate, declare that";
-        String afterLine = "whose signature(s) appears as subscribing witness(es) to the WILL or CODICIL of the above Testator,";
+        String afterLine = "whose signature(s) appear(s) as subscribing witness(es) to the WILL or CODICIL of the above Testator,";
 
         int startIndex = pdfText.indexOf(beforeLine);
         int endIndex = pdfText.indexOf(afterLine, startIndex);

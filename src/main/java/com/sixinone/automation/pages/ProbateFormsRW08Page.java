@@ -776,6 +776,7 @@ public class ProbateFormsRW08Page extends BasePage {
                     Beneficiary7Form
             );
 
+
             List<String> expectedAddresses = Arrays.asList(
                     beneAddress1Form,
                     beneAddress2Form,
@@ -996,7 +997,7 @@ public class ProbateFormsRW08Page extends BasePage {
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
 
-        String beforeLine = "Address";
+        String beforeLine = "Name Address";
         String afterLine = "Copyright (c) 2016 form software only The Lackner Group, Inc.Form RW-08 eff. 09.01.16";
 
         List<String> extractedLines = extractDataAfterThirdOccurrence(pdfText, beforeLine, afterLine);
@@ -1072,7 +1073,7 @@ public class ProbateFormsRW08Page extends BasePage {
 
             if (line.equalsIgnoreCase(beforeLine)) {
                 addressCount++;
-                if (addressCount == 3) { // Start capturing after the third occurrence
+                if (addressCount == 1) { // Start capturing after the third occurrence
                     capture = true;
                     continue;
                 }

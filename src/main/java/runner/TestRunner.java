@@ -13,12 +13,7 @@ import java.io.IOException;
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )
-public class
-
-
-
-
-TestRunner extends BaseRunner {
+public class TestRunner extends BaseRunner {
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass(ITestContext iTestContext) throws IOException {

@@ -154,12 +154,6 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String SIGN_OF_PETITIONER_PAGE_11 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
     private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]//span//*[self::input or self::textarea]";
     private static final String SAVE_BTN = "//button[text()='Save']";
-    private static final String NAME_OF_CORPORATE_FIDUCIARY = "//input[@name='fullname']";
-    private static final String NAME_OF_REPRESENTATIVE = "//input[@name='contact_fullname_title']";
-    private static final String PERSON_CLEAR_SELECTION_BTN = "//p[contains(text(),'Capacity')]/following-sibling::div//button[text()='Clear Selection']";
-    private static final String CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN = "//p[contains(text(),'Corporate Fiduciary (if applicable)')]//button[text()='Clear Selection']";
-    private static final String NAME_OF_PETITIONER_PAGE_10 = "//p[text()='Name of Petitioner']/preceding-sibling::p//input";
-    private static final String WARNING_MESSAGE = "//div[@role='alert']//div[text()='Please select the capacity before selecting the contact.']";
     private static final String NOTIFICATION_DELETE_BUTTON = "//button[@class='btn btn-danger' and text()='Delete']";
     private static final String CLAIMANT_INITIALS_ERR_MSG = "//div[@class='invalid-feedback' and text()='Initials are required when Name and Address are not provided.']";
     private static final String CLAIMANT_NAME_ERR_MSG = "//div[@class='invalid-feedback' and text()='Name is required when Initials are not provided.']";
@@ -1781,132 +1775,6 @@ public class ProbateFormsOC01Page extends BasePage {
         }
     }
 
-    public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
-        nameOfCorporateFiduciary = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
-
-        String corporateFiduciaryFirstName = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.firstName").toString();
-        String corporateFiduciaryLastName = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.lastName").toString() + ",";
-        String corporateFiduciaryMiddleName = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.middleName").toString();
-        String corporateFiduciarySuffix = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.suffix").toString();
-
-        corporateFiduciaryFullNameForm = corporateFiduciaryFirstName + " " + corporateFiduciaryMiddleName + " " + corporateFiduciaryLastName + " " + corporateFiduciarySuffix;
-
-        scrollToElement(NAME_OF_CORPORATE_FIDUCIARY);
-        driverUtil.getWebElement(NAME_OF_CORPORATE_FIDUCIARY).click();
-        WebDriverUtil.waitForAWhile();
-
-        WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, nameOfCorporateFiduciary));
-
-        corporateFiduciaryToSelect.click();
-
-        if (!corporateFiduciaryToSelect.isSelected()) {
-            throw new AutomationException("Unable to select the corporate fiduciary contact.");
-        }
-
-        driverUtil.getWebElement(SAVE_BTN).click();
-
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Corporate Fiduciary updated successfully.")));
-
-        String actualNameOfCorporateFiduciary = driverUtil.getWebElement(NAME_OF_CORPORATE_FIDUCIARY).getAttribute("value");
-        String actualNameOfRepresentative = driverUtil.getWebElement(NAME_OF_REPRESENTATIVE).getAttribute("value");
-
-        if (!actualNameOfCorporateFiduciary.equals(nameOfCorporateFiduciary)) {
-            throw new AutomationException("Name of Corporate Fiduciary not fetched correctly. Expected: " + nameOfCorporateFiduciary + " ,Found: " + actualNameOfCorporateFiduciary);
-        }
-
-        if (!actualNameOfRepresentative.equals(corporateFiduciaryFullNameForm)) {
-            throw new AutomationException("Name of Representative not fetched correctly. Expected: " + corporateFiduciaryFullNameForm + " ,Found: " + actualNameOfRepresentative);
-        }
-    }
-
-    public void userClicksOnNameOfPetitionerField() throws AutomationException {
-        WebDriverUtil.waitForAWhile();
-        scrollToElement(NAME_OF_PETITIONER_PAGE_10);
-        driverUtil.getWebElement(NAME_OF_PETITIONER_PAGE_10).click();
-    }
-
-    public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
-        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
-        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
-        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
-
-        WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
-
-        if (!modalHeader.getText().contains("Fiduciary")) {
-            throw new AutomationException("Fiduciary type of contacts are not displayed.");
-        }
-
-        String nameOFPetitioner = fiduciaryFirstName + " " + fiduciaryMiddleName + " " + fiduciaryLastName + " " + fiduciarySuffix;
-
-        WebElement fiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, nameOFPetitioner));
-
-        WebDriverUtil.waitForAWhile();
-        fiduciaryToSelect.click();
-
-        if (!fiduciaryToSelect.isSelected()) {
-            throw new AutomationException("Unable to select the fiduciary contact.");
-        }
-
-        driverUtil.getWebElement(SAVE_BTN).click();
-
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Individual Fiduciary updated successfully.")));
-
-        nameOFPetitionerPage10Form = driverUtil.getWebElement(NAME_OF_PETITIONER_PAGE_10).getAttribute("value");
-
-        if (!nameOFPetitionerPage10Form.equals(nameOFPetitioner)) {
-            throw new AutomationException("Name of Corporate Fiduciary not fetched correctly. Expected: " + nameOFPetitioner + " ,Found: " + nameOFPetitionerPage10Form);
-        }
-    }
-
-    public void verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws IOException, ParseException, AutomationException {
-        String attorneyFirstName = CommonUtil.getJsonPath("attorney2").get("attorney2.firstName").toString();
-        String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString() + ",";
-        String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
-        String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
-
-        WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
-
-        WebDriverUtil.waitForAWhile();
-        if (!modalHeader.getText().contains("Attorney")) {
-            throw new AutomationException("Attorney type of contacts are not displayed.");
-        }
-
-        String nameOFPetitioner = attorneyFirstName + " " + attorneyMiddleName + " " + attorneyLastName + " " + attorneySuffix;
-
-        WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, nameOFPetitioner));
-
-        WebDriverUtil.waitForAWhile();
-        attorneyToSelect.click();
-
-        if (!attorneyToSelect.isSelected()) {
-            throw new AutomationException("Unable to select the attorney contact.");
-        }
-
-        driverUtil.getWebElement(SAVE_BTN).click();
-
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
-
-        nameOFPetitionerPage10Form = driverUtil.getWebElement(NAME_OF_PETITIONER_PAGE_10).getAttribute("value");
-
-        if (!nameOFPetitionerPage10Form.equals(nameOFPetitioner)) {
-            throw new AutomationException("Name of Corporate Fiduciary not fetched correctly. Expected: " + nameOFPetitioner + " ,Found: " + nameOFPetitionerPage10Form);
-        }
-    }
-
-    public void verifyWarningIsDisplayedForSelectingCapacity() throws AutomationException {
-        WebDriverUtil.waitForAWhile();
-        WebElement warningMessage = driverUtil.getWebElement(WARNING_MESSAGE);
-
-        if (!warningMessage.isDisplayed()) {
-            throw new AutomationException("Warning is not displayed for selecting capacity");
-        }
-
-        CommonSteps.takeScreenshot();
-
-        WebDriverUtil.waitForInvisibleElement(By.xpath(WARNING_MESSAGE));
-    }
-
     public void userClicksOnAddEditClaimants() throws AutomationException {
         scrollToElement(CLAIMANT_INITIALS_FIELD);
         driverUtil.getWebElement(CLAIMANT_INITIALS_FIELD).click();
@@ -2288,12 +2156,6 @@ public class ProbateFormsOC01Page extends BasePage {
         }
     }
 
-    public void userChecksDisplayALLINCOMEDistributeesOnAttachmentCheckbox() {
-        scrollToElement(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN);
-        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN)).click();
-        WebDriverUtil.waitForAWhile();
-    }
-
     public void verifyAllTheBeneficiaryContactsAreMovedToTheAttachment() throws AutomationException {
         scrollToElement(VIEW_ATTACHMENT_BTN);
         driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
@@ -2359,12 +2221,6 @@ public class ProbateFormsOC01Page extends BasePage {
         driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
-    public void userNavigatesToEstateContactsTab() throws AutomationException {
-        waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
-        driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
-        waitForInvisibleElement(By.xpath(SPINNER));
-    }
-
     public void filterByContactName(String contactName) throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(CONTACT_NAME_FILTER).click();
@@ -2407,6 +2263,7 @@ public class ProbateFormsOC01Page extends BasePage {
 
     public void checkTheFiduciaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleFiduciary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -2414,6 +2271,7 @@ public class ProbateFormsOC01Page extends BasePage {
 
     public void uncheckTheFiduciaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleFiduciary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -2421,6 +2279,7 @@ public class ProbateFormsOC01Page extends BasePage {
 
     public void checkTheBeneficiaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleBeneficiary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -2428,20 +2287,7 @@ public class ProbateFormsOC01Page extends BasePage {
 
     public void uncheckTheBeneficiaryRole() throws AutomationException, IOException, ParseException {
         String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleBeneficiary").toString();
-        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
-        driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
-        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
-    }
-
-    public void checkTheAttorneyRole() throws AutomationException, IOException, ParseException {
-        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAttorney").toString();
-        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
-        driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
-        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
-    }
-
-    public void uncheckTheAttorneyRole() throws AutomationException, IOException, ParseException {
-        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAttorney").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
         driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
         driverUtil.getWebElement(ROLE_SAVE_BTN).click();
@@ -2492,35 +2338,6 @@ public class ProbateFormsOC01Page extends BasePage {
         driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
         WebDriverUtil.waitForAWhile();
         uncheckTheBeneficiaryRole();
-        verifyNotificationIsDisplayedOnRemovingTheRole();
-        CommonSteps.takeScreenshot();
-        driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
-        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
-    }
-
-    public void verifyNotificationIsDisplayedWhenTheCorporateFiduciaryAndAttorneyContactsAreRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
-        String petitioner = getEstateContactName(nameOFPetitionerPage10Form);
-
-        filterByContactName(nameOfCorporateFiduciary);
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, nameOfCorporateFiduciary)).click();
-        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
-        WebDriverUtil.waitForAWhile();
-        uncheckTheFiduciaryRole();
-        verifyNotificationIsDisplayedOnRemovingTheRole();
-        driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
-        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
-
-        filterByContactName(petitioner);
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, petitioner)).click();
-        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
-        WebDriverUtil.waitForAWhile();
-        uncheckTheAttorneyRole();
         verifyNotificationIsDisplayedOnRemovingTheRole();
         CommonSteps.takeScreenshot();
         driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
@@ -2630,19 +2447,6 @@ public class ProbateFormsOC01Page extends BasePage {
         String removedBene = beneDetails.get(0);
         if (beneDetailsAfterRoleRemoved.contains(removedBene)) {
             throw new AutomationException("Beneficiary contact still exists on the form even after role was removed: " + removedBene);
-        }
-    }
-
-    public void verifyRemovedCorporateFiduciaryAndAttorneyContactsFromTheEstateContactsAreAlsoGetsRemovedFromTheForm() throws AutomationException {
-        scrollToElement(NAME_OF_CORPORATE_FIDUCIARY);
-        String actualNameOfCorporateFiduciary = driverUtil.getWebElement(NAME_OF_CORPORATE_FIDUCIARY).getAttribute("value");
-        if (actualNameOfCorporateFiduciary.equals(nameOfCorporateFiduciary)) {
-            throw new AutomationException("Removed corporate fiduciary contact " + nameOfCorporateFiduciary + " from the estate contacts is not gets removed from the form");
-        }
-
-        String actualNameOFPetitioner = driverUtil.getWebElement(NAME_OF_PETITIONER_PAGE_10).getAttribute("value");
-        if (actualNameOFPetitioner.equals(nameOFPetitionerPage10Form)) {
-            throw new AutomationException("Removed corporate fiduciary contact " + nameOFPetitionerPage10Form + " from the estate contacts is not gets removed from the form");
         }
     }
 

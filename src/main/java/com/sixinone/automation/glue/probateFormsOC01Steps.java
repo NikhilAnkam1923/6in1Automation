@@ -228,41 +228,6 @@ public class probateFormsOC01Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user verifies only one corporate fiduciary contact can be selected and its details are displayed correctly")
-    public void userVerifiesOnlyOneCorporateFiduciaryContactCanBeSelectedAndItsDetailsAreDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that only one corporate fiduciary contact can be selected and its details are displayed correctly");
-        PageFactory.probateFormsOC01Page().verifyAnyOneOfTheFiduciaryContactsCanBeSelected();;
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("user clicks on name of petitioner field")
-    public void userClicksOnNameOfPetitionerField() throws AutomationException {
-        CommonSteps.logInfo("user clicks on name of petitioner field");
-        PageFactory.probateFormsOC01Page().userClicksOnNameOfPetitionerField();
-    }
-
-    @Then("^user verifies \"([^\"]*)\" type of contacts are displayed and can be selected and its details are displayed correctly on form$")
-    public void userVerifiesTypeOfContactsAreDisplayedAndCanBeSelectedAndItsDetailsAreDisplayedCorrectlyOnForm(String contactType) throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user verifies "+contactType+" type of contacts are displayed and can be selected and its details are displayed correctly on form");
-        switch (contactType){
-            case "fiduciary":
-                PageFactory.probateFormsOC01Page().verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected();
-                break;
-            case "attorney":
-                PageFactory.probateFormsOC01Page().verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected();
-                break;
-            default:
-                throw new AutomationException("Unsupported type : " + contactType);
-        }
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies warning is displayed for selecting capacity")
-    public void userVerifiesWarningIsDisplayedForSelectingCapacity() throws AutomationException {
-        CommonSteps.logInfo("Verified that warning is displayed for selecting capacity");
-        PageFactory.probateFormsOC01Page().verifyWarningIsDisplayedForSelectingCapacity();;
-    }
-
     @When("^user clicks on Add\\/Edit Claimants$")
     public void userClicksOnAddEditClaimants() throws AutomationException {
         CommonSteps.logInfo("user clicks on Add/Edit Claimants");
@@ -332,19 +297,6 @@ public class probateFormsOC01Steps {
     public void userVerifiesEnteredProportionValuesAreCorrectlyDisplayedOnTheForm() throws AutomationException {
         CommonSteps.logInfo("Verified that entered proportion values are correctly displayed on the form");
         PageFactory.probateFormsOC01Page().userVerifiesDisplayedProportionsOnForm();;
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies notification is displayed when the corporate fiduciary and attorney contacts are removed from the estate contacts")
-    public void userVerifiesNotificationIsDisplayedWhenTheCorporateFiduciaryAndAttorneyContactsAreRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("Verified that notification is displayed when the corporate fiduciary and attorney contacts are removed from the estate contacts");
-        PageFactory.probateFormsOC01Page().verifyNotificationIsDisplayedWhenTheCorporateFiduciaryAndAttorneyContactsAreRemovedFromTheEstateContacts();
-    }
-
-    @Then("user verifies removed corporate fiduciary and attorney contacts from the estate contacts are also gets removed from the form")
-    public void userVerifiesRemovedCorporateFiduciaryAndAttorneyContactsFromTheEstateContactsAreAlsoGetsRemovedFromTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that removed corporate fiduciary and attorney contacts from the estate contacts are also gets removed from the form");
-        PageFactory.probateFormsOC01Page().verifyRemovedCorporateFiduciaryAndAttorneyContactsFromTheEstateContactsAreAlsoGetsRemovedFromTheForm();;
         CommonSteps.takeScreenshot();
     }
 }

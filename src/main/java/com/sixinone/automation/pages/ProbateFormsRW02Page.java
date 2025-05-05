@@ -2051,7 +2051,7 @@ public class ProbateFormsRW02Page extends BasePage {
         document.close();
 
         // Define start and end markers
-        String beforeLine = "Petitioner(s) named below, who is/are 18 years of age or older, apply(ies) for Letters as specified below, and in support thereof aver(s) the following and respectfully request(s) the grant of Letters in the appropriate form:";
+        String beforeLine = "thereof aver(s) the following and respectfully request(s) the grant of Letters in the appropriate form:";
         String afterLine = "Oath of Personal Representative from page 2";
 
         Set<String> extractedPetitionerNames = new LinkedHashSet<>();
@@ -2064,7 +2064,7 @@ public class ProbateFormsRW02Page extends BasePage {
         for (String line : allLines) {
             String trimmedLine = line.trim();
 
-            if (trimmedLine.contains(beforeLine)) {
+            if (trimmedLine.startsWith(beforeLine)) {
                 captureNames = true;
                 continue;
             }
