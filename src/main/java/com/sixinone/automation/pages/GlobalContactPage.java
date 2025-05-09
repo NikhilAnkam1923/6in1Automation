@@ -115,22 +115,6 @@ public class GlobalContactPage extends BasePage {
 
     public void clickButtonCreate() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-
-        //temp use for failed to save data issue handling
-        try {
-            WebDriverWait wait = new WebDriverWait(DriverFactory.drivers.get(), Duration.ofSeconds(3));
-            WebElement alert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(FAILED_TO_SAVE_DATA_ALERT)));
-
-            if (alert.isDisplayed()) {
-                WebElement closeBtn = DriverFactory.drivers.get().findElement(By.xpath(ALERT_CLOSE_BTN));
-                closeBtn.click();
-                System.out.println("Alert appeared and was closed.");
-            }
-        } catch (TimeoutException e) {
-            // Alert did not appear — proceed
-            System.out.println("No alert appeared, continuing execution.");
-        }
-
         driverUtil.getWebElement(CREATE_BUTTON).click();
     }
 
@@ -247,6 +231,7 @@ public class GlobalContactPage extends BasePage {
         WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
         field.clear();
         field.sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString());
+        field.sendKeys(Keys.TAB);
     }
 
     private void fillField(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
@@ -256,6 +241,7 @@ public class GlobalContactPage extends BasePage {
                 .sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString())
                 .build()
                 .perform();
+        actions.sendKeys(Keys.TAB);
     }
 
     private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
@@ -296,6 +282,7 @@ public class GlobalContactPage extends BasePage {
                 .sendKeys(value)
                 .build()
                 .perform();
+        actions.sendKeys(Keys.TAB);
     }
 
     public static String filterByName() throws AutomationException {
@@ -386,6 +373,7 @@ public class GlobalContactPage extends BasePage {
                 fillField(BARID_FIELD, "Edit.barId");
                 clearField(CAF_FIELD);
                 fillField(CAF_FIELD, "Edit.caf");
+                waitForAWhile(2);
                 break;
             case "Entity Global Contact":
                 clearField(ENTITY_NAME_FIELD_CREATE);
@@ -416,6 +404,7 @@ public class GlobalContactPage extends BasePage {
                 fillField(WORK_NUMBER_FIELD, "Edit.workNumber", actions);
                 clearField(FAX_FIELD);
                 fillField(FAX_FIELD, "Edit.fax", actions);
+                waitForAWhile(2);
                 break;
 
             default:
@@ -793,6 +782,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void clickBtnManageAddress() throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(MANAGE_ADDRESS_BTN).click();
     }
 

@@ -50,7 +50,7 @@ Feature: 6in1 probate form OC01 Feature
       #Verify, all the petitioner details are auto filled.
     When user click on Petitioner name field
     And user selects multiple fiduciary contacts
-    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment
+    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC01" form
 
   Scenario: Verify, selected petitioner can be swapped and deleted.
     When user click on Petitioner name field
@@ -95,8 +95,8 @@ Feature: 6in1 probate form OC01 Feature
     Then user verifies name and address of the beneficiaries is displayed for "OC01"
 
   Scenario: Verify, comments can be added for that particular beneficiary.
-    When user adds comments
-    Then user verifies comments are added and auto saved
+    When user adds comments for "OC01" form
+    Then user verifies comments are added and auto saved for "OC01" form
 
   Scenario: Verify, relationship of the beneficiary with the given estate/trust is displayed under relationship section.
     Then user verifies correct relationship is auto fetched and displayed under relationship section for "OC01" form

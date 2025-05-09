@@ -52,12 +52,12 @@ Feature: 6in1 probate form OC02 Feature
 
   Scenario: Verify, attachment.
     When user click on Petitioner name field
-    And user selects multiple petitioners
+    And user selects multiple petitioners for "OC02" form
     Then user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment
 
   Scenario: Verify, selected petitioner can be swapped and deleted.
     When user click on Petitioner name field
-    And user swap the selected petitioner contacts
+    And user swap the selected petitioner contacts for "OC02" form
     Then user verifies for "OC02" form swapped petitioner names are reflected on UI accordingly
 
   Scenario: Verify, Testamentary trust section is enabled on selecting the radio button with the same name.

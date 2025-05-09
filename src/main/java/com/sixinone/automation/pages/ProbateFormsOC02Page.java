@@ -118,9 +118,9 @@ public class ProbateFormsOC02Page extends BasePage{
     private static final String ADVERTISING_DATE_2 = "//input[@name='advertisingDate2']";
     private static final String ADVERTISING_DATE_3 = "//input[@name='advertisingDate3']";
     private static final String BENE_DETAILS_FORM = "//p//div";
-    private static final String BENE_DETAILS_ATTACHMENT = "//div[@class='attachment-css border-0']//tr/td[textarea[contains(text(), ',')]]";
     private static final String BENE_RELATIONSHIP_FORM = "//td[@class='borderNewLeft2']//p[@class='p8-1 ft27-2 newstyle']//input";
     private static final String BENE_INTEREST_FORM = "//td[@class='borderNewLeft2 borderNewBottom2']//p[@class='p8-1 ft27-2 newstyle']//textarea";
+    private static final String BENE_DETAILS_ATTACHMENT = "//div[@class='attachment-css border-0']//tr/td[textarea[contains(text(), ',')]]";
     private static final String BENE_RELATIONSHIP_ATTACHMENT = "//div[@class='modal-body']//table/tbody/tr/td[position()=3]/textarea";
     private static final String BENE_INTEREST_ATTACHMENT = "//div[@class='modal-body']//table/tbody/tr/td[position()=4]/textarea";
     private static final String CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
@@ -1050,7 +1050,7 @@ public class ProbateFormsOC02Page extends BasePage{
         driverUtil.getWebElement(CLOSE_BTN).click();
 
         for (String detail : beneDetails) {
-            String fullName = extractFullName(detail); // Your custom logic to get full name
+            String fullName = extractFullName(detail);
             String matchedKey = findBeneficiaryKeyByName(fullName, jsonData);
 
             if (matchedKey != null) {
@@ -1514,7 +1514,6 @@ public class ProbateFormsOC02Page extends BasePage{
     public void verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection() throws IOException, ParseException, AutomationException {
         for (int i = 0; i < 7; i++) {
             String key = beneficiaryKeys.get(i);
-            System.out.println("bene keys: "+key);
             String expectedRelationship = CommonUtil.getJsonPath(key).get(key + ".Relationship").toString();
             String actualRelationship = beneRelationship.get(i).trim();
 
@@ -1527,7 +1526,6 @@ public class ProbateFormsOC02Page extends BasePage{
     public void verifyInterestIsAutoFetchedFromBenyWorksheet() throws AutomationException, IOException, ParseException {
         for (int i = 0; i < 7; i++) {
             String key = beneficiaryKeys.get(i);
-            System.out.println("bene keys: "+key);
             String expectedBeneficialInterest = CommonUtil.getJsonPath(key).get(key + ".BeneficialInterest").toString();
             String actualBeneficialInterest = beneInterest.get(i).trim();
 
@@ -1581,7 +1579,7 @@ public class ProbateFormsOC02Page extends BasePage{
         }
 
         if (!element.getAttribute("value").isEmpty()) {
-            System.out.println("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
+            CommonSteps.logInfo("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
         }
     }
 

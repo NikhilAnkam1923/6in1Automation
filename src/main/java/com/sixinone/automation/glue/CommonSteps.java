@@ -494,6 +494,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().userSavesEstateInfo();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -562,6 +565,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().userResetsTheRWForm();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userResetsTheRWForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -990,6 +996,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifySidebarAppearsAndAttorneyCanBeSelected();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1043,6 +1052,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1060,6 +1072,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().userSavesSelectedBeneficiariesDetails();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userSavesSelectedBeneficiariesDetails();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1074,6 +1089,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1099,6 +1117,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1113,6 +1134,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyMainSCountIsTurnToZeroAndOnlyAttachmentCountIsDisplayedCorrectly();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1129,6 +1153,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().userAddsInitials();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userAddsInitials();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1143,6 +1170,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyNameAndAddressGetsDisappear();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyNameAndAddressGetsDisappear();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1160,6 +1190,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().userRemovesInitials();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userRemovesInitials();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1174,6 +1207,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyNameAndAddressOfTheBeneficiariesIsDisplayed();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyNameAndAddressOfTheBeneficiariesIsDisplayed();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1191,6 +1227,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1206,6 +1245,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyInterestIsAutoFetchedFromBenyWorksheet();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyInterestIsAutoFetchedFromBenyWorksheet();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1293,6 +1335,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1308,6 +1353,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1332,6 +1380,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1347,6 +1398,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1361,6 +1415,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyRemovedPetitionerContactsFromTheEstateContactsIsAlsoRemovedFromTheForm();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyRemovedPetitionerContactsFromTheEstateContactsIsAlsoRemovedFromTheForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1378,6 +1435,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1394,8 +1454,87 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().resetRolesOfContacts();
                 break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().resetRolesOfContacts();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
+    }
+
+    @And("^user selects multiple petitioners for \"([^\"]*)\" form$")
+    public void userSelectsMultiplePetitioners(String formName) throws AutomationException {
+        CommonSteps.logInfo("user selects multiple petitioners for "+formName+" form");
+        switch (formName) {
+            case "OC02":
+                PageFactory.probateFormsOC02Page().userSelectsMultiplePetitioners();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userSelectsMultiplePetitioners();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for \"([^\"]*)\" form$")
+    public void userVerifiesOutOfTheSelectedPetitionersOnlyAreVisibleOnTheFormAndRestAreOnTheAttachment(String formName) throws AutomationException, IOException, ParseException {
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.logInfo("Verified that out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "+formName+" form");
+    }
+
+    @And("^user swap the selected petitioner contacts for \"([^\"]*)\" form$")
+    public void userSwapTheSelectedPetitionerContacts(String formName) throws AutomationException {
+        CommonSteps.logInfo("user swap the selected petitioner contacts for "+formName+" form");
+        switch (formName) {
+            case "OC02":
+                PageFactory.probateFormsOC02Page().userSwapTheSelectedPetitionerContacts();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userSwapTheSelectedPetitionerContacts();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @When("^user adds comments for \"([^\"]*)\" form$")
+    public void userAddsComments(String formName) throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user adds comments for "+formName+" form");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().userAddsComments();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userAddsComments();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies comments are added and auto saved for \"([^\"]*)\" form$")
+    public void userVerifiesCommentsAreAddedAndAutoSaved(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that comments are added and auto saved for "+formName+" form");
+        switch (formName) {
+            case "OC01":
+                PageFactory.probateFormsOC01Page().verifyCommentsAreAddedAndAutoSaved();
+                break;
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyCommentsAreAddedAndAutoSaved();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
     }
 }

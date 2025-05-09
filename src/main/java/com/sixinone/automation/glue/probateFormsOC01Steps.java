@@ -55,12 +55,6 @@ public class probateFormsOC01Steps {
         PageFactory.probateFormsOC01Page().userSelectsMultipleFiduciaryContacts();
     }
 
-    @Then("user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment")
-    public void userVerifiesOutOfTheSelectedPetitionersOnlyAreVisibleOnTheFormAndRestAreOnTheAttachment() throws AutomationException, IOException, ParseException {
-        PageFactory.probateFormsOC01Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
-        CommonSteps.logInfo("Verified that out of the selected petitioners only 2 are visible on the form and rest are on the attachment");
-    }
-
     @And("user swap the selected fiduciary contacts")
     public void userSwapTheSelectedFiduciaryContacts() throws AutomationException {
         CommonSteps.logInfo("user swap the selected fiduciary contacts");
@@ -178,19 +172,6 @@ public class probateFormsOC01Steps {
     public void userVerifiesAdditionalFiduciaryFieldsAppearAndAreEditable() throws AutomationException {
         CommonSteps.logInfo("Verified that additional fiduciary fields appear and are editable");
         PageFactory.probateFormsOC01Page().verifyAdditionalFiduciaryFieldsAppearAndAreEditable();
-        CommonSteps.takeScreenshot();
-    }
-
-    @When("user adds comments")
-    public void userAddsComments() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user adds comments");
-        PageFactory.probateFormsOC01Page().userAddsComments();
-    }
-
-    @Then("user verifies comments are added and auto saved")
-    public void userVerifiesCommentsAreAddedAndAutoSaved() throws AutomationException {
-        CommonSteps.logInfo("Verified that comments are added and auto saved");
-        PageFactory.probateFormsOC01Page().verifyCommentsAreAddedAndAutoSaved();
         CommonSteps.takeScreenshot();
     }
 

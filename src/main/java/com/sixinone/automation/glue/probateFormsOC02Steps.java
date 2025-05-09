@@ -79,23 +79,11 @@ public class probateFormsOC02Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @And("user selects multiple petitioners")
-    public void userSelectsMultiplePetitioners() throws AutomationException {
-        CommonSteps.logInfo("user selects multiple petitioners");
-        PageFactory.probateFormsOC02Page().userSelectsMultiplePetitioners();
-    }
-
     @Then("user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment")
     public void userVerifiesAttachmentIconIsVisibleAndThePetitionerDetailsAreCorrectlyVisibleOnTheAttachment() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that attachment icon is visible and the petitioner details are correctly visible on the attachment");
         PageFactory.probateFormsOC02Page().verifyAttachmentIconIsVisibleAndThePetitionerDetailsAreCorrectlyVisibleOnTheAttachment();
         CommonSteps.takeScreenshot();
-    }
-
-    @And("user swap the selected petitioner contacts")
-    public void userSwapTheSelectedPetitionerContacts() throws AutomationException {
-        CommonSteps.logInfo("user swap the selected petitioner contacts");
-        PageFactory.probateFormsOC02Page().userSwapTheSelectedPetitionerContacts();
     }
 
     @And("user select Testamentary option")
