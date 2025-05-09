@@ -477,6 +477,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary contacts updated successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary contacts updated successfully.")));
 
         WebDriverUtil.waitForAWhile();
@@ -495,14 +496,14 @@ public class ProbateFormsRW06Page extends BasePage {
 
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
         scrollToElementAndClick(SHOW_AKA_CHECkBOX);
         WebDriverUtil.waitForAWhile(2);
     }
 
-    public void
-    verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
+    public void verifyCorrectCorporateFiduciaryContactDetailsAreDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
         for (int i = 0; i < corporateFiduciariesKey.size(); i++) {
             String fiduciaryKey = corporateFiduciariesKey.get(i);
 
@@ -1064,7 +1065,7 @@ public class ProbateFormsRW06Page extends BasePage {
                 "Name or Corporate Fiduciary (if applicable)"});
 
         fieldMarkers.put("Issued To", new String[]{
-                "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully request",
+                "the Estate of the Decedent and, to the extent permitted by law pursuant to 20 Pa.C.S. § 3155, respectfully",
                 "(Name or Corporate Name)"});
 
         fieldMarkers.put("Signature of Officer/Representative", new String[]{
@@ -1181,7 +1182,7 @@ public class ProbateFormsRW06Page extends BasePage {
 
         switch (fieldName) {
             case "Issued To":
-                return rawText.replaceAll("(?i)\\b(that Letters be issued to )\\b", "")
+                return rawText.replaceAll("(?i)\\b(request that Letters be issued to )\\b", "")
                         .replaceAll("[,\\.\\s]+$", "")
                         .trim();
 

@@ -433,7 +433,7 @@ public class ProbateFormsRW05Page extends BasePage {
             boolean isVerifiedPrintNames = verifyPrintNames(pdfFilePath);
 
             boolean isVerifiedWitness1StreetAddress = verifyFieldsInPDF(pdfFilePath,
-                    "Commission.)",
+                    "commission.)",
                     "SS:",
                     enteredStreetAddress2Form,
                     "Witness2 Street Address");
@@ -544,9 +544,11 @@ public class ProbateFormsRW05Page extends BasePage {
         if (rawName == null || rawName.trim().isEmpty()) return "";
 
         return rawName
-                .replaceAll("(?i)\\b(each of|all of)\\b", "") // Remove unwanted phrases
-                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
-                .trim(); // Trim spaces
+                .replaceAll("(?i)\\b(each of|all of|each a|each an)\\b", "")  // Remove phrases like 'each a'
+                .replaceAll(",.*", "")                                       // Remove anything after a comma
+                .replaceAll("[\\.\\s]+$", "")                                // Remove trailing dots/spaces
+                .trim();
+
     }
 
     public static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {

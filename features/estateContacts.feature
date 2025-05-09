@@ -64,6 +64,7 @@ Feature: 6in1 estate contacts Feature
     Then "You have not selected any role for this contact in this Estate. Please recheck and then proceed." Error should be thrown
     And user clicks on Save Button of error pop up
     Then user verifies contact can be saved without selecting any role message
+    Then if the contact has multiple addresses, address selection page appear,user able to handle address selection task
 
   Scenario: Verify new individual contact can be created
     When user clicks on the Create New Individual Contact button

@@ -22,6 +22,7 @@ public class PageFactory {
     public ProbateFormsRW10Page probateFormsRW10Page;
     public ProbateFormsOC01Page probateFormsOC01Page;
     public ProbateFormsOC02Page probateFormsOC02Page;
+    public ProbateFormsOC03Page probateFormsOC03Page;
 
     private PageFactory() throws IOException, ParseException {
 
@@ -41,6 +42,7 @@ public class PageFactory {
         probateFormsRW10Page =new ProbateFormsRW10Page();
         probateFormsOC01Page =new ProbateFormsOC01Page();
         probateFormsOC02Page =new ProbateFormsOC02Page();
+        probateFormsOC03Page =new ProbateFormsOC03Page();
     }
 
     public static void init() throws IOException, ParseException {
@@ -104,6 +106,7 @@ public class PageFactory {
 
     public static ProbateFormsOC02Page probateFormsOC02Page() { return factory.get().probateFormsOC02Page; }
 
+    public static ProbateFormsOC03Page probateFormsOC03Page() { return factory.get().probateFormsOC03Page; }
 }
 
 

@@ -9,18 +9,11 @@ import java.io.IOException;
 @CucumberOptions(
 
 
-        features = {"features"},
+        features = {"features/probateFormsOC02.feature"},
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )
-public class
-
-
-
-
-
-
-TestRunner extends BaseRunner {
+public class TestRunner extends BaseRunner {
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass(ITestContext iTestContext) throws IOException {

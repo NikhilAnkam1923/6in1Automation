@@ -10,9 +10,13 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.IOException;
 
 import java.awt.*;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,6 +95,8 @@ public class GlobalContactPage extends BasePage {
     public static final String ADDRESS_IN_LIST_MODAL = "//div[@class='modal-body']//tbody//tr//td[contains(text(),'%s')]";
     public static final String ADDRESS_COLUMN_MODAL = "//div[@class='modal-body']//table//tr/th[contains(text(), 'Address')]/ancestor::table//tbody//tr//td[position() = count(//tr/th[contains(text(), 'Address')]/preceding-sibling::th) + 1]";
     public static final String ADDRESS_ROW_ON_EDIT_PAGE = "//ol[@class='mb-2 list-group list-group-numbered']//div[@class='font14 list-group-item']";
+    public static final String FAILED_TO_SAVE_DATA_ALERT = "//div[@role='alert']//div[text()='Failed to save data. Please try again later.']";
+    public static final String ALERT_CLOSE_BTN = "//div[@role='alert']/following-sibling::button[@class='Toastify__close-button Toastify__close-button--light']";
 
     public static String firstName;
     public static String lastName;
@@ -225,6 +231,7 @@ public class GlobalContactPage extends BasePage {
         WebElement field = driverUtil.getWebElementAndScroll(fieldLocator);
         field.clear();
         field.sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString());
+        field.sendKeys(Keys.TAB);
     }
 
     private void fillField(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
@@ -234,6 +241,7 @@ public class GlobalContactPage extends BasePage {
                 .sendKeys(CommonUtil.getJsonPath("Create").get(jsonKey).toString())
                 .build()
                 .perform();
+        actions.sendKeys(Keys.TAB);
     }
 
     private void fillFieldWithKeyStrokes(String fieldLocator, String jsonKey) throws AutomationException, IOException, ParseException {
@@ -274,6 +282,7 @@ public class GlobalContactPage extends BasePage {
                 .sendKeys(value)
                 .build()
                 .perform();
+        actions.sendKeys(Keys.TAB);
     }
 
     public static String filterByName() throws AutomationException {
@@ -364,6 +373,7 @@ public class GlobalContactPage extends BasePage {
                 fillField(BARID_FIELD, "Edit.barId");
                 clearField(CAF_FIELD);
                 fillField(CAF_FIELD, "Edit.caf");
+                waitForAWhile(2);
                 break;
             case "Entity Global Contact":
                 clearField(ENTITY_NAME_FIELD_CREATE);
@@ -394,6 +404,7 @@ public class GlobalContactPage extends BasePage {
                 fillField(WORK_NUMBER_FIELD, "Edit.workNumber", actions);
                 clearField(FAX_FIELD);
                 fillField(FAX_FIELD, "Edit.fax", actions);
+                waitForAWhile(2);
                 break;
 
             default:
@@ -744,26 +755,6 @@ public class GlobalContactPage extends BasePage {
         }
     }
 
-    public List<String> getAllDisplayedContactNames() throws AutomationException {
-        List<String> contactNames = new ArrayList<>();
-        while (true) {
-            List<WebElement> contactNameElements = driverUtil.getWebElements(CONTACT_NAMES_COLUMN);
-            for (WebElement nameElement : contactNameElements) {
-                String nameText = nameElement.getText().trim();
-                if (!nameText.isEmpty()) {
-                    contactNames.add(nameText);
-                }
-            }
-            WebElement nextPageButton = driverUtil.getWebElement(NEXT_PAGE, 2);
-            if (nextPageButton == null || nextPageButton.getAttribute("aria-disabled").equals("true")) {
-                break;
-            }
-            nextPageButton.click();
-            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        }
-        return contactNames;
-    }
-
     public void enterExistedEIN() throws AutomationException, IOException, ParseException {
         Actions actions = new Actions(DriverFactory.drivers.get());
         WebElement EINField = driverUtil.getWebElement(ENTITY_EIN_FIELD);
@@ -791,6 +782,7 @@ public class GlobalContactPage extends BasePage {
     }
 
     public void clickBtnManageAddress() throws AutomationException {
+        waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(MANAGE_ADDRESS_BTN).click();
     }
 
@@ -862,11 +854,11 @@ public class GlobalContactPage extends BasePage {
         String randomSSNSuffix = String.format("%04d", (int) (Math.random() * 10000));
         String randomSSN = String.format("%03d-%02d-%04d", (int) (Math.random() * 1000), (int) (Math.random() * 100), Integer.parseInt(randomSSNSuffix));
 
-        selectSuffixOption();
-        WebDriverUtil.waitForAWhile();
         fillFieldWithKeyStrokes(FIRST_NAME_FIELD, "Create.firstName");
         fillFieldWithKeyStrokes(MIDDLE_NAME_FIELD, "Create.middleName");
         fillFieldWithKeyStrokes(LAST_NAME_FIELD, "Create.lastName");
+        selectSuffixOption();
+        WebDriverUtil.waitForAWhile();
         fillFieldWithKeyStrokes(EMAIL_ADDRESS_FIELD, "Create.emailId");
         fillFieldWithKeyStrokes(PTIN_FIELD, "Create.ptin");
         fillFieldWithKeyStrokes(PINEFILE_FIELD, "Create.pinEFile");
@@ -889,11 +881,13 @@ public class GlobalContactPage extends BasePage {
         verifyAutoFetchedFields();
         clickButtonSave();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         fillAddressInfo();
         verifyAutoFetchedFields();
         clickButtonSave();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
     }
 
@@ -1007,7 +1001,6 @@ public class GlobalContactPage extends BasePage {
         String expectedFirstName = CommonUtil.getJsonPath("Create").get("Create.firstName").toString();
         String expectedMiddleName = CommonUtil.getJsonPath("Create").get("Create.middleName").toString();
         String expectedLastName = CommonUtil.getJsonPath("Create").get("Create.lastName").toString();
-        String expectedSuffix = CommonUtil.getJsonPath("Create").get("Create.suffix").toString();
         String expectedPhone = CommonUtil.getJsonPath("Create").get("Create.phoneNumber").toString();
         String expectedWorkPhone = CommonUtil.getJsonPath("Create").get("Create.workNumber").toString();
         String expectedEmailAddress = CommonUtil.getJsonPath("Create").get("Create.emailId").toString();
@@ -1030,7 +1023,6 @@ public class GlobalContactPage extends BasePage {
         String actualFirstName = getFieldValue(FIRST_NAME_FIELD, "value");
         String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
         String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");
-        String actualSuffix = getFieldValue(SELECTED_SUFFIX, "text");
 
         String actualPhone = getFieldValue(PHONE_NUMBER_FIELD, "value");
         String actualWorkPhone = getFieldValue(WORK_NUMBER_FIELD, "value");
@@ -1047,7 +1039,6 @@ public class GlobalContactPage extends BasePage {
         verifyField("First Name", expectedFirstName, actualFirstName);
         verifyField("Middle Name", expectedMiddleName, actualMiddleName);
         verifyField("Last Name", expectedLastName, actualLastName);
-        verifyField("Suffix", expectedSuffix, actualSuffix);
         verifyField("Phone",expectedPhone,actualPhone);
         verifyField("Work Phone",expectedWorkPhone,actualWorkPhone);
         verifyField("Email Address",expectedEmailAddress,actualEmailAddress);

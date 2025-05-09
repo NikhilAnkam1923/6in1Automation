@@ -289,7 +289,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies only 1 contact can be selected from the list")
-    public void userVerifiesOnlyContactCanBeSelectedFromTheList() throws AutomationException {
+    public void userVerifiesOnlyContactCanBeSelectedFromTheList() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that only 1 contact can be selected from the list");
         PageFactory.probateFormsRW02Page().verifyOnlyContactCanBeSelectedFromTheList();
     }

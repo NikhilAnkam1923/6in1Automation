@@ -52,12 +52,12 @@ Feature: 6in1 probate form OC02 Feature
 
   Scenario: Verify, attachment.
     When user click on Petitioner name field
-    And user selects multiple petitioners
+    And user selects multiple petitioners for "OC02" form
     Then user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment
 
   Scenario: Verify, selected petitioner can be swapped and deleted.
     When user click on Petitioner name field
-    And user swap the selected petitioner contacts
+    And user swap the selected petitioner contacts for "OC02" form
     Then user verifies for "OC02" form swapped petitioner names are reflected on UI accordingly
 
   Scenario: Verify, Testamentary trust section is enabled on selecting the radio button with the same name.
@@ -111,12 +111,81 @@ Feature: 6in1 probate form OC02 Feature
   Scenario: Verify correct count of main and attachment is displayed.
     Then user verifies for "OC02" form the Main's count is turn to zero and only Attachment count is displayed correctly
 
+  Scenario: Verify, if the initials are added then name address disappears. if initials are removed then name and address appears.
+    When user adds initials for "OC02"
+    Then user verifies name and address gets disappear for "OC02"
+    When user removes initials for "OC02"
+    Then user verifies name and address of the beneficiaries is displayed for "OC02"
+
+  Scenario: Verify, relationship of the beneficiary with the given estate/trust is displayed under relationship section.
+    Then user verifies correct relationship is auto fetched and displayed under relationship section for "OC02" form
+
+  Scenario: Verify, interest value for each beneficiary.
+    Then user verifies interest is auto fetched from beny worksheet for "OC02" form
+
+  Scenario: Verify, name of the trust is auto fetched and is not editable.
+    When user navigates to page number: "8"
+    Then user verifies correct trust name is displayed on page 8 and is not editable
+
+  Scenario: Verify, name of the trust is auto fetched and is not editable.
+    When user navigates to page number: "9"
+    Then user verifies correct trust name is displayed on page 9 and is not editable
+
+  Scenario: Verify, date and principal amount can be added for previously paid commissions in multi lines.
+    Then user verifies principal amount and date can be added
+
+  Scenario: Verify, reserve amount and purpose fields are editable.
+    Then user verifies both the fields are editable and accept values
+
+  Scenario: Verify, trust's name is auto fetched.
+    When user navigates to page number: "10"
+    Then user verifies estate's name is auto fetched and correctly displayed
+
+  Scenario: Verify, if displayed on checkbox is checked, then the contacts are displayed on the form.
+    When user checks the Display checkbox for beneficiaries of "OC02" form
+    Then user verifies the contacts for which the checkbox is checked are displayed on the "OC02" form
+
+  Scenario: Verify, all the contacts are moved to attachment if the display all bene in attachment checkbox is checked.
+    When user checks 'Display ALL INCOME Distributees on attachment' checkbox
+    Then user verifies all the beneficiary contacts are moved to the attachment for "OC02" form
+
+  Scenario: Verify, trust's name is auto fetched and correctly displayed.
+    When user navigates to page number: "11"
+    Then user verifies correct trust name is displayed on the "OC02" form
+
+  Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
+    Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner on "OC02" form
+
+  Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
+    Then user verifies all the remaining petitioners are displayed as a part of attachment for "OC02" form
+
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'OC02'
     And verify all the fields entered are correctly reflected in the 'OC02' pdf
 
+  Scenario: Verify, if the notification if the selected contact is removed from the estate.
+    When user navigates to Estate Contacts tab
+    Then user verifies for "OC02" form notification is displayed when the contact selected as the petitioner is removed from the estate contacts
+      #Verify, notification popup is shown for removal of contact already in use.
+    Then user verifies for "OC02" form notification is displayed when the beneficiary contact is removed from the estate contacts
+
+  Scenario: Verify, if the contact is removed, it is removed from the form as well.
+    When user navigates to the probate forms tab
+    And user click on the "OC 02" form
+    And user navigates to page number: "2"
+    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the "OC02" form
+
+  Scenario: Verify, if for a user role of beny is removed.
+    When user navigates to page number: "6"
+    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the "OC02" form
+
+  Scenario: Reset Roles of Removed Contacts
+    When user resets roles of removed contacts from the Estate Contacts of "OC02" form
+
   Scenario: Reset the OC02 form
+    When user navigates to the probate forms tab
+    And user click on the "OC 02" form
     Then user resets the "OC02" form
 
   @Setup

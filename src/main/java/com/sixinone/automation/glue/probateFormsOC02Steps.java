@@ -79,23 +79,11 @@ public class probateFormsOC02Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @And("user selects multiple petitioners")
-    public void userSelectsMultiplePetitioners() throws AutomationException {
-        CommonSteps.logInfo("user selects multiple petitioners");
-        PageFactory.probateFormsOC02Page().userSelectsMultiplePetitioners();
-    }
-
     @Then("user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment")
     public void userVerifiesAttachmentIconIsVisibleAndThePetitionerDetailsAreCorrectlyVisibleOnTheAttachment() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that attachment icon is visible and the petitioner details are correctly visible on the attachment");
         PageFactory.probateFormsOC02Page().verifyAttachmentIconIsVisibleAndThePetitionerDetailsAreCorrectlyVisibleOnTheAttachment();
         CommonSteps.takeScreenshot();
-    }
-
-    @And("user swap the selected petitioner contacts")
-    public void userSwapTheSelectedPetitionerContacts() throws AutomationException {
-        CommonSteps.logInfo("user swap the selected petitioner contacts");
-        PageFactory.probateFormsOC02Page().userSwapTheSelectedPetitionerContacts();
     }
 
     @And("user select Testamentary option")
@@ -182,5 +170,40 @@ public class probateFormsOC02Steps {
     public void userVerifiesSameAttachmentIsDisplayedOnPage() throws AutomationException {
         CommonSteps.logInfo("Verified that same attachment is displayed on page 7");
         PageFactory.probateFormsOC02Page().verifySameAttachmentIsDisplayedOnPage7();
+    }
+
+    @Then("user verifies correct trust name is displayed on page 8 and is not editable")
+    public void userVerifiesCorrectTrustNameIsDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that correct trust name is displayed on page 8 and is not editable");
+        PageFactory.probateFormsOC02Page().verifyCorrectTrustNameIsDisplayedOnPage();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies correct trust name is displayed on page 9 and is not editable")
+    public void userVerifiesCorrectTrustNameIsDisplayedOnPage9() throws AutomationException {
+        CommonSteps.logInfo("Verified that correct trust name is displayed on page 9 and is not editable");
+        PageFactory.probateFormsOC02Page().verifyCorrectTrustNameIsDisplayedOnPage9();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies principal amount and date can be added")
+    public void userVerifiesPrincipalAmountAndDateCanBeAdded() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that principal amount and date can be added");
+        PageFactory.probateFormsOC02Page().verifyPrincipalAmountAndDateCanBeAdded();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayed() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed");
+        PageFactory.probateFormsOC02Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies both the fields are editable and accept values")
+    public void userVerifiesBothTheFieldsAreEditableAndAcceptValues() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that both the fields are editable and accept values");
+        PageFactory.probateFormsOC02Page().verifyBothTheFieldsAreEditableAndAcceptValues();
+        CommonSteps.takeScreenshot();
     }
 }
