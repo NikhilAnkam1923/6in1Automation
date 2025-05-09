@@ -8,6 +8,7 @@ import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -68,12 +69,12 @@ public class ProbateFormsRW07Page extends BasePage {
     private static final String DROP_CONTACT_FIELD_XPATH = "//div[@class='right-droppable']//div[@class='drag-names-list drop-box h-100']";
     private static final String SAVE_BTN = "//button[text()='Save']";
     public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
-    private static final String DECEDENT_DIED_DATE = "//td[@class='tr4']/span[@class='newstyle'][input[@class='noneditable prn_bords bold']]/input";
-    private static final String DECEDENT_DIED_COUNTY = "//td[@class='tr4']/span[@class='newstyle'][input[@class='noneditable center-text prn_bords bold']] /input";
-    private static final String NAME_COLUMN = "//table[@class='t2 tbl_fiduciary']//tr[td[@class='tr14 td79']][1]/td[@class='tr14 td79']/p/input";
+    private static final String DECEDENT_DIED_DATE = "//span[@id='decedentFillingSection' and contains(text(),'The Decedent died on')]//span//input";
+    private static final String DECEDENT_DIED_COUNTY = "//span[@id='decedentFillingSection' and contains(text(),'The Decedent died on')]//span/following-sibling::span//input";
+    private static final String NAME_COLUMN = "//span[@id='representativeSection']//input";
     private static final String TABLE_FORM = "//table[@class='t2 tbl_fiduciary']";
-    private static final String TABLE_NAME_COLUMN = "//table[@class='t2 tbl_fiduciary']//td[@class='tr14 td79']/p/input";
-    private static final String TABLE_ADDRESS_COLUMN = "//table[@class='t2 tbl_fiduciary']//td[@class='tr14 td80']/p/input";
+    private static final String TABLE_NAME_COLUMN = "//table[@class='t2 tbl_fiduciary']//span[@id='representativeSection']//input";
+    private static final String TABLE_ADDRESS_COLUMN = "//table[@class='t2 tbl_fiduciary']//td[@class='tr14 td80']//input";
     private static final String TABLE_TELEPHONE_COLUMN = "//table[@class='t2 tbl_fiduciary']//td[@class='tr14 td81']/p/input";
     private static final String DATE_FIELD = "//p[contains(text(),'Date')]//input[@name='formItems[0].date']";
     private static final String REGISTRARS_ADDRESS_FIELD = "//textarea[@name='formItems[0].countyAddress']";
@@ -82,8 +83,15 @@ public class ProbateFormsRW07Page extends BasePage {
     private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
     private static final String SHOW_AKA_CHECkBOX = "//label[text()='Show aka']/preceding-sibling::input";
+    private static final String SELECTED_CONTACT = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
 
     private final Map<String, String> estateInfo = new HashMap<>();
+
+    JSONObject jsonData = CommonUtil.getFullJsonObject();
+
+    private static final List<String> beneDetails = new ArrayList<>();
+    private static final List<String> beneficiaryKeys = new ArrayList<>();
+
     static String downloadedFileName;
 
     static String initialFileNumberForm;
@@ -93,11 +101,6 @@ public class ProbateFormsRW07Page extends BasePage {
     static String Beneficiary3Form;
     static String Beneficiary4Form;
     static String Beneficiary5Form;
-    static String Fiduciary1Form;
-    static String Fiduciary2Form;
-    static String Fiduciary3Form;
-    static String Fiduciary4Form;
-    static String Fiduciary5Form;
     static String enteredDateForm;
     static String beneficiary1NameAddressForm;
     static String beneficiary2NameAddressForm;
@@ -134,6 +137,9 @@ public class ProbateFormsRW07Page extends BasePage {
     static String FiduciaryAddress5Form;
     static String FiduciaryTelephone5Form;
 
+    public ProbateFormsRW07Page() throws IOException, ParseException {
+    }
+
 
     private static String getFieldValue(String locator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(locator, 5);
@@ -153,7 +159,7 @@ public class ProbateFormsRW07Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-//        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
+        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -224,7 +230,7 @@ public class ProbateFormsRW07Page extends BasePage {
 
     public void verifyFieldIsNotEditable(String fieldLocator) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
-        if (field.isEnabled() && field.getAttribute("disabled") == null && field.getAttribute("readonly") == null) {
+        if (field.getAttribute("disabled") == null && field.getAttribute("readonly") == null && field.isEnabled()) {
             throw new AutomationException("Field is editable");
         }
     }
@@ -258,6 +264,27 @@ public class ProbateFormsRW07Page extends BasePage {
         driverUtil.getWebElement(BENE_ADDRESS_FIELD).click();
     }
 
+    public static String findBeneficiaryKeyByName(String fullName, JSONObject jsonData) {
+        for (Object keyObj : jsonData.keySet()) {
+            String key = keyObj.toString();
+            if (key.startsWith("beneficiary")) {
+                JSONObject beneData = (JSONObject) jsonData.get(key);
+
+                String jsonFullName = beneData.getOrDefault("firstName", "") + " " +
+                        beneData.getOrDefault("middleName", "") + " " +
+                        beneData.getOrDefault("lastName", "") + ", " +
+                        beneData.getOrDefault("suffix", "");
+
+                jsonFullName = jsonFullName.trim().replaceAll(" +", " ");
+
+                if (fullName.equalsIgnoreCase(jsonFullName)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
 
     public void verifyMultipleBeneficiariesCanBeSelected() throws AutomationException {
         Actions actions = new Actions(DriverFactory.drivers.get());
@@ -266,25 +293,55 @@ public class ProbateFormsRW07Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
 
-        Beneficiary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile(2);
-        Beneficiary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        WebDriverUtil.waitForAWhile();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile(2);
-        Beneficiary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        WebDriverUtil.waitForAWhile();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile(2);
-        Beneficiary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        WebDriverUtil.waitForAWhile();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
-        WebDriverUtil.waitForAWhile(2);
-        Beneficiary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        WebDriverUtil.waitForAWhile();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
 
-        WebDriverUtil.waitForAWhile(2);
+        WebDriverUtil.waitForAWhile();
         CommonSteps.takeScreenshot();
 
-        WebDriverUtil.waitForAWhile(2);
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneNames = driverUtil.getWebElements(SELECTED_CONTACT);
+
+        for (int i = 0; i < beneNames.size(); i++) {
+            String name = beneNames.get(i).getText().trim();
+            beneDetails.add(name);
+            switch (i) {
+                case 0:
+                    Beneficiary1Form = name;
+                    break;
+                case 1:
+                    Beneficiary2Form = name;
+                    break;
+                case 2:
+                    Beneficiary3Form = name;
+                    break;
+                case 3:
+                    Beneficiary4Form = name;
+                    break;
+                case 4:
+                    Beneficiary5Form = name;
+                    break;
+            }
+        }
+
+        for (String detail : beneDetails) {
+            String matchedKey = findBeneficiaryKeyByName(detail, jsonData);
+
+            if (matchedKey != null) {
+                beneficiaryKeys.add(matchedKey);
+            } else {
+                throw new AutomationException("Beneficiary key not found for full name: " + detail);
+            }
+        }
+
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(SAVE_BTN).click();
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "contacts updated successfully.")));
@@ -294,10 +351,10 @@ public class ProbateFormsRW07Page extends BasePage {
         WebDriverUtil.waitForAWhile(2);
         List<String> expectedNames = Arrays.asList(
                 Beneficiary1Form,
-                Beneficiary4Form,
-                Beneficiary5Form,
+                Beneficiary2Form,
                 Beneficiary3Form,
-                Beneficiary2Form
+                Beneficiary4Form,
+                Beneficiary5Form
         );
 
         List<WebElement> BeneficiaryAddressFields = driverUtil.getWebElements(BENE_ADDRESS_FIELD);
@@ -309,11 +366,9 @@ public class ProbateFormsRW07Page extends BasePage {
 
     public void verifyNameAndAddressOfTheBeneficiaryCorrectlyDisplayedOnEachForm() throws AutomationException, IOException, ParseException {
         List<WebElement> BeneficiaryAddressFields = driverUtil.getWebElements(BENE_ADDRESS_FIELD);
-        List<Integer> beneficiaryNum = Arrays.asList(5, 2, 1, 3, 4);
 
         for (int i = 0; i < BeneficiaryAddressFields.size(); i++) {
-            int beneficiaryIndex = beneficiaryNum.get(i);
-            String beneficiaryKey = "beneficiary" + beneficiaryIndex;
+            String beneficiaryKey = beneficiaryKeys.get(i);
 
             String expectedLastName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".lastName").toString();
             String expectedMiddleName = CommonUtil.getJsonPath(beneficiaryKey).get(beneficiaryKey + ".middleName").toString();
@@ -329,24 +384,22 @@ public class ProbateFormsRW07Page extends BasePage {
             String expectedStateCodeZip = expectedState + " " + expectedZip;
             String expectedNameAndAddress = expectedName + "\n" + expectedAddressLine1 + " " + expectedAddressLine2 + "\n" + expectedCity + " " + expectedStateCodeZip;
 
-
             String actualNameAndAddress = BeneficiaryAddressFields.get(i).getAttribute("value");
 
-
-            switch (beneficiaryIndex) {
-                case 1:
+            switch (i) {
+                case 0:
                     beneficiary1NameAddressForm = actualNameAndAddress;
                     break;
-                case 4:
+                case 1:
                     beneficiary2NameAddressForm = actualNameAndAddress;
                     break;
-                case 3:
+                case 2:
                     beneficiary3NameAddressForm = actualNameAndAddress;
                     break;
-                case 5:
+                case 3:
                     beneficiary4NameAddressForm = actualNameAndAddress;
                     break;
-                case 2:
+                case 4:
                     beneficiary5NameAddressForm = actualNameAndAddress;
                     break;
             }
@@ -398,19 +451,14 @@ public class ProbateFormsRW07Page extends BasePage {
 
         WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
 
-        Fiduciary1Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Fiduciary2Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Fiduciary3Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Fiduciary4Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
         WebDriverUtil.waitForAWhile();
-        Fiduciary5Form = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
         actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
 
         CommonSteps.takeScreenshot();
@@ -495,6 +543,14 @@ public class ProbateFormsRW07Page extends BasePage {
         }
     }
 
+    private void scrollToElement(String elementLocator) {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(elementLocator));
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+    }
 
     public void userResetsTheRWForm() throws AutomationException {
         WebDriverUtil.waitForAWhile();
@@ -515,9 +571,13 @@ public class ProbateFormsRW07Page extends BasePage {
         driverUtil.getWebElement(SAVE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "contacts updated successfully.")));
 
-        scrollToElementAndClick(SHOW_AKA_CHECkBOX);
+        scrollToElement(SHOW_AKA_CHECkBOX);
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(SHOW_AKA_CHECkBOX).click();
         WebDriverUtil.waitForAWhile();
     }
+
+
 
     public void verifyDateIsEnteredInCorrectFormat() throws AutomationException {
         String datePattern = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(\\d{4})$";
@@ -559,7 +619,6 @@ public class ProbateFormsRW07Page extends BasePage {
         if (!driverUtil.getWebElement(REGISTRARS_ADDRESS_FIELD).isEnabled()) {
             throw new AutomationException("Registrars address field is not editable.");
         }
-
     }
 
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
@@ -576,6 +635,7 @@ public class ProbateFormsRW07Page extends BasePage {
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm)));
         WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
         corporateFiduciaryToSelect.click();
@@ -592,6 +652,9 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
+        WebDriverUtil.waitForAWhile();
+        scrollToElementAndClick(PERSON_NAME_FIELD);
+
         String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
         String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString() + ",";
         String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
@@ -620,6 +683,9 @@ public class ProbateFormsRW07Page extends BasePage {
     }
 
     public void verifyAttorneyTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws IOException, ParseException, AutomationException {
+        WebDriverUtil.waitForAWhile();
+        scrollToElementAndClick(PERSON_NAME_FIELD);
+
         String attorneyFirstName = CommonUtil.getJsonPath("attorney2").get("attorney2.firstName").toString();
         String attorneyLastName = CommonUtil.getJsonPath("attorney2").get("attorney2.lastName").toString() + ",";
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();

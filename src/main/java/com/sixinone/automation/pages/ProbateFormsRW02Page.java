@@ -1105,48 +1105,73 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void verifyDecreeOfRegisterInformationDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        List<String> corporateFiduciaryContacts = new ArrayList<>();
-
-        for (int i = 1; i <= 5; i++) {
-            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
-
-            corporateFiduciaryContacts.add(String.join(" ", entityName).trim());
-        }
-
+        //line 1
         String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
         String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
         String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
         String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
-
         String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
 
-        String expectedCorporateFiduciaryContact = String.join(", ", corporateFiduciaryContacts);
-        String expectedCorporateAndFiduciaryContacts = String.join(", ", fiduciaryContact, expectedCorporateFiduciaryContact);
+        List<String> corporateFiduciaryContacts1 = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
+
+            corporateFiduciaryContacts1.add(String.join(" ", entityName).trim());
+        }
+
+        String expectedCorporateFiduciaryContact1 = String.join(", ", corporateFiduciaryContacts1);
+        String expectedCorporateAndFiduciaryContacts1 = String.join(", ", fiduciaryContact, expectedCorporateFiduciaryContact1);
 
 
-        List<String> fiduciaryContacts = new ArrayList<>();
+        //line 2
+        List<String> corporateFiduciaryContacts2 = new ArrayList<>();
+        for (int i = 4; i <= 5; i++) {
+            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
 
-        for (int i = 1; i <= 4; i++) {
+            corporateFiduciaryContacts2.add(String.join(" ", entityName).trim());
+        }
+
+        List<String> fiduciaryContacts2 = new ArrayList<>();
+
+        for (int i = 1; i <= 2; i++) {
             String firstNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
             String lastNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
             String middleNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
             String suffixFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
 
-            fiduciaryContacts.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
+            fiduciaryContacts2.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
         }
 
-        String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
+        String expectedFiduciaryContacts2 = String.join(", ", fiduciaryContacts2);
+
+        String expectedCorporateFiduciaryContact2 = String.join(", ", corporateFiduciaryContacts2);
+        String expectedCorporateAndFiduciaryContacts2 = String.join(", ", expectedCorporateFiduciaryContact2, expectedFiduciaryContacts2 );
+
+        //line 3
+        List<String> fiduciaryContacts3 = new ArrayList<>();
+
+        for (int i = 3; i <= 4; i++) {
+            String firstNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
+            String lastNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
+            String middleNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
+            String suffixFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
+
+            fiduciaryContacts3.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
+        }
+
+        String expectedFiduciaryContacts3 = String.join(", ", fiduciaryContacts3);
 
         String decedentName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
         String akaNames = getEstateValue("AlsoKnownAs1") + " " + getEstateValue("AlsoKnownAs2") + " " + getEstateValue("AlsoKnownAs3");
         String fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
-        allFiduciaryContactsForm = expectedCorporateAndFiduciaryContacts + ", " + expectedFiduciaryContacts;
         String dateOfWill = getEstateValue("DateOfWill");
 
         verifyAutoPopulatedValue(decedentName);
         verifyAutoPopulatedValue(fileNumberForm);
         verifyAutoPopulatedValue(akaNames.trim());
-        verifyAutoPopulatedValue(allFiduciaryContactsForm);
+        verifyAutoPopulatedValue(expectedCorporateAndFiduciaryContacts1);
+        verifyAutoPopulatedValue(expectedCorporateAndFiduciaryContacts2);
+        verifyAutoPopulatedValue(expectedFiduciaryContacts3);
         verifyAutoPopulatedValue(dateOfWill);
         verifyAutoPopulatedValue(rwCodicilDate1Form);
         verifyAutoPopulatedValue(rwCodicilDate2Form);

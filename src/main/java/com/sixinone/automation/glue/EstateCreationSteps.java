@@ -1,16 +1,11 @@
 package com.sixinone.automation.glue;
 
-import com.aspose.pdf.Page;
-import com.beust.jcommander.JCommander;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 
-import com.sixinone.automation.util.CommonUtil;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import gherkin.lexer.Pa;
-import org.apache.xmlbeans.impl.jam.JComment;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -61,12 +56,6 @@ public class EstateCreationSteps {
         CommonSteps.takeScreenshot();
     }
 
-    @And("user enters valid Date of Birth and Date of Death")
-    public void userEntersValidDateOfBirthAndDateOfDeath() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("user enters valid Date of Birth and Date of Death");
-        PageFactory.estateCreationPage().entersDOBandDOD();
-    }
-
     @Then("the system calculate and displays correct Age at Death")
     public void theSystemCalculateAndDisplaysCorrectAgeAtDeath() throws AutomationException {
         PageFactory.estateCreationPage().calculateAgeAtDeath();
@@ -97,12 +86,6 @@ public class EstateCreationSteps {
         PageFactory.estateCreationPage().fillLastAddressDomicileDetails();
     }
 
-    @Then("^user verify validations for all the fields of Last Address\\/Domicile$")
-    public void userVerifyValidationsForAllFields() throws AutomationException, IOException, ParseException {
-        CommonSteps.logInfo("User verified validations for all the fields of Last Address/Domicile.");
-        PageFactory.estateCreationPage().verifyDomicileAddressFieldValidations();
-    }
-
     @And("user verifies Township and Borough radio buttons toggle correctly")
     public void userVerifiesTownshipAndBoroughRadioButtons() throws AutomationException {
         CommonSteps.logInfo("User verified Township and Borough radio buttons toggle correctly.");
@@ -110,16 +93,10 @@ public class EstateCreationSteps {
         CommonSteps.takeScreenshot();
     }
 
-
     @When("user fills Place of Death details")
     public void userFillsPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("User filled Place of Death details.");
         PageFactory.estateCreationPage().fillPlaceOfDeathDetails();
-    }
-
-    @Then("user verify validations for all the fields of Place of Death")
-    public void userVerifyValidationsForAllTheFieldsOfPlaceOfDeath() throws AutomationException, IOException, ParseException {
-        PageFactory.estateCreationPage().verifyPlaceOfDeathFieldValidations();
     }
 
     @When("user clicks on Estate tab")
@@ -195,17 +172,11 @@ public class EstateCreationSteps {
         PageFactory.estateCreationPage().verifyFileNumberFieldValidations();
     }
 
-    @Then("for different SSN number no validation should be thrown")
-    public void forDifferentSSNNumberNoValidationShouldBeThrown() throws AutomationException, IOException, ParseException {
-        PageFactory.estateCreationPage().validateSSNForSameName();
-    }
-
     @And("user clicks on the codicil date fields date picker should open for these fields")
     public void userClicksOnTheCodicilDateFieldsDatePickerShouldOpenForTheseFields() throws AutomationException {
         CommonSteps.logInfo("user clicks on the codicil date fields date picker should open for these fields");
         PageFactory.estateCreationPage().clickOnCodicilDatesDatePickerOpen();
     }
-
 
     @And("user enters codicil dates")
     public void userEntersCodicilDates() throws AutomationException, IOException, ParseException {

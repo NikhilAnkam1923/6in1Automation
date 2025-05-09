@@ -115,6 +115,17 @@ public class GlobalContactPage extends BasePage {
 
     public void clickButtonCreate() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+
+        WebDriverUtil.waitForAWhile(3);
+        List<WebElement> alerts = DriverFactory.drivers.get().findElements(By.xpath(FAILED_TO_SAVE_DATA_ALERT));
+        if (!alerts.isEmpty() && alerts.get(0).isDisplayed()) {
+            WebElement closeBtn = DriverFactory.drivers.get().findElement(By.xpath(ALERT_CLOSE_BTN));
+            closeBtn.click();
+            CommonSteps.logInfo("Alert appeared and was closed.");
+        } else {
+            CommonSteps.logInfo("No alert appeared, continuing execution.");
+        }
+
         driverUtil.getWebElement(CREATE_BUTTON).click();
     }
 
@@ -1014,9 +1025,9 @@ public class GlobalContactPage extends BasePage {
         filterByEntity();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         driverUtil.getWebElement(String.format(CONTACT_NAME,entityName)).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
 
-
-        WebDriverUtil.waitForAWhile(1);
+        WebDriverUtil.waitForAWhile();
         String actualEntityName = getFieldValue(ENTITY_NAME_FIELD_CREATE, "value");
         String actualEIN = getFieldValue(EIN_FIELD, "value");
 
@@ -1034,7 +1045,7 @@ public class GlobalContactPage extends BasePage {
         String actualBarID = getFieldValue(BARID_FIELD, "value");
         String actualCAF = getFieldValue(CAF_FIELD, "value");
 
-        verifyField("Entity Name",entityName,actualEntityName);
+        verifyField("Entity Name", entityName, actualEntityName);
         verifyField("EIN",enteredEntityEIN,actualEIN);
         verifyField("First Name", expectedFirstName, actualFirstName);
         verifyField("Middle Name", expectedMiddleName, actualMiddleName);

@@ -54,10 +54,8 @@ Feature: 6in1 probate form RW07 Feature
 
   Scenario: Verify, based on capacity contact can be selected.
     When user selects capacity as "Personal Representative"
-    And user clicks on name of person field
     Then user verifies for "RW07" form fiduciary type of contacts are displayed in the list and can be selected
     When user selects capacity as "Counsel"
-    And user clicks on name of person field
     Then user verifies for "RW07" form attorney type of contacts are displayed in the list and can be selected
 
   Scenario: Verify form can be printed in pdf
