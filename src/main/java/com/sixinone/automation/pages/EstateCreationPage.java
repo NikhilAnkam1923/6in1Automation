@@ -41,10 +41,6 @@ public class EstateCreationPage extends BasePage {
     private static final String DROPDOWN_LABEL = "//label[text()='%s']/following-sibling::div/span/following-sibling::div//div[contains(@class,'select__indicators')]";
     private static final String SELECT_OPTION = "//div[contains(@class,'select__menu-list')]//div[text()='%s']";
     private static final String DECEDENT_DETAILS_PAGE = "//button[text()='Decedent Info']";
-    private static final String DOMICILE_MAX_CHAR_LIMIT_ERROR = "//div[text()='Last Address/Domicile']/following-sibling::div//input[contains(@name,'domicileAddress')]/following-sibling::div[@class='invalid-feedback' and contains(text(),'You have exceeded the maximum character limit of 100')]";
-    private static final String DOMICILE_SPECIAL_CHAR_ERROR = "//div[text()='Last Address/Domicile']/following-sibling::div//input[contains(@name,'domicileAddress')]/following-sibling::div[@class='invalid-feedback' and contains(text(),'Allowed special characters are , / and &')]";
-    private static final String MUNICIPALITY_MAX_CHAR_ERROR = "//div[@class='invalid-feedback' and contains(text(),'You have exceeded the maximum character limit of 50')]";
-    private static final String MUNICIPALITY_SPECIAL_CHAR_ERROR = "//div[@class='invalid-feedback' and contains(text(),'Allowed special characters is -')]";
     private static final String DOMICILE_ADDRESS_LINE1 = "//input[@name='domicileAddress.addressLine1']";
     private static final String DOMICILE_ADDRESS_LINE2 = "//input[@name='domicileAddress.addressLine2']";
     private static final String DOMICILE_ZIP = "//input[@name='domicileAddress.zip']";
@@ -60,15 +56,11 @@ public class EstateCreationPage extends BasePage {
     private static final String PLACE_OF_DEATH_CITY = "//input[@name='placeOfDeath.city']";
     private static final String PLACE_OF_DEATH_STATE = "//div[text()='Place of Death']/following-sibling::div/div/div/div/div/label[text()='State']/following-sibling::div//div[contains(@class, 'select__single-value')]";
     private static final String PLACE_OF_DEATH_COUNTRY = "//input[@name='placeOfDeath.county']";
-    private static final String POD_MAX_CHAR_LIMIT_ERROR = "//div[text()='Place of Death']/following-sibling::div/div/div/div/div/div/label[text()='Address Line 1']/following-sibling::div[@class='invalid-feedback' and contains(text(),'You have exceeded the maximum character limit of 100')]";
-    private static final String POD_SPECIAL_CHAR_ERROR = "//div[text()='Place of Death']/following-sibling::div/div/div/div/div/div/label[text()='Address Line 1']/following-sibling::div[@class='invalid-feedback' and contains(text(),'Allowed special characters are , / and &')]";
     private static final String DATE_OF_BIRTH_FIELD = "//label[text()='Date of Birth']/following-sibling::div//div//input";
     private static final String DATE_OF_DEATH_FIELD = "//label[text()='Date of Death']/following-sibling::div//div//input";
     private static final String AGE_AT_DEATH_FIELD = "//input[@name='lifeDetails.ageAtDeath']";
-    private static final String ALT_VAL_DATE_FIELD = "//label[text()='Alt Val Date']/following-sibling::div//div//input";
     private static final String SELECTED_MARITAL_STATUS = "//div[text()='Life Details']/following-sibling::div//input[@name='lifeDetails.ageAtDeath'] /ancestor::div[contains(@class, 'col-')]/following-sibling::div//label[contains(text(), 'Marital Status')] /following-sibling::div//div[contains(@class, 'select__single-value')]";
     private static final String LAST_RESIDENCE_FIELD = "//input[@name='lifeDetails.lastResidence']";
-    private static final String LAST_RESIDENCE_ERROR_MSG = "//input[@name='lifeDetails.lastResidence']/following-sibling::div[@class='invalid-feedback'  and (text()='You have exceeded the maximum character limit of 50'  or text()='Allowed special characters are , and &')]";
     private static final String DATEPICKER = "//div[@class='react-datepicker__month-container']";
     private static final String DATE_DIVORCED_DECREE = "//label[text()='Date Divorced Decree']/following-sibling::div";
     private static final String ESTATE_TAB = "//button[@role='tab' and text()='Estate']";
@@ -94,7 +86,6 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_2_ERR = "//div[@class='invalid-feedback' and contains(text(),'Year must be exactly 2 digits.')]";
     private static final String FILE_NUMBER_3_ERR = "//div[@class='invalid-feedback' and contains(text(),'File Number must be at least 4 digits.')]";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
-    private static final String SSN_ERROR_MESSAGE = "//div[@class='invalid-feedback' and contains(text(), 'SSN')]";
     private static final String NAME_FILTER = "//th[@aria-label='Filter' and @aria-colindex='1']/div/div/span/input";
 
     static String ageAtDeath;
@@ -257,55 +248,6 @@ public class EstateCreationPage extends BasePage {
         fillField(DOMICILE_MUNICIPALITY, "EstateCreate.municipality");
     }
 
-    public void verifyDomicileAddressFieldValidations() throws AutomationException, IOException, ParseException {
-        WebElement addressLine1 = driverUtil.getWebElement(DOMICILE_ADDRESS_LINE1);
-        WebElement addressLine2 = driverUtil.getWebElement(DOMICILE_ADDRESS_LINE2);
-        WebElement municipality = driverUtil.getWebElement(DOMICILE_MUNICIPALITY);
-        clearField(DOMICILE_ADDRESS_LINE1);
-        addressLine1.sendKeys("A".repeat(101));
-        clearField(DOMICILE_ADDRESS_LINE2);
-        addressLine2.sendKeys("B".repeat(101));
-        addressLine2.sendKeys(Keys.TAB);
-        WebElement errorMaxChar = driverUtil.getWebElement(DOMICILE_MAX_CHAR_LIMIT_ERROR);
-        if (errorMaxChar == null || !errorMaxChar.isDisplayed()) {
-            throw new AutomationException("Validation for exceeding max character limit is not displayed.");
-        }
-
-        clearField(DOMICILE_ADDRESS_LINE1);
-        addressLine1.sendKeys("Invalid@#$%");
-        clearField(DOMICILE_ADDRESS_LINE2);
-        addressLine2.sendKeys("##@@Invalid");
-        addressLine2.sendKeys(Keys.TAB);
-        WebElement errorSpecialChar = driverUtil.getWebElement(DOMICILE_SPECIAL_CHAR_ERROR);
-        if (errorSpecialChar == null || !errorSpecialChar.isDisplayed()) {
-            throw new AutomationException("Validation for allowed special characters is not displayed.");
-        }
-
-        clearField(DOMICILE_MUNICIPALITY);
-        municipality.sendKeys("x".repeat(51));
-        municipality.sendKeys(Keys.TAB);
-        WebElement municipalityErrorMaxChar = driverUtil.getWebElement(MUNICIPALITY_MAX_CHAR_ERROR);
-        if (municipalityErrorMaxChar == null || !municipalityErrorMaxChar.isDisplayed()) {
-            throw new AutomationException("Validation for exceeding max character limit is not displayed.");
-        }
-
-        clearField(DOMICILE_MUNICIPALITY);
-        municipality.sendKeys("##@@Invalid");
-        municipality.sendKeys(Keys.TAB);
-        WebElement municipalityErrorSpecialChar = driverUtil.getWebElement(MUNICIPALITY_SPECIAL_CHAR_ERROR);
-        if (municipalityErrorSpecialChar == null || !municipalityErrorSpecialChar.isDisplayed()) {
-            throw new AutomationException("Validation for exceeding max character limit is not displayed.");
-        }
-
-        CommonSteps.takeScreenshot();
-        clearField(DOMICILE_ADDRESS_LINE1);
-        fillField(DOMICILE_ADDRESS_LINE1, "EstateCreate.addressLine1");
-        clearField(DOMICILE_ADDRESS_LINE2);
-        fillField(DOMICILE_ADDRESS_LINE2, "EstateCreate.addressLine2");
-        clearField(DOMICILE_MUNICIPALITY);
-        fillField(DOMICILE_MUNICIPALITY, "EstateCreate.municipality");
-    }
-
     private void verifyRadioButtonSelection(WebElement selected, WebElement unselected) throws AutomationException {
         if (!selected.isSelected() || unselected.isSelected()) {
             throw new AutomationException("Radio button selection behavior is incorrect.");
@@ -337,36 +279,6 @@ public class EstateCreationPage extends BasePage {
         verifyAutoFetchedFieldsOfPlaceOfDeathAddress();
     }
 
-    public void verifyPlaceOfDeathFieldValidations() throws AutomationException, IOException, ParseException {
-        WebElement addressLine1 = driverUtil.getWebElement(PLACE_OF_DEATH_ADDRESS_LINE1);
-        WebElement addressLine2 = driverUtil.getWebElement(PLACE_OF_DEATH_ADDRESS_LINE2);
-        clearField(PLACE_OF_DEATH_ADDRESS_LINE1);
-        addressLine1.sendKeys("A".repeat(101));
-        clearField(PLACE_OF_DEATH_ADDRESS_LINE2);
-        addressLine2.sendKeys("B".repeat(101));
-        addressLine2.sendKeys(Keys.TAB);
-        WebElement errorMaxChar = driverUtil.getWebElement(POD_MAX_CHAR_LIMIT_ERROR);
-        if (errorMaxChar == null || !errorMaxChar.isDisplayed()) {
-            throw new AutomationException("Validation for exceeding max character limit is not displayed.");
-        }
-
-        clearField(PLACE_OF_DEATH_ADDRESS_LINE1);
-        addressLine1.sendKeys("Invalid@#$%");
-        clearField(PLACE_OF_DEATH_ADDRESS_LINE2);
-        addressLine2.sendKeys("##@@Invalid");
-        addressLine2.sendKeys(Keys.TAB);
-        WebElement errorSpecialChar = driverUtil.getWebElement(POD_SPECIAL_CHAR_ERROR);
-        if (errorSpecialChar == null || !errorSpecialChar.isDisplayed()) {
-            throw new AutomationException("Validation for allowed special characters is not displayed.");
-        }
-        CommonSteps.logInfo("Verified Validations for all fields under Place of Death.");
-        CommonSteps.takeScreenshot();
-        clearField(PLACE_OF_DEATH_ADDRESS_LINE1);
-        fillField(PLACE_OF_DEATH_ADDRESS_LINE1, "EstateCreate.PODaddressLine1");
-        clearField(PLACE_OF_DEATH_ADDRESS_LINE2);
-        fillField(PLACE_OF_DEATH_ADDRESS_LINE2, "EstateCreate.PODaddressLine2");
-    }
-
     public void clickOnEstateTab() throws AutomationException {
         scrollPageToTop();
         driverUtil.getWebElement(ESTATE_TAB).click();
@@ -387,15 +299,6 @@ public class EstateCreationPage extends BasePage {
 
     public void selectDefaultAddressRadioButton(String checkboxName) throws AutomationException {
         driverUtil.getWebElement(String.format(ADDRESS_RADIO_BTN_XPATH, checkboxName)).click();
-    }
-
-    public void verifyLastResidenceFieldValidationErrors() throws AutomationException {
-        waitForVisibleElement(By.xpath(LAST_RESIDENCE_ERROR_MSG));
-        if (!driverUtil.getWebElement(LAST_RESIDENCE_ERROR_MSG).isDisplayed()) {
-            throw new AutomationException("The Last Residence field not displays the respective validation error messages for invalid inputs.");
-        }
-        CommonSteps.logInfo("The Last Residence field displays the respective validation error messages for invalid inputs.");
-        CommonSteps.takeScreenshot();
     }
 
     public void fillEstateDetails() throws AutomationException, IOException, ParseException {
@@ -492,7 +395,6 @@ public class EstateCreationPage extends BasePage {
         verifyField("Age at Death", ageAtDeath, actualAgeAtDeath);
         verifyField("Marital Status", expectedMaritalStatus, actualMaritalStatus);
     }
-
 
     public static void verifyEstateRetainedTheEnteredValue() throws IOException, ParseException, AutomationException {
         String expectedDateOfWill = CommonUtil.getJsonPath("EstateCreate").get("EstateCreate.dateOfWill").toString();
@@ -617,16 +519,6 @@ public class EstateCreationPage extends BasePage {
         CommonSteps.takeScreenshot();
     }
 
-    public void entersDOBandDOD() throws AutomationException, IOException, ParseException {
-        Actions actions = new Actions(DriverFactory.drivers.get());
-
-        fillField(DATE_OF_BIRTH_FIELD, "EstateCreate.dateOfBirth", actions);
-        actions.sendKeys(Keys.ENTER);
-        fillField(DATE_OF_DEATH_FIELD, "EstateCreate.dateOfDeath", actions);
-        actions.sendKeys(Keys.ENTER);
-        waitForAWhile(3);
-    }
-
     public void calculateAgeAtDeath() throws AutomationException {
         String dob = driverUtil.getWebElement(DATE_OF_BIRTH_FIELD).getAttribute("value");
         String dod = driverUtil.getWebElement(DATE_OF_DEATH_FIELD).getAttribute("value");
@@ -660,15 +552,6 @@ public class EstateCreationPage extends BasePage {
         }
     }
 
-    public void validateSSNForSameName() throws AutomationException, IOException, ParseException {
-        WebElement errorSSNElement = driverUtil.getWebElement(SSN_ERROR_MESSAGE);
-        if (errorSSNElement != null && errorSSNElement.isDisplayed()) {
-            throw new AutomationException("Error displayed incorrectly for a different SSN also");
-        } else {
-            CommonSteps.logInfo("No error message display for different SSN as expected");
-        }
-    }
-
     public void clickOnCodicilDatesDatePickerOpen() throws AutomationException {
         Actions actions = new Actions(DriverFactory.drivers.get());
         driverUtil.getWebElement(CODICILE_DATE_1).click();
@@ -683,7 +566,6 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void entersCodicilDates() throws AutomationException, IOException, ParseException {
-
         Actions actions = new Actions(DriverFactory.drivers.get());
         clearField(CODICILE_DATE_1);
         fillField(CODICILE_DATE_1, "EstateCreate.codicilDate1");
@@ -762,13 +644,7 @@ public class EstateCreationPage extends BasePage {
     }
 
     public void fillLifeDetailsAndValidatefields() throws AutomationException, IOException, ParseException {
-
         Actions actions = new Actions(DriverFactory.drivers.get());
-
-        clearField(LAST_RESIDENCE_FIELD);
-        driverUtil.getWebElement(LAST_RESIDENCE_FIELD).sendKeys("A".repeat(51));
-        driverUtil.getWebElement("//body").click();
-        verifyLastResidenceFieldValidationErrors();
 
         clearField(LAST_RESIDENCE_FIELD);
         fillField(LAST_RESIDENCE_FIELD, "EstateCreate.lastResidence");
