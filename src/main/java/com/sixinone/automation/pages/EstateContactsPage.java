@@ -22,7 +22,7 @@ import static com.sixinone.automation.util.WebDriverUtil.*;
 
 public class EstateContactsPage extends BasePage {
 
-    public static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
+    public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static final String NAME_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Name']";
     public static final String ROLES_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Roles']";

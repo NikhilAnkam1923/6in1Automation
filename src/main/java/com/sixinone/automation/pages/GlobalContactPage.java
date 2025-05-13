@@ -43,7 +43,7 @@ public class GlobalContactPage extends BasePage {
     private static final String EIN_FIELD = "//input[@name='contact.ein']";
     private static final String ENTITY_EIN_FIELD = "//input[@id='contact.ein']";
     public static final String SAVE_BUTTON = "//button[text()='Save']";
-    public static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
+    public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     public static final String CREATE_INDIVIDUAL_CONTACT_BTN = "//button[text()='Create Individual Contact']";
     public static final String CREATE_ENTITY_CONTACT_BTN = "//button[text()='Create Entity Contact']";
@@ -856,6 +856,7 @@ public class GlobalContactPage extends BasePage {
         CommonSteps.logInfo("Verified that Address is added successfully.");
         CommonSteps.takeScreenshot();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
 
     }
@@ -970,7 +971,8 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(String.format(CONTACT_NAME,contactName)).click();
 
 
-        WebDriverUtil.waitForAWhile(1);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
         String actualFirstName = getFieldValue(FIRST_NAME_FIELD, "value");
         String actualMiddleName = getFieldValue(MIDDLE_NAME_FIELD, "value");
         String actualLastName = getFieldValue(LAST_NAME_FIELD, "value");

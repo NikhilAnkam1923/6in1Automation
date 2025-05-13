@@ -81,7 +81,7 @@ public class EstateCreationPage extends BasePage {
     private static final String ARCHIVE_DESCRIPTION = "//textarea[@name='description']";
     private static final String ARCHIVE_BUTTON = "//button[text()='Archive']";
     private static final String ARCHIVE_CONFIRMATIONBUTTON = "//h4[@class='text-start mb-0']//following-sibling::div[@class='footer-modal']//button[text()='Archive']";
-    private static final String CONFIRMATION_MESSAGE = "//div[text()='%s']";
+    private static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
     private static final String FILE_NUMBER_1_ERR = "//div[@class='invalid-feedback' and contains(text(),'County Code must be a number between 1 and 99.')]";
     private static final String FILE_NUMBER_2_ERR = "//div[@class='invalid-feedback' and contains(text(),'Year must be exactly 2 digits.')]";
     private static final String FILE_NUMBER_3_ERR = "//div[@class='invalid-feedback' and contains(text(),'File Number must be at least 4 digits.')]";
