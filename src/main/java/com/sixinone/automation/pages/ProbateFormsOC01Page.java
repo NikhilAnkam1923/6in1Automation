@@ -1639,6 +1639,7 @@ public class ProbateFormsOC01Page extends BasePage {
         WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
         fileNumberField.clear();
         fileNumberField.sendKeys(initialFileNumber);
+        WebDriverUtil.waitForAWhile();
         List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
         if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
             toasterBtns.get(0).click();
