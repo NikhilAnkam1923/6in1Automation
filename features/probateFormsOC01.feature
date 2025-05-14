@@ -11,7 +11,6 @@ Feature: 6in1 probate form OC01 Feature
       | user-email                        | password  |
       | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
-
   Scenario: Open Estate
     When user opens "Sara Watt" Estate
     And user saves entered Estate information for "OC01" form

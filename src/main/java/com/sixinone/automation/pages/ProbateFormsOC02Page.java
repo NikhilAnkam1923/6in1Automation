@@ -24,10 +24,12 @@ import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.*;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProbateFormsOC02Page extends BasePage{
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
@@ -1213,7 +1215,7 @@ public class ProbateFormsOC02Page extends BasePage{
             Map<String, String> expectedCounselDetails = new HashMap<>();
             expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
             expectedCounselDetails.put("Name of Law Firm", nameOfLawFirmForm);
-            String attorneyAddressLineForm = attorneyAddressLine1Form+" "+attorneyAddressLine2Form;
+            String attorneyAddressLineForm = attorneyAddressLine1Form + " " + attorneyAddressLine2Form;
             expectedCounselDetails.put("Address", attorneyAddressLineForm);
             expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
             expectedCounselDetails.put("Fax", attorneyFaxForm);
@@ -1221,9 +1223,18 @@ public class ProbateFormsOC02Page extends BasePage{
 
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
+            String petitionerAddressLine1Form = petitioner1AddressLine1Form +" "+ petitioner1CityStateCodeZipForm;
+            String petitionerAddressLine2Form = petitioner2AddressLine1Form +" "+ petitioner2CityStateCodeZipForm;
+
+            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
+            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
+            expectedPetitioners.put(nameOfPetitioner2Form,petitionerAddressLine2Form);
+
+            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
+
 
             // If any verification fails, throw an exception
-            if (!isVerifiedFileNumber || !isVerifiedCounselDetails) {
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -2060,5 +2071,89 @@ public class ProbateFormsOC02Page extends BasePage{
         driverUtil.getWebElement(String.format(BENEFICIAL_INTEREST, fullName)).sendKeys(beneficialInterest);
         driverUtil.getWebElement(String.format(BENEFICIAL_INTEREST, fullName)).sendKeys(Keys.TAB);
     }
+
+    public static boolean validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
+            throws IOException, AutomationException {
+        Map<String, String> extractedMap = extractPetitionerAddressMapping(pdfFilePath);
+
+        int index = 1;
+        for (Map.Entry<String, String> expectedEntry : expectedNameAddressMap.entrySet()) {
+            String expectedName = expectedEntry.getKey().trim();
+            String expectedAddress = expectedEntry.getValue().trim();
+
+            String extractedName = "";
+            String extractedAddress = "";
+
+            // Extract values based on index order
+            List<String> extractedNames = new ArrayList<>(extractedMap.keySet());
+            List<String> extractedAddresses = new ArrayList<>(extractedMap.values());
+
+            if (index - 1 < extractedNames.size()) {
+                extractedName = extractedNames.get(index - 1);
+                extractedAddress = extractedAddresses.get(index - 1);
+            }
+
+            String petitionerLabel = "petitioner" + index;
+
+            // 🔍 Compare Name
+            CommonSteps.logInfo("🔍 Comparing -> for " + petitionerLabel + " Name Expected: '" + expectedName + "', Extracted: '" + extractedName + "'");
+            if (expectedName.equalsIgnoreCase(extractedName)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + petitionerLabel + " Name' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Name' mismatch. Expected: '" + expectedName + "', Found: '" + extractedName + "'");
+            }
+
+            // 🔍 Compare Address
+            CommonSteps.logInfo("🔍 Comparing -> for " + petitionerLabel + " Address Expected: '" + expectedAddress + "', Extracted: '" + extractedAddress + "'");
+            if (expectedAddress.equalsIgnoreCase(extractedAddress)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + petitionerLabel + " Address' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Address' mismatch. Expected: '" + expectedAddress + "', Found: '" + extractedAddress + "'");
+            }
+
+            index++;
+        }
+        return true;
+    }
+
+    public static Map<String, String> extractPetitionerAddressMapping(String pdfFilePath) throws IOException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] lines = pdfText.split("\\r?\\n");
+        List<String> trimmedLines = Arrays.stream(lines).map(String::trim).collect(Collectors.toList());
+
+        Map<String, String> nameAddressMap = new LinkedHashMap<>();
+
+        for (int i = 0; i < trimmedLines.size(); i++) {
+            String line = trimmedLines.get(i);
+            if (line.startsWith("Name:") && i + 2 < trimmedLines.size()) {
+                String namesLine = trimmedLines.get(i).replace("Name:", "").trim();
+                String addressLine = trimmedLines.get(i + 1).replace("Address:", "").trim();
+                String cityStateLine = trimmedLines.get(i + 2).trim();
+
+                // Split by Jr./Sr. endings or two spaces
+                List<String> names = Arrays.asList(namesLine.split("(?<=, (Jr\\.|Sr\\.|II|III|IV|V))\\s+"));
+                List<String> streets = Arrays.asList(addressLine.split("\\s{2,}|(?<=Street|Avenue|Road|Lane|Drive)\\s+"));
+                List<String> cities = Arrays.asList(cityStateLine.split("(?<=\\d{5})\\s*"));
+
+                for (int j = 0; j < names.size(); j++) {
+                    String name = names.get(j).trim();
+                    String street = j < streets.size() ? streets.get(j).trim() : "";
+                    String cityState = j < cities.size() ? cities.get(j).trim() : "";
+
+                    String fullAddress = (street + " " + cityState).trim();
+                    nameAddressMap.put(name, fullAddress);
+
+                    CommonSteps.logInfo("✅ " + name + " -> " + fullAddress);
+                }
+                break; // Done once we parse the first "Name:" block
+            }
+        }
+
+        return nameAddressMap;
+    }
+
 }
 

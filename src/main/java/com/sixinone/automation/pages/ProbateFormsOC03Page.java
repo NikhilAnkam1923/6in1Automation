@@ -15,6 +15,8 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.sixinone.automation.util.WebDriverUtil.*;
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
@@ -310,26 +312,22 @@ public class ProbateFormsOC03Page extends BasePage{
         String allFiduciaryContactsForm = String.join(", ",expectedFiduciaryContacts, expectedCorporateFiduciaryContact);
 
         List<WebElement> accountFields = driverUtil.getWebElements(ACCOUNT_OF_FIELDS);
-        List<String> actualFiduciaryContacts = new ArrayList<>();
+        List<String> allNamesRaw = new ArrayList<>();
 
-        for (WebElement accountField : accountFields) {
-            String value = accountField.getAttribute("value");
-
-            String[] parts = value.split(",");
-            List<String> names = new ArrayList<>();
-
-            for (int i = 0; i < parts.length - 1; i += 2) {
-                String fullName = parts[i].trim() + ", " + parts[i + 1].trim();
-                names.add(fullName);
-            }
-
-            if (parts.length % 2 != 0) {
-                names.add(parts[parts.length - 1].trim());
-            }
-            actualFiduciaryContacts.addAll(names);
+        for (WebElement el : accountFields) {
+            allNamesRaw.add(el.getAttribute("value").trim());
         }
 
-        for(String contact:actualFiduciaryContacts){
+        String combined = String.join(" ", allNamesRaw);
+
+        List<String> extractedNames = new ArrayList<>();
+        Matcher matcher = Pattern.compile("([A-Za-z ]+, (?:Sr\\.|Jr\\.)|[a-zA-Z]+(?:[a-zA-Z]+)*)").matcher(combined);
+
+        while (matcher.find()) {
+            extractedNames.add(matcher.group(1).trim());
+        }
+
+        for(String contact:extractedNames){
             if(!allFiduciaryContactsForm.contains(contact)){
                 throw new AutomationException("Fiduciary contact mismatch. "+contact+" not contain in "+allFiduciaryContactsForm);
             }

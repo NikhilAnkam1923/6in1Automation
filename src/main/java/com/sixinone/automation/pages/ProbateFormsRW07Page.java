@@ -113,10 +113,10 @@ public class ProbateFormsRW07Page extends BasePage {
     static String fileNumberForm;
     static String corporateFiduciaryFirm;
     static String fiduciaryCityStateCodeZip;
-    static String fiduciaryAddressLine1Form;
+    static String fiduciaryAddressLineForm;
     static String fiduciaryPhoneForm;
     static String fiduciaryEmailForm;
-    static String attorneyAddressLine1Form;
+    static String attorneyAddressLineForm;
     static String attorneyPhoneForm;
     static String attorneyEmailForm;
     static String attorneyCityStateCodeZip;
@@ -627,10 +627,12 @@ public class ProbateFormsRW07Page extends BasePage {
         String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
         String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
         String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
-        fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        String fiduciaryAddressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        String fiduciaryAddressLine2Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine2").toString();
         fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
         fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
 
+        fiduciaryAddressLineForm = fiduciaryAddressLine1Form + ", " + fiduciaryAddressLine2Form;
         fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
@@ -694,10 +696,12 @@ public class ProbateFormsRW07Page extends BasePage {
         String attorneyCityForm = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
         String attorneyStateForm = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
         String attorneyZipForm = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
-        attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        String attorneyAddressLine1Form = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString();
+        String attorneyAddressLine2Form= CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine2").toString();
         attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
         attorneyEmailForm = CommonUtil.getJsonPath("attorney2").get("attorney2.emailId").toString();
 
+        attorneyAddressLineForm = attorneyAddressLine1Form + ", " + attorneyAddressLine2Form;
         attorneyCityStateCodeZip = attorneyCityForm + ", " + attorneyStateForm + " " + attorneyZipForm;
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
@@ -814,7 +818,7 @@ public class ProbateFormsRW07Page extends BasePage {
             boolean isVerifyAllNamesAddressesTelephone = verifyAllNamesAddressesTelephone(pdfFilePath, expectedNames, expectedAddresses, expectedTelephones);
             boolean isVerifyCorporateFiduciaryAndPersonDetails = verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
 
-            if (!isVerifiedBeneficiaryDetails || isVerifyAllNamesAddressesTelephone || isVerifyCorporateFiduciaryAndPersonDetails) {
+            if (!isVerifiedBeneficiaryDetails || !isVerifyAllNamesAddressesTelephone || !isVerifyCorporateFiduciaryAndPersonDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -1041,13 +1045,13 @@ public class ProbateFormsRW07Page extends BasePage {
             if (corporateFiduciary == null && currentLine.equalsIgnoreCase("Name of Corporate Fiduciary") && i > 5) {
                 corporateFiduciary = clean(allLines[i + 8]);
             } else if (corporateFiduciary != null && corpAddress == null && currentLine.equalsIgnoreCase("Address") && i > 6) {
-                corpAddress = clean(allLines[i + 7]);
+                corpAddress = clean(allLines[i + 8]);
             } else if (corporateFiduciary != null && corpCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 4) {
-                corpCityStateZip = clean(allLines[i + 7]);
+                corpCityStateZip = clean(allLines[i + 8]);
             } else if (corporateFiduciary != null && corpTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 3) {
-                corpTelephone = clean(allLines[i + 7]);
+                corpTelephone = clean(allLines[i + 8]);
             } else if (corporateFiduciary != null && corpEmail == null && currentLine.equalsIgnoreCase("Email") && i > 2) {
-                corpEmail = clean(allLines[i + 7]);
+                corpEmail = clean(allLines[i + 8]);
             }
 
 // Extract Name of Person (2nd occurrence)
@@ -1078,7 +1082,7 @@ public class ProbateFormsRW07Page extends BasePage {
         // Validate Corporate Fiduciary Details (1st occurrence)
         if (corporateFiduciary != null) {
             validateField("Corporate Fiduciary", corporateFiduciary, corporateFiduciaryFirm);
-            validateField("Corporate Address", corpAddress, fiduciaryAddressLine1Form);
+            validateField("Corporate Address", corpAddress, fiduciaryAddressLineForm);
             validateField("Corporate City, State, Zip", corpCityStateZip, fiduciaryCityStateCodeZip);
             validateField("Corporate Telephone", corpTelephone, fiduciaryPhoneForm);
             validateField("Corporate Email", corpEmail, fiduciaryEmailForm);
@@ -1087,7 +1091,7 @@ public class ProbateFormsRW07Page extends BasePage {
         // Validate Name of Person Details (2nd occurrence)
         if (personName != null) {
             validateField("Name of Person", personName, selectedNameOfPerson);
-            validateField("Person Address", personAddress, attorneyAddressLine1Form);
+            validateField("Person Address", personAddress, attorneyAddressLineForm);
             validateField("Person City, State, Zip", personCityStateZip, attorneyCityStateCodeZip);
             validateField("Person Telephone", personTelephone, attorneyPhoneForm);
             validateField("Person Email", personEmail, attorneyEmailForm);
