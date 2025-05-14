@@ -15,14 +15,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.stringtemplate.v4.ST;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
@@ -232,6 +229,8 @@ public class ProbateFormsOC01Page extends BasePage {
     static String Fiduciary4Form;
     static String nameOfPetitionerForm;
     static String nameOfPetitioner2Form;
+    static String petitioner1AddressLineForm;
+    static String petitioner2AddressLineForm;
     static String petitioner1AddressLine1Form;
     static String petitioner1CityStateCodeZipForm;
     static String petitioner2AddressLine1Form;
@@ -715,6 +714,7 @@ public class ProbateFormsOC01Page extends BasePage {
         String stateCode1 = contact1.get("stateCode").toString();
         String zip1 = contact1.get("zip").toString();
         petitioner1CityStateCodeZipForm = city1 + " " + stateCode1 + " " + zip1;
+        petitioner1AddressLineForm = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
 
         String key2 = findFiduciaryKeyByName(Fiduciary2Form, jsonData);
         JSONObject contact2 = (JSONObject) jsonData.get(key2);
@@ -723,6 +723,7 @@ public class ProbateFormsOC01Page extends BasePage {
         String stateCode2 = contact2.get("stateCode").toString();
         String zip2 = contact2.get("zip").toString();
         petitioner2CityStateCodeZipForm = city2 + " " + stateCode2 + " " + zip2;
+        petitioner2AddressLineForm = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -2493,49 +2494,52 @@ public class ProbateFormsOC01Page extends BasePage {
             verifyFieldsInPDF(pdfFilePath,
                     "ORPHANS' COURT DIVISION",
                     "This form shall be used in all cases involving the Audit or Confirmation of the Account of a",
-                    "12-24-2001",
+                    fileNumberForm,
                     "file number");
 
 
             Map<String, String> expectedCounselDetails = new HashMap<>();
-            expectedCounselDetails.put("Name of Counsel", "Ethan Benjamin Walker, Jr.");
-            expectedCounselDetails.put("Name of Law Firm", "sigmaConsulting");
-            expectedCounselDetails.put("Address", "Riverside Drive Suite 101 Kansas City MO 64101");
-            expectedCounselDetails.put("Telephone 1", "(816) 555-4321");
-            expectedCounselDetails.put("Telephone 2", "(816) 888-6543");
-            expectedCounselDetails.put("Email", "ethan.walker@business.com");
+            expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
+            expectedCounselDetails.put("Name of Law Firm", nameOfLawFirmForm);
+            String attorneyAddressLineForm = attorneyAddressLine1Form + " " + attorneyAddressLine2Form;
+            expectedCounselDetails.put("Address", attorneyAddressLineForm);
+            expectedCounselDetails.put("Telephone 1", attorneyTelephoneForm);
+            expectedCounselDetails.put("Telephone 2", attorneyFaxForm);
+            expectedCounselDetails.put("Email", attorneyEmailForm);
 
             verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
-
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-            expectedPetitioners.put("Jessica Marie Brown, Jr.", "Maple Avenue Chicago, IL 60610");
-            expectedPetitioners.put("zetaConsulting", "Mountain View Drive Seattle, WA 98101");
+            expectedPetitioners.put(nameOfPetitionerForm, petitioner2AddressLineForm);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitioner1AddressLineForm);
+
 
             validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
             verifyFieldsInPDF(pdfFilePath,
                     "Letters Testamentary or  Letters of Administration were granted to Petitioner(s) on",
                     "Date(s) of Codicil(s) (if applicable): 02/17/2023 02/20/2023 02/26/2023",
-                    "10/26/2015",
+                    dateOfWillForm,
                     "Date of Will");
 
-//            Map<String, String> expectedCodicilValues = new HashMap<>();
-//            expectedCodicilValues.put("Codicil Date1", codicilDate1Form);
-//            expectedCodicilValues.put("Codicil Date2", codicilDate2Form);
-//            expectedCodicilValues.put("Codicil Date3", codicilDate3Form);
-//
-//            boolean isverifiedCodicilDates = verifyCodicilDates(pdfFilePath,
-//                    "Date of Will (if applicable): 10/26/2015",
-//                    "Date of probate (if different from date Letters granted):",
-//                    expectedCodicilValues,
-//                    "Codicil Dates");
+            Map<String, String> expectedCodicilValues = new HashMap<>();
+            expectedCodicilValues.put("Codicil Date1", codicilDate1Form);
+            expectedCodicilValues.put("Codicil Date2", codicilDate2Form);
+            expectedCodicilValues.put("Codicil Date3", codicilDate3Form);
+
+            verifyCodicilDates(pdfFilePath,
+                    "Date of Will (if applicable): 10/26/2015",
+                    "Date of probate (if different from date Letters granted):",
+                    expectedCodicilValues,
+                    "Codicil Dates");
 
             Map<String, String> expectedValues = new HashMap<>();
-            expectedValues.put("additionalPetitioner1 Name", "Emily Ann Wilson, Sr.");
-            expectedValues.put("additionalPetitioner1 Address", "Cedar Lane New York, NY 10001");
-            expectedValues.put("additionalPetitioner2 Name", "Daniel Robert Harris, Sr.");
-            expectedValues.put("additionalPetitioner2 Address", "Willow Drive Dallas, TX 75201");
+            expectedValues.put("additionalPetitioner1 Name", Fiduciary3Form);
+            String petitioner3AddressLineForm = petitioner3AddressLine1Form + " " + petitioner3CityStateCodeZipForm;
+            expectedValues.put("additionalPetitioner1 Address", petitioner3AddressLineForm);
+            expectedValues.put("additionalPetitioner2 Name", Fiduciary4Form);
+            String petitioner4AddressLineForm = petitioner4AddressLine1Form + " " + petitioner4CityStateCodeZipForm;
+            expectedValues.put("additionalPetitioner2 Address", petitioner4AddressLineForm);
 
             verifyAdditionalPetitioners(pdfFilePath,
                     "(Additional Petitioner)",               // beforeLine
@@ -2544,15 +2548,16 @@ public class ProbateFormsOC01Page extends BasePage {
             );
 
             Map<String, String> expectedChildren = new LinkedHashMap<>();
-            expectedChildren.put("Alice Johnson", "03/01/2024");
-            expectedChildren.put("Bob Smith", "03/02/2024");
-            expectedChildren.put("Charlie Brown", "03/03/2024");
-            expectedChildren.put("David Wilson", "03/04/2024");
-            expectedChildren.put("Emma Davis", "03/05/2024");
-            expectedChildren.put("Fiona White", "03/06/2024");
-            expectedChildren.put("George Hall", "03/07/2024");
-            expectedChildren.put("Hannah Lee", "03/08/2024");
-            expectedChildren.put("Isaac Martin", "03/09/2024");
+            expectedChildren.put(childrenDetailDataForm1, dateDataForm1);
+            expectedChildren.put(childrenDetailDataForm2, dateDataForm2);
+            expectedChildren.put(childrenDetailDataForm3, dateDataForm3);
+            expectedChildren.put(childrenDetailDataForm4, dateDataForm4);
+            expectedChildren.put(childrenDetailDataForm5, dateDataForm5);
+            expectedChildren.put(childrenDetailDataForm6, dateDataForm6);
+            expectedChildren.put(childrenDetailDataForm7, dateDataForm7);
+            expectedChildren.put(childrenDetailDataForm8, dateDataForm8);
+            expectedChildren.put(childrenDetailDataForm9, dateDataForm9);
+            expectedChildren.put(childrenDetailDataForm10, dateDataForm10);
 
             verifyChildrenNamesAndDOBs(
                     pdfFilePath,
@@ -2562,79 +2567,80 @@ public class ProbateFormsOC01Page extends BasePage {
             );
 
             Map<String, String> expectedDatePaymentInterestMap = new LinkedHashMap<>();
-            expectedDatePaymentInterestMap.put("Date_1", "01/15/2025");
-            expectedDatePaymentInterestMap.put("Payment_1", "1,000.00");
-            expectedDatePaymentInterestMap.put("Interest_1", "5");
+            expectedDatePaymentInterestMap.put("Date_1", paDateForm1);
+            expectedDatePaymentInterestMap.put("Payment_1", paPaymentForm1);
+            expectedDatePaymentInterestMap.put("Interest_1", paInterestForm1);
 
-            expectedDatePaymentInterestMap.put("Date_2", "02/20/2025");
-            expectedDatePaymentInterestMap.put("Payment_2", "1,500.00");
-            expectedDatePaymentInterestMap.put("Interest_2", "4.5");
+            expectedDatePaymentInterestMap.put("Date_2", paDateForm2);
+            expectedDatePaymentInterestMap.put("Payment_2", paPaymentForm2);
+            expectedDatePaymentInterestMap.put("Interest_2", paInterestForm2);
 
-            expectedDatePaymentInterestMap.put("Date_3", "03/10/2025");
-            expectedDatePaymentInterestMap.put("Payment_3", "1,200.00");
-            expectedDatePaymentInterestMap.put("Interest_3", "6");
+            expectedDatePaymentInterestMap.put("Date_3", paDateForm3);
+            expectedDatePaymentInterestMap.put("Payment_3", paPaymentForm3);
+            expectedDatePaymentInterestMap.put("Interest_3", paInterestForm3);
 
-            expectedDatePaymentInterestMap.put("Date_4", "04/25/2025");
-            expectedDatePaymentInterestMap.put("Payment_4", "2,000.00");
-            expectedDatePaymentInterestMap.put("Interest_4", "5.2");
+            expectedDatePaymentInterestMap.put("Date_4", paDateForm4);
+            expectedDatePaymentInterestMap.put("Payment_4", paPaymentForm4);
+            expectedDatePaymentInterestMap.put("Interest_4", paInterestForm4);
 
-            expectedDatePaymentInterestMap.put("Date_5", "05/30/2025");
-            expectedDatePaymentInterestMap.put("Payment_5", "1,800.00");
-            expectedDatePaymentInterestMap.put("Interest_5", "4.8");
+            expectedDatePaymentInterestMap.put("Date_5", paDateForm5);
+            expectedDatePaymentInterestMap.put("Payment_5", paPaymentForm5);
+            expectedDatePaymentInterestMap.put("Interest_5", paInterestForm5);
 
-            expectedDatePaymentInterestMap.put("Date_6", "06/05/2025");
-            expectedDatePaymentInterestMap.put("Payment_6", "2,200.00");
-            expectedDatePaymentInterestMap.put("Interest_6", "5.5");
+            expectedDatePaymentInterestMap.put("Date_6", paDateForm6);
+            expectedDatePaymentInterestMap.put("Payment_6", paPaymentForm6);
+            expectedDatePaymentInterestMap.put("Interest_6", paInterestForm6);
 
-            expectedDatePaymentInterestMap.put("Date_7", "07/12/2025");
-            expectedDatePaymentInterestMap.put("Payment_7", "1,700.00");
-            expectedDatePaymentInterestMap.put("Interest_7", "6.2");
+            expectedDatePaymentInterestMap.put("Date_7", paDateForm7);
+            expectedDatePaymentInterestMap.put("Payment_7", paPaymentForm7);
+            expectedDatePaymentInterestMap.put("Interest_7", paInterestForm7);
 
-            expectedDatePaymentInterestMap.put("Date_8", "08/22/2025");
-            expectedDatePaymentInterestMap.put("Payment_8", "2,500.00");
-            expectedDatePaymentInterestMap.put("Interest_8", "4.9");
+            expectedDatePaymentInterestMap.put("Date_8", paDateForm8);
+            expectedDatePaymentInterestMap.put("Payment_8", paPaymentForm8);
+            expectedDatePaymentInterestMap.put("Interest_8", paInterestForm8);
 
-            boolean isVerifiedTaxPaymentData = verifyTaxPaymentData(pdfFilePath,
+
+            verifyTaxPaymentData(pdfFilePath,
                     "Date Payment Interest",
                     "13. On the date of death, was the decedent a fiduciary",
                     expectedDatePaymentInterestMap);
 
             Map<String, String> expectedDateDescriptionAmountMap = new LinkedHashMap<>();
-            expectedDateDescriptionAmountMap.put("Date_1", "01/10/2025");
-            expectedDateDescriptionAmountMap.put("Description_1", "Payment for invoice #123");
-            expectedDateDescriptionAmountMap.put("Amount_1", "1,000.00");
+            expectedDateDescriptionAmountMap.put("Date_1", radDateForm1);
+            expectedDateDescriptionAmountMap.put("Description_1", radDescriptionForm1);
+            expectedDateDescriptionAmountMap.put("Amount_1", radAmountForm1);
 
-            expectedDateDescriptionAmountMap.put("Date_2", "02/15/2025");
-            expectedDateDescriptionAmountMap.put("Description_2", "Refund for order #456");
-            expectedDateDescriptionAmountMap.put("Amount_2", "1,500.00");
+            expectedDateDescriptionAmountMap.put("Date_2", radDateForm2);
+            expectedDateDescriptionAmountMap.put("Description_2", radDescriptionForm2);
+            expectedDateDescriptionAmountMap.put("Amount_2", radAmountForm2);
 
-            expectedDateDescriptionAmountMap.put("Date_3", "03/20/2025");
-            expectedDateDescriptionAmountMap.put("Description_3", "Service charge for March");
-            expectedDateDescriptionAmountMap.put("Amount_3", "1,200.00");
+            expectedDateDescriptionAmountMap.put("Date_3", radDateForm3);
+            expectedDateDescriptionAmountMap.put("Description_3", radDescriptionForm3);
+            expectedDateDescriptionAmountMap.put("Amount_3", radAmountForm3);
 
-            expectedDateDescriptionAmountMap.put("Date_4", "04/25/2025");
-            expectedDateDescriptionAmountMap.put("Description_4", "Reimbursement for expenses");
-            expectedDateDescriptionAmountMap.put("Amount_4", "2,000.00");
+            expectedDateDescriptionAmountMap.put("Date_4", radDateForm4);
+            expectedDateDescriptionAmountMap.put("Description_4", radDescriptionForm4);
+            expectedDateDescriptionAmountMap.put("Amount_4", radAmountForm4);
 
-            expectedDateDescriptionAmountMap.put("Date_5", "05/30/2025");
-            expectedDateDescriptionAmountMap.put("Description_5", "Bonus payout");
-            expectedDateDescriptionAmountMap.put("Amount_5", "1,800.00");
+            expectedDateDescriptionAmountMap.put("Date_5", radDateForm5);
+            expectedDateDescriptionAmountMap.put("Description_5", radDescriptionForm5);
+            expectedDateDescriptionAmountMap.put("Amount_5", radAmountForm5);
 
-            expectedDateDescriptionAmountMap.put("Date_6", "06/05/2025");
-            expectedDateDescriptionAmountMap.put("Description_6", "Monthly subscription fee");
-            expectedDateDescriptionAmountMap.put("Amount_6", "2,200.00");
+            expectedDateDescriptionAmountMap.put("Date_6", radDateForm6);
+            expectedDateDescriptionAmountMap.put("Description_6", radDescriptionForm6);
+            expectedDateDescriptionAmountMap.put("Amount_6", radAmountForm6);
 
-            expectedDateDescriptionAmountMap.put("Date_7", "07/10/2025");
-            expectedDateDescriptionAmountMap.put("Description_7", "Annual maintenance charge");
-            expectedDateDescriptionAmountMap.put("Amount_7", "1,700.00");
+            expectedDateDescriptionAmountMap.put("Date_7", radDateForm7);
+            expectedDateDescriptionAmountMap.put("Description_7", radDescriptionForm7);
+            expectedDateDescriptionAmountMap.put("Amount_7", radAmountForm7);
 
-            expectedDateDescriptionAmountMap.put("Date_8", "08/15/2025");
-            expectedDateDescriptionAmountMap.put("Description_8", "Late fee adjustment");
-            expectedDateDescriptionAmountMap.put("Amount_8", "2,500.00");
+            expectedDateDescriptionAmountMap.put("Date_8", radDateForm8);
+            expectedDateDescriptionAmountMap.put("Description_8", radDescriptionForm8);
+            expectedDateDescriptionAmountMap.put("Amount_8", radAmountForm8);
 
-            expectedDateDescriptionAmountMap.put("Date_9", "09/20/2025");
-            expectedDateDescriptionAmountMap.put("Description_9", "Tax refund");
-            expectedDateDescriptionAmountMap.put("Amount_9", "3,000.00");
+            expectedDateDescriptionAmountMap.put("Date_9", radDateForm9);
+            expectedDateDescriptionAmountMap.put("Description_9", radDescriptionForm9);
+            expectedDateDescriptionAmountMap.put("Amount_9", radAmountForm9);
 
 
             verifyTransactionDetails(
@@ -2646,17 +2652,60 @@ public class ProbateFormsOC01Page extends BasePage {
             );
 
 
-            Map<String, String> expected = new HashMap<>();
-            expected.put("Name of Corporate Fiduciary", "zetaConsulting");
-            expected.put("Name of Representative and Title", "Liam Noah Anderson, Jr.");
-            expected.put("Name of Petitioner", "Rihan Benjamin Miles, Jr.");
+            Map<String, String> expectedSubmittedByPetitioners = new LinkedHashMap<>();
+            expectedSubmittedByPetitioners.put("Name of Petitioner1", nameOfPetitionerForm);
+            expectedSubmittedByPetitioners.put("Name of Petitioner2", nameOfPetitioner2Form);
 
-            verifySubmittedByFiduciaryAndPetitionerDetails(pdfFilePath, expected);
+            verifySubmittedByPetitionerNames(
+                    pdfFilePath,
+                    "in proportions, not amounts) are as follows:",
+                    "Signature of Petitioner",
+                    expectedSubmittedByPetitioners
+            );
+
+            List<Map<String, String>> expectedClaimants = new ArrayList<>();
+
+            Map<String, String> claimant1 = new LinkedHashMap<>();
+            claimant1.put("Claimant", "T.J.");
+            claimant1.put("Amount", "3,000.00");
+            claimant1.put("ClaimAdmitted", "No");
+            claimant1.put("PaidInFull", "No");
+            expectedClaimants.add(claimant1);
+
+            Map<String, String> claimant2 = new LinkedHashMap<>();
+            claimant2.put("Claimant", "L.W.");
+            claimant2.put("Amount", "15,000.00");
+            claimant2.put("ClaimAdmitted", "Yes");
+            claimant2.put("PaidInFull", "Yes");
+            expectedClaimants.add(claimant2);
+
+            Map<String, String> claimant3 = new LinkedHashMap<>();
+            claimant3.put("Claimant", "R.B.");
+            claimant3.put("Amount", "8,000.00");
+            claimant3.put("ClaimAdmitted", "Yes");
+            claimant3.put("PaidInFull", "No");
+            expectedClaimants.add(claimant3);
+
+            Map<String, String> claimant4 = new LinkedHashMap<>();
+            claimant4.put("Claimant", "A.S.");
+            claimant4.put("Amount", "12,000.00");
+            claimant4.put("ClaimAdmitted", "No");
+            claimant4.put("PaidInFull", "No");
+            expectedClaimants.add(claimant4);
+
+            // Define the expected summary data
+            String expectedAbove = "38,000.00";
+            String expectedAttachment = "220,000.00";
+            String expectedTotal = "258,000.00";
 
 
-            if (!isVerifiedTaxPaymentData) {
-                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
-            }
+
+
+            verifyClaimantsData(pdfFilePath, expectedClaimants, expectedAbove, expectedAttachment, expectedTotal);
+
+//            if (!isVerifiedTaxPaymentData) {
+//                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+//            }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
         } catch (AutomationException | IOException e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
@@ -2932,7 +2981,7 @@ public class ProbateFormsOC01Page extends BasePage {
         return nameAddressMap;
     }
 
-    private static boolean verifyCodicilDates(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues, String fieldName) throws IOException, AutomationException {
+    private static void verifyCodicilDates(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -2990,10 +3039,9 @@ public class ProbateFormsOC01Page extends BasePage {
         } else {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
-        return true;
     }
 
-    private static boolean verifyAdditionalPetitioners(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues) throws IOException, AutomationException {
+    private static void verifyAdditionalPetitioners(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3021,15 +3069,17 @@ public class ProbateFormsOC01Page extends BasePage {
         for (int i = startIndex + 1; i < endIndex; i++) {
             String line = allLines[i].trim();
 
-            if (line.equalsIgnoreCase("Name:") && i + 1 < endIndex) {
-                extractedNames.add(allLines[i + 1].trim());
+            if (line.startsWith("Name:")) {
+                extractedNames.add(line.replace("Name:", "").trim());
             }
 
-            if (line.equalsIgnoreCase("Address:") && i + 2 < endIndex) {
-                String line1 = allLines[i + 1].trim();
-                String line2 = allLines[i + 2].trim();
-                extractedAddresses.add(line1 + " " + line2);
+
+            if (line.startsWith("Address:") && i + 1 < endIndex) {
+                String line1 = line.replace("Address:", "").trim();
+                String line2 = allLines[i + 1].trim();
+                extractedAddresses.add((line1 + " " + line2).trim());
             }
+
         }
 
         // ✅ Build expected sets
@@ -3056,7 +3106,7 @@ public class ProbateFormsOC01Page extends BasePage {
             CommonSteps.logInfo("O] ✅ " + name + " -> " + address);
         }
 
-        CommonSteps.logInfo("🔍 Comparing extracted names set with expected names set...");
+        CommonSteps.logInfo("🔍 Comparing extracted names set with expected names set");
         if (!expectedNames.equals(extractedNamesSet)) {
             throw new AutomationException("❌ Validation Failed: Extracted names do not match expected names.");
         } else {
@@ -3070,13 +3120,12 @@ public class ProbateFormsOC01Page extends BasePage {
             CommonSteps.logInfo("✅ Validation Passed: All addresses matched expected values.");
         }
 
-        return true;
     }
 
-    private static boolean verifyChildrenNamesAndDOBs(String pdfFilePath,
-                                                      String beforeLine,
-                                                      String afterLine,
-                                                      Map<String, String> expectedNameDobMap) throws IOException, AutomationException {
+    private static void verifyChildrenNamesAndDOBs(String pdfFilePath,
+                                                   String beforeLine,
+                                                   String afterLine,
+                                                   Map<String, String> expectedNameDobMap) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3130,13 +3179,12 @@ public class ProbateFormsOC01Page extends BasePage {
 
             CommonSteps.logInfo("✅ Verified: " + expectedName + " → DOB: " + actualDob);
         }
-        return true;
     }
 
-    public static boolean verifyTaxPaymentData(String pdfFilePath,
-                                               String beforeLine,
-                                               String afterLine,
-                                               Map<String, String> expectedMap) throws IOException, AutomationException {
+    public static void verifyTaxPaymentData(String pdfFilePath,
+                                            String beforeLine,
+                                            String afterLine,
+                                            Map<String, String> expectedMap) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3194,14 +3242,12 @@ public class ProbateFormsOC01Page extends BasePage {
                         " → " + expectedKey + ": " + actualValue);
             }
         }
-
-        return true;
     }
 
-    public static boolean verifyTransactionDetails(String pdfFilePath,
-                                                   String beforeLine,
-                                                   String afterLine,
-                                                   Map<String, String> expectedMap) throws IOException, AutomationException {
+    public static void verifyTransactionDetails(String pdfFilePath,
+                                                String beforeLine,
+                                                String afterLine,
+                                                Map<String, String> expectedMap) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3263,59 +3309,203 @@ public class ProbateFormsOC01Page extends BasePage {
             }
         }
 
-        return true;
     }
 
-    public static boolean verifySubmittedByFiduciaryAndPetitionerDetails(String pdfFilePath,
-                                                                         Map<String, String> expectedValues)
-            throws AutomationException {
+    public static void verifySubmittedByPetitionerNames(String pdfFilePath,
+                                                        String beforeLine,
+                                                        String afterLine,
+                                                        Map<String, String> expectedPetitionerMap)
+            throws IOException, AutomationException {
 
-        List<String> extractedLines = new ArrayList<>();
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
 
-        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            String pdfText = stripper.getText(document);
-            extractedLines = Arrays.asList(pdfText.split("\\r?\\n"));
-        } catch (IOException e) {
-            throw new AutomationException("❌ Failed to read PDF: " + e.getMessage());
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            CommonSteps.logInfo("[INFO] Line " + (i + 1) + ": " + allLines[i].trim());
         }
 
-        String corporateFiduciary = "";
-        String representativeName = "";
-        String petitionerName = "";
-
-        for (int i = 0; i < extractedLines.size(); i++) {
-            String line = extractedLines.get(i).trim();
-
-            if (line.equalsIgnoreCase("Name of Corporate Fiduciary") && i > 0) {
-                corporateFiduciary = extractedLines.get(i - 1).trim();
-            } else if (line.equalsIgnoreCase("Name of Representative and Title") && i > 0) {
-                representativeName = extractedLines.get(i - 1).trim();
-            } else if (line.equalsIgnoreCase("Name of Petitioner") && i > 0) {
-                petitionerName = extractedLines.get(i - 1).trim();
+        // Track all occurrences of "Signature of Petitioner"
+        List<Integer> signatureIndexes = new ArrayList<>();
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].trim().equalsIgnoreCase("Signature of Petitioner")) {
+                signatureIndexes.add(i);
             }
         }
 
-        // Validation
-        validateField("Corporate Fiduciary", corporateFiduciary, expectedValues.get("Name of Corporate Fiduciary"));
-        validateField("Representative Name", representativeName, expectedValues.get("Name of Representative and Title"));
-        validateField("Petitioner Name", petitionerName, expectedValues.get("Name of Petitioner"));
-
-
-        CommonSteps.logInfo("✅ All 'Submitted By' fiduciary and petitioner fields verified successfully.");
-        return true;
-    }
-
-    private static void validateField(String fieldName, String actual, String expected) throws AutomationException {
-        if (expected == null) {
-            throw new AutomationException("⚠️ Expected value is missing for field: " + fieldName);
+        if (signatureIndexes.size() < 2) {
+            throw new AutomationException("❌ Less than 2 occurrences of 'Signature of Petitioner' found in the PDF.");
         }
 
-        if (!expected.equals(actual)) {
-            throw new AutomationException("❌ Mismatch in " + fieldName +
-                    "\nExpected: '" + expected + "'\nFound:    '" + actual + "'");
+        // Start processing from the second occurrence
+        int secondSignatureIndex = signatureIndexes.get(1);
+
+        // We'll go backwards in chunks of 3: [name line, "Name of Petitioner", "Signature of Petitioner"]
+        List<String> extractedNames = new ArrayList<>();
+        for (int i = secondSignatureIndex; i >= 2; i--) {
+            String line3 = allLines[i].trim();
+            String line2 = allLines[i - 1].trim();
+            String line1 = allLines[i - 2].trim();
+
+            if (line2.equalsIgnoreCase("Name of Petitioner") &&
+                    line3.equalsIgnoreCase("Signature of Petitioner") &&
+                    !line1.isEmpty()) {
+                extractedNames.add(0, line1); // add to beginning to maintain order
+                i = i - 2; // move past this group
+            }
+        }
+
+        CommonSteps.logInfo("✅ Extracted petitioner names: " + extractedNames);
+
+        if (extractedNames.size() != expectedPetitionerMap.size()) {
+            throw new AutomationException("❌ Petitioner count mismatch. Expected: " +
+                    expectedPetitionerMap.size() + ", Found: " + extractedNames.size());
+        }
+
+        // Sort map keys to preserve order like Petitioner1, Petitioner2
+        List<String> sortedKeys = expectedPetitionerMap.keySet()
+                .stream()
+                .sorted(Comparator.comparing(s -> s.replaceAll("\\D+", "")))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < sortedKeys.size(); i++) {
+            String key = sortedKeys.get(i);
+            String expected = expectedPetitionerMap.get(key);
+
+            if (expected == null) {
+                throw new AutomationException("❌ Expected value missing for key: " + key);
+            }
+
+            expected = expected.trim();
+            String actual = extractedNames.get(i).trim();
+
+            CommonSteps.logInfo("🔍 Comparing " + key + " -> Expected: '" + expected + "', Extracted: '" + actual + "'");
+
+            if (!expected.equalsIgnoreCase(actual)) {
+                throw new AutomationException("❌ Mismatch in " + key + "\nExpected: " + expected + "\nFound:    " + actual);
+            }
+        }
+
+        CommonSteps.logInfo("✅ All petitioner names verified successfully.");
+    }
+
+    public static void verifyClaimantsData(String pdfFilePath,
+                                           List<Map<String, String>> expectedClaimants,
+                                           String expectedAbove,
+                                           String expectedAttachment,
+                                           String expectedTotal) throws IOException, AutomationException {
+
+        List<String> lines;
+        try (PDDocument document = PDDocument.load(new File(pdfFilePath))) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            String text = stripper.getText(document);
+            lines = Arrays.asList(text.split("\\r?\\n"));
+        }
+
+        List<String> dataLines = new ArrayList<>();
+        boolean capture = false;
+
+        for (String line : lines) {
+            String trimmed = line.trim();
+
+            if (trimmed.equalsIgnoreCase("Full?")) {
+                capture = true;
+                continue;
+            }
+
+            if (trimmed.startsWith("If the estate is insolvent") || trimmed.startsWith("20 Pa.C.S.")) {
+                break;
+            }
+
+            if (capture && !trimmed.isEmpty()) {
+                dataLines.add(trimmed);
+            }
+        }
+
+        // Split claim rows and summary rows
+        List<String> claimLines = new ArrayList<>();
+        String above = "", attachment = "", total = "";
+
+        for (String line : dataLines) {
+            if (line.startsWith("Above")) {
+                above = line.replace("Above", "").trim();
+            } else if (line.startsWith("Attachment")) {
+                attachment = line.replace("Attachment", "").trim();
+            } else if (line.startsWith("Total")) {
+                total = line.replace("Total", "").trim();
+            } else {
+                claimLines.add(line);
+            }
+        }
+
+        if (claimLines.size() != expectedClaimants.size()) {
+            throw new AutomationException("❌ Mismatch in number of claimants. Expected: " +
+                    expectedClaimants.size() + ", Found: " + claimLines.size());
+        }
+
+        int rowNumber = 1;
+        for (int i = 0; i < claimLines.size(); i++) {
+            String[] parts = claimLines.get(i).split("\\s+");
+            if (parts.length < 4) {
+                throw new AutomationException("❌ Invalid data format in claimant row: " + claimLines.get(i));
+            }
+
+            String initials = parts[0];
+            String amount = parts[1];
+            String claimAdmitted = parts[2];
+            String paidInFull = parts[3];
+
+            // Get expected data from the map for the current claimant
+            Map<String, String> expected = expectedClaimants.get(i);
+
+            // Perform manual validation and logging
+            if (!initials.equals(expected.get("Claimant"))) {
+                throw new AutomationException("❌ Mismatch in Claimant_" + rowNumber + ":\nExpected: " + expected.get("Claimant") + "\nFound   : " + initials);
+            } else {
+                CommonSteps.logInfo("✅ Verified → Claimant_" + rowNumber + ": " + initials);
+            }
+
+            if (!amount.equals(expected.get("Amount"))) {
+                throw new AutomationException("❌ Mismatch in Amount_" + rowNumber + ":\nExpected: " + expected.get("Amount") + "\nFound   : " + amount);
+            } else {
+                CommonSteps.logInfo("✅ Verified → Amount_" + rowNumber + ": " + amount);
+            }
+
+            if (!claimAdmitted.equals(expected.get("ClaimAdmitted"))) {
+                throw new AutomationException("❌ Mismatch in ClaimAdmitted_" + rowNumber + ":\nExpected: " + expected.get("ClaimAdmitted") + "\nFound   : " + claimAdmitted);
+            } else {
+                CommonSteps.logInfo("✅ Verified → ClaimAdmitted_" + rowNumber + ": " + claimAdmitted);
+            }
+
+            if (!paidInFull.equals(expected.get("PaidInFull"))) {
+                throw new AutomationException("❌ Mismatch in PaidInFull_" + rowNumber + ":\nExpected: " + expected.get("PaidInFull") + "\nFound   : " + paidInFull);
+            } else {
+                CommonSteps.logInfo("✅ Verified → PaidInFull_" + rowNumber + ": " + paidInFull);
+            }
+
+            rowNumber++;
+        }
+
+        // Validate summary fields: Above, Attachment, Total
+        if (!above.equals(expectedAbove)) {
+            throw new AutomationException("❌ Mismatch in Above:\nExpected: " + expectedAbove + "\nFound   : " + above);
         } else {
-            CommonSteps.logInfo("✅ " + fieldName + " matched successfully: " + actual);
+            CommonSteps.logInfo("✅ Verified → Above: " + above);
+        }
+
+        if (!attachment.equals(expectedAttachment)) {
+            throw new AutomationException("❌ Mismatch in Attachment:\nExpected: " + expectedAttachment + "\nFound   : " + attachment);
+        } else {
+            CommonSteps.logInfo("✅ Verified → Attachment: " + attachment);
+        }
+
+        if (!total.equals(expectedTotal)) {
+            throw new AutomationException("❌ Mismatch in Total:\nExpected: " + expectedTotal + "\nFound   : " + total);
+        } else {
+            CommonSteps.logInfo("✅ Verified → Total: " + total);
         }
     }
 

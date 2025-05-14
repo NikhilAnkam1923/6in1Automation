@@ -1226,6 +1226,8 @@ public class ProbateFormsOC02Page extends BasePage{
             boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
 
+
+
             // If any verification fails, throw an exception
             if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");

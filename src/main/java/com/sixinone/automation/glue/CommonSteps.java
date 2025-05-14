@@ -53,7 +53,7 @@ public class CommonSteps {
     public static final String METHOD_NAME = "NAME";
     public static final String TAB_XPATH = "//div[@class='nav-item']//a//span[contains(text(),'%s')]";
     public static final String BTN_XPATH = "//button[contains(text(),'%s')]";
-    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
+    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input";
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String TEMP_ESTATE = "//a[text()='%s']";
     public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
