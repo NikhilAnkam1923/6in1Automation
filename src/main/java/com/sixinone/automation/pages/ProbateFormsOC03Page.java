@@ -1032,11 +1032,6 @@ public class ProbateFormsOC03Page extends BasePage{
         }
     }
 
-    public void userClicksOnTheEditAmountsProportionsButtonForIncome() throws AutomationException {
-        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
-        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
-    }
-
     public void verifyTheSidebarOpensDisplayingAListOfBeneficiaries() throws AutomationException {
         waitForVisibleElement(By.xpath(EDIT_AMOUNT_PROPORTION_MODAL));
         WebElement modalHeader = driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_MODAL);

@@ -82,6 +82,17 @@ Feature: 6in1 probate form OC04 Feature
     When user navigates to page number: "5"
     Then user verifies the field is populated with the correct estate name on page 5 for "OC04" form
 
+  Scenario: Verify that the sidebar opens when "Edit Amounts/Proportions" is clicked.
+    When user clicks on the 'Edit Amounts/Proportions' button for income
+    Then user verifies the sidebar opens displaying a list of beneficiaries for "OC04" form
+
+#  Scenario: Verify that users can specify amounts and proportions for beneficiaries.
+#    When user enters amounts and proportions for beneficiaries
+#    Then user verifies the entered data is saved and displayed correctly on the form
+#
+#  Scenario: Verify that excess distributees are included in an attachment, with the form displaying "See attached schedule."
+#    Then user verifies the form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment
+
   Scenario: Reset the OC02 form
     When user navigates to the probate forms tab
     And user click on the "OC 04" form

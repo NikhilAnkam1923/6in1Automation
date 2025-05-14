@@ -43,6 +43,7 @@ public class ProbateFormsRW02Steps {
     public void userVerifiesWhenNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment();
         CommonSteps.logInfo("Verified that when names exceed the line, the contacts are displayed in the attachment");
+        CommonSteps.takeScreenshot();
     }
 
     @And("user selects options from all the dropdowns of 'Estimate of value of decedents property at death'")

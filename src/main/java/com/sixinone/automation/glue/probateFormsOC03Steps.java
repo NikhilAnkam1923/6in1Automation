@@ -17,19 +17,6 @@ public class probateFormsOC03Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user clicks on the 'Edit Amounts/Proportions' button for income$")
-    public void userClicksOnTheEditAmountsProportionsButtonForIncome() throws AutomationException {
-        CommonSteps.logInfo("user clicks on the 'Edit Amounts/Proportions' button for income");
-        PageFactory.probateFormsOC03Page().userClicksOnTheEditAmountsProportionsButtonForIncome();
-    }
-
-    @Then("user verifies the sidebar opens displaying a list of beneficiaries")
-    public void userVerifiesTheSidebarOpensDisplayingAListOfBeneficiaries() throws AutomationException {
-        CommonSteps.logInfo("Verified that the sidebar opens displaying a list of beneficiaries");
-        PageFactory.probateFormsOC03Page().verifyTheSidebarOpensDisplayingAListOfBeneficiaries();
-        CommonSteps.takeScreenshot();
-    }
-
     @When("user enters amounts and proportions for beneficiaries")
     public void userEntersAmountsAndProportionsForBeneficiaries() throws AutomationException {
         CommonSteps.logInfo("user enters amounts and proportions for beneficiaries");

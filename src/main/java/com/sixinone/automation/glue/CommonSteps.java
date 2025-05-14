@@ -53,7 +53,7 @@ public class CommonSteps {
     public static final String METHOD_NAME = "NAME";
     public static final String TAB_XPATH = "//div[@class='nav-item']//a//span[contains(text(),'%s')]";
     public static final String BTN_XPATH = "//button[contains(text(),'%s')]";
-    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@class='k-textbox form-control']";
+    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input";
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String TEMP_ESTATE = "//a[text()='%s']";
     public static final String PROBATE_FORMS_TAB = "//span[text()='Probate Forms']";
@@ -70,6 +70,7 @@ public class CommonSteps {
     private static final String PETITIONER_NAME_FIELD = "//td[@class='tr5 td9']//input";
     private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllBenyOnAttachment']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllIncomeOnAttachment']";
+    private static final String EDIT_AMOUNT_PROPORTION_FIELD = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@class='yellowbg bold']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -1700,6 +1701,29 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyFieldIsPopulatedWithTheCorrectEstateNameOnPage5();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("^user clicks on the 'Edit Amounts/Proportions' button for income$")
+    public void userClicksOnTheEditAmountsProportionsButtonForIncome() throws AutomationException {
+        CommonSteps.logInfo("user clicks on the 'Edit Amounts/Proportions' button for income");
+        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
+    }
+
+    @Then("^user verifies the sidebar opens displaying a list of beneficiaries for \"([^\"]*)\" form$")
+    public void userVerifiesTheSidebarOpensDisplayingAListOfBeneficiaries(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that the sidebar opens displaying a list of beneficiaries for "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyTheSidebarOpensDisplayingAListOfBeneficiaries();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyTheSidebarOpensDisplayingAListOfBeneficiaries();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

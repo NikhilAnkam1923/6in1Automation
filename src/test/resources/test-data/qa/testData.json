@@ -124,10 +124,10 @@
     "fileNumberPart3": "1234"
   },
   "EstateScript": {
-    "firstName": "William",
+    "firstName": "Test",
     "middleName": "Arik",
-    "lastName": "John",
-    "displayName": "William John",
+    "lastName": "Watt",
+    "displayName": "Sara Watt",
     "alsoKnownAs": "Siri",
     "ssn": "123-33-0923",
     "suffix": "Jr.",

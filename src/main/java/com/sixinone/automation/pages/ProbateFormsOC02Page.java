@@ -448,7 +448,14 @@ public class ProbateFormsOC02Page extends BasePage{
             throw new AutomationException("File number not updated correctly. Expected: " + newFileNumber + " ,Found: " + fileNumberForm);
         }
 
-        driverUtil.getWebElement(CLOSE_TOASTER_BTN).click();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
     }
 
     public void verifySidebarAppearsAndAttorneyCanBeSelected() throws AutomationException, IOException, ParseException {
@@ -1411,7 +1418,13 @@ public class ProbateFormsOC02Page extends BasePage{
         WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
         fileNumberField.clear();
         fileNumberField.sendKeys(initialFileNumber);
-        driverUtil.getWebElement(CLOSE_TOASTER_BTN).click();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
 
         //Page 2
         switchToPage(2);

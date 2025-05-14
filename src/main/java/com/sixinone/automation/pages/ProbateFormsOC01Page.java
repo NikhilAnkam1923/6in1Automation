@@ -509,7 +509,14 @@ public class ProbateFormsOC01Page extends BasePage {
             throw new AutomationException("File number not updated correctly. Expected: " + newFileNumber + " ,Found: " + fileNumberForm);
         }
 
-        driverUtil.getWebElement(CLOSE_TOASTER_BTN).click();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
     }
 
     public void verifySidebarAppearsAndAttorneyCanBeSelected() throws AutomationException, IOException, ParseException {
@@ -1635,7 +1642,13 @@ public class ProbateFormsOC01Page extends BasePage {
         WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
         fileNumberField.clear();
         fileNumberField.sendKeys(initialFileNumber);
-        driverUtil.getWebElement(CLOSE_TOASTER_BTN).click();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
 
 
         //page 2
@@ -1752,6 +1765,7 @@ public class ProbateFormsOC01Page extends BasePage {
                 checkbox.click();
             }
         }
+        WebDriverUtil.waitForAWhile();
         List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
         int[] contactsToEnterProportion = {0, 2, 3, 4};
         for (int i = 0; i < contactsToEnterProportion.length; i++) {
@@ -1762,6 +1776,7 @@ public class ProbateFormsOC01Page extends BasePage {
                 inputField.clear();
             }
         }
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(CLOSE_BTN).click();
     }
 

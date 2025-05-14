@@ -85,7 +85,7 @@ Feature: 6in1 probate form OC03 Feature
 
   Scenario: Verify that the sidebar opens when "Edit Amounts/Proportions" is clicked.
     When user clicks on the 'Edit Amounts/Proportions' button for income
-    Then user verifies the sidebar opens displaying a list of beneficiaries
+    Then user verifies the sidebar opens displaying a list of beneficiaries for "OC03" form
 
   Scenario: Verify that users can specify amounts and proportions for beneficiaries.
     When user enters amounts and proportions for beneficiaries
