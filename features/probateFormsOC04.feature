@@ -31,14 +31,14 @@ Feature: 6in1 probate form OC04 Feature
 
   Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
     When user click on Petitioner name field
-    And user selects multiple petitioners for "OC03" form
+    And user selects multiple petitioners for "OC04" form
       #Verify, attachment.
-    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC03" form
+    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC04" form
 
   Scenario: Verify, selected petitioner can be swapped and deleted.
     When user click on Petitioner name field
-    And user swap the selected petitioner contacts for "OC03" form
-    Then user verifies for "OC03" form swapped petitioner names are reflected on UI accordingly
+    And user swap the selected petitioner contacts for "OC04" form
+    Then user verifies for "OC04" form swapped petitioner names are reflected on UI accordingly
 
   Scenario: Verify that the "Estate of" field is auto-populated with the estate name.
     When user navigates to page number: "3"

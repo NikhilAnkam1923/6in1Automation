@@ -1556,6 +1556,8 @@ public class ProbateFormsOC04Page extends BasePage{
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
 
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
