@@ -17,44 +17,6 @@ public class probateFormsOC03Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("user enters amounts and proportions for beneficiaries")
-    public void userEntersAmountsAndProportionsForBeneficiaries() throws AutomationException {
-        CommonSteps.logInfo("user enters amounts and proportions for beneficiaries");
-        PageFactory.probateFormsOC03Page().userEntersAmountsAndProportionsForBeneficiaries();
-    }
-
-    @Then("user verifies the entered data is saved and displayed correctly on the form")
-    public void userVerifiesTheEnteredDataIsSavedAndDisplayedCorrectlyOnTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that the entered data is saved and displayed correctly on the form");
-        PageFactory.probateFormsOC03Page().verifyEnteredDataIsSavedAndDisplayedCorrectlyOnTheForm();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("^user verifies the form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment$")
-    public void userVerifiesTheFormDisplaysSeeContinuationScheduleAttachedAndExtraBeneficiariesAppearInAnAttachment() throws AutomationException {
-        CommonSteps.logInfo("Verified that the form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment");
-        PageFactory.probateFormsOC03Page().verifyFormDisplaysSeeContinuationScheduleAttachedAndExtraBeneficiariesAppearInAnAttachment();
-    }
-
-    @Then("user verifies correct trust name is displayed on the form")
-    public void userVerifiesCorrectTrustNameIsDisplayedOnTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that correct trust name is displayed on the form");
-        PageFactory.probateFormsOC03Page().verifyCorrectTrustNameIsDisplayedOnTheForm();
-        CommonSteps.takeScreenshot();
-    }
-
-    @And("user adds new petitioner")
-    public void userAddsNewPetitioner() throws AutomationException {
-        CommonSteps.logInfo("user adds new petitioner");
-        PageFactory.probateFormsOC03Page().userAddsNewPetitioner();
-    }
-
-    @Then("user verifies newly added petitioner is displayed in the attachment")
-    public void userVerifiesNewlyAddedPetitionerIsDisplayedInTheAttachment() throws AutomationException {
-        CommonSteps.logInfo("Verified that newly added petitioner is displayed in the attachment");
-        PageFactory.probateFormsOC03Page().verifyNewlyAddedPetitionerIsDisplayedInTheAttachment();
-    }
-
     @Then("user verifies after removing the existing contact next inline contact is displayed on the form")
     public void userVerifiesAfterRemovingTheExistingContactNextInlineContactIsDisplayedOnTheForm() throws AutomationException {
         CommonSteps.logInfo("Verified that after removing the existing contact next inline contact is displayed on the form");

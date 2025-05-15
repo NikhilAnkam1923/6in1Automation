@@ -162,6 +162,10 @@ public class ProbateFormsOC02Page extends BasePage{
     private static final String BENY_WORKSHEET_TAB = "//a//span[text()='Beny Worksheet']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllIncomeOnAttachment']";
+    private static final String PETITIONER_1_ADDRESS_LINE = "//td[@class='trnew10 td11']//span[@class='p0 ft12 newstyle']//input";
+    private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
+    private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
+    private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -781,6 +785,11 @@ public class ProbateFormsOC02Page extends BasePage{
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
     }
 
     public void userSelectTestamentaryOption() {

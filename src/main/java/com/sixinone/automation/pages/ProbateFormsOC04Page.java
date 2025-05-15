@@ -129,6 +129,11 @@ public class ProbateFormsOC04Page extends BasePage{
     private static final String BENY_WORKSHEET_TAB = "//a//span[text()='Beny Worksheet']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     private static final String COMMENTS_FIELD_XPATH = "//textarea[@name='beneficiaries[%s].comments']";
+    private static final String PETITIONER_1_ADDRESS_LINE = "//td[@class='trnew10 td11']//span[@class='p0 ft12 newstyle']//input";
+    private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
+    private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
+    private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
+
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -1229,6 +1234,10 @@ public class ProbateFormsOC04Page extends BasePage{
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
         nameOfPetitionerForm = nameOfPetitionerField.getAttribute("value");
         nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
     }
 
     public void verifyNewlyAddedPetitionerIsDisplayedInTheAttachment() throws AutomationException {
@@ -1576,41 +1585,41 @@ public class ProbateFormsOC04Page extends BasePage{
             commentsField.clear();
         }
 
-//        //Page 5
-//        switchToPage(5);
-//        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
-//        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
-//        WebDriverUtil.waitForAWhile();
-//        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
-//        int[] contactsToClear = {0, 2, 3, 4, 5};
-//        for (int index : contactsToClear) {
-//            if (index < checkboxElements.size()) {
-//                WebElement checkbox = checkboxElements.get(index);
-//                checkbox.click();
-//            }
-//        }
-//
-//        List<WebElement> amountFields = driverUtil.getWebElements(AMOUNT_COLUMNS_MODAL);
-//        int[] contactsToEnterAmount = {0, 2, 3, 4, 5};
-//        for (int i = 0; i < contactsToEnterAmount.length; i++) {
-//            int index = contactsToEnterAmount[i];
-//
-//            if (index < amountFields.size()) {
-//                WebElement inputField = amountFields.get(index);
-//                inputField.clear();
-//            }
-//        }
-//
-//        List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
-//        int[] contactsToEnterProportion = {0, 2, 3, 4, 5};
-//        for (int i = 0; i < contactsToEnterProportion.length; i++) {
-//            int index = contactsToEnterProportion[i];
-//
-//            if (index < proportionFields.size()) {
-//                WebElement inputField = proportionFields.get(index);
-//                inputField.clear();
-//            }
-//        }
-//        driverUtil.getWebElement(CLOSE_BTN).click();
+        //Page 5
+        switchToPage(5);
+        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
+        int[] contactsToClear = {0, 2, 3, 4, 5};
+        for (int index : contactsToClear) {
+            if (index < checkboxElements.size()) {
+                WebElement checkbox = checkboxElements.get(index);
+                checkbox.click();
+            }
+        }
+
+        List<WebElement> amountFields = driverUtil.getWebElements(AMOUNT_COLUMNS_MODAL);
+        int[] contactsToEnterAmount = {0, 2, 3, 4, 5};
+        for (int i = 0; i < contactsToEnterAmount.length; i++) {
+            int index = contactsToEnterAmount[i];
+
+            if (index < amountFields.size()) {
+                WebElement inputField = amountFields.get(index);
+                inputField.clear();
+            }
+        }
+
+        List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
+        int[] contactsToEnterProportion = {0, 2, 3, 4, 5};
+        for (int i = 0; i < contactsToEnterProportion.length; i++) {
+            int index = contactsToEnterProportion[i];
+
+            if (index < proportionFields.size()) {
+                WebElement inputField = proportionFields.get(index);
+                inputField.clear();
+            }
+        }
+        driverUtil.getWebElement(CLOSE_BTN).click();
     }
 }

@@ -1381,6 +1381,9 @@ public class CommonSteps {
             case "OC03":
                 PageFactory.probateFormsOC03Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
                 break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1399,6 +1402,9 @@ public class CommonSteps {
                 break;
             case "OC03":
                 PageFactory.probateFormsOC03Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1729,5 +1735,97 @@ public class CommonSteps {
                 throw new AutomationException("Unsupported form name: " + formName);
         }
         CommonSteps.takeScreenshot();
+    }
+
+    @When("^user enters amounts and proportions for beneficiaries for \"([^\"]*)\" form$")
+    public void userEntersAmountsAndProportionsForBeneficiaries(String formName) throws AutomationException {
+        CommonSteps.logInfo("user enters amounts and proportions for beneficiaries for "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userEntersAmountsAndProportionsForBeneficiaries();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().userEntersAmountsAndProportionsForBeneficiaries();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies the entered data is saved and displayed correctly on the \"([^\"]*)\" form$")
+    public void userVerifiesTheEnteredDataIsSavedAndDisplayedCorrectlyOnTheForm(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that the entered data is saved and displayed correctly on the "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyEnteredDataIsSavedAndDisplayedCorrectlyOnTheForm();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyEnteredDataIsSavedAndDisplayedCorrectlyOnTheForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies the \"([^\"]*)\" form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment$")
+    public void userVerifiesTheFormDisplaysSeeContinuationScheduleAttachedAndExtraBeneficiariesAppearInAnAttachment(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that the "+formName+" form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyFormDisplaysSeeContinuationScheduleAttachedAndExtraBeneficiariesAppearInAnAttachment();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyFormDisplaysSeeContinuationScheduleAttachedAndExtraBeneficiariesAppearInAnAttachment();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies correct trust name is displayed on page 6 for \"([^\"]*)\" form$")
+    public void userVerifiesCorrectTrustNameIsDisplayedOnTheFormPage6(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that correct trust name is displayed on page 6 for "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyCorrectTrustNameIsDisplayedOnTheForm();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyCorrectTrustNameIsDisplayedOnTheForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @And("^user adds new petitioner for \"([^\"]*)\" form$")
+    public void userAddsNewPetitioner(String formName) throws AutomationException {
+        CommonSteps.logInfo("user adds new petitioner for "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().userAddsNewPetitioner();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().userAddsNewPetitioner();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies newly added petitioner is displayed in the attachment for \"([^\"]*)\" form$")
+    public void userVerifiesNewlyAddedPetitionerIsDisplayedInTheAttachment(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that newly added petitioner is displayed in the attachment for "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyNewlyAddedPetitionerIsDisplayedInTheAttachment();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyNewlyAddedPetitionerIsDisplayedInTheAttachment();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
     }
 }

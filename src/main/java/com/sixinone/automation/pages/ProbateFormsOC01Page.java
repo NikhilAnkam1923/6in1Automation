@@ -186,6 +186,10 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String BENEFICIAL_INTEREST = "//tr//td//span[contains(text(),'%s')]/ancestor::td/ancestor::tr//td[position()='6']//input";
     private static final String BENY_WORKSHEET_TAB = "//a//span[text()='Beny Worksheet']";
     private static final String SELECTED_PETITIONER_NAMES = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
+    private static final String PETITIONER_1_ADDRESS_LINE = "//td[@class='trnew10 td11']//span[@class='p0 ft12 newstyle']//input";
+    private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
+    private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
+    private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -720,7 +724,6 @@ public class ProbateFormsOC01Page extends BasePage {
         String stateCode1 = contact1.get("stateCode").toString();
         String zip1 = contact1.get("zip").toString();
         petitioner1CityStateCodeZipForm = city1 + " " + stateCode1 + " " + zip1;
-        petitioner1AddressLineForm = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
 
         String key2 = findFiduciaryKeyByName(Fiduciary2Form, jsonData);
         JSONObject contact2 = (JSONObject) jsonData.get(key2);
@@ -729,7 +732,6 @@ public class ProbateFormsOC01Page extends BasePage {
         String stateCode2 = contact2.get("stateCode").toString();
         String zip2 = contact2.get("zip").toString();
         petitioner2CityStateCodeZipForm = city2 + " " + stateCode2 + " " + zip2;
-        petitioner2AddressLineForm = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -888,6 +890,14 @@ public class ProbateFormsOC01Page extends BasePage {
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
+
+        petitioner1AddressLineForm = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
+        petitioner2AddressLineForm = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
     }
 
     public static void clearField(String fieldXpath) throws AutomationException {
@@ -2525,8 +2535,8 @@ public class ProbateFormsOC01Page extends BasePage {
             verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-            expectedPetitioners.put(nameOfPetitionerForm, petitioner2AddressLineForm);
-            expectedPetitioners.put(nameOfPetitioner2Form, petitioner1AddressLineForm);
+            expectedPetitioners.put(nameOfPetitionerForm, petitioner1AddressLineForm);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitioner2AddressLineForm);
 
 
             validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
