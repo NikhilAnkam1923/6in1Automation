@@ -11,7 +11,6 @@ import java.io.IOException;
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )
-
 public class TestRunner extends BaseRunner {
 
     @BeforeClass(alwaysRun = true)
