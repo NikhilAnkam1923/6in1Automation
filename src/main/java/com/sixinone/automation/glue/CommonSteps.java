@@ -838,7 +838,8 @@ public class CommonSteps {
         DriverFactory.drivers.get().findElement(By.xpath(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN)).click();
         DriverFactory.drivers.get().findElement(By.xpath(CORPORATE_FIDUCIARY_CLEAR_SELECTION_BTN)).click();
         WebDriverUtil.waitForAWhile(2);
-        scrollToElementAndClick(PERSON_CLEAR_SELECTION_BTN);
+        scrollToElement(PERSON_CLEAR_SELECTION_BTN);
+        DriverFactory.drivers.get().findElement(By.xpath(PERSON_CLEAR_SELECTION_BTN)).click();
         DriverFactory.drivers.get().findElement(By.xpath(PERSON_CLEAR_SELECTION_BTN)).click();
         WebDriverUtil.waitForAWhile(2);
     }
