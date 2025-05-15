@@ -29,9 +29,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ProbateFormsOC02Page extends BasePage{
+public class ProbateFormsOC02Page extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -334,11 +336,11 @@ public class ProbateFormsOC02Page extends BasePage{
         String enteredCountyName = getEstateValue("DomicileCountry").toUpperCase();
         countyNameForm = countyName.getText();
 
-        if(!page1.isDisplayed()){
+        if (!page1.isDisplayed()) {
             throw new AutomationException("On clicking OC02, page 1 is not opened by default.");
         }
 
-        if(!countyNameForm.equals(enteredCountyName)){
+        if (!countyNameForm.equals(enteredCountyName)) {
             throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm);
         }
     }
@@ -352,7 +354,7 @@ public class ProbateFormsOC02Page extends BasePage{
     public void verifyTrustUnderWillFieldIsEnabled() throws AutomationException {
         WebElement trustOfWillField = driverUtil.getWebElement(TRUST_UNDER_WILL_TEXT_FIELD);
 
-        if(!trustOfWillField.isEnabled() && trustOfWillField.getAttribute("disabled") != null && trustOfWillField.getAttribute("readonly") != null){
+        if (!trustOfWillField.isEnabled() && trustOfWillField.getAttribute("disabled") != null && trustOfWillField.getAttribute("readonly") != null) {
             throw new AutomationException("Trust under Will text field is not gets enabled");
         }
     }
@@ -366,7 +368,7 @@ public class ProbateFormsOC02Page extends BasePage{
     public void verifyTrustUnderDeedFieldIsEnabled() throws AutomationException {
         WebElement trustOfDeedField = driverUtil.getWebElement(TRUST_UNDER_DEED_TEXT_FIELD);
 
-        if(!trustOfDeedField.isEnabled() && trustOfDeedField.getAttribute("disabled") != null && trustOfDeedField.getAttribute("readonly") != null){
+        if (!trustOfDeedField.isEnabled() && trustOfDeedField.getAttribute("disabled") != null && trustOfDeedField.getAttribute("readonly") != null) {
             throw new AutomationException("Trust under deed text field is not gets enabled");
         }
     }
@@ -380,13 +382,13 @@ public class ProbateFormsOC02Page extends BasePage{
         trustUnderWillField.sendKeys(Keys.TAB);
 
         String trustUnderWillName = trustUnderWillField.getAttribute("value");
-        if(!trustUnderWillName.equals(nameOfDecedent)){
+        if (!trustUnderWillName.equals(nameOfDecedent)) {
             throw new AutomationException("Entered name is not displayed on the form against the Trust under will field");
         }
 
         String otherFieldText = driverUtil.getWebElement(TRUST_UNDER_DEED_TEXT_FIELD).getAttribute("value");
-        if(!otherFieldText.isEmpty()){
-            throw new AutomationException("Other field is not empty. Found text: "+otherFieldText);
+        if (!otherFieldText.isEmpty()) {
+            throw new AutomationException("Other field is not empty. Found text: " + otherFieldText);
         }
 
     }
@@ -400,33 +402,33 @@ public class ProbateFormsOC02Page extends BasePage{
         trustUnderDeedField.sendKeys(Keys.TAB);
 
         String trustUnderDeedName = trustUnderDeedField.getAttribute("value");
-        if(!trustUnderDeedName.equals(nameOfDecedent)){
+        if (!trustUnderDeedName.equals(nameOfDecedent)) {
             throw new AutomationException("Entered name is not displayed on the form against the Trust under deed field");
         }
 
         String otherFieldText = driverUtil.getWebElement(TRUST_UNDER_WILL_TEXT_FIELD).getAttribute("value");
-        if(!otherFieldText.isEmpty()){
-            throw new AutomationException("Other field is not empty. Found text: "+otherFieldText);
+        if (!otherFieldText.isEmpty()) {
+            throw new AutomationException("Other field is not empty. Found text: " + otherFieldText);
         }
 
         enteredDecedentNameForm = trustUnderDeedField.getAttribute("value");
     }
 
     public void verifyEnteredNameOfDecedentIsDisplayedOnAllTheOCPages() throws AutomationException {
-        for(int i=2; i<=11; i++){
+        for (int i = 2; i <= 11; i++) {
             switchToPage(i);
             String actualNameOfTrust;
-            if(i==2 || i==4){
+            if (i == 2 || i == 4) {
                 actualNameOfTrust = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_2_AND_4_PAGE).getAttribute("value");
-                if(i==2){
+                if (i == 2) {
                     nameOfTrustPage2 = actualNameOfTrust;
                 }
             } else {
                 actualNameOfTrust = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES).getAttribute("value");
             }
 
-            if(!actualNameOfTrust.equals(enteredDecedentNameForm)){
-                throw new AutomationException("Decedent Name is not reflected on page: "+i+". Expected: "+enteredDecedentNameForm+" ,Found: "+actualNameOfTrust);
+            if (!actualNameOfTrust.equals(enteredDecedentNameForm)) {
+                throw new AutomationException("Decedent Name is not reflected on page: " + i + ". Expected: " + enteredDecedentNameForm + " ,Found: " + actualNameOfTrust);
             }
         }
     }
@@ -915,8 +917,8 @@ public class ProbateFormsOC02Page extends BasePage{
         String actualJudicialCounty = judicialCountyField.getAttribute("value");
         String enteredJudicialCounty = getEstateValue("DomicileCountry");
 
-        if(!actualJudicialCounty.contains(enteredJudicialCounty)){
-            throw new AutomationException("Judicial county is not fetched correctly. Expected: "+enteredJudicialCounty+" ,Found: "+actualJudicialCounty);
+        if (!actualJudicialCounty.contains(enteredJudicialCounty)) {
+            throw new AutomationException("Judicial county is not fetched correctly. Expected: " + enteredJudicialCounty + " ,Found: " + actualJudicialCounty);
         }
     }
 
@@ -971,8 +973,8 @@ public class ProbateFormsOC02Page extends BasePage{
             String enteredDate = enteredDates.get(i);
             String actualDate = driverUtil.getWebElement(xpath).getAttribute("value");
 
-            if(!enteredDate.equals(actualDate)){
-                throw new AutomationException("Entered date is not auto saved. Expected: "+enteredDate+" ,Found: "+actualDate);
+            if (!enteredDate.equals(actualDate)) {
+                throw new AutomationException("Entered date is not auto saved. Expected: " + enteredDate + " ,Found: " + actualDate);
             }
         }
     }
@@ -981,8 +983,8 @@ public class ProbateFormsOC02Page extends BasePage{
         WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
         String actualNameOfTrust = nameOfTrustField.getAttribute("value");
 
-        if(!actualNameOfTrust.equals(nameOfTrustPage2)){
-            throw new AutomationException("Name of Trust is not fetched from Page 2. Expected: "+nameOfTrustPage2+" ,Found: "+actualNameOfTrust);
+        if (!actualNameOfTrust.equals(nameOfTrustPage2)) {
+            throw new AutomationException("Name of Trust is not fetched from Page 2. Expected: " + nameOfTrustPage2 + " ,Found: " + actualNameOfTrust);
         }
     }
 
@@ -1223,25 +1225,44 @@ public class ProbateFormsOC02Page extends BasePage{
 
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
-            String petitionerAddressLine1Form = petitioner1AddressLine1Form +" "+ petitioner1CityStateCodeZipForm;
-            String petitionerAddressLine2Form = petitioner2AddressLine1Form +" "+ petitioner2CityStateCodeZipForm;
+            String petitionerAddressLine1Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
+            String petitionerAddressLine2Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
+
+//
+//            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
+//            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine2Form);
+//            expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine1Form);
+//
+//            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
-            expectedPetitioners.put(nameOfPetitioner2Form,petitionerAddressLine2Form);
-
-            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
+            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine2Form);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine1Form);
 
 
+            validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
+
+
+            Map<String, String> expectedTrustData = new LinkedHashMap<>();
+            expectedTrustData.put("Date of Trust", "01/10/2020");
+            expectedTrustData.put("Amendment Date 1", "03/15/2021");
+            expectedTrustData.put("Amendment Date 2", "06/22/2021");
+            expectedTrustData.put("Amendment Date 3", "09/10/2021");
+            expectedTrustData.put("Amendment Date 4", "12/01/2021");
+            expectedTrustData.put("Advertising Date 1", "02/05/2022");
+            expectedTrustData.put("Advertising Date 2", "04/18/2022");
+            expectedTrustData.put("Advertising Date 3", "07/30/2022");
+
+            boolean isValidatedInterVivosTrustDetails = validateInterVivosTrustDetails(pdfFilePath, expectedTrustData);
 
 
             // If any verification fails, throw an exception
-            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping) {
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedInterVivosTrustDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
-        } catch (AutomationException | IOException e) {
+        } catch (Exception e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
@@ -1477,7 +1498,7 @@ public class ProbateFormsOC02Page extends BasePage{
         }
 
         scrollToElement(RESERVE_AMOUNT_FIELD);
-        WebElement amountField =  driverUtil.getWebElement(RESERVE_AMOUNT_FIELD);
+        WebElement amountField = driverUtil.getWebElement(RESERVE_AMOUNT_FIELD);
         WebElement purposeField = driverUtil.getWebElement(RESERVE_PURPOSE_FIELD);
         clearFieldUntilEmpty(amountField);
         scrollToElement(RESERVE_PURPOSE_FIELD);
@@ -1578,8 +1599,8 @@ public class ProbateFormsOC02Page extends BasePage{
         WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
         String actualNameOfTrust = nameOfTrustField.getAttribute("value");
 
-        if(!actualNameOfTrust.equals(nameOfTrustPage2)){
-            throw new AutomationException("Correct trust name is not displayed on page 8. Expected: "+nameOfTrustPage2+" ,Found: "+actualNameOfTrust);
+        if (!actualNameOfTrust.equals(nameOfTrustPage2)) {
+            throw new AutomationException("Correct trust name is not displayed on page 8. Expected: " + nameOfTrustPage2 + " ,Found: " + actualNameOfTrust);
         }
 
         verifyFieldIsNotEditable(NAME_OF_TRUST_FIELD_OTHER_PAGES);
@@ -1590,8 +1611,8 @@ public class ProbateFormsOC02Page extends BasePage{
         WebElement nameOfTrustField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
         String actualNameOfTrust = nameOfTrustField.getAttribute("value");
 
-        if(!actualNameOfTrust.equals(nameOfTrustPage2)){
-            throw new AutomationException("Correct trust name is not displayed page 9. Expected: "+nameOfTrustPage2+" ,Found: "+actualNameOfTrust);
+        if (!actualNameOfTrust.equals(nameOfTrustPage2)) {
+            throw new AutomationException("Correct trust name is not displayed page 9. Expected: " + nameOfTrustPage2 + " ,Found: " + actualNameOfTrust);
         }
 
         verifyFieldIsNotEditable(NAME_OF_TRUST_FIELD_OTHER_PAGES);
@@ -1694,7 +1715,7 @@ public class ProbateFormsOC02Page extends BasePage{
         reserveAmountForm = CommonUtil.getJsonPath("OC02Form").get("OC02Form.reserveAmount").toString();
         reservePurposeForm = CommonUtil.getJsonPath("OC02Form").get("OC02Form.reservePurpose").toString();
 
-        WebElement amountField =  driverUtil.getWebElement(RESERVE_AMOUNT_FIELD);
+        WebElement amountField = driverUtil.getWebElement(RESERVE_AMOUNT_FIELD);
         WebElement purposeField = driverUtil.getWebElement(RESERVE_PURPOSE_FIELD);
 
         verifyFieldIsEditable("Reserve Amount", RESERVE_AMOUNT_FIELD);
@@ -1718,12 +1739,12 @@ public class ProbateFormsOC02Page extends BasePage{
         String actualAmount = amountField.getAttribute("value");
         String actualPurpose = purposeField.getText();
 
-        if(!actualAmount.equals(reserveAmountForm)){
-            throw new AutomationException("Reserve Amount field not accepted the entered value. Expected: "+ reserveAmountForm + " ,Found: "+ actualAmount);
+        if (!actualAmount.equals(reserveAmountForm)) {
+            throw new AutomationException("Reserve Amount field not accepted the entered value. Expected: " + reserveAmountForm + " ,Found: " + actualAmount);
         }
 
-        if(!actualPurpose.equals(reservePurposeForm)){
-            throw new AutomationException("Reserve Purpose field not accepted the entered value. Expected: "+ reservePurposeForm + " ,Found: "+ actualPurpose);
+        if (!actualPurpose.equals(reservePurposeForm)) {
+            throw new AutomationException("Reserve Purpose field not accepted the entered value. Expected: " + reservePurposeForm + " ,Found: " + actualPurpose);
         }
     }
 
@@ -1817,16 +1838,16 @@ public class ProbateFormsOC02Page extends BasePage{
 
         List<String> expectedPetitionersOnAttachment = new ArrayList<>();
         List<String> expectedFiduciary = new ArrayList<>();
-        List<String> expectedCorporateFiduciary =new ArrayList<>();
+        List<String> expectedCorporateFiduciary = new ArrayList<>();
 
-        for(int i=0; i<Fiduciaries.size(); i++){
-            if(i!=0){
+        for (int i = 0; i < Fiduciaries.size(); i++) {
+            if (i != 0) {
                 expectedFiduciary.add(Fiduciaries.get(i));
             }
         }
 
-        for(int i=0; i<corporateFiduciaries.size(); i++){
-            if(i!=0){
+        for (int i = 0; i < corporateFiduciaries.size(); i++) {
+            if (i != 0) {
                 expectedCorporateFiduciary.add(corporateFiduciaries.get(i));
             }
         }
@@ -2056,7 +2077,7 @@ public class ProbateFormsOC02Page extends BasePage{
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
         driverUtil.getWebElement(SELECT_RELATIONSHIP_BTN).click();
         WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(String.format(RELATIONSHIP_OPTION,relationship)).click();
+        driverUtil.getWebElement(String.format(RELATIONSHIP_OPTION, relationship)).click();
         driverUtil.getWebElement(SAVE_BTN).click();
         WebDriverUtil.waitForAWhile();
 
@@ -2075,7 +2096,7 @@ public class ProbateFormsOC02Page extends BasePage{
         driverUtil.getWebElement(String.format(BENEFICIAL_INTEREST, fullName)).sendKeys(Keys.TAB);
     }
 
-    public static boolean validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
+    public static void validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
             throws IOException, AutomationException {
         Map<String, String> extractedMap = extractPetitionerAddressMapping(pdfFilePath);
 
@@ -2116,7 +2137,6 @@ public class ProbateFormsOC02Page extends BasePage{
 
             index++;
         }
-        return true;
     }
 
     public static Map<String, String> extractPetitionerAddressMapping(String pdfFilePath) throws IOException {
@@ -2158,5 +2178,86 @@ public class ProbateFormsOC02Page extends BasePage{
         return nameAddressMap;
     }
 
+    public static boolean validateInterVivosTrustDetails(String pdfFilePath, Map<String, String> expectedTrustDataMap)
+            throws IOException, AutomationException {
+
+        Map<String, String> extractedTrustData = extractInterVivosTrustData(pdfFilePath);
+
+        for (Map.Entry<String, String> expectedEntry : expectedTrustDataMap.entrySet()) {
+            String field = expectedEntry.getKey().trim();
+            String expectedValue = expectedEntry.getValue().trim();
+
+            String actualValue = extractedTrustData.getOrDefault(field, "").trim();
+
+            CommonSteps.logInfo("🔍 Comparing -> Field: '" + field + "' | Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
+
+            if (expectedValue.equalsIgnoreCase(actualValue)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + field + "' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + field + "' mismatch. Expected: '" + expectedValue + "', Found: '" + actualValue + "'");
+            }
+        }
+
+        return true;
+    }
+
+    public static Map<String, String> extractInterVivosTrustData(String pdfFilePath) throws IOException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] lines = pdfText.split("\\r?\\n");
+        List<String> trimmedLines = Arrays.stream(lines)
+                .map(String::trim)
+                .collect(Collectors.toList());
+
+        Map<String, String> trustDataMap = new LinkedHashMap<>();
+        Pattern datePattern = Pattern.compile("\\b\\d{2}/\\d{2}/\\d{4}\\b"); // MM/DD/YYYY pattern
+
+        for (int i = 0; i < trimmedLines.size(); i++) {
+            String line = trimmedLines.get(i);
+
+            if (line.contains("Date of Trust:")) {
+                trustDataMap.put("Date of Trust", line.replace("Date of Trust:", "").trim());
+            }
+
+            if (line.contains("Date(s) of Amendment(s):")) {
+                String amendmentsLine = line.replace("Date(s) of Amendment(s):", "").trim();
+                if (amendmentsLine.isEmpty() && i + 1 < trimmedLines.size()) {
+                    amendmentsLine = trimmedLines.get(i + 1).trim();
+                }
+
+                Matcher matcher = datePattern.matcher(amendmentsLine);
+                int amendmentIndex = 1;
+                while (matcher.find()) {
+                    trustDataMap.put("Amendment Date " + amendmentIndex, matcher.group().trim());
+                    amendmentIndex++;
+                }
+            }
+
+            if (line.contains("attach proofs of advertising:")) {
+                String advertisingLine = line.replace("attach proofs of advertising:", "").trim();
+
+                if (advertisingLine.isEmpty() && i + 1 < trimmedLines.size()) {
+                    advertisingLine = trimmedLines.get(i + 1).trim();
+                }
+
+                String[] advertisingDates = advertisingLine.split("\\s+");
+                int advertisingIndex = 1;
+                for (String dateCandidate : advertisingDates) {
+                    Matcher matcher = datePattern.matcher(dateCandidate);
+                    if (matcher.matches()) {
+                        trustDataMap.put("Advertising Date " + advertisingIndex, dateCandidate.trim());
+                        advertisingIndex++;
+                    }
+                }
+            }
+        }
+
+        return trustDataMap;
+    }
+
 }
+
+
 
