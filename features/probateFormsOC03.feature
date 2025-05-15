@@ -18,7 +18,7 @@ Feature: 6in1 probate form OC03 Feature
   Scenario: Verify that the “Estate of” field is populated automatically from estate records.
     When user navigates to the probate forms tab
     And user click on the "OC 03" form
-    Then user verifies the 'Estate of' field is populated automatically with the correct estate name
+    Then user verifies the 'Estate of' field is populated automatically with the correct estate name for "OC03" form
 
   Scenario: Verify that the “Account of” field is auto-filled with the first Fiduciary contact’s name.
     Then user verifies the 'Account of' field is populated with the Fiduciary’s name
@@ -26,11 +26,11 @@ Feature: 6in1 probate form OC03 Feature
   Scenario: Verify that selecting Counsel from the sidebar populates Counsel details correctly.
     When user clicks on Name of Counsel field
     Then user verifies for "OC03" form a sidebar appears and attorney can be selected
-    Then user verifies Counsel details are populated correctly
+    Then user verifies Counsel details are populated correctly for "OC03" form
 
   Scenario: Verify that the estate name is auto-populated from estate records.
     When user navigates to page number: "2"
-    Then user verifies the estate name is pre-filled from the estate records
+    Then user verifies the estate name is pre-filled from the estate records for "OC03" form
 
   Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
     When user click on Petitioner name field
@@ -45,14 +45,14 @@ Feature: 6in1 probate form OC03 Feature
 
   Scenario: Verify that the "Estate of" field is auto-populated with the estate name.
     When user navigates to page number: "3"
-    Then user verifies the field is populated with the correct estate name
+    Then user verifies the field is populated with the correct estate name for "OC03" form
 
   Scenario: Verify that fee claims (amount, start date, and end date) are saved and displayed correctly.
-    Then user verifies fee claims (amount, start date, and end date) are saved and displayed correctly
+    Then user verifies fee claims (amount, start date, and end date) are saved and displayed correctly for "OC03" form
 
   Scenario: Verify that the "Estate of" field is auto-populated with the estate name.
     When user navigates to page number: "4"
-    Then user verifies the field is populated with the correct estate name on page 4
+    Then user verifies the field is populated with the correct estate name on page 4 for "OC03" form
 
   Scenario: Verify, rest of the selected beneficiaries are displayed as a part of attachment.
     When user saves selected beneficiaries details for "OC03" form
@@ -81,11 +81,11 @@ Feature: 6in1 probate form OC03 Feature
 
   Scenario: Verify that the "Estate of" field is auto-populated with the estate name.
     When user navigates to page number: "5"
-    Then user verifies the field is populated with the correct estate name on page 5
+    Then user verifies the field is populated with the correct estate name on page 5 for "OC03" form
 
   Scenario: Verify that the sidebar opens when "Edit Amounts/Proportions" is clicked.
     When user clicks on the 'Edit Amounts/Proportions' button for income
-    Then user verifies the sidebar opens displaying a list of beneficiaries
+    Then user verifies the sidebar opens displaying a list of beneficiaries for "OC03" form
 
   Scenario: Verify that users can specify amounts and proportions for beneficiaries.
     When user enters amounts and proportions for beneficiaries

@@ -15,13 +15,11 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.sixinone.automation.util.WebDriverUtil.*;
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 
-public class ProbateFormsOC03Page extends BasePage{
+public class ProbateFormsOC04Page extends BasePage{
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -65,7 +63,6 @@ public class ProbateFormsOC03Page extends BasePage{
     private static final String ESTATE_OF_FIELD_PAGE_4 = "//p[contains(text(),'Estate of')]//input";
     private static final String ESTATE_OF_FIELD_PAGE_5 = "//p[contains(text(),'Estate of')]//input";
     private static final String ESTATE_OF_FIELD_PAGE_6 = "//p[contains(text(),'Estate of')]//input";
-    private static final String ACCOUNT_OF_FIELDS = "//p[contains(text(),'ACCOUNT OF')]//input";
     private static final String AMOUNT_FIELDS = "//input[@name='guardianFees[%s].amount']";
     private static final String START_DATE_FIELDS = "//input[@name='guardianFees[%s].beginDate']";
     private static final String END_DATE_FIELDS = "//input[@name='guardianFees[%s].endDate']";
@@ -192,7 +189,7 @@ public class ProbateFormsOC03Page extends BasePage{
 
     static String downloadedFileName;
 
-    public ProbateFormsOC03Page() throws IOException, ParseException {
+    public ProbateFormsOC04Page() throws IOException, ParseException {
     }
 
     private static String getFieldValue(String locator) throws AutomationException {
@@ -283,54 +280,6 @@ public class ProbateFormsOC03Page extends BasePage{
 
         if(!enteredEstateName.equals(actualEstateName)){
             throw new AutomationException("Estate of field is not populated correctly with Estate name. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
-        }
-    }
-
-    public void verifyAccountOfFieldIsPopulatedWithTheFiduciarySName() throws IOException, ParseException, AutomationException {
-        List<String> fiduciaryContacts = new ArrayList<>();
-        List<String> corporateFiduciaryContacts = new ArrayList<>();
-
-        for (int i = 1; i <= 5; i++) {
-            String firstNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
-            String lastNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
-            String middleNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
-            String suffixFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
-
-            fiduciaryContacts.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
-        }
-
-        String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
-
-        for (int i = 1; i <= 5; i++) {
-            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
-
-            corporateFiduciaryContacts.add(String.join(" ", entityName).trim());
-        }
-
-        String expectedCorporateFiduciaryContact = String.join(", ", corporateFiduciaryContacts);
-
-        String allFiduciaryContactsForm = String.join(", ",expectedFiduciaryContacts, expectedCorporateFiduciaryContact);
-
-        List<WebElement> accountFields = driverUtil.getWebElements(ACCOUNT_OF_FIELDS);
-        List<String> allNamesRaw = new ArrayList<>();
-
-        for (WebElement el : accountFields) {
-            allNamesRaw.add(el.getAttribute("value").trim());
-        }
-
-        String combined = String.join(" ", allNamesRaw);
-
-        List<String> extractedNames = new ArrayList<>();
-        Matcher matcher = Pattern.compile("([A-Za-z ]+, (?:Sr\\.|Jr\\.)|[a-zA-Z]+(?:[a-zA-Z]+)*)").matcher(combined);
-
-        while (matcher.find()) {
-            extractedNames.add(matcher.group(1).trim());
-        }
-
-        for(String contact:extractedNames){
-            if(!allFiduciaryContactsForm.contains(contact)){
-                throw new AutomationException("Fiduciary contact mismatch. "+contact+" not contain in "+allFiduciaryContactsForm);
-            }
         }
     }
 
@@ -801,7 +750,7 @@ public class ProbateFormsOC03Page extends BasePage{
         List<WebElement> beneRelationshipPage4Fields = driverUtil.getWebElements(BENE_RELATIONSHIP_FORM);
         List<WebElement> beneInterestPage4Fields = driverUtil.getWebElements(BENE_INTEREST_FORM);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             beneDetails.add(beneDetailsPage4Fields.get(i).getText());
             beneRelationship.add(beneRelationshipPage4Fields.get(i).getAttribute("value"));
             beneInterest.add(beneInterestPage4Fields.get(i).getText());
@@ -815,7 +764,7 @@ public class ProbateFormsOC03Page extends BasePage{
         List<WebElement> beneRelationshipOnAttachmentFields = driverUtil.getWebElements(BENE_RELATIONSHIP_ATTACHMENT);
         List<WebElement> beneInterestOnAttachmentFields = driverUtil.getWebElements(BENE_INTEREST_ATTACHMENT);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             beneDetails.add(beneDetailsOnAttachmentFields.get(i).getText());
             beneRelationship.add(beneRelationshipOnAttachmentFields.get(i).getText());
             beneInterest.add(beneInterestOnAttachmentFields.get(i).getText());
@@ -840,7 +789,7 @@ public class ProbateFormsOC03Page extends BasePage{
         driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
         WebDriverUtil.waitForAWhile();
 
-        if (beneDetails.size() <= 4) {
+        if (beneDetails.size() <= 2) {
             throw new AutomationException("There are no additional beneficiaries to verify in the attachment.");
         }
 
@@ -1028,6 +977,11 @@ public class ProbateFormsOC03Page extends BasePage{
         if(!enteredEstateName.equals(actualEstateName)){
             throw new AutomationException("Estate of field is not populated correctly on Page 5. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
         }
+    }
+
+    public void userClicksOnTheEditAmountsProportionsButtonForIncome() throws AutomationException {
+        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
     }
 
     public void verifyTheSidebarOpensDisplayingAListOfBeneficiaries() throws AutomationException {
@@ -1587,6 +1541,13 @@ public class ProbateFormsOC03Page extends BasePage{
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
+
+        //temp use remove later
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
@@ -1615,41 +1576,41 @@ public class ProbateFormsOC03Page extends BasePage{
             commentsField.clear();
         }
 
-        //Page 5
-        switchToPage(5);
-        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
-        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
-        WebDriverUtil.waitForAWhile();
-        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
-        int[] contactsToClear = {0, 2, 3, 4, 5};
-        for (int index : contactsToClear) {
-            if (index < checkboxElements.size()) {
-                WebElement checkbox = checkboxElements.get(index);
-                checkbox.click();
-            }
-        }
-
-        List<WebElement> amountFields = driverUtil.getWebElements(AMOUNT_COLUMNS_MODAL);
-        int[] contactsToEnterAmount = {0, 2, 3, 4, 5};
-        for (int i = 0; i < contactsToEnterAmount.length; i++) {
-            int index = contactsToEnterAmount[i];
-
-            if (index < amountFields.size()) {
-                WebElement inputField = amountFields.get(index);
-                inputField.clear();
-            }
-        }
-
-        List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
-        int[] contactsToEnterProportion = {0, 2, 3, 4, 5};
-        for (int i = 0; i < contactsToEnterProportion.length; i++) {
-            int index = contactsToEnterProportion[i];
-
-            if (index < proportionFields.size()) {
-                WebElement inputField = proportionFields.get(index);
-                inputField.clear();
-            }
-        }
-        driverUtil.getWebElement(CLOSE_BTN).click();
+//        //Page 5
+//        switchToPage(5);
+//        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+//        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
+//        WebDriverUtil.waitForAWhile();
+//        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
+//        int[] contactsToClear = {0, 2, 3, 4, 5};
+//        for (int index : contactsToClear) {
+//            if (index < checkboxElements.size()) {
+//                WebElement checkbox = checkboxElements.get(index);
+//                checkbox.click();
+//            }
+//        }
+//
+//        List<WebElement> amountFields = driverUtil.getWebElements(AMOUNT_COLUMNS_MODAL);
+//        int[] contactsToEnterAmount = {0, 2, 3, 4, 5};
+//        for (int i = 0; i < contactsToEnterAmount.length; i++) {
+//            int index = contactsToEnterAmount[i];
+//
+//            if (index < amountFields.size()) {
+//                WebElement inputField = amountFields.get(index);
+//                inputField.clear();
+//            }
+//        }
+//
+//        List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
+//        int[] contactsToEnterProportion = {0, 2, 3, 4, 5};
+//        for (int i = 0; i < contactsToEnterProportion.length; i++) {
+//            int index = contactsToEnterProportion[i];
+//
+//            if (index < proportionFields.size()) {
+//                WebElement inputField = proportionFields.get(index);
+//                inputField.clear();
+//            }
+//        }
+//        driverUtil.getWebElement(CLOSE_BTN).click();
     }
 }

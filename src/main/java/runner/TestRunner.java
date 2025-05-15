@@ -7,12 +7,11 @@ import org.testng.annotations.BeforeClass;
 import java.io.IOException;
 
 @CucumberOptions(
-
-
-        features = {"features/probateFormsOC01.feature"},
+        features = {"features"},
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )
+
 public class TestRunner extends BaseRunner {
 
     @BeforeClass(alwaysRun = true)

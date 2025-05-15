@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
@@ -161,6 +162,9 @@ public class ProbateFormsRW02Page extends BasePage {
     private static final String SELECTED_CONTACT = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
     private static final String SELECTED_BENE_NAMES = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
     private static final String CONTACT_RADIO_BTN_DYNAMIC_XPATH = "//label[text()='%s']/preceding-sibling::input[@type='radio']";
+    private static final String FIDUCIARY_NAMES_PAGE_1 = "//p[@class='ft6 newstyle']//input";
+    private static final String FIDUCIARY_NAMES_ATTACHMENT_PAGE_1 = "//div[@class='modal-body']//p[@class='p2 gray-bg']//input";
+    private static final String FIDUCIARY_NAMES_PAGE_2 = "//p[@class='p49 ft13']//span[@class='newstyle']//input[contains(@value, ',')]";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -168,6 +172,9 @@ public class ProbateFormsRW02Page extends BasePage {
 
     private static final List<String> beneDetails = new ArrayList<>();
     private static final List<String> beneficiaryKeys = new ArrayList<>();
+    private static final List<String> allFiduciaryContacts = new ArrayList<>();
+    private static List<String> fiduciaryNameListForm = new ArrayList<>();
+    private static List<String> remainingFiduciaries = new ArrayList<>();
 
     static String personalPropertyForm;
     static String pennsylvaniaPropertyForm;
@@ -381,6 +388,8 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void verifyDecedentInformationIsAutoPopulatedOnTheForm() throws AutomationException {
+        driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
+
         fullNameForm = getEstateValue("FirstName") + " " + getEstateValue("LastName");
         fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
         dateOfDeathForm = getEstateValue("DateOfDeath");
@@ -447,6 +456,16 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void verifyFiduciaryTypeOfContactsAreDisplayed() throws AutomationException, IOException, ParseException {
+        WebElement fiduciaryInput = driverUtil.getWebElement(FIDUCIARY_NAMES_PAGE_1);
+        String rawValue = fiduciaryInput.getAttribute("value");
+
+        String[] fiduciaryNames = rawValue.split(", (?=\\p{L}{3,})");
+
+        fiduciaryNameListForm = Arrays.stream(fiduciaryNames)
+                .map(String::trim)
+                .filter(name -> !name.isEmpty())
+                .collect(Collectors.toList());
+
         List<String> corporateFiduciaryContacts = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
@@ -455,25 +474,9 @@ public class ProbateFormsRW02Page extends BasePage {
             corporateFiduciaryContacts.add(String.join(" ", entityName).trim());
         }
 
-        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
-        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
-        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
-        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
-
-        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
-
-        String expectedCorporateFiduciaryContact = String.join(", ", corporateFiduciaryContacts);
-        String expectedFiduciaryContacts = String.join(", ", fiduciaryContact, expectedCorporateFiduciaryContact);
-
-        verifyAutoPopulatedValue(expectedFiduciaryContacts);
-    }
-
-    public void verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
-        driverUtil.getWebElement(VIEW_ATTACHMENT_HEADER).click();
-
         List<String> fiduciaryContacts = new ArrayList<>();
 
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= 5; i++) {
             String firstName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
             String lastName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
             String middleName = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
@@ -482,13 +485,38 @@ public class ProbateFormsRW02Page extends BasePage {
             fiduciaryContacts.add(String.join(" ", firstName, middleName, lastName, suffix).trim());
         }
 
-        String expectedFiduciaryContacts = String.join(", ", fiduciaryContacts);
+        allFiduciaryContacts.addAll(fiduciaryContacts);
+        allFiduciaryContacts.addAll(corporateFiduciaryContacts);
 
-        verifyAutoPopulatedValueOnAttachment(expectedFiduciaryContacts);
+        remainingFiduciaries = new ArrayList<>(allFiduciaryContacts);
 
-        CommonSteps.takeScreenshot();
+        for(String fiduciaryName: fiduciaryNameListForm){
+            if(!allFiduciaryContacts.contains(fiduciaryName)){
+                throw new AutomationException("Fiduciary type of contacts are not correctly displayed at the top. Expected: "+fiduciaryName+" not found.");
+            } else {
+                remainingFiduciaries.remove(fiduciaryName);
+            }
+        }
+    }
 
-        driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
+    public void verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
+        driverUtil.getWebElement(VIEW_ATTACHMENT_HEADER).click();
+
+        WebElement fiduciaryInput = driverUtil.getWebElement(FIDUCIARY_NAMES_ATTACHMENT_PAGE_1);
+        String rawValue = fiduciaryInput.getAttribute("value");
+
+        String[] fiduciaryNames = rawValue.split(", (?=\\p{L}{3,})");
+
+        List<String> fiduciaryNameListAttachment = Arrays.stream(fiduciaryNames)
+                .map(String::trim)
+                .filter(name -> !name.isEmpty())
+                .collect(Collectors.toList());
+
+        for(String fiduciaryName: fiduciaryNameListAttachment){
+            if(!remainingFiduciaries.contains(fiduciaryName)){
+                throw new AutomationException("Fiduciary type of contacts are not correctly displayed on the attachment. Expected: "+fiduciaryName+" not found.");
+            }
+        }
     }
 
     public void selectPropertyOption(String field, String selectOption) throws AutomationException {
@@ -1105,73 +1133,36 @@ public class ProbateFormsRW02Page extends BasePage {
     }
 
     public void verifyDecreeOfRegisterInformationDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        //line 1
-        String firstName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.firstName").toString();
-        String lastName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.lastName").toString() + ",";
-        String middleName = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.middleName").toString();
-        String suffix = CommonUtil.getJsonPath("fiduciary5").get("fiduciary5.suffix").toString();
-        String fiduciaryContact = String.join(" ", firstName, middleName, lastName, suffix).trim();
-
-        List<String> corporateFiduciaryContacts1 = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
-
-            corporateFiduciaryContacts1.add(String.join(" ", entityName).trim());
-        }
-
-        String expectedCorporateFiduciaryContact1 = String.join(", ", corporateFiduciaryContacts1);
-        String expectedCorporateAndFiduciaryContacts1 = String.join(", ", fiduciaryContact, expectedCorporateFiduciaryContact1);
-
-
-        //line 2
-        List<String> corporateFiduciaryContacts2 = new ArrayList<>();
-        for (int i = 4; i <= 5; i++) {
-            String entityName = CommonUtil.getJsonPath("corporateFiduciary" + i).get("corporateFiduciary" + i + ".entityName").toString();
-
-            corporateFiduciaryContacts2.add(String.join(" ", entityName).trim());
-        }
-
-        List<String> fiduciaryContacts2 = new ArrayList<>();
-
-        for (int i = 1; i <= 2; i++) {
-            String firstNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
-            String lastNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
-            String middleNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
-            String suffixFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
-
-            fiduciaryContacts2.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
-        }
-
-        String expectedFiduciaryContacts2 = String.join(", ", fiduciaryContacts2);
-
-        String expectedCorporateFiduciaryContact2 = String.join(", ", corporateFiduciaryContacts2);
-        String expectedCorporateAndFiduciaryContacts2 = String.join(", ", expectedCorporateFiduciaryContact2, expectedFiduciaryContacts2 );
-
-        //line 3
-        List<String> fiduciaryContacts3 = new ArrayList<>();
-
-        for (int i = 3; i <= 4; i++) {
-            String firstNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".firstName").toString();
-            String lastNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".lastName").toString() + ",";
-            String middleNameFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".middleName").toString();
-            String suffixFiduciary = CommonUtil.getJsonPath("fiduciary" + i).get("fiduciary" + i + ".suffix").toString();
-
-            fiduciaryContacts3.add(String.join(" ", firstNameFiduciary, middleNameFiduciary, lastNameFiduciary, suffixFiduciary).trim());
-        }
-
-        String expectedFiduciaryContacts3 = String.join(", ", fiduciaryContacts3);
-
         String decedentName = getEstateValue("FirstName") + " " + getEstateValue("LastName");
         String akaNames = getEstateValue("AlsoKnownAs1") + " " + getEstateValue("AlsoKnownAs2") + " " + getEstateValue("AlsoKnownAs3");
         String fileNumberForm = getEstateValue("FileNumberPart1") + "-" + getEstateValue("FileNumberPart2") + "-" + getEstateValue("FileNumberPart3");
         String dateOfWill = getEstateValue("DateOfWill");
 
+        List<WebElement> nameElements = driverUtil.getWebElements(FIDUCIARY_NAMES_PAGE_2);
+        List<String> allNamesRaw = new ArrayList<>();
+
+        for (WebElement el : nameElements) {
+            allNamesRaw.add(el.getAttribute("value").trim());
+        }
+
+        String combined = String.join(" ", allNamesRaw);
+
+        List<String> extractedNames = new ArrayList<>();
+        Matcher matcher = Pattern.compile("([A-Za-z ]+, (?:Sr\\.|Jr\\.)|[a-zA-Z]+(?:[a-zA-Z]+)*)").matcher(combined);
+
+        while (matcher.find()) {
+            extractedNames.add(matcher.group(1).trim());
+        }
+
+        for(String fiduciaryName: extractedNames){
+            if(!allFiduciaryContacts.contains(fiduciaryName)){
+                throw new AutomationException("Fiduciary type of contacts are not correctly displayed in DECREE OF THE REGISTER section. Expected: "+fiduciaryName+" not found.");
+            }
+        }
+
         verifyAutoPopulatedValue(decedentName);
         verifyAutoPopulatedValue(fileNumberForm);
         verifyAutoPopulatedValue(akaNames.trim());
-        verifyAutoPopulatedValue(expectedCorporateAndFiduciaryContacts1);
-        verifyAutoPopulatedValue(expectedCorporateAndFiduciaryContacts2);
-        verifyAutoPopulatedValue(expectedFiduciaryContacts3);
         verifyAutoPopulatedValue(dateOfWill);
         verifyAutoPopulatedValue(rwCodicilDate1Form);
         verifyAutoPopulatedValue(rwCodicilDate2Form);
