@@ -1233,6 +1233,15 @@ public class ProbateFormsOC01Page extends BasePage {
     }
 
     public void verifyDecedentSNameIsDisplayedAndNonEditable() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
+
         String enteredEstateName = getEstateValue("DisplayName");
         WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_8);
         scrollToElement(ESTATE_NAME_PAGE_8);
@@ -2147,7 +2156,7 @@ public class ProbateFormsOC01Page extends BasePage {
                 inputField.sendKeys(value);
             }
         }
-
+        WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
