@@ -88,15 +88,15 @@ Feature: 6in1 probate form OC03 Feature
     Then user verifies the sidebar opens displaying a list of beneficiaries for "OC03" form
 
   Scenario: Verify that users can specify amounts and proportions for beneficiaries.
-    When user enters amounts and proportions for beneficiaries
-    Then user verifies the entered data is saved and displayed correctly on the form
+    When user enters amounts and proportions for beneficiaries for "OC03" form
+    Then user verifies the entered data is saved and displayed correctly on the "OC03" form
 
   Scenario: Verify that excess distributees are included in an attachment, with the form displaying "See attached schedule."
-    Then user verifies the form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment
+    Then user verifies the "OC03" form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment
 
   Scenario: Verify, trust's name is auto fetched and correctly displayed.
     When user navigates to page number: "6"
-    Then user verifies correct trust name is displayed on the form
+    Then user verifies correct trust name is displayed on page 6 for "OC03" form
 
   Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
     Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner on "OC03" form
@@ -107,9 +107,9 @@ Feature: 6in1 probate form OC03 Feature
   Scenario: Verify, if any new petitioner is added, it is reflected in the attachment.
     When user navigates to page number: "2"
     And user click on Petitioner name field
-    And user adds new petitioner
+    And user adds new petitioner for "OC03" form
     When user navigates to page number: "6"
-    Then user verifies newly added petitioner is displayed in the attachment
+    Then user verifies newly added petitioner is displayed in the attachment for "OC03" form
 
   Scenario: Verify, if the notification if the selected contact is removed from the estate.
     When user navigates to Estate Contacts tab

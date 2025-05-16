@@ -170,7 +170,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String BENE_PROPORTION_INCOME_PAGE_10 = "//p[@class='p0-3 ft12 newstyle']//input[@value and normalize-space(@value)]";
     private static final String BENE_ON_ATTACHMENT_PAGE_10 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
-    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
+    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";
@@ -186,6 +186,10 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String BENEFICIAL_INTEREST = "//tr//td//span[contains(text(),'%s')]/ancestor::td/ancestor::tr//td[position()='6']//input";
     private static final String BENY_WORKSHEET_TAB = "//a//span[text()='Beny Worksheet']";
     private static final String SELECTED_PETITIONER_NAMES = "//div[@class='drag-names-list drop-box h-100']//div//div//span";
+    private static final String PETITIONER_1_ADDRESS_LINE = "//td[@class='trnew10 td11']//span[@class='p0 ft12 newstyle']//input";
+    private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
+    private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
+    private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -720,7 +724,6 @@ public class ProbateFormsOC01Page extends BasePage {
         String stateCode1 = contact1.get("stateCode").toString();
         String zip1 = contact1.get("zip").toString();
         petitioner1CityStateCodeZipForm = city1 + " " + stateCode1 + " " + zip1;
-        petitioner1AddressLineForm = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
 
         String key2 = findFiduciaryKeyByName(Fiduciary2Form, jsonData);
         JSONObject contact2 = (JSONObject) jsonData.get(key2);
@@ -729,7 +732,6 @@ public class ProbateFormsOC01Page extends BasePage {
         String stateCode2 = contact2.get("stateCode").toString();
         String zip2 = contact2.get("zip").toString();
         petitioner2CityStateCodeZipForm = city2 + " " + stateCode2 + " " + zip2;
-        petitioner2AddressLineForm = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -888,6 +890,14 @@ public class ProbateFormsOC01Page extends BasePage {
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
+
+        petitioner1AddressLineForm = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
+        petitioner2AddressLineForm = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
     }
 
     public static void clearField(String fieldXpath) throws AutomationException {
@@ -2525,8 +2535,8 @@ public class ProbateFormsOC01Page extends BasePage {
             verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-            expectedPetitioners.put(nameOfPetitionerForm, petitioner2AddressLineForm);
-            expectedPetitioners.put(nameOfPetitioner2Form, petitioner1AddressLineForm);
+            expectedPetitioners.put(nameOfPetitionerForm, petitioner1AddressLineForm);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitioner2AddressLineForm);
 
 
             validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
@@ -2681,37 +2691,37 @@ public class ProbateFormsOC01Page extends BasePage {
             List<Map<String, String>> expectedClaimants = new ArrayList<>();
 
             Map<String, String> claimant1 = new LinkedHashMap<>();
-            claimant1.put("Claimant", "T.J.");
-            claimant1.put("Amount", "3,000.00");
-            claimant1.put("ClaimAdmitted", "No");
-            claimant1.put("PaidInFull", "No");
+            claimant1.put("Claimant", Initials1Form);
+            claimant1.put("Amount", Amount_of_Claim1Form);
+            claimant1.put("ClaimAdmitted", Claim_Admitted1Form);
+            claimant1.put("PaidInFull", Will_Claim_Be_Paid_In_Full1Form);
             expectedClaimants.add(claimant1);
 
             Map<String, String> claimant2 = new LinkedHashMap<>();
-            claimant2.put("Claimant", "L.W.");
-            claimant2.put("Amount", "15,000.00");
-            claimant2.put("ClaimAdmitted", "Yes");
-            claimant2.put("PaidInFull", "Yes");
+            claimant2.put("Claimant", Initials2Form);
+            claimant2.put("Amount", Amount_of_Claim2Form);
+            claimant2.put("ClaimAdmitted",Claim_Admitted2Form);
+            claimant2.put("PaidInFull", Will_Claim_Be_Paid_In_Full2Form);
             expectedClaimants.add(claimant2);
 
             Map<String, String> claimant3 = new LinkedHashMap<>();
-            claimant3.put("Claimant", "R.B.");
-            claimant3.put("Amount", "8,000.00");
-            claimant3.put("ClaimAdmitted", "Yes");
-            claimant3.put("PaidInFull", "No");
+            claimant3.put("Claimant", Initials3Form);
+            claimant3.put("Amount", Amount_of_Claim3Form);
+            claimant3.put("ClaimAdmitted", Claim_Admitted3Form);
+            claimant3.put("PaidInFull", Will_Claim_Be_Paid_In_Full3Form);
             expectedClaimants.add(claimant3);
 
             Map<String, String> claimant4 = new LinkedHashMap<>();
-            claimant4.put("Claimant", "A.S.");
-            claimant4.put("Amount", "12,000.00");
-            claimant4.put("ClaimAdmitted", "No");
-            claimant4.put("PaidInFull", "No");
+            claimant4.put("Claimant", Initials4Form);
+            claimant4.put("Amount", Amount_of_Claim4Form);
+            claimant4.put("ClaimAdmitted", Claim_Admitted4Form);
+            claimant4.put("PaidInFull", Will_Claim_Be_Paid_In_Full4Form);
             expectedClaimants.add(claimant4);
 
             // Define the expected summary data
-            String expectedAbove = "38,000.00";
-            String expectedAttachment = "220,000.00";
-            String expectedTotal = "258,000.00";
+            String expectedAbove = aboveAmountForm;
+            String expectedAttachment = attachmentAmountForm;
+            String expectedTotal = totalAmountForm;
 
 
 

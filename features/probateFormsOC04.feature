@@ -86,12 +86,30 @@ Feature: 6in1 probate form OC04 Feature
     When user clicks on the 'Edit Amounts/Proportions' button for income
     Then user verifies the sidebar opens displaying a list of beneficiaries for "OC04" form
 
-#  Scenario: Verify that users can specify amounts and proportions for beneficiaries.
-#    When user enters amounts and proportions for beneficiaries
-#    Then user verifies the entered data is saved and displayed correctly on the form
-#
-#  Scenario: Verify that excess distributees are included in an attachment, with the form displaying "See attached schedule."
-#    Then user verifies the form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment
+  Scenario: Verify that users can specify amounts and proportions for beneficiaries.
+      #Verify that totals are dynamically calculated and updated in real time.
+    When user enters amounts and proportions for beneficiaries for "OC04" form
+    Then user verifies the entered data is saved and displayed correctly on the "OC04" form
+
+  Scenario: Verify that excess distributees are included in an attachment, with the form displaying "See attached schedule."
+    Then user verifies the "OC04" form displays 'See continuation schedule attached' and extra beneficiaries appear in an attachment
+
+  Scenario: Verify, trust's name is auto fetched and correctly displayed.
+    When user navigates to page number: "6"
+    Then user verifies correct trust name is displayed on page 6 for "OC04" form
+
+  Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
+    Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner on "OC04" form
+
+  Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
+    Then user verifies all the remaining petitioners are displayed as a part of attachment for "OC04" form
+
+  Scenario: Verify, if any new petitioner is added, it is reflected in the attachment.
+    When user navigates to page number: "2"
+    And user click on Petitioner name field
+    And user adds new petitioner for "OC04" form
+    When user navigates to page number: "6"
+    Then user verifies newly added petitioner is displayed in the attachment for "OC04" form
 
   Scenario: Reset the OC02 form
     When user navigates to the probate forms tab

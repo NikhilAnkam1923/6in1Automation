@@ -147,7 +147,7 @@ public class ProbateFormsOC02Page extends BasePage {
     private static final String BENE_ON_ATTACHMENT_PAGE_10 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     private static final String SIGN_OF_PETITIONER_PAGE_11 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
     private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]//span//*[self::input or self::textarea]";
-    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
+    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";
@@ -164,6 +164,10 @@ public class ProbateFormsOC02Page extends BasePage {
     private static final String BENY_WORKSHEET_TAB = "//a//span[text()='Beny Worksheet']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllIncomeOnAttachment']";
+    private static final String PETITIONER_1_ADDRESS_LINE = "//td[@class='trnew10 td11']//span[@class='p0 ft12 newstyle']//input";
+    private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
+    private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
+    private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -783,6 +787,11 @@ public class ProbateFormsOC02Page extends BasePage {
         }
         verifyPetitionerOnForm(petitioner1AddressLine1Form);
         verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
     }
 
     public void userSelectTestamentaryOption() {
@@ -1228,36 +1237,55 @@ public class ProbateFormsOC02Page extends BasePage {
             String petitionerAddressLine1Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
             String petitionerAddressLine2Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
 
-//
-//            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-//            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine2Form);
-//            expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine1Form);
-//
-//            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
-
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine2Form);
-            expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine1Form);
+            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine2Form);
 
 
-            validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
-
+            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
             Map<String, String> expectedTrustData = new LinkedHashMap<>();
-            expectedTrustData.put("Date of Trust", "01/10/2020");
-            expectedTrustData.put("Amendment Date 1", "03/15/2021");
-            expectedTrustData.put("Amendment Date 2", "06/22/2021");
-            expectedTrustData.put("Amendment Date 3", "09/10/2021");
-            expectedTrustData.put("Amendment Date 4", "12/01/2021");
-            expectedTrustData.put("Advertising Date 1", "02/05/2022");
-            expectedTrustData.put("Advertising Date 2", "04/18/2022");
-            expectedTrustData.put("Advertising Date 3", "07/30/2022");
+            expectedTrustData.put("Date of Trust", dateOfTrust);
+            expectedTrustData.put("Amendment Date 1", amendmentDate1);
+            expectedTrustData.put("Amendment Date 2", amendmentDate2);
+            expectedTrustData.put("Amendment Date 3", amendmentDate3);
+            expectedTrustData.put("Amendment Date 4", amendmentDate4);
+            expectedTrustData.put("Advertising Date 1", advertisingDate1);
+            expectedTrustData.put("Advertising Date 2", advertisingDate2);
+            expectedTrustData.put("Advertising Date 3", advertisingDate3);
 
             boolean isValidatedInterVivosTrustDetails = validateInterVivosTrustDetails(pdfFilePath, expectedTrustData);
 
+            Map<String, String> expectedAmountDateMap = new LinkedHashMap<>();
+
+            expectedAmountDateMap.put(principalAmountForm1, principalDateForm1);
+            expectedAmountDateMap.put(principalAmountForm2, principalDateForm2);
+            expectedAmountDateMap.put(principalAmountForm3, principalDateForm3);
+            expectedAmountDateMap.put(principalAmountForm4, principalDateForm4);
+            expectedAmountDateMap.put(principalAmountForm5, principalDateForm5);
+            expectedAmountDateMap.put(principalAmountForm6, principalDateForm6);
+            expectedAmountDateMap.put(principalAmountForm7, principalDateForm7);
+            expectedAmountDateMap.put(principalAmountForm8, principalDateForm8);
+
+            boolean isVerifiedPrincipalCommissionAmountsAndDates = verifyPrincipalCommissionAmountsAndDates(
+                    pdfFilePath,
+                    "If a principal commission is claimed, state amount.B.",
+                    "Amount Date Paid",
+                    expectedAmountDateMap
+            );
+
+            boolean isverifiedReserveAmountAndPurpose = verifyReserveAmountAndPurpose(
+                    pdfFilePath,
+                    "If a Trustee’s principal commission is claimed:18.",
+                    "If a reserve is requested for counsel fees, has notice of the",
+                    reserveAmountForm,
+                    reservePurposeForm
+            );
+
+
 
             // If any verification fails, throw an exception
-            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedInterVivosTrustDetails) {
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedInterVivosTrustDetails || !isVerifiedPrincipalCommissionAmountsAndDates || !isverifiedReserveAmountAndPurpose) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -2096,8 +2124,9 @@ public class ProbateFormsOC02Page extends BasePage {
         driverUtil.getWebElement(String.format(BENEFICIAL_INTEREST, fullName)).sendKeys(Keys.TAB);
     }
 
-    public static void validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
+    public static boolean validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
             throws IOException, AutomationException {
+
         Map<String, String> extractedMap = extractPetitionerAddressMapping(pdfFilePath);
 
         int index = 1;
@@ -2137,7 +2166,10 @@ public class ProbateFormsOC02Page extends BasePage {
 
             index++;
         }
+
+        return true;
     }
+
 
     public static Map<String, String> extractPetitionerAddressMapping(String pdfFilePath) throws IOException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -2235,27 +2267,168 @@ public class ProbateFormsOC02Page extends BasePage {
                 }
             }
 
-            if (line.contains("attach proofs of advertising:")) {
-                String advertisingLine = line.replace("attach proofs of advertising:", "").trim();
+            if (line.toLowerCase().contains("attach proofs of advertising")) {
+                String advertisingDatesCombined = "";
 
-                if (advertisingLine.isEmpty() && i + 1 < trimmedLines.size()) {
-                    advertisingLine = trimmedLines.get(i + 1).trim();
+                // Collect next two lines to be safe (could span multiple lines)
+                if (i + 1 < trimmedLines.size()) {
+                    advertisingDatesCombined += trimmedLines.get(i + 1).trim();
+                }
+                if (i + 2 < trimmedLines.size() && !trimmedLines.get(i + 2).contains(":")) {
+                    advertisingDatesCombined += " " + trimmedLines.get(i + 2).trim();
                 }
 
-                String[] advertisingDates = advertisingLine.split("\\s+");
+                // Extract dates from combined string
+                Matcher matcher = datePattern.matcher(advertisingDatesCombined);
                 int advertisingIndex = 1;
-                for (String dateCandidate : advertisingDates) {
-                    Matcher matcher = datePattern.matcher(dateCandidate);
-                    if (matcher.matches()) {
-                        trustDataMap.put("Advertising Date " + advertisingIndex, dateCandidate.trim());
-                        advertisingIndex++;
-                    }
+                while (matcher.find()) {
+                    trustDataMap.put("Advertising Date " + advertisingIndex, matcher.group().trim());
+                    advertisingIndex++;
                 }
             }
         }
 
         return trustDataMap;
     }
+
+
+    public static boolean verifyPrincipalCommissionAmountsAndDates(
+            String pdfFilePath,
+            String beforeLine,
+            String afterLine,
+            Map<String, String> expectedAmountDateMap
+    ) throws IOException, AutomationException {
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1;
+        int endIndex = -1;
+
+        // 🔍 Find the start and end lines
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.equalsIgnoreCase(beforeLine.trim())) {
+                startIndex = i;
+            } else if (line.equalsIgnoreCase(afterLine.trim())) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+            throw new AutomationException("❌ Could not locate correct range using beforeLine and afterLine.");
+        }
+
+        // 📥 Extracted values
+        Map<String, String> extractedMap = new LinkedHashMap<>();
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (line.isEmpty()) continue;
+
+            String[] parts = line.split("\\s+");
+            if (parts.length < 2) continue;
+
+            String amount = parts[0].trim();
+            String date = parts[1].trim();
+            extractedMap.put(amount, date);
+        }
+
+        // ✅ Validate against expected map
+        boolean allMatched = true;
+        StringBuilder errorMessage = new StringBuilder();
+
+        for (Map.Entry<String, String> expectedEntry : expectedAmountDateMap.entrySet()) {
+            String expectedAmount = expectedEntry.getKey().trim();
+            String expectedDate = expectedEntry.getValue().trim();
+
+            if (!extractedMap.containsKey(expectedAmount)) {
+                errorMessage.append("❌ Amount not found in PDF: ").append(expectedAmount).append("\n");
+                allMatched = false;
+                continue;
+            }
+
+            String actualDate = extractedMap.get(expectedAmount).trim();
+            if (!actualDate.equals(expectedDate)) {
+                errorMessage.append("❌ Date mismatch for amount '")
+                        .append(expectedAmount)
+                        .append("' → Expected: ")
+                        .append(expectedDate)
+                        .append(", Found: ")
+                        .append(actualDate)
+                        .append("\n");
+                allMatched = false;
+            } else {
+                CommonSteps.logInfo("✅ Verified: Amount = " + expectedAmount + ", Date = " + actualDate);
+            }
+        }
+
+        if (!allMatched) {
+            throw new AutomationException(errorMessage.toString().trim());
+        }
+
+        return true;
+    }
+
+    public static boolean verifyReserveAmountAndPurpose(
+            String pdfFilePath,
+            String beforeLine,
+            String afterLine,
+            String expectedAmount,
+            String expectedPurpose
+    ) throws IOException, AutomationException {
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1;
+        int endIndex = -1;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.equalsIgnoreCase(beforeLine.trim())) {
+                startIndex = i;
+            } else if (line.equalsIgnoreCase(afterLine.trim())) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+            throw new AutomationException("❌ Could not identify valid section using beforeLine and afterLine.");
+        }
+
+        String actualAmount = "";
+        String actualPurpose = "";
+
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+
+            if (line.startsWith("Amount:")) {
+                actualAmount = line.replace("Amount:", "").trim();
+            } else if (line.startsWith("Purpose:")) {
+                actualPurpose = line.replace("Purpose:", "").trim();
+            }
+        }
+
+        if (!actualAmount.equals(expectedAmount.trim())) {
+            throw new AutomationException("❌ Reserve amount mismatch. Expected: " + expectedAmount + ", Found: " + actualAmount);
+        }
+
+        if (!actualPurpose.equals(expectedPurpose.trim())) {
+            throw new AutomationException("❌ Reserve purpose mismatch. Expected: " + expectedPurpose + ", Found: " + actualPurpose);
+        }
+
+        CommonSteps.logInfo("✅ Verified Reserve Amount: " + actualAmount);
+        CommonSteps.logInfo("✅ Verified Reserve Purpose: " + actualPurpose);
+        return true;
+    }
+
+
 
 }
 
