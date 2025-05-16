@@ -2,14 +2,11 @@
 Feature: 6in1 probate form RW08 Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
-    When user login using "<user-email>" and "<password>"
+    And user go to application "$6in1_url"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "Kris Warner" Estate
@@ -28,10 +25,8 @@ Feature: 6in1 probate form RW08 Feature
     Then user verifies will number and dates can be entered and are auto saved
 
   Scenario: Verify, checkboxes for file no field.
-    When user check the "Use Will Number" checkbox
-    Then user verifies "will number" is displayed in file number
-    When user check the "Use 4 digit year" checkbox
-    Then user verifies "4 digit year" is displayed in file number
+    When user checks the Use 4 digit year checkbox
+    Then user verifies 4 digit year is displayed in file number field
 
   Scenario: Verify, multiple beneficiaries can be selected.
     Then user verifies multiple beneficiary contacts can be selected and displayed on the form

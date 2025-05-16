@@ -81,6 +81,7 @@ public class DriverFactory {
         chromePrefs.put("plugins.always_open_pdf_externally", true); // Force PDF download instead of viewing
 
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("force-device-scale-factor=1.0");
         options.addArguments("--disable-notifications");
         options.setExperimentalOption("prefs", chromePrefs);
         if (System.getProperty("debug") == null || System.getProperty("debug").equalsIgnoreCase("false")) {

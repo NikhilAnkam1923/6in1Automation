@@ -16,21 +16,21 @@ public class ProbateFormsRW08Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @When("^user check the \"([^\"]*)\" checkbox$")
-    public void userCheckTheCheckbox(String checkboxToSelect) throws AutomationException {
-        CommonSteps.logInfo("user check the "+checkboxToSelect+" checkbox");
-        PageFactory.probateFormsRW08Page().userCheckTheCheckbox(checkboxToSelect);
+    @When("user checks the Use 4 digit year checkbox")
+    public void userCheckTheCheckbox() throws AutomationException {
+        CommonSteps.logInfo("user checks the Use 4 digit year checkbox");
+        PageFactory.probateFormsRW08Page().userCheckTheCheckbox();
     }
 
-    @Then("^user verifies \"([^\"]*)\" is displayed in file number$")
-    public void userVerifiesIsDisplayedInFileNumber(String displayedFileNumber) throws AutomationException {
-        CommonSteps.logInfo("Verified that "+displayedFileNumber+" is displayed in file number");
-        PageFactory.probateFormsRW08Page().verifyDisplayedFileNumber(displayedFileNumber);
+    @Then("user verifies 4 digit year is displayed in file number field")
+    public void userVerifiesIsDisplayedInFileNumber() throws AutomationException {
+        CommonSteps.logInfo("user verifies 4 digit year is displayed in file number field");
+        PageFactory.probateFormsRW08Page().verifyDisplayedFileNumber();
         CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies multiple beneficiary contacts can be selected and displayed on the form")
-    public void userVerifiesMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException {
+    public void userVerifiesMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that multiple beneficiary contacts can be selected and displayed on the form");
         PageFactory.probateFormsRW08Page().verifyMultipleBeneficiaryContactsCanBeSelectedAndDisplayedOnTheForm();
         CommonSteps.takeScreenshot();

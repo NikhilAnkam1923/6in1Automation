@@ -32,7 +32,6 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
     private static final String DECEDENT_LAST_NAME_FIELD = "//input[@name='decedentInfo.lastName']";
     private static final String DECEDENT_DISPLAY_NAME = "//input[@name='decedentInfo.displayNameAs']";
-    private static final String SELECTED_SUFFIX = "//label[text()='Suffix']/following-sibling::div/div/div/div[contains(@class,'select__single-value')]";
     private static final String DECEDENT_SSN_FIELD = "//input[@name='decedentInfo.SSN']";
     private static final String DECEDENT_ALSO_KNOWN_AS = "//textarea[@name='decedentInfo.alsoKnownAs']";
     private static final String DOMICILE_ADDRESS_LINE1 = "//input[@name='domicileAddress.addressLine1']";
@@ -127,7 +126,6 @@ public class ProbateFormsRW01Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -551,7 +549,7 @@ public class ProbateFormsRW01Page extends BasePage {
         driverUtil.getWebElement(FIRST_PAGE_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(SECTION_5_LAST_NAME).click();
+        scrollToElementAndClick(SECTION_5_LAST_NAME);
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
@@ -561,7 +559,7 @@ public class ProbateFormsRW01Page extends BasePage {
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
         WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(SECTION_4_LAST_NAME).click();
+        scrollToElementAndClick(SECTION_4_LAST_NAME);
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(String.format(ROLE_RADIO_BTN_XPATH, "NONE")).click();
         driverUtil.getWebElement(CONTACT_RADIO_BTN_XPATH).click();
@@ -608,20 +606,27 @@ public class ProbateFormsRW01Page extends BasePage {
     private static final Map<String, String> expectedValues = new HashMap<>();
 
     static {
-        expectedValues.put("Last Name", "Walker");
-        expectedValues.put("ExecutorOrAdministratorLastName", "Smith");
-        expectedValues.put("CoExecutorOrAdministratorLastName", "Brown");
-        expectedValues.put("SecondaryCoExecutorOrAdministratorLastName", "Clark");
+        expectedValues.put("Last Name", attorneyLastNameForm);
+        expectedValues.put("ExecutorOrAdministratorLastName", executorLastNameForm);
+        expectedValues.put("CoExecutorOrAdministratorLastName", coExecutorLastNameForm);
+        expectedValues.put("SecondaryCoExecutorOrAdministratorLastName", secondaryCoExecutorLastNameForm);
     }
 
-    public void verifyAllFieldsInDownloadedPDF() throws IOException {
-        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
-                ? System.getProperty("user.dir") + "\\downloads\\"
-                : System.getProperty("user.dir") + "/downloads/") + DownloadedFileName;
+    public void verifyAllFieldsInDownloadedPDF() throws IOException, AutomationException {
+        String pdfFilePath = System.getProperty("user.dir") +
+                (System.getProperty("os.name").toLowerCase().contains("win") ? "\\downloads\\" : "/downloads/")
+                + DownloadedFileName;
 
-        Map<String, String> extractedData = extractDataFromPDF(pdfFilePath);
-        verifyFields(extractedData);
+        try {
+            Map<String, String> extractedData = extractDataFromPDF(pdfFilePath);
+            verifyFields(extractedData);
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (IOException e) {
+            throw new IOException("❌ PDF Read Error: " + e.getMessage(), e);
+        }
     }
+
+
 
 
     private Map<String, String> extractDataFromPDF(String filePath) throws IOException {

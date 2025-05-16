@@ -4,12 +4,12 @@ Feature: 6in1 Global Contacts Feature
   @Setup
   Scenario Outline: SETUP: Launch Browser and go to application
     Given User launched "chrome"
-    And user go to application "https://benchmark1.benchmarkits.in/"
+    And user go to application "$6in1_url"
     When user login using "<user-email>" and "<password>"
     Then user verifies the Home page
     Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
+      | user-email                        | password  |
+      | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
   Scenario: User verify user is on the Global Contact Creation page
     When user navigate to "Global Contact"
@@ -122,13 +122,13 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario Outline: Verify user authorization for "View Only" user
     When user logged out from the application
-    And user go to application "https://benchmark1.benchmarkits.in/"
+    And user go to application "$6in1_url"
     When user login using "<user-email>" and "<password>"
     When user navigate to "Global Contact"
     Then user verifies authorization for "View Only"
     Examples:
-      | user-email                               | password  |
-      | bhaveshkulkarni+13@benchmarkit.solutions | Bits@1234 |
+      | user-email                           | password  |
+      | gauravgidye+54@benchmarkit.solutions | Bits@1234 |
 
   @Setup
   Scenario:SETUP: Close Browser

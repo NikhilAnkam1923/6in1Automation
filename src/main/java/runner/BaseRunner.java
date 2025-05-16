@@ -43,8 +43,15 @@ public class BaseRunner implements ITest {
 	public void
 
 
+
+
+
+
+
+
 	feature(CucumberFeature feature) {
 		try {
+
 			String uri = feature.getUri();
 			uri = uri.substring(uri.lastIndexOf("/")+1);
 			boolean isSkippedFeature = false;

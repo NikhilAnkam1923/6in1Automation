@@ -78,11 +78,12 @@ public class ProbateFormsRW10Page extends BasePage {
     private static final String CORPORATE_FIDUCIARY_NAME_FIELD = "//input[@name='fullname']";
     private static final String CONTACT_RADIO_BTN_DYNAMIC_XPATH = "//label[text()='%s']/preceding-sibling::input[@type='radio']";
     private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
-    private static final String PERSON_NAME_FIELD = "//p[text()='Name of Person']/preceding-sibling::p//input";
+    private static final String PERSON_NAME_FIELD_RW08_RW10 = "//p[text()='Name of Person']/preceding-sibling::div//p//input";
     private static final String SAVE_BTN = "//button[text()='Save']";
     public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
+    private static final String PERSON_NAME_FIELD_RW07 = "//p[text()='Name of Person']/preceding-sibling::p//input";
 
-    private final Map<String, String> estateInfo = new HashMap<>();
+    private final Map<String, String> estateInfo = new HashMap<>();//p[text()='Name of Person']/preceding-sibling::div//p//input
 
     static String downloadedFileName;
     static String enteredReasonForm;
@@ -94,6 +95,15 @@ public class ProbateFormsRW10Page extends BasePage {
     static String displayNameForm;
     static String dateOfDeathForm;
     static String fileNumberForm;
+    static String fiduciaryCityStateCodeZip;
+    static String fiduciaryAddressLine1Form;
+    static String fiduciaryPhoneForm;
+    static String fiduciaryEmailForm;
+    static String attorneyAddressLineForm;
+    static String attorneyPhoneForm;
+    static String attorneyEmailForm;
+    static String attorneyCityStateCodeZip;
+    static String corporateFiduciaryFirm;
 
     @Override
     String getName() {
@@ -118,7 +128,6 @@ public class ProbateFormsRW10Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -371,12 +380,26 @@ public class ProbateFormsRW10Page extends BasePage {
     }
 
     public void verifyAnyOneOfTheFiduciaryContactsCanBeSelected() throws AutomationException, IOException, ParseException {
-        String corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+        corporateFiduciaryFirm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.entityName").toString();
+
+        String fiduciaryCityForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.city").toString();
+        String fiduciaryStateForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.stateCode").toString();
+        String fiduciaryZipForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.zip").toString();
+
+        String addressLine1Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine1").toString();
+        String addressLine2Form = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.addressLine2").toString();
+        fiduciaryAddressLine1Form = addressLine1Form + ", " + addressLine2Form;
+
+        fiduciaryPhoneForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.phoneNumber").toString();
+        fiduciaryEmailForm = CommonUtil.getJsonPath("corporateFiduciary1").get("corporateFiduciary1.emailId").toString();
+
+        fiduciaryCityStateCodeZip = fiduciaryCityForm + ", " + fiduciaryStateForm + " " + fiduciaryZipForm;
 
         scrollToElementAndClick(CORPORATE_FIDUCIARY_NAME_FIELD);
 
         WebElement corporateFiduciaryToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, corporateFiduciaryFirm));
 
+        WebDriverUtil.waitForAWhile();
         corporateFiduciaryToSelect.click();
 
         if (!corporateFiduciaryToSelect.isSelected()) {
@@ -393,10 +416,10 @@ public class ProbateFormsRW10Page extends BasePage {
     }
 
     public void verifyFiduciaryTypeOfContactAreDisplayedInTheListAndCanBeSelected() throws AutomationException, IOException, ParseException {
-        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.firstName").toString();
-        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.lastName").toString() + ",";
-        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.middleName").toString();
-        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary2").get("fiduciary2.suffix").toString();
+        String fiduciaryFirstName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.firstName").toString();
+        String fiduciaryLastName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.lastName").toString() + ",";
+        String fiduciaryMiddleName = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.middleName").toString();
+        String fiduciarySuffix = CommonUtil.getJsonPath("fiduciary3").get("fiduciary3.suffix").toString();
 
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
@@ -428,6 +451,15 @@ public class ProbateFormsRW10Page extends BasePage {
         String attorneyMiddleName = CommonUtil.getJsonPath("attorney2").get("attorney2.middleName").toString();
         String attorneySuffix = CommonUtil.getJsonPath("attorney2").get("attorney2.suffix").toString();
 
+        String attorneyCityForm = CommonUtil.getJsonPath("attorney2").get("attorney2.city").toString();
+        String attorneyStateForm = CommonUtil.getJsonPath("attorney2").get("attorney2.stateCode").toString();
+        String attorneyZipForm = CommonUtil.getJsonPath("attorney2").get("attorney2.zip").toString();
+        attorneyAddressLineForm = CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine1").toString() +", "+CommonUtil.getJsonPath("attorney2").get("attorney2.addressLine2").toString();
+        attorneyPhoneForm = CommonUtil.getJsonPath("attorney2").get("attorney2.phoneNumber").toString();
+        attorneyEmailForm = CommonUtil.getJsonPath("attorney2").get("attorney2.emailId").toString();
+
+        attorneyCityStateCodeZip = attorneyCityForm + ", " + attorneyStateForm + " " + attorneyZipForm;
+
         WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
 
         if (!modalHeader.getText().contains("Attorney")) {
@@ -451,13 +483,16 @@ public class ProbateFormsRW10Page extends BasePage {
 
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel (Attorney) updated successfully.")));
 
-        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").replace(",", "");
+        selectedNameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08_RW10).getAttribute("value");
+        if (!(selectedNameOfPerson.contains("Jr.") || selectedNameOfPerson.contains("Sr."))) {
+            selectedNameOfPerson = selectedNameOfPerson.replace(",", "");
+        }
     }
 
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor7And10() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
-        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW07).getAttribute("value");
 
         if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
             throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW07. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
@@ -471,7 +506,7 @@ public class ProbateFormsRW10Page extends BasePage {
     public void verifyCorporateFiduciaryAndPersonSectionsInformationIsCommonFor8And10() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryName = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value");
-        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value");
+        String nameOfPerson = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08_RW10).getAttribute("value");
 
         if (!corporateFiduciaryName.equals(selectedNameOfCorporateFiduciary)) {
             throw new AutomationException("Changes made in Corporate Fiduciary section on RW10 are not reflected on RW08. Expected Name: " + selectedNameOfCorporateFiduciary + " ,Found: " + corporateFiduciaryName);
@@ -485,7 +520,7 @@ public class ProbateFormsRW10Page extends BasePage {
     public void verifySelectedContactsAreCleared() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);
         String corporateFiduciaryValue = driverUtil.getWebElement(CORPORATE_FIDUCIARY_NAME_FIELD).getAttribute("value").trim();
-        String personNameValue = driverUtil.getWebElement(PERSON_NAME_FIELD).getAttribute("value").trim();
+        String personNameValue = driverUtil.getWebElement(PERSON_NAME_FIELD_RW08_RW10).getAttribute("value").trim();
 
         if (!corporateFiduciaryValue.isEmpty()) {
             throw new AutomationException("Corporate Fiduciary selection is not cleared. Found value: " + corporateFiduciaryValue);
@@ -547,8 +582,10 @@ public class ProbateFormsRW10Page extends BasePage {
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
             verifyCorporateFiduciaryAndPersonDetails(pdfFilePath);
-        } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
@@ -610,20 +647,20 @@ public class ProbateFormsRW10Page extends BasePage {
 
         // Validate Corporate Fiduciary Details (1st occurrence)
         if (corporateFiduciary != null) {
-            validateField("Corporate Fiduciary", corporateFiduciary, "zetaConsulting");
-            validateField("Corporate Address", corpAddress, "Mountain View Drive");
-            validateField("Corporate City, State, Zip", corpCityStateZip, "Seattle, WA 98101");
-            validateField("Corporate Telephone", corpTelephone, "(206) 555-6789");
-            validateField("Corporate Email", corpEmail, "liam.anderson@zetaconsulting.com");
+            validateField("Corporate Fiduciary", corporateFiduciary, corporateFiduciaryFirm);
+            validateField("Corporate Address", corpAddress, fiduciaryAddressLine1Form);
+            validateField("Corporate City, State, Zip", corpCityStateZip, fiduciaryCityStateCodeZip);
+            validateField("Corporate Telephone", corpTelephone, fiduciaryPhoneForm);
+            validateField("Corporate Email", corpEmail, fiduciaryEmailForm);
         }
 
         // Validate Name of Person Details (2nd occurrence)
         if (personName != null) {
-            validateField("Name of Person", personName, "Rihan Benjamin Miles Jr");
-            validateField("Person Address", personAddress, "Riverside Drive");
-            validateField("Person City, State, Zip", personCityStateZip, "Kansas City, MO 64101");
-            validateField("Person Telephone", personTelephone, "(816) 555-4321");
-            validateField("Person Email", personEmail, "rihan.miles@business.com");
+            validateField("Name of Person", personName, selectedNameOfPerson);
+            validateField("Person Address", personAddress, attorneyAddressLineForm);
+            validateField("Person City, State, Zip", personCityStateZip, attorneyCityStateCodeZip);
+            validateField("Person Telephone", personTelephone, attorneyPhoneForm);
+            validateField("Person Email", personEmail, attorneyEmailForm);
         }
 
         if (corporateFiduciary == null && personName == null) {

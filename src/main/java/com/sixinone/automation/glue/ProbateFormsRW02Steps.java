@@ -43,6 +43,7 @@ public class ProbateFormsRW02Steps {
     public void userVerifiesWhenNamesExceedTheLineTheContactsAreDisplayedInTheAttachment() throws AutomationException, IOException, ParseException {
         PageFactory.probateFormsRW02Page().verifyNamesExceedTheLineTheContactsAreDisplayedInTheAttachment();
         CommonSteps.logInfo("Verified that when names exceed the line, the contacts are displayed in the attachment");
+        CommonSteps.takeScreenshot();
     }
 
     @And("user selects options from all the dropdowns of 'Estimate of value of decedents property at death'")
@@ -119,7 +120,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @And("user checks Option A checkbox")
-    public void userChecksOptionACheckbox() {
+    public void userChecksOptionACheckbox() throws AutomationException {
         CommonSteps.logInfo("user checks Option A checkbox");
         PageFactory.probateFormsRW02Page().userChecksOptionACheckbox();
     }
@@ -159,7 +160,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies text can be entered in the state relevant circumstances text fields")
-    public void userVerifiesTextCanBeEnteredInTheStateRelevantCircumstancesTextFields() throws AutomationException {
+    public void userVerifiesTextCanBeEnteredInTheStateRelevantCircumstancesTextFields() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that text can be entered in the state relevant circumstances text fields");
         PageFactory.probateFormsRW02Page().verifyTextCanBeEnteredInTheStateRelevantCircumstancesTextFields();
         CommonSteps.takeScreenshot();
@@ -172,7 +173,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies the text field is enabled and text can be entered")
-    public void userVerifiesTheTextFieldIsEnabledAndTextCanBeEntered() throws AutomationException {
+    public void userVerifiesTheTextFieldIsEnabledAndTextCanBeEntered() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that the text field is enabled and text can be entered");
         PageFactory.probateFormsRW02Page().verifyTextFieldIsEnabledAndTextCanBeEntered();
         CommonSteps.takeScreenshot();
@@ -199,7 +200,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies multiple beneficiaries can be added")
-    public void userVerifiesMultipleBeneficiariesCanBeAdded() throws AutomationException {
+    public void userVerifiesMultipleBeneficiariesCanBeAdded() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that multiple beneficiaries can be added");
         PageFactory.probateFormsRW02Page().verifyMultipleBeneficiariesCanBeAdded();
         CommonSteps.takeScreenshot();
@@ -225,7 +226,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @And("user checks 'Display ALL heirs on attachment' checkbox")
-    public void userChecksDisplayALLHeirsOnAttachmentCheckbox() {
+    public void userChecksDisplayALLHeirsOnAttachmentCheckbox() throws AutomationException {
         CommonSteps.logInfo("user checks 'Display ALL heirs on attachment' checkbox");
         PageFactory.probateFormsRW02Page().userChecksDisplayALLHeirsOnAttachmentCheckbox();
     }
@@ -289,7 +290,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies only 1 contact can be selected from the list")
-    public void userVerifiesOnlyContactCanBeSelectedFromTheList() throws AutomationException {
+    public void userVerifiesOnlyContactCanBeSelectedFromTheList() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that only 1 contact can be selected from the list");
         PageFactory.probateFormsRW02Page().verifyOnlyContactCanBeSelectedFromTheList();
     }

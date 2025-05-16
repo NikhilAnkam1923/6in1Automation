@@ -1,5 +1,7 @@
 package com.sixinone.automation.pages;
 
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 
 public class PageFactory {
@@ -19,8 +21,11 @@ public class PageFactory {
     public ProbateFormsRW08Page probateFormsRW08Page;
     public ProbateFormsRW10Page probateFormsRW10Page;
     public ProbateFormsOC01Page probateFormsOC01Page;
+    public ProbateFormsOC02Page probateFormsOC02Page;
+    public ProbateFormsOC03Page probateFormsOC03Page;
+    public ProbateFormsOC04Page probateFormsOC04Page;
 
-    private PageFactory() throws IOException {
+    private PageFactory() throws IOException, ParseException {
 
         loginPage = new LoginPage();
         globalContactPage = new GlobalContactPage();
@@ -37,9 +42,12 @@ public class PageFactory {
         probateFormsRW08Page =new ProbateFormsRW08Page();
         probateFormsRW10Page =new ProbateFormsRW10Page();
         probateFormsOC01Page =new ProbateFormsOC01Page();
+        probateFormsOC02Page =new ProbateFormsOC02Page();
+        probateFormsOC03Page =new ProbateFormsOC03Page();
+        probateFormsOC04Page =new ProbateFormsOC04Page();
     }
 
-    public static void init() throws IOException {
+    public static void init() throws IOException, ParseException {
         if (factory.get() == null) {
             PageFactory pageFactory = new PageFactory();
             factory.set(pageFactory);
@@ -98,6 +106,11 @@ public class PageFactory {
 
     public static ProbateFormsOC01Page probateFormsOC01Page() { return factory.get().probateFormsOC01Page; }
 
+    public static ProbateFormsOC02Page probateFormsOC02Page() { return factory.get().probateFormsOC02Page; }
+
+    public static ProbateFormsOC03Page probateFormsOC03Page() { return factory.get().probateFormsOC03Page; }
+
+    public static ProbateFormsOC04Page probateFormsOC04Page() { return factory.get().probateFormsOC04Page; }
 }
 
 

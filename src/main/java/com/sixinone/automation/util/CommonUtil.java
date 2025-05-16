@@ -44,6 +44,14 @@ public class CommonUtil {
         jsonObject.get(jsonObjectData);
         return jsonObject;
     }
+
+    public static JSONObject getFullJsonObject() throws IOException, ParseException {
+        jsonParser = new JSONParser();
+        FileReader reader = new FileReader(".\\src\\test\\resources\\test-data\\qa\\testData.json");
+        Object obj = jsonParser.parse(reader);
+        return (JSONObject) obj;
+    }
+
     public static Map<String, String> readData(DataTable parameters) {
         Map<String, String> parametersMap = new LinkedHashMap<>();
         List<Map<String, String>> rows = parameters.asMaps();

@@ -19,6 +19,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.text.PDFTextStripper;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -117,7 +118,6 @@ public class ProbateFormsRW05Page extends BasePage {
         estateInfo.put("MiddleName", getFieldValue(DECEDENT_MIDDLE_NAME));
         estateInfo.put("LastName", getFieldValue(DECEDENT_LAST_NAME_FIELD));
         estateInfo.put("DisplayName", getFieldValue(DECEDENT_DISPLAY_NAME));
-        estateInfo.put("Suffix", getFieldValue(SELECTED_SUFFIX));
         estateInfo.put("SSN", getFieldValue(DECEDENT_SSN_FIELD));
         estateInfo.put("AlsoKnownAs", getFieldValue(DECEDENT_ALSO_KNOWN_AS));
         estateInfo.put("DomicileAddressLine1", getFieldValue(DOMICILE_ADDRESS_LINE1));
@@ -430,27 +430,31 @@ public class ProbateFormsRW05Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyPrintNames(pdfFilePath);
-            //verifyCounty(pdfFilePath);
-            verifyFieldsInPDF(pdfFilePath,
-                    "Commission.)",
+            boolean isVerifiedPrintNames = verifyPrintNames(pdfFilePath);
+
+            boolean isVerifiedWitness1StreetAddress = verifyFieldsInPDF(pdfFilePath,
+                    "commission.)",
                     "SS:",
                     enteredStreetAddress2Form,
                     "Witness2 Street Address");
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isVerifiedWitness2StreetAddress = verifyFieldsInPDF(pdfFilePath,
                     "Deputy for Register of Wills",
                     "(Signature) Leo",
                     enteredStreetAddress1Form,
                     "Witness1 Street Address");
 
-            validateWitnessDetails(pdfFilePath);
+            boolean isValidateWitnessDetails = validateWitnessDetails(pdfFilePath);
 
-        } catch (IOException e) {
-            CommonSteps.logInfo("Error reading PDF: " + e.getMessage());
+            if (!isVerifiedPrintNames || !isVerifiedWitness1StreetAddress || !isVerifiedWitness2StreetAddress || !isValidateWitnessDetails) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (AutomationException | IOException e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
-    public static void verifyPrintNames(String pdfFilePath) throws IOException, AutomationException {
+    public static boolean verifyPrintNames(String pdfFilePath) throws IOException {
         List<String> beforeLines = Arrays.asList("a/k/a Jonny", "Estate of William John , Deceased");
         String afterLine = "(Print Name/s) (Print Name/s)";
 
@@ -501,8 +505,7 @@ public class ProbateFormsRW05Page extends BasePage {
 
             CommonSteps.logInfo("\n📌 Extracted Witness Names: " + names);
             if (names.isEmpty()) {
-                CommonSteps.logInfo("❌ Validation Failed: No names found between the specified lines.");
-                return;
+                throw new AuthenticationException("❌ Validation Failed: No names found between the specified lines.");
             }
 
             // Create a map of expected names
@@ -525,13 +528,15 @@ public class ProbateFormsRW05Page extends BasePage {
 
             if (allMatch) {
                 CommonSteps.logInfo("✅ Validation Passed: Print names match as expected.");
+                return true;
             } else {
-                throw new AutomationException("❌ Validation Failed: Print names do not match the expected values.");
+                throw new AuthenticationException("❌ Validation Failed: Print names do not match the expected values.");
             }
         } else {
-            throw new AutomationException("❌ Before or after line not found!");
+            throw new AuthenticationException("❌ Before or after line not found!");
         }
     }
+
 
 
     // **Updated Helper Method to Clean Names Properly**
@@ -539,12 +544,14 @@ public class ProbateFormsRW05Page extends BasePage {
         if (rawName == null || rawName.trim().isEmpty()) return "";
 
         return rawName
-                .replaceAll("(?i)\\b(each of|all of)\\b", "") // Remove unwanted phrases
-                .replaceAll("[,\\.\\s]+$", "") // Remove trailing commas, dots, and extra spaces
-                .trim(); // Trim spaces
+                .replaceAll("(?i)\\b(each of|all of|each a|each an)\\b", "")  // Remove phrases like 'each a'
+                .replaceAll(",.*", "")                                       // Remove anything after a comma
+                .replaceAll("[\\.\\s]+$", "")                                // Remove trailing dots/spaces
+                .trim();
+
     }
 
-    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+    public static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -553,6 +560,7 @@ public class ProbateFormsRW05Page extends BasePage {
         int startIndex = -1, endIndex = -1;
         String extractedValue = "";
 
+        // Find the lines that match the beforeLine and afterLine
         for (int i = 0; i < allLines.length; i++) {
             String trimmedLine = allLines[i].trim();
             if (trimmedLine.contains(beforeLine.trim())) {
@@ -565,6 +573,7 @@ public class ProbateFormsRW05Page extends BasePage {
         }
 
         if (startIndex != -1 && endIndex != -1) {
+            // Extract the field value between the specified lines
             for (int i = startIndex + 1; i < endIndex; i++) {
                 String currentLine = allLines[i].trim();
                 if (!currentLine.isBlank()) {
@@ -577,17 +586,21 @@ public class ProbateFormsRW05Page extends BasePage {
                 throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
             }
 
-            CommonSteps.logInfo("🔍 Comparing -> for "+ fieldName +" Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+            // Log comparison details
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
 
+            // Validate the extracted value against the expected value
             if (!expectedValue.equalsIgnoreCase(extractedValue)) {
                 throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
             }
 
             CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+            return true;
         } else {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
     }
+
 
     // **Updated Helper Method to Clean Names Properly**
     private static String cleanField(String rawName) {
@@ -598,7 +611,7 @@ public class ProbateFormsRW05Page extends BasePage {
                 .trim(); // Trim spaces
     }
 
-    public void validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
+    public boolean validateWitnessDetails(String pdfFilePath) throws IOException, AutomationException {
         Map<String, String> extractedWitnessDetails = new LinkedHashMap<>();
         List<String> mismatchErrors = new ArrayList<>();
 
@@ -653,8 +666,11 @@ public class ProbateFormsRW05Page extends BasePage {
         if (!mismatchErrors.isEmpty()) {
             throw new AutomationException(String.join("\n", mismatchErrors));
         }
-    }
 
+        // Return true if validation passed successfully
+        CommonSteps.logInfo("✅ All witness details validated successfully.");
+        return true;
+    }
 
     public void userResetsTheRWForm() throws AutomationException {
         WebDriverUtil.waitForAWhile(2);

@@ -11,6 +11,7 @@ import org.stringtemplate.v4.ST;
 import org.testng.Assert;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class LoginPage extends BasePage {
@@ -29,6 +30,7 @@ public class LoginPage extends BasePage {
     private static final String BACK_TO_LOGIN = "//a[text()='« Back to Login']";
     public static WebDriverUtil driverUtil = new WebDriverUtil();
     private static final String CREATE_LACKNER_STAFF_BTN = "//button[@aria-label='%s']";
+    private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
 
     public void clickOnLoginButton() throws AutomationException {
         driverUtil.getWebElement(LOGIN_BTN).click();
@@ -95,6 +97,26 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty()) {
+            boolean clickedAtLeastOne = false;
+            for (WebElement btn : toasterBtns) {
+                if (btn.isDisplayed()) {
+                    btn.click();
+                    CommonSteps.logInfo("Toaster closed.");
+                    clickedAtLeastOne = true;
+                    WebDriverUtil.waitForAWhile();
+                }
+            }
+            if (!clickedAtLeastOne) {
+                CommonSteps.logInfo("No visible toaster found.");
+            }
+        } else {
+            CommonSteps.logInfo("Toaster not present.");
+        }
+
+
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForVisibleElement(By.xpath(LOGOUT_BTN));
         driverUtil.getWebElementAndScroll(LOGOUT_BTN).click();
