@@ -129,10 +129,10 @@ Feature: 6in1 probate form OC03 Feature
 
   Scenario: Verify, if the 1st petitioner is removed, next in line is displayed on the form.
     When user navigates to page number: "6"
-    Then user verifies after removing the existing contact next inline contact is displayed on the form
+    Then user verifies after removing the existing contact next inline contact is displayed on the "OC03" form
 
   Scenario: Verify, if any petitioner removed, same is reflected in the attachment.
-    Then user verifies the contact removed from the estate contacts is also removed from the attachment as well
+    Then user verifies the contact removed from the estate contacts is also removed from the attachment as well for "OC03" form
 
   Scenario: Reset Roles of Removed Contacts
     When user resets roles of removed contacts from the Estate Contacts of "OC03" form

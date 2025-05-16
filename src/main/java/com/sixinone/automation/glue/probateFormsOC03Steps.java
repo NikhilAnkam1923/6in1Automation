@@ -16,17 +16,4 @@ public class probateFormsOC03Steps {
         PageFactory.probateFormsOC03Page().verifyAccountOfFieldIsPopulatedWithTheFiduciarySName();
         CommonSteps.takeScreenshot();
     }
-
-    @Then("user verifies after removing the existing contact next inline contact is displayed on the form")
-    public void userVerifiesAfterRemovingTheExistingContactNextInlineContactIsDisplayedOnTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that after removing the existing contact next inline contact is displayed on the form");
-        PageFactory.probateFormsOC03Page().verifyAfterRemovingTheExistingContactNextInlineContactIsDisplayedOnTheForm();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies the contact removed from the estate contacts is also removed from the attachment as well")
-    public void userVerifiesTheContactRemovedFromTheEstateContactsIsAlsoRemovedFromTheAttachmentAsWell() throws AutomationException {
-        CommonSteps.logInfo("Verified that the contact removed from the estate contacts is also removed from the attachment as well");
-        PageFactory.probateFormsOC03Page().verifyContactRemovedFromTheEstateContactsIsAlsoRemovedFromTheAttachmentAsWell();
-    }
 }

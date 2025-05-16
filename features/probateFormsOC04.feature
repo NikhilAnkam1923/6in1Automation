@@ -31,14 +31,14 @@ Feature: 6in1 probate form OC04 Feature
 
   Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
     When user click on Petitioner name field
-    And user selects multiple petitioners for "OC03" form
+    And user selects multiple petitioners for "OC04" form
       #Verify, attachment.
-    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC03" form
+    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC04" form
 
   Scenario: Verify, selected petitioner can be swapped and deleted.
     When user click on Petitioner name field
-    And user swap the selected petitioner contacts for "OC03" form
-    Then user verifies for "OC03" form swapped petitioner names are reflected on UI accordingly
+    And user swap the selected petitioner contacts for "OC04" form
+    Then user verifies for "OC04" form swapped petitioner names are reflected on UI accordingly
 
   Scenario: Verify that the "Estate of" field is auto-populated with the estate name.
     When user navigates to page number: "3"
@@ -110,6 +110,32 @@ Feature: 6in1 probate form OC04 Feature
     And user adds new petitioner for "OC04" form
     When user navigates to page number: "6"
     Then user verifies newly added petitioner is displayed in the attachment for "OC04" form
+
+  Scenario: Verify, if the notification if the selected contact is removed from the estate.
+    When user navigates to Estate Contacts tab
+    Then user verifies for "OC04" form notification is displayed when the contact selected as the petitioner is removed from the estate contacts
+      #Verify, notification popup is shown for removal of contact already in use.
+    Then user verifies for "OC04" form notification is displayed when the beneficiary contact is removed from the estate contacts
+
+  Scenario: Verify, if the contact is removed, it is removed from the form as well.
+    When user navigates to the probate forms tab
+    And user click on the "OC 04" form
+    And user navigates to page number: "2"
+    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the "OC04" form
+
+  Scenario: Verify, if for a user role of beny is removed.
+    When user navigates to page number: "4"
+    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the "OC04" form
+
+  Scenario: Verify, if the 1st petitioner is removed, next in line is displayed on the form.
+    When user navigates to page number: "6"
+    Then user verifies after removing the existing contact next inline contact is displayed on the "OC04" form
+
+  Scenario: Verify, if any petitioner removed, same is reflected in the attachment.
+    Then user verifies the contact removed from the estate contacts is also removed from the attachment as well for "OC04" form
+
+  Scenario: Reset Roles of Removed Contacts
+    When user resets roles of removed contacts from the Estate Contacts of "OC04" form
 
   Scenario: Reset the OC02 form
     When user navigates to the probate forms tab
