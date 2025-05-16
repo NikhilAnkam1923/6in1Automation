@@ -46,7 +46,7 @@ public class EstateContactsPage extends BasePage {
     private static final String MAIDEN_NAME_FIELD = "//input[@name='contact.maidenName']";
     private static final String ENTITY_NAME_FIELD = "//input[contains(@name,'entityName')]";
     private static final String EIN_FIELD = "//input[contains(translate(@name, 'EIN', 'ein'), 'ein')]";
-    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
+    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";

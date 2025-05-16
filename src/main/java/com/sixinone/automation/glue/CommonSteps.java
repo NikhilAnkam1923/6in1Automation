@@ -1433,6 +1433,9 @@ public class CommonSteps {
             case "OC03":
                 PageFactory.probateFormsOC03Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts();
                 break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsThePetitionerIsRemovedFromTheEstateContacts();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1451,6 +1454,9 @@ public class CommonSteps {
             case "OC03":
                 PageFactory.probateFormsOC03Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
                 break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1468,6 +1474,9 @@ public class CommonSteps {
                 break;
             case "OC03":
                 PageFactory.probateFormsOC03Page().verifyRemovedPetitionerContactsFromTheEstateContactsIsAlsoRemovedFromTheForm();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyRemovedPetitionerContactsFromTheEstateContactsIsAlsoRemovedFromTheForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1488,6 +1497,9 @@ public class CommonSteps {
             case "OC03":
                 PageFactory.probateFormsOC03Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();
                 break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1506,6 +1518,9 @@ public class CommonSteps {
                 break;
             case "OC03":
                 PageFactory.probateFormsOC03Page().resetRolesOfContacts();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().resetRolesOfContacts();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1824,6 +1839,37 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyNewlyAddedPetitionerIsDisplayedInTheAttachment();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+    }
+
+    @Then("^user verifies after removing the existing contact next inline contact is displayed on the \"([^\"]*)\" form$")
+    public void userVerifiesAfterRemovingTheExistingContactNextInlineContactIsDisplayedOnTheForm(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that after removing the existing contact next inline contact is displayed on the "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyAfterRemovingTheExistingContactNextInlineContactIsDisplayedOnTheForm();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyAfterRemovingTheExistingContactNextInlineContactIsDisplayedOnTheForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies the contact removed from the estate contacts is also removed from the attachment as well for \"([^\"]*)\" form$")
+    public void userVerifiesTheContactRemovedFromTheEstateContactsIsAlsoRemovedFromTheAttachmentAsWell(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that the contact removed from the estate contacts is also removed from the attachment as well for "+formName+" form");
+        switch (formName) {
+            case "OC03":
+                PageFactory.probateFormsOC03Page().verifyContactRemovedFromTheEstateContactsIsAlsoRemovedFromTheAttachmentAsWell();
+                break;
+            case "OC04":
+                PageFactory.probateFormsOC04Page().verifyContactRemovedFromTheEstateContactsIsAlsoRemovedFromTheAttachmentAsWell();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

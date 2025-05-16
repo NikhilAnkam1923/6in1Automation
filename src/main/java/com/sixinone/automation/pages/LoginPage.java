@@ -104,16 +104,16 @@ public class LoginPage extends BasePage {
             for (WebElement btn : toasterBtns) {
                 if (btn.isDisplayed()) {
                     btn.click();
-                    CommonSteps.logInfo("Toaster close button clicked.");
+                    CommonSteps.logInfo("Toaster closed.");
                     clickedAtLeastOne = true;
                     WebDriverUtil.waitForAWhile();
                 }
             }
             if (!clickedAtLeastOne) {
-                CommonSteps.logInfo("No visible toaster close button found.");
+                CommonSteps.logInfo("No visible toaster found.");
             }
         } else {
-            CommonSteps.logInfo("Toaster close button not present.");
+            CommonSteps.logInfo("Toaster not present.");
         }
 
 

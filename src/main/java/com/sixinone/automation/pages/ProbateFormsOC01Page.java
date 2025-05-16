@@ -170,7 +170,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String BENE_PROPORTION_INCOME_PAGE_10 = "//p[@class='p0-3 ft12 newstyle']//input[@value and normalize-space(@value)]";
     private static final String BENE_ON_ATTACHMENT_PAGE_10 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
-    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
+    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";

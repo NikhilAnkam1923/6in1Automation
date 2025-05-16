@@ -197,24 +197,24 @@ Feature: 6in1 probate form OC01 Feature
     Then verify form can be printed in pdf with name as 'OC01'
     And verify all the fields entered are correctly reflected in the 'OC01' pdf
 
-#  Scenario: Verify, if the notification if the selected contact is removed from the estate.
-#    When user navigates to Estate Contacts tab
-#    Then user verifies for "OC01" form notification is displayed when the contact selected as the petitioner is removed from the estate contacts
-#      #Verify, notification popup is shown for removal of contact already in use.
-#    Then user verifies for "OC01" form notification is displayed when the beneficiary contact is removed from the estate contacts
-#
-#  Scenario: Verify, if the contact is removed, it is removed from the form as well.
-#    When user navigates to the probate forms tab
-#    And user click on the "OC 01" form
-#    And user navigates to page number: "2"
-#    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the "OC01" form
-#
-#  Scenario: Verify, if for a user role of beny is removed.
-#    When user navigates to page number: "4"
-#    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the "OC01" form
-#
-#  Scenario: Reset Roles of Removed Contacts
-#    When user resets roles of removed contacts from the Estate Contacts of "OC01" form
+  Scenario: Verify, if the notification if the selected contact is removed from the estate.
+    When user navigates to Estate Contacts tab
+    Then user verifies for "OC01" form notification is displayed when the contact selected as the petitioner is removed from the estate contacts
+      #Verify, notification popup is shown for removal of contact already in use.
+    Then user verifies for "OC01" form notification is displayed when the beneficiary contact is removed from the estate contacts
+
+  Scenario: Verify, if the contact is removed, it is removed from the form as well.
+    When user navigates to the probate forms tab
+    And user click on the "OC 01" form
+    And user navigates to page number: "2"
+    Then user verifies removed petitioner contacts from the estate contacts is also gets removed from the "OC01" form
+
+  Scenario: Verify, if for a user role of beny is removed.
+    When user navigates to page number: "4"
+    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the "OC01" form
+
+  Scenario: Reset Roles of Removed Contacts
+    When user resets roles of removed contacts from the Estate Contacts of "OC01" form
 
   Scenario: Reset the OC01 form
     When user navigates to the probate forms tab

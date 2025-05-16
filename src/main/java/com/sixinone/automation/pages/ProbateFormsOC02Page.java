@@ -145,7 +145,7 @@ public class ProbateFormsOC02Page extends BasePage{
     private static final String BENE_ON_ATTACHMENT_PAGE_10 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     private static final String SIGN_OF_PETITIONER_PAGE_11 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
     private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_11 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]//span//*[self::input or self::textarea]";
-    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
+    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";

@@ -112,14 +112,14 @@ public class ProbateFormsOC04Page extends BasePage{
     private static final String BENE_ON_ATTACHMENT_PAGE_5 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     private static final String SIGN_OF_PETITIONER_PAGE_6 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
     private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_6 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]//span//*[self::input or self::textarea]";
-    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input[@aria-label='Filter']";
+    private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String ESTATE_SPECIFIC_SELECT_ROLE_BTN = "//button[text()='Select Role']";
     private static final String ROLE_CHECKBOX = "//div[@class='modal-content']//label[@class='form-check-label' and text()='%s']/preceding-sibling::input[not(@checked)]";
     private static final String ROLE_UNCHECK = "//div[@class='modal-content']//label[@class='form-check-label' and text()='%s']/preceding-sibling::input";
     private static final String ROLE_SAVE_BTN = "//div[@class='fade custom-modal center-small-modal modal show']//button[text()='Save']";
-    private static final String CONTACT_USED_IN_OC03_FORM_NOTIFICATION = "//div[@class='modal-inner-content']//li[text()='ProbateOC03']";
+    private static final String CONTACT_USED_IN_OC04_FORM_NOTIFICATION = "//div[@class='modal-inner-content']//li[text()='ProbateOC04']";
     private static final String NO_ROLES_SAVE_BTN = "//button[@class='btn btn-danger' and text()='Save']";
     private static final String SELECT_RELATIONSHIP_BTN = "//button[@aria-label='Select Relationship']";
     private static final String RELATIONSHIP_OPTION = "//label[@class='form-check-label' and text()='%s']/preceding-sibling::input";
@@ -1326,8 +1326,8 @@ public class ProbateFormsOC04Page extends BasePage{
 
     public void verifyNotificationIsDisplayedOnRemovingTheRole() throws AutomationException {
         WebDriverUtil.waitForAWhile();
-        waitForVisibleElement(By.xpath(CONTACT_USED_IN_OC03_FORM_NOTIFICATION));
-        WebElement rolesNotification = driverUtil.getWebElement(CONTACT_USED_IN_OC03_FORM_NOTIFICATION);
+        waitForVisibleElement(By.xpath(CONTACT_USED_IN_OC04_FORM_NOTIFICATION));
+        WebElement rolesNotification = driverUtil.getWebElement(CONTACT_USED_IN_OC04_FORM_NOTIFICATION);
         if (!rolesNotification.isDisplayed()) {
             throw new AutomationException("Notification is not displayed on removing the role");
         }
@@ -1411,7 +1411,7 @@ public class ProbateFormsOC04Page extends BasePage{
     public void verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm() throws AutomationException {
         WebDriverUtil.waitForAWhile();
         List<WebElement> beneDetailsPage4Fields = driverUtil.getWebElements(BENE_DETAILS_FORM);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             beneDetailsAfterRoleRemoved.add(beneDetailsPage4Fields.get(i).getText());
         }
 
@@ -1419,7 +1419,7 @@ public class ProbateFormsOC04Page extends BasePage{
         driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
         WebDriverUtil.waitForAWhile();
         List<WebElement> beneDetailsOnAttachmentFields = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             beneDetailsAfterRoleRemoved.add(beneDetailsOnAttachmentFields.get(i).getText());
         }
         driverUtil.getWebElement(CLOSE_BTN).click();
@@ -1550,15 +1550,6 @@ public class ProbateFormsOC04Page extends BasePage{
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
-
-        //temp use remove later
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-        WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement("//span[@class='cursor']").click();
-
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
