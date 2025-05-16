@@ -156,7 +156,10 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String CLAIMANT_NAME_ERR_MSG = "//div[@class='invalid-feedback' and text()='Name is required when Initials are not provided.']";
     private static final String CLAIMANT_ADDRESS_ERR_MSG = "//div[@class='invalid-feedback' and text()='Address is required when Initials are not provided.']";
     private static final String CLAIMANT_INITIALS_LIST = "//div[@class='modal-dialog modal-xl']//td[position()='1']";
+    private static final String CLAIMANT_NAME_ADDRESS_LIST = "//div[@class='modal-dialog modal-xl']//td[position()='2']";
     private static final String CLAIMANT_AMOUNT_LIST = "//div[@class='modal-dialog modal-xl']//td[position()='3']";
+    private static final String CLAIM_ADMITTED_LIST = "//div[@class='modal-dialog modal-xl']//td[position()='4']";
+    private static final String CLAIM_PAID_LIST = "//div[@class='modal-dialog modal-xl']//td[position()='5']";
     private static final String CLAIMANT_INITIALS_FORM_LIST = "//input[contains(@class,'no-bords')]";
     private static final String CLAIMANT_AMOUNT_FORM = "//td//p//input[contains(@id,'claimed_amount') and not(contains(@class,'bold'))]";
     private static final String ABOVE_ATTACHMENT_TOTAL_FIELDS = "//td//p//input[contains(@id,'claimed_amount') and @class='noneditable bold']";
@@ -201,7 +204,11 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final List<String> beneRelationship = new ArrayList<>();
     private static final List<String> beneInterest = new ArrayList<>();
     private static final List<String> claimantInitialsForm = new ArrayList<>();
+    private static final List<String> claimantNameForm = new ArrayList<>();
+    private static final List<String> claimantAddressForm = new ArrayList<>();
     private static final List<String> claimAmountForm = new ArrayList<>();
+    private static final List<String> claimAdmittedForm = new ArrayList<>();
+    private static final List<String> claimPaidForm = new ArrayList<>();
     private static final List<String> mainTableClaimAmount = new ArrayList<>();
     private static final List<String> attachmentClaimAmount = new ArrayList<>();
     private static final List<String> selectedContactNamesPage10 = new ArrayList<>();
@@ -1916,14 +1923,76 @@ public class ProbateFormsOC01Page extends BasePage {
 
         WebDriverUtil.waitForAWhile();
         List<WebElement> claimantInitialsFields = driverUtil.getWebElements(CLAIMANT_INITIALS_LIST);
+        List<WebElement> claimantNameAddressFields = driverUtil.getWebElements(CLAIMANT_NAME_ADDRESS_LIST);
         List<WebElement> claimantAmountFields = driverUtil.getWebElements(CLAIMANT_AMOUNT_LIST);
+        List<WebElement> claimAdmittedFields = driverUtil.getWebElements(CLAIM_ADMITTED_LIST);
+        List<WebElement> claimPaidFields = driverUtil.getWebElements(CLAIM_PAID_LIST);
 
         for (int i = 0; i < claimantInitialsFields.size(); i++) {
             claimantInitialsForm.add(claimantInitialsFields.get(i).getText().trim());
             claimAmountForm.add(claimantAmountFields.get(i).getText().trim());
+            claimAdmittedForm.add(claimAdmittedFields.get(i).getText().trim());
+            claimPaidForm.add(claimPaidFields.get(i).getText().trim());
         }
 
+        for (WebElement nameAddress : claimantNameAddressFields) {
+            String text = nameAddress.getText().trim();
+            if (!text.isEmpty()) {
+                String[] lines = text.split("\\r?\\n");
+                if (lines.length >= 2) {
+                    claimantNameForm.add(lines[0].trim());
+                    claimantAddressForm.add(lines[1].trim());
+                } else {
+                    CommonSteps.logInfo("Invalid claimant format: " + text);
+                }
+            }
+        }
         driverUtil.getWebElement(CLOSE_BTN).click();
+
+        for (int i = 0; i < claimantInitialsForm.size(); i++) {
+            switch (i) {
+                case 0:
+                    Initials1Form = claimantInitialsForm.get(i);
+                    Name1Form = claimantNameForm.get(i);
+                    Address1Form = claimantAddressForm.get(i);
+                    Amount_of_Claim1Form = claimAmountForm.get(i);
+                    Claim_Admitted1Form = claimAdmittedForm.get(i);
+                    Will_Claim_Be_Paid_In_Full1Form = claimPaidForm.get(i);
+                    break;
+                case 1:
+                    Initials2Form = claimantInitialsForm.get(i);
+                    Name2Form = claimantNameForm.get(i);
+                    Address2Form = claimantAddressForm.get(i);
+                    Amount_of_Claim2Form = claimAmountForm.get(i);
+                    Claim_Admitted2Form = claimAdmittedForm.get(i);
+                    Will_Claim_Be_Paid_In_Full2Form = claimPaidForm.get(i);
+                    break;
+                case 2:
+                    Initials3Form = claimantInitialsForm.get(i);
+                    Name3Form = claimantNameForm.get(i);
+                    Address3Form = claimantAddressForm.get(i);
+                    Amount_of_Claim3Form = claimAmountForm.get(i);
+                    Claim_Admitted3Form = claimAdmittedForm.get(i);
+                    Will_Claim_Be_Paid_In_Full3Form = claimPaidForm.get(i);
+                    break;
+                case 3:
+                    Initials4Form = claimantInitialsForm.get(i);
+                    Name4Form = claimantNameForm.get(i);
+                    Address4Form = claimantAddressForm.get(i);
+                    Amount_of_Claim4Form = claimAmountForm.get(i);
+                    Claim_Admitted4Form = claimAdmittedForm.get(i);
+                    Will_Claim_Be_Paid_In_Full4Form = claimPaidForm.get(i);
+                    break;
+                case 4:
+                    Initials5Form = claimantInitialsForm.get(i);
+                    Name5Form = claimantNameForm.get(i);
+                    Address5Form = claimantAddressForm.get(i);
+                    Amount_of_Claim5Form = claimAmountForm.get(i);
+                    Claim_Admitted5Form = claimAdmittedForm.get(i);
+                    Will_Claim_Be_Paid_In_Full5Form = claimPaidForm.get(i);
+                    break;
+            }
+        }
     }
 
     public void verifyClaimantIsAddedToTheListAndTotalsAreUpdatedDynamically() throws AutomationException {
