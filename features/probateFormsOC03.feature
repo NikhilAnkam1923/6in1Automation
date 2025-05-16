@@ -111,6 +111,11 @@ Feature: 6in1 probate form OC03 Feature
     When user navigates to page number: "6"
     Then user verifies newly added petitioner is displayed in the attachment for "OC03" form
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC03'
+    And verify all the fields entered are correctly reflected in the 'OC03' pdf
+
   Scenario: Verify, if the notification if the selected contact is removed from the estate.
     When user navigates to Estate Contacts tab
     Then user verifies for "OC03" form notification is displayed when the contact selected as the petitioner is removed from the estate contacts

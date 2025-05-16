@@ -4,7 +4,10 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
@@ -13,15 +16,18 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 import static com.sixinone.automation.util.WebDriverUtil.*;
 import static com.sixinone.automation.util.WebDriverUtil.waitForInvisibleElement;
 
-public class ProbateFormsOC03Page extends BasePage{
+public class ProbateFormsOC03Page extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
     private static final String DECEDENT_MIDDLE_NAME = "//input[@name='decedentInfo.middleName']";
@@ -286,8 +292,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String actualEstateName = estateOfField.getAttribute("value");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredEstateName.equals(actualEstateName)){
-            throw new AutomationException("Estate of field is not populated correctly with Estate name. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
+        if (!enteredEstateName.equals(actualEstateName)) {
+            throw new AutomationException("Estate of field is not populated correctly with Estate name. Expected: " + enteredEstateName + " ,Found: " + actualEstateName);
         }
     }
 
@@ -314,7 +320,7 @@ public class ProbateFormsOC03Page extends BasePage{
 
         String expectedCorporateFiduciaryContact = String.join(", ", corporateFiduciaryContacts);
 
-        String allFiduciaryContactsForm = String.join(", ",expectedFiduciaryContacts, expectedCorporateFiduciaryContact);
+        String allFiduciaryContactsForm = String.join(", ", expectedFiduciaryContacts, expectedCorporateFiduciaryContact);
 
         List<WebElement> accountFields = driverUtil.getWebElements(ACCOUNT_OF_FIELDS);
         List<String> allNamesRaw = new ArrayList<>();
@@ -332,9 +338,9 @@ public class ProbateFormsOC03Page extends BasePage{
             extractedNames.add(matcher.group(1).trim());
         }
 
-        for(String contact:extractedNames){
-            if(!allFiduciaryContactsForm.contains(contact)){
-                throw new AutomationException("Fiduciary contact mismatch. "+contact+" not contain in "+allFiduciaryContactsForm);
+        for (String contact : extractedNames) {
+            if (!allFiduciaryContactsForm.contains(contact)) {
+                throw new AutomationException("Fiduciary contact mismatch. " + contact + " not contain in " + allFiduciaryContactsForm);
             }
         }
     }
@@ -439,8 +445,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String actualEstateName = estateOfField.getAttribute("value");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredEstateName.equals(actualEstateName)){
-            throw new AutomationException("Estate of field is not populated correctly on Page 2. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
+        if (!enteredEstateName.equals(actualEstateName)) {
+            throw new AutomationException("Estate of field is not populated correctly on Page 2. Expected: " + enteredEstateName + " ,Found: " + actualEstateName);
         }
     }
 
@@ -667,8 +673,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String actualEstateName = estateOfField.getAttribute("value");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredEstateName.equals(actualEstateName)){
-            throw new AutomationException("Estate of field is not populated correctly on Page 3. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
+        if (!enteredEstateName.equals(actualEstateName)) {
+            throw new AutomationException("Estate of field is not populated correctly on Page 3. Expected: " + enteredEstateName + " ,Found: " + actualEstateName);
         }
     }
 
@@ -719,11 +725,11 @@ public class ProbateFormsOC03Page extends BasePage{
         endDateForm2 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.endDateForm2").toString();
         endDateForm3 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.endDateForm3").toString();
 
-        List<String> amountForms = Arrays.asList( amountForm1, amountForm2, amountForm3 );
+        List<String> amountForms = Arrays.asList(amountForm1, amountForm2, amountForm3);
 
-        List<String> startDateForms = Arrays.asList( startDateForm1, startDateForm2, startDateForm3 );
+        List<String> startDateForms = Arrays.asList(startDateForm1, startDateForm2, startDateForm3);
 
-        List<String> endDateForms = Arrays.asList( endDateForm1, endDateForm2, endDateForm3 );
+        List<String> endDateForms = Arrays.asList(endDateForm1, endDateForm2, endDateForm3);
 
         int maxRetries = 3;
 
@@ -764,8 +770,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String actualEstateName = estateOfField.getAttribute("value");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredEstateName.equals(actualEstateName)){
-            throw new AutomationException("Estate of field is not populated correctly on Page 4. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
+        if (!enteredEstateName.equals(actualEstateName)) {
+            throw new AutomationException("Estate of field is not populated correctly on Page 4. Expected: " + enteredEstateName + " ,Found: " + actualEstateName);
         }
     }
 
@@ -1030,8 +1036,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String actualEstateName = estateOfField.getAttribute("value");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredEstateName.equals(actualEstateName)){
-            throw new AutomationException("Estate of field is not populated correctly on Page 5. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
+        if (!enteredEstateName.equals(actualEstateName)) {
+            throw new AutomationException("Estate of field is not populated correctly on Page 5. Expected: " + enteredEstateName + " ,Found: " + actualEstateName);
         }
     }
 
@@ -1131,11 +1137,11 @@ public class ProbateFormsOC03Page extends BasePage{
     public void verifyFormDisplaysSeeContinuationScheduleAttachedAndExtraBeneficiariesAppearInAnAttachment() throws AutomationException {
         WebElement scheduleAttachedMsg = driverUtil.getWebElement(SCHEDULE_ATTACHED_MSG);
 
-        if(selectedContactNamesPage5.size() <=4 ){
+        if (selectedContactNamesPage5.size() <= 4) {
             throw new AutomationException("There are no additional beneficiaries to verify in the attachment.");
         }
 
-        if(!scheduleAttachedMsg.isDisplayed()){
+        if (!scheduleAttachedMsg.isDisplayed()) {
             throw new AutomationException("'See continuation schedule attached' is not displayed on form.");
         }
 
@@ -1162,8 +1168,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String actualEstateName = estateOfField.getAttribute("value");
         String enteredEstateName = getEstateValue("DisplayName");
 
-        if(!enteredEstateName.equals(actualEstateName)){
-            throw new AutomationException("Correct Trust Name is not displayed on the form. Expected: "+enteredEstateName+" ,Found: "+actualEstateName);
+        if (!enteredEstateName.equals(actualEstateName)) {
+            throw new AutomationException("Correct Trust Name is not displayed on the form. Expected: " + enteredEstateName + " ,Found: " + actualEstateName);
         }
     }
 
@@ -1184,16 +1190,16 @@ public class ProbateFormsOC03Page extends BasePage{
 
         List<String> expectedPetitionersOnAttachment = new ArrayList<>();
         List<String> expectedFiduciary = new ArrayList<>();
-        List<String> expectedCorporateFiduciary =new ArrayList<>();
+        List<String> expectedCorporateFiduciary = new ArrayList<>();
 
-        for(int i=0; i<Fiduciaries.size(); i++){
-            if(i!=0){
+        for (int i = 0; i < Fiduciaries.size(); i++) {
+            if (i != 0) {
                 expectedFiduciary.add(Fiduciaries.get(i));
             }
         }
 
-        for(int i=0; i<corporateFiduciaries.size(); i++){
-            if(i!=0){
+        for (int i = 0; i < corporateFiduciaries.size(); i++) {
+            if (i != 0) {
                 expectedCorporateFiduciary.add(corporateFiduciaries.get(i));
             }
         }
@@ -1385,7 +1391,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String petitionerOnAttachment;
 
         if (isIndividualFiduciary(Fiduciary5Form)) {
-            petitionerOnAttachment = getEstateContactName(Fiduciary5Form);;
+            petitionerOnAttachment = getEstateContactName(Fiduciary5Form);
+            ;
         } else {
             petitionerOnAttachment = Fiduciary5Form;
         }
@@ -1486,7 +1493,8 @@ public class ProbateFormsOC03Page extends BasePage{
         String petitionerOnAttachment;
 
         if (isIndividualFiduciary(Fiduciary5Form)) {
-            petitionerOnAttachment = getEstateContactName(Fiduciary5Form);;
+            petitionerOnAttachment = getEstateContactName(Fiduciary5Form);
+            ;
         } else {
             petitionerOnAttachment = Fiduciary5Form;
         }
@@ -1537,7 +1545,7 @@ public class ProbateFormsOC03Page extends BasePage{
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
         driverUtil.getWebElement(SELECT_RELATIONSHIP_BTN).click();
         WebDriverUtil.waitForAWhile();
-        driverUtil.getWebElement(String.format(RELATIONSHIP_OPTION,relationship)).click();
+        driverUtil.getWebElement(String.format(RELATIONSHIP_OPTION, relationship)).click();
         driverUtil.getWebElement(SAVE_BTN).click();
         WebDriverUtil.waitForAWhile();
 
@@ -1579,7 +1587,7 @@ public class ProbateFormsOC03Page extends BasePage{
         }
 
         if (actualPetitionersOnAttachment.contains(Fiduciary5Form)) {
-            throw new AutomationException("The contact removed from the estate contacts is not gets removed from the attachment. Found: "+Fiduciary5Form+ " on attachment.");
+            throw new AutomationException("The contact removed from the estate contacts is not gets removed from the attachment. Found: " + Fiduciary5Form + " on attachment.");
         }
 
         CommonSteps.takeScreenshot();
@@ -1661,4 +1669,181 @@ public class ProbateFormsOC03Page extends BasePage{
         }
         driverUtil.getWebElement(CLOSE_BTN).click();
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS))
+                        ? System.getProperty("user.dir") + "\\downloads"
+                        : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
+
+        try {
+
+            Map<String, String> expectedCounselDetails = new HashMap<>();
+            expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
+            expectedCounselDetails.put("Name of Law Firm", nameOfLawFirmForm);
+            String attorneyAddressLineForm = attorneyAddressLine1Form + " " + attorneyAddressLine2Form;
+            expectedCounselDetails.put("Address", attorneyAddressLineForm);
+            expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
+            expectedCounselDetails.put("Fax", attorneyFaxForm);
+            expectedCounselDetails.put("Email", attorneyEmailForm);
+
+            boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
+
+            if (!isVerifiedCounselDetails) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (Exception e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
+
+    }
+
+    private static boolean verifyCounselDetails(String pdfFilePath, Map<String, String> expectedDetails) throws
+            IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        // 🔍 Log Full PDF Content with Line Numbers
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+        }
+
+
+        Map<String, String> extractedDetails = new HashMap<>();
+        String addressLine1 = "";
+        String addressLine2 = "";
+
+        boolean nameOfCounselFound = false;
+        boolean nameOfLawFirmFound = false;
+        boolean addressFound = false;
+        boolean telephoneFound = false;
+        boolean faxFound = false;
+        boolean emailFound = false;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+
+            // Check for "Name of Counsel" only once
+            if (!nameOfCounselFound && line.startsWith("Name of Counsel:")) {
+                extractedDetails.put("Name of Counsel", clean(line.replace("Name of Counsel:", "").trim()));
+                nameOfCounselFound = true;
+            }
+            // Check for "Name of Law Firm" only once
+            else if (!nameOfLawFirmFound && line.startsWith("Name of Law Firm:")) {
+                extractedDetails.put("Name of Law Firm", clean(line.replace("Name of Law Firm:", "").trim()));
+                nameOfLawFirmFound = true;
+            }
+            // Check for "Address" only once
+            else if (!addressFound && line.startsWith("Address:")) {
+                addressLine1 = clean(line.replace("Address:", "").trim());
+                if (i + 1 < allLines.length) {
+                    addressLine2 = clean(allLines[i + 1].trim()); // Next line contains city/state/zip
+                }
+                addressFound = true;
+            }
+            // Check for "Telephone" only once
+            else if (!telephoneFound && line.startsWith("Telephone:")) {
+                extractedDetails.put("Telephone", clean(line.replace("Telephone:", "").trim()));
+                telephoneFound = true;
+            }
+            // Check for "Fax" only once
+            else if (!faxFound && line.startsWith("Fax:")) {
+                extractedDetails.put("Fax", clean(line.replace("Fax:", "").trim()));
+                faxFound = true;
+            }
+            // Check for "Email" only once
+            else if (!emailFound && line.startsWith("E-mail:")) {
+                extractedDetails.put("Email", clean(line.replace("E-mail:", "").trim()));
+                emailFound = true;
+            }
+        }
+
+        // Combine address lines if both are found
+        if (!addressLine1.isEmpty() && !addressLine2.isEmpty()) {
+            extractedDetails.put("Address", addressLine1 + " " + addressLine2);
+        } else if (!addressLine1.isEmpty()) {
+            extractedDetails.put("Address", addressLine1);
+        } else if (!addressLine2.isEmpty()) {
+            extractedDetails.put("Address", addressLine2);
+        }
+
+        // Validate extracted details
+        for (Map.Entry<String, String> entry : expectedDetails.entrySet()) {
+            String field = entry.getKey();
+            String expectedValue = entry.getValue();
+            String extractedValue = extractedDetails.get(field);
+
+            // Clean both the expected and extracted values before comparing
+            expectedValue = clean(expectedValue);
+            extractedValue = clean(extractedValue);
+
+            CommonSteps.logInfo("🔍 Comparing -> " + field + " | Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (extractedValue == null || extractedValue.isEmpty()) {
+                throw new AutomationException("⚠️ Warning: '" + field + "' not found in document.");
+            }
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("⚠️ Warning: '" + field + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + field + "' processed successfully.");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: Counsel details successfully verified.");
+        return true;
+    }
+
+
+    // Utility method to clean the string, removing unwanted characters or spaces
+    private static String clean(String value) {
+        if (value != null) {
+            // Remove unwanted punctuation like commas, periods, etc. and trim spaces
+            value = value.replaceAll("[,\\.]", "").trim();
+        }
+        return value;
+    }
 }
+
