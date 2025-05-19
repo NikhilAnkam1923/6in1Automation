@@ -49,7 +49,7 @@ public class EstateContactsPage extends BasePage {
     private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
-    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input[@aria-label='Filter']";
+    public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input";
     public static final String MODAL_NAME_FILTER_INPUT = "//div[@class='modal-body']//th[@aria-colindex='2'] //input[@aria-label='Filter']";
     private static final String CONTACT_NAME_IN_GLOBAL_CONTACT = "//td//a[contains(@class,'column-edit-link') and text()='%s']";
     private static final String CONTACT_NAME_IN_ADD_CONTACT_LIST = "//div[@class='modal-body']//td[@aria-colindex='2' and text()='%s']";
