@@ -826,7 +826,7 @@ public class ProbateFormsOC03Page extends BasePage {
         List<WebElement> beneRelationshipOnAttachmentFields = driverUtil.getWebElements(BENE_RELATIONSHIP_ATTACHMENT);
         List<WebElement> beneInterestOnAttachmentFields = driverUtil.getWebElements(BENE_INTEREST_ATTACHMENT);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             beneDetails.add(beneDetailsOnAttachmentFields.get(i).getText());
             beneRelationship.add(beneRelationshipOnAttachmentFields.get(i).getText());
             beneInterest.add(beneInterestOnAttachmentFields.get(i).getText());
@@ -1113,7 +1113,7 @@ public class ProbateFormsOC03Page extends BasePage {
         waitForAWhile(2);
         List<WebElement> displayedProportionElements = driverUtil.getWebElements(BENE_PROPORTION_INCOME_PAGE_5);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             String expectedValue = enteredProportionValues[i];
             String actualValue = displayedProportionElements.get(i).getAttribute("value").trim().replace("%", "");
 
@@ -1124,7 +1124,7 @@ public class ProbateFormsOC03Page extends BasePage {
 
         List<WebElement> displayedAmountElements = driverUtil.getWebElements(BENE_AMOUNT_INCOME_PAGE_5);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             String expectedValue = enteredAmountValues[i];
             String actualValue = displayedAmountElements.get(i).getAttribute("value").trim().replace("%", "");
 
