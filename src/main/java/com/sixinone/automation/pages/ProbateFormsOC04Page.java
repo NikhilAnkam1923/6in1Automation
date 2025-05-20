@@ -1673,21 +1673,30 @@ public class ProbateFormsOC04Page extends BasePage{
             expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
             expectedCounselDetails.put("Fax", attorneyFaxForm);
             expectedCounselDetails.put("Email", attorneyEmailForm);
-
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
             String petitionerAddressLine1Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
             String petitionerAddressLine2Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
-
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
             expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
             expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine2Form);
-
-
             boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
+            List<Map<String, String>> expectedAmountDateRanges = Arrays.asList(
+                    Map.of("Amount", amountForm1, "DateBegin", startDateForm1, "DateEnd", endDateForm1),
+                    Map.of("Amount", amountForm2, "DateBegin", startDateForm2, "DateEnd", endDateForm2),
+                    Map.of("Amount", amountForm3, "DateBegin", startDateForm3, "DateEnd", endDateForm3)
+            );
+            boolean  isVerifiedAmountDateRanges = verifyAmountDateRanges(
+                    pdfFilePath,
+                    "B.",
+                    "Amount Date Begin Date End",
+                    expectedAmountDateRanges
+            );
 
-            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping) {
+
+
+            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping ||!isVerifiedAmountDateRanges) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -1894,4 +1903,74 @@ public class ProbateFormsOC04Page extends BasePage{
 
         return nameAddressMap;
     }
+    private static boolean verifyAmountDateRanges(
+            String pdfFilePath,
+            String beforeLine,
+            String afterLine,
+            List<Map<String, String>> expectedAmountDateRanges
+    ) throws IOException, AutomationException {
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1;
+        int endIndex = -1;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.equalsIgnoreCase(beforeLine.trim())) {
+                startIndex = i;
+            } else if (line.equalsIgnoreCase(afterLine.trim())) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+            throw new AutomationException("❌ Section boundaries not found using beforeLine/afterLine.");
+        }
+
+        List<Map<String, String>> actualTriplets = new ArrayList<>();
+
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (!line.isEmpty()) {
+                String[] parts = line.split("\\s+");
+                if (parts.length == 3) {
+                    Map<String, String> entry = new HashMap<>();
+                    entry.put("Amount", parts[0]);
+                    entry.put("DateBegin", parts[1]);
+                    entry.put("DateEnd", parts[2]);
+                    actualTriplets.add(entry);
+                }
+            }
+        }
+
+        if (actualTriplets.size() != expectedAmountDateRanges.size()) {
+            throw new AutomationException("❌ Mismatch in number of entries between actual and expected.");
+        }
+
+        for (int i = 0; i < expectedAmountDateRanges.size(); i++) {
+            Map<String, String> expected = expectedAmountDateRanges.get(i);
+            Map<String, String> actual = actualTriplets.get(i);
+
+            boolean match = expected.get("Amount").equals(actual.get("Amount")) &&
+                    expected.get("DateBegin").equals(actual.get("DateBegin")) &&
+                    expected.get("DateEnd").equals(actual.get("DateEnd"));
+
+            if (!match) {
+                throw new AutomationException(String.format(
+                        "❌ Mismatch at index %d -> Expected: %s, Found: %s",
+                        i, expected, actual
+                ));
+            }
+
+            CommonSteps.logInfo("✅ Matched Entry " + (i + 1) + ": " + actual);
+        }
+
+        return true;
+    }
+
 }

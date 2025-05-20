@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
@@ -1721,10 +1722,30 @@ public class ProbateFormsOC03Page extends BasePage {
             expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
             expectedCounselDetails.put("Fax", attorneyFaxForm);
             expectedCounselDetails.put("Email", attorneyEmailForm);
-
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
-            if (!isVerifiedCounselDetails) {
+            String petitionerAddressLine1Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
+            String petitionerAddressLine2Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
+            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
+            expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine2Form);
+            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
+
+            List<Map<String, String>> expectedAmountDateRanges = Arrays.asList(
+                    Map.of("Amount", amountForm1, "DateBegin", startDateForm1, "DateEnd", endDateForm1),
+                    Map.of("Amount", amountForm2, "DateBegin", startDateForm2, "DateEnd", endDateForm2),
+                    Map.of("Amount", amountForm3, "DateBegin", startDateForm3, "DateEnd", endDateForm3)
+            );
+            boolean  isVerifiedAmountDateRanges = verifyAmountDateRanges(
+                    pdfFilePath,
+                    "B.",
+                    "Amount Date Begin Date End",
+                    expectedAmountDateRanges
+            );
+
+
+
+            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping ||!isVerifiedAmountDateRanges) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -1732,7 +1753,6 @@ public class ProbateFormsOC03Page extends BasePage {
         } catch (Exception e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
-
     }
 
     private static boolean verifyCounselDetails(String pdfFilePath, Map<String, String> expectedDetails) throws
@@ -1845,5 +1865,162 @@ public class ProbateFormsOC03Page extends BasePage {
         }
         return value;
     }
+
+    public static boolean validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
+            throws IOException, AutomationException {
+
+        Map<String, String> extractedMap = extractPetitionerAddressMapping(pdfFilePath);
+
+        int index = 1;
+        for (Map.Entry<String, String> expectedEntry : expectedNameAddressMap.entrySet()) {
+            String expectedName = expectedEntry.getKey().trim();
+            String expectedAddress = expectedEntry.getValue().trim();
+
+            String extractedName = "";
+            String extractedAddress = "";
+
+            // Extract values based on index order
+            List<String> extractedNames = new ArrayList<>(extractedMap.keySet());
+            List<String> extractedAddresses = new ArrayList<>(extractedMap.values());
+
+            if (index - 1 < extractedNames.size()) {
+                extractedName = extractedNames.get(index - 1);
+                extractedAddress = extractedAddresses.get(index - 1);
+            }
+
+            String petitionerLabel = "petitioner" + index;
+
+            // 🔍 Compare Name
+            CommonSteps.logInfo("🔍 Comparing -> for " + petitionerLabel + " Name Expected: '" + expectedName + "', Extracted: '" + extractedName + "'");
+            if (expectedName.equalsIgnoreCase(extractedName)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + petitionerLabel + " Name' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Name' mismatch. Expected: '" + expectedName + "', Found: '" + extractedName + "'");
+            }
+
+            // 🔍 Compare Address
+            CommonSteps.logInfo("🔍 Comparing -> for " + petitionerLabel + " Address Expected: '" + expectedAddress + "', Extracted: '" + extractedAddress + "'");
+            if (expectedAddress.equalsIgnoreCase(extractedAddress)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + petitionerLabel + " Address' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Address' mismatch. Expected: '" + expectedAddress + "', Found: '" + extractedAddress + "'");
+            }
+
+            index++;
+        }
+
+        return true;
+    }
+
+
+    public static Map<String, String> extractPetitionerAddressMapping(String pdfFilePath) throws IOException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] lines = pdfText.split("\\r?\\n");
+        List<String> trimmedLines = Arrays.stream(lines).map(String::trim).collect(Collectors.toList());
+
+        Map<String, String> nameAddressMap = new LinkedHashMap<>();
+
+        for (int i = 0; i < trimmedLines.size(); i++) {
+            String line = trimmedLines.get(i);
+            if (line.startsWith("Name:") && i + 2 < trimmedLines.size()) {
+                String namesLine = trimmedLines.get(i).replace("Name:", "").trim();
+                String addressLine = trimmedLines.get(i + 1).replace("Address:", "").trim();
+                String cityStateLine = trimmedLines.get(i + 2).trim();
+
+                // Split by Jr./Sr. endings or two spaces
+                List<String> names = Arrays.asList(namesLine.split("(?<=, (Jr\\.|Sr\\.|II|III|IV|V))\\s+"));
+                List<String> streets = Arrays.asList(addressLine.split("\\s{2,}|(?<=Street|Avenue|Road|Lane|Drive)\\s+"));
+                List<String> cities = Arrays.asList(cityStateLine.split("(?<=\\d{5})\\s*"));
+
+                for (int j = 0; j < names.size(); j++) {
+                    String name = names.get(j).trim();
+                    String street = j < streets.size() ? streets.get(j).trim() : "";
+                    String cityState = j < cities.size() ? cities.get(j).trim() : "";
+
+                    String fullAddress = (street + " " + cityState).trim();
+                    nameAddressMap.put(name, fullAddress);
+
+                    CommonSteps.logInfo("✅ " + name + " -> " + fullAddress);
+                }
+                break; // Done once we parse the first "Name:" block
+            }
+        }
+
+        return nameAddressMap;
+    }
+
+    private static boolean verifyAmountDateRanges(
+            String pdfFilePath,
+            String beforeLine,
+            String afterLine,
+            List<Map<String, String>> expectedAmountDateRanges
+    ) throws IOException, AutomationException {
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+        int startIndex = -1;
+        int endIndex = -1;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.equalsIgnoreCase(beforeLine.trim())) {
+                startIndex = i;
+            } else if (line.equalsIgnoreCase(afterLine.trim())) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+            throw new AutomationException("❌ Section boundaries not found using beforeLine/afterLine.");
+        }
+
+        List<Map<String, String>> actualTriplets = new ArrayList<>();
+
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (!line.isEmpty()) {
+                String[] parts = line.split("\\s+");
+                if (parts.length == 3) {
+                    Map<String, String> entry = new HashMap<>();
+                    entry.put("Amount", parts[0]);
+                    entry.put("DateBegin", parts[1]);
+                    entry.put("DateEnd", parts[2]);
+                    actualTriplets.add(entry);
+                }
+            }
+        }
+
+        if (actualTriplets.size() != expectedAmountDateRanges.size()) {
+            throw new AutomationException("❌ Mismatch in number of entries between actual and expected.");
+        }
+
+        for (int i = 0; i < expectedAmountDateRanges.size(); i++) {
+            Map<String, String> expected = expectedAmountDateRanges.get(i);
+            Map<String, String> actual = actualTriplets.get(i);
+
+            boolean match = expected.get("Amount").equals(actual.get("Amount")) &&
+                    expected.get("DateBegin").equals(actual.get("DateBegin")) &&
+                    expected.get("DateEnd").equals(actual.get("DateEnd"));
+
+            if (!match) {
+                throw new AutomationException(String.format(
+                        "❌ Mismatch at index %d -> Expected: %s, Found: %s",
+                        i, expected, actual
+                ));
+            }
+
+            CommonSteps.logInfo("✅ Matched Entry " + (i + 1) + ": " + actual);
+        }
+
+        return true;
+    }
+
 }
 
