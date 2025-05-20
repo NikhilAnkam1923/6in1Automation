@@ -3593,20 +3593,20 @@ public class ProbateFormsOC01Page extends BasePage {
         }
 
         // Validate summary fields: Above, Attachment, Total
-        if (!above.equals(expectedAbove)) {
-            throw new AutomationException("❌ Mismatch in Above:\nExpected: " + expectedAbove + "\nFound   : " + above);
+        if (!above.replace(",", "").equals(expectedAbove)) {
+            throw new AutomationException("❌ Mismatch in Above:\nExpected: " + expectedAbove + "\nFound   : " + above.replace(",", ""));
         } else {
             CommonSteps.logInfo("✅ Verified → Above: " + above);
         }
 
-        if (!attachment.equals(expectedAttachment)) {
-            throw new AutomationException("❌ Mismatch in Attachment:\nExpected: " + expectedAttachment + "\nFound   : " + attachment);
+        if (!attachment.replace(",", "").equals(expectedAttachment)) {
+            throw new AutomationException("❌ Mismatch in Attachment:\nExpected: " + expectedAttachment + "\nFound   : " + attachment.replace(",", ""));
         } else {
             CommonSteps.logInfo("✅ Verified → Attachment: " + attachment);
         }
 
-        if (!total.equals(expectedTotal)) {
-            throw new AutomationException("❌ Mismatch in Total:\nExpected: " + expectedTotal + "\nFound   : " + total);
+        if (!total.replace(",", "").equals(expectedTotal)) {
+            throw new AutomationException("❌ Mismatch in Total:\nExpected: " + expectedTotal + "\nFound   : " + total.replace(",", ""));
         } else {
             CommonSteps.logInfo("✅ Verified → Total: " + total);
         }
