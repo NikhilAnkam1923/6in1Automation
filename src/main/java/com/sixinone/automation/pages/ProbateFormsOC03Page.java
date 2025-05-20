@@ -826,7 +826,7 @@ public class ProbateFormsOC03Page extends BasePage {
         List<WebElement> beneRelationshipOnAttachmentFields = driverUtil.getWebElements(BENE_RELATIONSHIP_ATTACHMENT);
         List<WebElement> beneInterestOnAttachmentFields = driverUtil.getWebElements(BENE_INTEREST_ATTACHMENT);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             beneDetails.add(beneDetailsOnAttachmentFields.get(i).getText());
             beneRelationship.add(beneRelationshipOnAttachmentFields.get(i).getText());
             beneInterest.add(beneInterestOnAttachmentFields.get(i).getText());
