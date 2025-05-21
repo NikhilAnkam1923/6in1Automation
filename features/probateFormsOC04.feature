@@ -142,7 +142,7 @@ Feature: 6in1 probate form OC04 Feature
   Scenario: Reset Roles of Removed Contacts
     When user resets roles of removed contacts from the Estate Contacts of "OC04" form
 
-  Scenario: Reset the OC02 form
+  Scenario: Reset the OC04 form
     When user navigates to the probate forms tab
     And user click on the "OC 04" form
     Then user resets the "OC04" form
