@@ -86,7 +86,7 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_2_ERR = "//div[@class='invalid-feedback' and contains(text(),'Year must be exactly 2 digits.')]";
     private static final String FILE_NUMBER_3_ERR = "//div[@class='invalid-feedback' and contains(text(),'File Number must be at least 4 digits.')]";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
-    private static final String NAME_FILTER = "//th[@aria-label='Filter' and @aria-colindex='1']/div/div/span/input";
+    private static final String NAME_FILTER = "//th[@aria-colindex='1'] //input";
 
     static String ageAtDeath;
     static String decedentSSN;

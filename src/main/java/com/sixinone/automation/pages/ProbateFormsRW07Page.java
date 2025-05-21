@@ -836,7 +836,7 @@ public class ProbateFormsRW07Page extends BasePage {
         document.close();
 
         // Define markers
-        String beforeLine = "a/k/a Jonny File Number: 22-2023-1234";
+        String beforeLine = "a/k/a Jonny";
         String afterLine = "(Beneficiary)";
 
         // Extract occurrences dynamically
@@ -1059,16 +1059,16 @@ public class ProbateFormsRW07Page extends BasePage {
                 if (!personFoundFirstTime) {
                     personFoundFirstTime = true; // Mark the first occurrence but do nothing
                 } else if (personName == null) { // Now process the second occurrence
-                    personName = allLines[i + 41];
+                    personName = allLines[i + 42];
                 }
             } else if (personFoundFirstTime && personName != null && personAddress == null && currentLine.equalsIgnoreCase("Address") && i > 6) {
-                personAddress = clean(allLines[i + 41]);
+                personAddress = clean(allLines[i + 42]);
             } else if (personFoundFirstTime && personName != null && personCityStateZip == null && currentLine.equalsIgnoreCase("City, State, Zip") && i > 4) {
-                personCityStateZip = clean(allLines[i + 41]);
+                personCityStateZip = clean(allLines[i + 42]);
             } else if (personFoundFirstTime && personName != null && personTelephone == null && currentLine.equalsIgnoreCase("Telephone") && i > 3) {
-                personTelephone = clean(allLines[i + 41]);
+                personTelephone = clean(allLines[i + 42]);
             } else if (personFoundFirstTime && personName != null && personEmail == null && currentLine.equalsIgnoreCase("Email") && i > 2) {
-                personEmail = clean(allLines[i + 41]);
+                personEmail = clean(allLines[i + 42]);
             }
 
             // Exit loop early if all values are found

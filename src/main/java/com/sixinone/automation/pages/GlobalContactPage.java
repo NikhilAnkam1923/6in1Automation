@@ -79,8 +79,8 @@ public class GlobalContactPage extends BasePage {
     public static final String EDIT_BUTTON = "//a[text()='Edit']";
     public static final String SELECT_AND_PROCEED_BTN ="//button[contains(text(),'Select & Proceed')]";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input";
-    public static final String CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='3'] //input[@aria-label='Filter']";
-    public static final String CONTACT_TYPE_FILTER_INPUT_RECORDS = "//th[@aria-colindex='5'] //input[@aria-label='Filter']";
+    public static final String CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='3'] //input";
+    public static final String CONTACT_TYPE_FILTER_INPUT_RECORDS = "//th[@aria-colindex='5'] //input";
     public static final String ACTIONS_BUTTON = "//td[@class='action-column text-center']//button[@class='dropdown-toggle btn btn-primary']";
     public static final String ENTITY_NAME_FIELD = "//input[@name='entityName']";
     public static final String EIN_ERROR = "//div[contains(text(),'EIN')]";

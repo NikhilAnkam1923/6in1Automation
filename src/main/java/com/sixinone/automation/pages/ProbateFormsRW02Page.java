@@ -1406,6 +1406,7 @@ public class ProbateFormsRW02Page extends BasePage {
 
         Robot robot = new Robot();
         waitForAWhile(2); // Wait for the dialog to appear
+
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
 
