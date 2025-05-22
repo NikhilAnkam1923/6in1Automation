@@ -193,6 +193,7 @@ public class ProbateFormsOC01Page extends BasePage {
     private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
     private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
     private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
+    private static final String ADDITION_PETITIONER_ADDRESS = "//div[@class='modal-body']//tbody//tr//td//p[contains(text(),'Address')]/ancestor::td/following-sibling::td//input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -726,19 +727,19 @@ public class ProbateFormsOC01Page extends BasePage {
     public void verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm() throws AutomationException, IOException, ParseException {
         String key1 = findFiduciaryKeyByName(Fiduciary1Form, jsonData);
         JSONObject contact1 = (JSONObject) jsonData.get(key1);
-        petitioner1AddressLine1Form = contact1.get("addressLine1").toString();
+        String petitioner1AddressLine1 = contact1.get("addressLine1").toString();
         String city1 = contact1.get("city").toString() + ",";
         String stateCode1 = contact1.get("stateCode").toString();
         String zip1 = contact1.get("zip").toString();
-        petitioner1CityStateCodeZipForm = city1 + " " + stateCode1 + " " + zip1;
+        String petitioner1CityStateCodeZip = city1 + " " + stateCode1 + " " + zip1;
 
         String key2 = findFiduciaryKeyByName(Fiduciary2Form, jsonData);
         JSONObject contact2 = (JSONObject) jsonData.get(key2);
-        petitioner2AddressLine1Form = contact2.get("addressLine1").toString();
+        String petitioner2AddressLine1 = contact2.get("addressLine1").toString();
         String city2 = contact2.get("city").toString() + ",";
         String stateCode2 = contact2.get("stateCode").toString();
         String zip2 = contact2.get("zip").toString();
-        petitioner2CityStateCodeZipForm = city2 + " " + stateCode2 + " " + zip2;
+        String petitioner2CityStateCodeZip = city2 + " " + stateCode2 + " " + zip2;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -747,15 +748,20 @@ public class ProbateFormsOC01Page extends BasePage {
         if (!nameOfPetitionerForm.equals(Fiduciary1Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitionerForm);
         }
-        verifyPetitionerOnForm(petitioner1AddressLine1Form);
-        verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+        verifyPetitionerOnForm(petitioner1AddressLine1);
+        verifyPetitionerOnForm(petitioner1CityStateCodeZip);
 
         nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
         if (!nameOfPetitioner2Form.equals(Fiduciary2Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitioner2Form);
         }
-        verifyPetitionerOnForm(petitioner2AddressLine1Form);
-        verifyPetitionerOnForm(petitioner2CityStateCodeZipForm);
+        verifyPetitionerOnForm(petitioner2AddressLine1);
+        verifyPetitionerOnForm(petitioner2CityStateCodeZip);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
     }
 
     public void userSelectsMultipleFiduciaryContacts() throws AutomationException {
@@ -807,8 +813,8 @@ public class ProbateFormsOC01Page extends BasePage {
         String city3 = contact3.get("city").toString() + ",";
         String stateCode3 = contact3.get("stateCode").toString();
         String zip3 = contact3.get("zip").toString();
-        petitioner3CityStateCodeZipForm = city3 + " " + stateCode3 + " " + zip3;
-        petitioner3AddressLine1Form = address3Line1 + ", " + address3Line2;
+        String petitioner3CityStateCodeZip = city3 + " " + stateCode3 + " " + zip3;
+        String petitioner3AddressLine1 = address3Line1 + ", " + address3Line2;
 
         String key4 = findFiduciaryKeyByName(Fiduciary4Form, jsonData);
 
@@ -818,8 +824,8 @@ public class ProbateFormsOC01Page extends BasePage {
         String city4 = contact4.get("city").toString() + ",";
         String stateCode4 = contact4.get("stateCode").toString();
         String zip4 = contact4.get("zip").toString();
-        petitioner4CityStateCodeZipForm = city4 + " " + stateCode4 + " " + zip4;
-        petitioner4AddressLine1Form = address4Line1 + ", " + address4Line2;
+        String petitioner4CityStateCodeZip = city4 + " " + stateCode4 + " " + zip4;
+        String petitioner4AddressLine1 = address4Line1 + ", " + address4Line2;
 
         verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm();
 
@@ -827,14 +833,35 @@ public class ProbateFormsOC01Page extends BasePage {
         WebDriverUtil.waitForAWhile();
 
         verifyPetitionerOnAttachment(Fiduciary3Form);
-        verifyPetitionerOnAttachment(petitioner3AddressLine1Form);
-        verifyPetitionerOnAttachment(petitioner3CityStateCodeZipForm);
+        verifyPetitionerOnAttachment(petitioner3AddressLine1);
+        verifyPetitionerOnAttachment(petitioner3CityStateCodeZip);
 
         verifyPetitionerOnAttachment(Fiduciary4Form);
-        verifyPetitionerOnAttachment(petitioner4AddressLine1Form);
-        verifyPetitionerOnAttachment(petitioner4CityStateCodeZipForm);
+        verifyPetitionerOnAttachment(petitioner4AddressLine1);
+        verifyPetitionerOnAttachment(petitioner4CityStateCodeZip);
 
         CommonSteps.takeScreenshot();
+
+        List<WebElement> additionalPetitonerAddress = driverUtil.getWebElements(ADDITION_PETITIONER_ADDRESS);
+
+        for (int i=0; i< additionalPetitonerAddress.size(); i++){
+            String value = additionalPetitonerAddress.get(i).getAttribute("value");
+            switch (i){
+                case 0:
+                    petitioner3AddressLine1Form = value;
+                    break;
+                case 1:
+                    petitioner3CityStateCodeZipForm = value;
+                    break;
+                case 2:
+                    petitioner4AddressLine1Form = value;
+                    break;
+                case 3:
+                    petitioner4CityStateCodeZipForm = value;
+                    break;
+
+            }
+        }
 
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
     }
@@ -983,52 +1010,75 @@ public class ProbateFormsOC01Page extends BasePage {
         verifyFieldIsNotEditable(ESTATE_NAME_PAGE_3);
     }
 
-    public void verifyMultipleChildrenAndDoBCanBeAdded() throws AutomationException, IOException, ParseException {
-        dateDataForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm1").toString();
-        dateDataForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm2").toString();
-        dateDataForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm3").toString();
-        dateDataForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm4").toString();
-        dateDataForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm5").toString();
-        dateDataForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm6").toString();
-        dateDataForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm7").toString();
-        dateDataForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm8").toString();
-        dateDataForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm9").toString();
-        dateDataForm10 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm10").toString();
+    public static void fillFieldUntilValueHolds(WebElement element, String expectedValue, int maxRetries) throws AutomationException {
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
+            element.clear();
+            element.sendKeys(expectedValue);
+            element.sendKeys(Keys.TAB);
+            WebDriverUtil.waitForAWhile();
 
-        childrenDetailDataForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm1").toString();
-        childrenDetailDataForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm2").toString();
-        childrenDetailDataForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm3").toString();
-        childrenDetailDataForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm4").toString();
-        childrenDetailDataForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm5").toString();
-        childrenDetailDataForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm6").toString();
-        childrenDetailDataForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm7").toString();
-        childrenDetailDataForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm8").toString();
-        childrenDetailDataForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm9").toString();
-        childrenDetailDataForm10 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm10").toString();
+            String actualValue = element.getAttribute("value");
+            if (expectedValue.equals(actualValue)) {
+                break;
+            }
+            retryCount++;
+        }
+
+        if (retryCount == maxRetries) {
+            throw new AutomationException("Failed to set value after " + maxRetries + " attempts. Expected: " + expectedValue);
+        }
+    }
+
+
+    public void verifyMultipleChildrenAndDoBCanBeAdded() throws AutomationException, IOException, ParseException {
+        String dateData1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm1").toString();
+        String dateData2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm2").toString();
+        String dateData3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm3").toString();
+        String dateData4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm4").toString();
+        String dateData5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm5").toString();
+        String dateData6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm6").toString();
+        String dateData7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm7").toString();
+        String dateData8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm8").toString();
+        String dateData9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm9").toString();
+        String dateData10 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.dateDataForm10").toString();
+
+        String childrenDetailData1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm1").toString();
+        String childrenDetailData2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm2").toString();
+        String childrenDetailData3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm3").toString();
+        String childrenDetailData4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm4").toString();
+        String childrenDetailData5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm5").toString();
+        String childrenDetailData6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm6").toString();
+        String childrenDetailData7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm7").toString();
+        String childrenDetailData8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm8").toString();
+        String childrenDetailData9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm9").toString();
+        String childrenDetailData10 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.childrenDetailDataForm10").toString();
 
         List<String> dateDataForm = Arrays.asList(
-                dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,
-                dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10
+                dateData1, dateData2, dateData3, dateData4, dateData5,
+                dateData6, dateData7, dateData8, dateData9, dateData10
         );
 
         List<String> childrenDetailDataForm = Arrays.asList(
-                childrenDetailDataForm1, childrenDetailDataForm2, childrenDetailDataForm3, childrenDetailDataForm4, childrenDetailDataForm5,
-                childrenDetailDataForm6, childrenDetailDataForm7, childrenDetailDataForm8, childrenDetailDataForm9, childrenDetailDataForm10
+                childrenDetailData1, childrenDetailData2, childrenDetailData3, childrenDetailData4, childrenDetailData5,
+                childrenDetailData6, childrenDetailData7, childrenDetailData8, childrenDetailData9, childrenDetailData10
         );
 
         for (int i = 0; i < 10; i++) {
             WebDriverUtil.waitForAWhile(2);
             scrollToElement(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
             WebElement childrenDetailField = driverUtil.getWebElementAndScroll(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i));
-            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
-            childrenDetailField.sendKeys(Keys.TAB);
+//            childrenDetailField.sendKeys(childrenDetailDataForm.get(i));
+//            childrenDetailField.sendKeys(Keys.TAB);
+            fillFieldUntilValueHolds(childrenDetailField, childrenDetailDataForm.get(i), 3);
 
             WebDriverUtil.waitForAWhile();
             WebElement dateField = DriverFactory.drivers.get().findElement(By.xpath(String.format(DATE_FIELDS_PAGE_3, i)));
-            dateField.click();
-            dateField.clear();
-            dateField.sendKeys(dateDataForm.get(i));
-            dateField.sendKeys(Keys.TAB);
+//            dateField.click();
+//            dateField.clear();
+//            dateField.sendKeys(dateDataForm.get(i));
+//            dateField.sendKeys(Keys.TAB);
+            fillFieldUntilValueHolds(dateField, dateDataForm.get(i), 3);
 
             WebDriverUtil.waitForAWhile();
             String actualChildrenDetail = DriverFactory.drivers.get().findElement(By.xpath(String.format(CHILDREN_DETAILS_FIELDS_PAGE_3, i))).getAttribute("value");
@@ -1040,6 +1090,49 @@ public class ProbateFormsOC01Page extends BasePage {
 
             if (!actualDate.equals(dateDataForm.get(i))) {
                 throw new AutomationException("Date field did not accept the entered date correctly. Expected: " + dateDataForm.get(i) + ", Found: " + actualDate);
+            }
+
+            switch (i) {
+                case 0:
+                    dateDataForm1 = actualDate;
+                    childrenDetailDataForm1 = actualChildrenDetail;
+                    break;
+                case 1:
+                    dateDataForm2 = actualDate;
+                    childrenDetailDataForm2 = actualChildrenDetail;
+                    break;
+                case 2:
+                    dateDataForm3 = actualDate;
+                    childrenDetailDataForm3 = actualChildrenDetail;
+                    break;
+                case 3:
+                    dateDataForm4 = actualDate;
+                    childrenDetailDataForm4 = actualChildrenDetail;
+                    break;
+                case 4:
+                    dateDataForm5 = actualDate;
+                    childrenDetailDataForm5 = actualChildrenDetail;
+                    break;
+                case 5:
+                    dateDataForm6 = actualDate;
+                    childrenDetailDataForm6 = actualChildrenDetail;
+                    break;
+                case 6:
+                    dateDataForm7 = actualDate;
+                    childrenDetailDataForm7 = actualChildrenDetail;
+                    break;
+                case 7:
+                    dateDataForm8 = actualDate;
+                    childrenDetailDataForm8 = actualChildrenDetail;
+                    break;
+                case 8:
+                    dateDataForm9 = actualDate;
+                    childrenDetailDataForm9 = actualChildrenDetail;
+                    break;
+                case 9:
+                    dateDataForm10 = actualDate;
+                    childrenDetailDataForm10 = actualChildrenDetail;
+                    break;
             }
         }
     }
@@ -1464,46 +1557,46 @@ public class ProbateFormsOC01Page extends BasePage {
     }
 
     public void verifyDatePaymentAndInterestCanBeAddedInCorrectFormat() throws IOException, ParseException, AutomationException {
-        paDateForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm1").toString();
-        paDateForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm2").toString();
-        paDateForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm3").toString();
-        paDateForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm4").toString();
-        paDateForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm5").toString();
-        paDateForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm6").toString();
-        paDateForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm7").toString();
-        paDateForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm8").toString();
+        String paDate1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm1").toString();
+        String paDate2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm2").toString();
+        String paDate3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm3").toString();
+        String paDate4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm4").toString();
+        String paDate5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm5").toString();
+        String paDate6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm6").toString();
+        String paDate7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm7").toString();
+        String paDate8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PADateForm8").toString();
 
-        paPaymentForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm1").toString();
-        paPaymentForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm2").toString();
-        paPaymentForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm3").toString();
-        paPaymentForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm4").toString();
-        paPaymentForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm5").toString();
-        paPaymentForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm6").toString();
-        paPaymentForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm7").toString();
-        paPaymentForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm8").toString();
+        String paPayment1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm1").toString();
+        String paPayment2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm2").toString();
+        String paPayment3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm3").toString();
+        String paPayment4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm4").toString();
+        String paPayment5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm5").toString();
+        String paPayment6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm6").toString();
+        String paPayment7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm7").toString();
+        String paPayment8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAPaymentForm8").toString();
 
-        paInterestForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm1").toString();
-        paInterestForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm2").toString();
-        paInterestForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm3").toString();
-        paInterestForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm4").toString();
-        paInterestForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm5").toString();
-        paInterestForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm6").toString();
-        paInterestForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm7").toString();
-        paInterestForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm8").toString();
+        String paInterest1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm1").toString();
+        String paInterest2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm2").toString();
+        String paInterest3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm3").toString();
+        String paInterest4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm4").toString();
+        String paInterest5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm5").toString();
+        String paInterest6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm6").toString();
+        String paInterest7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm7").toString();
+        String paInterest8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.PAInterestForm8").toString();
 
         List<String> paDateForm = Arrays.asList(
-                paDateForm1, paDateForm2, paDateForm3, paDateForm4, paDateForm5,
-                paDateForm6, paDateForm7, paDateForm8
+                paDate1, paDate2, paDate3, paDate4, paDate5,
+                paDate6, paDate7, paDate8
         );
 
         List<String> paPaymentForm = Arrays.asList(
-                paPaymentForm1, paPaymentForm2, paPaymentForm3, paPaymentForm4, paPaymentForm5,
-                paPaymentForm6, paPaymentForm7, paPaymentForm8
+                paPayment1, paPayment2, paPayment3, paPayment4, paPayment5,
+                paPayment6, paPayment7, paPayment8
         );
 
         List<String> paInterestForm = Arrays.asList(
-                paInterestForm1, paInterestForm2, paInterestForm3, paInterestForm4, paInterestForm5,
-                paInterestForm6, paInterestForm7, paInterestForm8
+                paInterest1, paInterest2, paInterest3, paInterest4, paInterest5,
+                paInterest6, paInterest7, paInterest8
         );
 
         for (int i = 0; i < 8; i++) {
@@ -1541,55 +1634,98 @@ public class ProbateFormsOC01Page extends BasePage {
             if (!actualInterest.equals(paInterestForm.get(i))) {
                 throw new AutomationException("Interest field did not accept the entered text correctly. Expected: " + paInterestForm.get(i) + ", Found: " + actualInterest);
             }
-        }
 
+            switch (i) {
+                case 0:
+                    paDateForm1 = actualDate;
+                    paPaymentForm1 = actualPayment;
+                    paInterestForm1 = actualInterest;
+                    break;
+                case 1:
+                    paDateForm2 = actualDate;
+                    paPaymentForm2 = actualPayment;
+                    paInterestForm2 = actualInterest;
+                    break;
+                case 2:
+                    paDateForm3 = actualDate;
+                    paPaymentForm3 = actualPayment;
+                    paInterestForm3 = actualInterest;
+                    break;
+                case 3:
+                    paDateForm4 = actualDate;
+                    paPaymentForm4 = actualPayment;
+                    paInterestForm4 = actualInterest;
+                    break;
+                case 4:
+                    paDateForm5 = actualDate;
+                    paPaymentForm5 = actualPayment;
+                    paInterestForm5 = actualInterest;
+                    break;
+                case 5:
+                    paDateForm6 = actualDate;
+                    paPaymentForm6 = actualPayment;
+                    paInterestForm6 = actualInterest;
+                    break;
+                case 6:
+                    paDateForm7 = actualDate;
+                    paPaymentForm7 = actualPayment;
+                    paInterestForm7 = actualInterest;
+                    break;
+                case 7:
+                    paDateForm8 = actualDate;
+                    paPaymentForm8 = actualPayment;
+                    paInterestForm8 = actualInterest;
+                    break;
+            }
+        }
     }
 
     public void verifyDateDescriptionAndAmountCanBeAddedInTheReceiptsDisbursementsTable() throws IOException, ParseException, AutomationException {
-        radDateForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm1").toString();
-        radDateForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm2").toString();
-        radDateForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm3").toString();
-        radDateForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm4").toString();
-        radDateForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm5").toString();
-        radDateForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm6").toString();
-        radDateForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm7").toString();
-        radDateForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm8").toString();
-        radDateForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm9").toString();
+        String radDate1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm1").toString();
+        String radDate2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm2").toString();
+        String radDate3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm3").toString();
+        String radDate4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm4").toString();
+        String radDate5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm5").toString();
+        String radDate6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm6").toString();
+        String radDate7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm7").toString();
+        String radDate8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm8").toString();
+        String radDate9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDateForm9").toString();
 
-        radDescriptionForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm1").toString();
-        radDescriptionForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm2").toString();
-        radDescriptionForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm3").toString();
-        radDescriptionForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm4").toString();
-        radDescriptionForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm5").toString();
-        radDescriptionForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm6").toString();
-        radDescriptionForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm7").toString();
-        radDescriptionForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm8").toString();
-        radDescriptionForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm9").toString();
+        String radDescription1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm1").toString();
+        String radDescription2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm2").toString();
+        String radDescription3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm3").toString();
+        String radDescription4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm4").toString();
+        String radDescription5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm5").toString();
+        String radDescription6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm6").toString();
+        String radDescription7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm7").toString();
+        String radDescription8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm8").toString();
+        String radDescription9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADDescriptionForm9").toString();
 
-        radAmountForm1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm1").toString();
-        radAmountForm2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm2").toString();
-        radAmountForm3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm3").toString();
-        radAmountForm4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm4").toString();
-        radAmountForm5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm5").toString();
-        radAmountForm6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm6").toString();
-        radAmountForm7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm7").toString();
-        radAmountForm8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm8").toString();
-        radAmountForm9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm9").toString();
+        String radAmount1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm1").toString();
+        String radAmount2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm2").toString();
+        String radAmount3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm3").toString();
+        String radAmount4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm4").toString();
+        String radAmount5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm5").toString();
+        String radAmount6 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm6").toString();
+        String radAmount7 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm7").toString();
+        String radAmount8 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm8").toString();
+        String radAmount9 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.RADAmountForm9").toString();
 
         List<String> radDateForm = Arrays.asList(
-                radDateForm1, radDateForm2, radDateForm3, radDateForm4, radDateForm5,
-                radDateForm6, radDateForm7, radDateForm8, radDateForm9
+                radDate1, radDate2, radDate3, radDate4, radDate5,
+                radDate6, radDate7, radDate8, radDate9
         );
 
         List<String> radDescriptionForm = Arrays.asList(
-                radDescriptionForm1, radDescriptionForm2, radDescriptionForm3, radDescriptionForm4, radDescriptionForm5,
-                radDescriptionForm6, radDescriptionForm7, radDescriptionForm8, radDescriptionForm9
+                radDescription1, radDescription2, radDescription3, radDescription4, radDescription5,
+                radDescription6, radDescription7, radDescription8, radDescription9
         );
 
         List<String> radAmountForm = Arrays.asList(
-                radAmountForm1, radAmountForm2, radAmountForm3, radAmountForm4, radAmountForm5,
-                radAmountForm6, radAmountForm7, radAmountForm8, radAmountForm9
+                radAmount1, radAmount2, radAmount3, radAmount4, radAmount5,
+                radAmount6, radAmount7, radAmount8, radAmount9
         );
+
 
         for (int i = 0; i < 9; i++) {
             WebDriverUtil.waitForAWhile(2);
@@ -1626,23 +1762,71 @@ public class ProbateFormsOC01Page extends BasePage {
             if (!actualAmount.equals(radAmountForm.get(i))) {
                 throw new AutomationException("Amount field did not accept the entered text correctly. Expected: " + radAmountForm.get(i) + ", Found: " + actualAmount);
             }
+
+            switch (i) {
+                case 0:
+                    radDateForm1 = actualDate;
+                    radDescriptionForm1 = actualDescription;
+                    radAmountForm1 = actualAmount;
+                    break;
+                case 1:
+                    radDateForm2 = actualDate;
+                    radDescriptionForm2 = actualDescription;
+                    radAmountForm2 = actualAmount;
+                    break;
+                case 2:
+                    radDateForm3 = actualDate;
+                    radDescriptionForm3 = actualDescription;
+                    radAmountForm3 = actualAmount;
+                    break;
+                case 3:
+                    radDateForm4 = actualDate;
+                    radDescriptionForm4 = actualDescription;
+                    radAmountForm4 = actualAmount;
+                    break;
+                case 4:
+                    radDateForm5 = actualDate;
+                    radDescriptionForm5 = actualDescription;
+                    radAmountForm5 = actualAmount;
+                    break;
+                case 5:
+                    radDateForm6 = actualDate;
+                    radDescriptionForm6 = actualDescription;
+                    radAmountForm6 = actualAmount;
+                    break;
+                case 6:
+                    radDateForm7 = actualDate;
+                    radDescriptionForm7 = actualDescription;
+                    radAmountForm7 = actualAmount;
+                    break;
+                case 7:
+                    radDateForm8 = actualDate;
+                    radDescriptionForm8 = actualDescription;
+                    radAmountForm8 = actualAmount;
+                    break;
+                case 8:
+                    radDateForm9 = actualDate;
+                    radDescriptionForm9 = actualDescription;
+                    radAmountForm9 = actualAmount;
+                    break;
+            }
         }
     }
 
     public void verifyReserveRequestAmountCanBeAdded() throws IOException, ParseException, AutomationException {
-        reserveRequestAmountForm = CommonUtil.getJsonPath("OC01Form").get("OC01Form.ReserveRequestAmount").toString();
+        String enteredReserveRequestAmountForm = CommonUtil.getJsonPath("OC01Form").get("OC01Form.ReserveRequestAmount").toString();
 
         WebDriverUtil.waitForAWhile();
         scrollToElement(RESERVE_REQUEST_AMOUNT);
         WebElement amountField = DriverFactory.drivers.get().findElement(By.xpath(RESERVE_REQUEST_AMOUNT));
-        amountField.sendKeys(reserveRequestAmountForm);
+        amountField.sendKeys(enteredReserveRequestAmountForm);
         amountField.sendKeys(Keys.TAB);
 
         WebDriverUtil.waitForAWhile();
-        String actualAmount = DriverFactory.drivers.get().findElement(By.xpath(RESERVE_REQUEST_AMOUNT)).getAttribute("value");
+        reserveRequestAmountForm = DriverFactory.drivers.get().findElement(By.xpath(RESERVE_REQUEST_AMOUNT)).getAttribute("value");
 
-        if (!actualAmount.equals(reserveRequestAmountForm)) {
-            throw new AutomationException("Reserve Request Amount field did not accept the entered amount correctly. Expected: " + reserveRequestAmountForm + ", Found: " + actualAmount);
+        if (!enteredReserveRequestAmountForm.equals(reserveRequestAmountForm)) {
+            throw new AutomationException("Reserve Request Amount field did not accept the entered amount correctly. Expected: " + enteredReserveRequestAmountForm + ", Found: " + reserveRequestAmountForm);
         }
     }
 
@@ -1728,7 +1912,13 @@ public class ProbateFormsOC01Page extends BasePage {
         //page 7
         switchToPage(7);
         scrollToElement(FAMILY_EXEMPTION_CLAIMED_YES_OPT);
-        driverUtil.getWebElement(CLOSE_TOASTER_BTN).click();
+        List<WebElement> toasterBtns7 = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns7.isEmpty() && toasterBtns7.get(0).isDisplayed()) {
+            toasterBtns7.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
         DriverFactory.drivers.get().findElement(By.xpath(FAMILY_EXEMPTION_ALLOWED_YES_OPT)).click();
         DriverFactory.drivers.get().findElement(By.xpath(FAMILY_EXEMPTION_CLAIMED_YES_OPT)).click();
         scrollToElement(String.format(PA_DATE_FIELDS, 7));
@@ -1826,64 +2016,64 @@ public class ProbateFormsOC01Page extends BasePage {
     }
 
     public void userAddsMultipleClaimants() throws IOException, ParseException, AutomationException {
-        Initials1Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials1").toString();
-        Name1Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name1").toString();
-        Address1Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address1").toString();
-        Amount_of_Claim1Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim1").toString();
-        Claim_Admitted1Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted1").toString();
-        Will_Claim_Be_Paid_In_Full1Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full1").toString();
+        String Initials1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials1").toString();
+        String Name1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name1").toString();
+        String Address1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address1").toString();
+        String Amount_of_Claim1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim1").toString();
+        String Claim_Admitted1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted1").toString();
+        String Will_Claim_Be_Paid_In_Full1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full1").toString();
 
-        Initials2Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials2").toString();
-        Name2Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name2").toString();
-        Address2Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address2").toString();
-        Amount_of_Claim2Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim2").toString();
-        Claim_Admitted2Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted2").toString();
-        Will_Claim_Be_Paid_In_Full2Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full2").toString();
+        String Initials2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials2").toString();
+        String Name2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name2").toString();
+        String Address2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address2").toString();
+        String Amount_of_Claim2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim2").toString();
+        String Claim_Admitted2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted2").toString();
+        String Will_Claim_Be_Paid_In_Full2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full2").toString();
 
-        Initials3Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials3").toString();
-        Name3Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name3").toString();
-        Address3Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address3").toString();
-        Amount_of_Claim3Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim3").toString();
-        Claim_Admitted3Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted3").toString();
-        Will_Claim_Be_Paid_In_Full3Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full3").toString();
+        String Initials3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials3").toString();
+        String Name3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name3").toString();
+        String Address3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address3").toString();
+        String Amount_of_Claim3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim3").toString();
+        String Claim_Admitted3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted3").toString();
+        String Will_Claim_Be_Paid_In_Full3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full3").toString();
 
-        Initials4Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials4").toString();
-        Name4Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name4").toString();
-        Address4Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address4").toString();
-        Amount_of_Claim4Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim4").toString();
-        Claim_Admitted4Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted4").toString();
-        Will_Claim_Be_Paid_In_Full4Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full4").toString();
+        String Initials4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials4").toString();
+        String Name4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name4").toString();
+        String Address4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address4").toString();
+        String Amount_of_Claim4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim4").toString();
+        String Claim_Admitted4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted4").toString();
+        String Will_Claim_Be_Paid_In_Full4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full4").toString();
 
-        Initials5Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials5").toString();
-        Name5Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name5").toString();
-        Address5Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address5").toString();
-        Amount_of_Claim5Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim5").toString();
-        Claim_Admitted5Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted5").toString();
-        Will_Claim_Be_Paid_In_Full5Form = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full5").toString();
+        String Initials5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Initials5").toString();
+        String Name5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Name5").toString();
+        String Address5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Address5").toString();
+        String Amount_of_Claim5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Amount_of_Claim5").toString();
+        String Claim_Admitted5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Claim_Admitted5").toString();
+        String Will_Claim_Be_Paid_In_Full5 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.Will_Claim_Be_Paid_In_Full5").toString();
 
         List<String> InitialsForm = Arrays.asList(
-                Initials1Form, Initials2Form, Initials3Form, Initials4Form, Initials5Form
+                Initials1, Initials2, Initials3, Initials4, Initials5
         );
 
         List<String> NameForm = Arrays.asList(
-                Name1Form, Name2Form, Name3Form, Name4Form, Name5Form
+                Name1, Name2, Name3, Name4, Name5
         );
 
         List<String> AddressForm = Arrays.asList(
-                Address1Form, Address2Form, Address3Form, Address4Form, Address5Form
+                Address1, Address2, Address3, Address4, Address5
         );
 
         List<String> AmountOfClaimForm = Arrays.asList(
-                Amount_of_Claim1Form, Amount_of_Claim2Form, Amount_of_Claim3Form, Amount_of_Claim4Form, Amount_of_Claim5Form
+                Amount_of_Claim1, Amount_of_Claim2, Amount_of_Claim3, Amount_of_Claim4, Amount_of_Claim5
         );
 
         List<String> ClaimAdmittedForm = Arrays.asList(
-                Claim_Admitted1Form, Claim_Admitted2Form, Claim_Admitted3Form, Claim_Admitted4Form, Claim_Admitted5Form
+                Claim_Admitted1, Claim_Admitted2, Claim_Admitted3, Claim_Admitted4, Claim_Admitted5
         );
 
         List<String> WillClaimBePaidInFullForm = Arrays.asList(
-                Will_Claim_Be_Paid_In_Full1Form, Will_Claim_Be_Paid_In_Full2Form,
-                Will_Claim_Be_Paid_In_Full3Form, Will_Claim_Be_Paid_In_Full4Form, Will_Claim_Be_Paid_In_Full5Form
+                Will_Claim_Be_Paid_In_Full1, Will_Claim_Be_Paid_In_Full2,
+                Will_Claim_Be_Paid_In_Full3, Will_Claim_Be_Paid_In_Full4, Will_Claim_Be_Paid_In_Full5
         );
 
         clearField(INITIALS_MODAL_FIELD);
@@ -2209,11 +2399,16 @@ public class ProbateFormsOC01Page extends BasePage {
 
     }
 
-    public void userEntersProportionForBeneficiaries() throws AutomationException {
+    public void userEntersProportionForBeneficiaries() throws AutomationException, IOException, ParseException {
+        String proportionValue1 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.proportionValue1").toString();
+        String proportionValue2 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.proportionValue2").toString();
+        String proportionValue3 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.proportionValue3").toString();
+        String proportionValue4 = CommonUtil.getJsonPath("OC01Form").get("OC01Form.proportionValue4").toString();
+
         List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
 
         int[] contactsToEnterProportion = {0, 2, 3, 4};
-        enteredProportionValues = new String[]{"25.0000", "35.0000", "20.0000", "20.0000"};
+        enteredProportionValues = new String[]{proportionValue1, proportionValue2, proportionValue3, proportionValue4};
 
         for (int i = 0; i < contactsToEnterProportion.length; i++) {
             int index = contactsToEnterProportion[i];
