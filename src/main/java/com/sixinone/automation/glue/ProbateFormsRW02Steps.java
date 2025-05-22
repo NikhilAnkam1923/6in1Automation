@@ -59,7 +59,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user verifies Amount can be entered in all the fields")
-    public void userVerifiesAmountCanBeEnteredInAllTheFieldsAndAutoSaved() throws AutomationException {
+    public void userVerifiesAmountCanBeEnteredInAllTheFieldsAndAutoSaved() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that Amount is entered in all the fields");
         PageFactory.probateFormsRW02Page().verifyAmountCanBeEnteredInAllTheFieldsAndAutoSaved();
         CommonSteps.takeScreenshot();
@@ -93,13 +93,6 @@ public class ProbateFormsRW02Steps {
         CommonSteps.takeScreenshot();
     }
 
-    @Then("user verifies unchecking the checkbox does not clear the 'Real estate in Pennsylvania situated at' field")
-    public void userVerifiesUncheckingTheCheckboxDoesNotClearTheRealEstateInPennsylvaniaSituatedAtField() throws AutomationException {
-        CommonSteps.logInfo("Verified that unchecking the checkbox does not clear the 'Real estate in Pennsylvania situated at' field");
-        PageFactory.probateFormsRW02Page().verifyUncheckingTheCheckboxDoesNotClearTheRealEstateInPennsylvaniaSituatedAtField();
-        CommonSteps.takeScreenshot();
-    }
-
     @Then("user verifies the copied address is retained and auto-saved")
     public void userVerifiesTheCopiedAddressIsRetainedAndAutoSaved() throws AutomationException {
         CommonSteps.logInfo("Verified that the copied address is retained and auto-saved");
@@ -108,7 +101,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user modifies the address in the 'Real estate in Pennsylvania situated at' field")
-    public void userModifiesTheAddressInTheField() throws AutomationException {
+    public void userModifiesTheAddressInTheField() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user modifies the address in the 'Real estate in Pennsylvania situated at' field");
         PageFactory.probateFormsRW02Page().userModifiesTheAddressInTheField();
     }
@@ -147,7 +140,7 @@ public class ProbateFormsRW02Steps {
     }
 
     @Then("user updates the codicil dates")
-    public void userUpdatesCodicilDates() throws AutomationException {
+    public void userUpdatesCodicilDates() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user updates the codicil dates");
         PageFactory.probateFormsRW02Page().userUpdatesCodicilDates();
     }
@@ -265,19 +258,19 @@ public class ProbateFormsRW02Steps {
     }
 
     @And("user enters values in letters fields")
-    public void userEntersValuesInLettersField() throws AutomationException {
+    public void userEntersValuesInLettersField() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters values in letters fields");
         PageFactory.probateFormsRW02Page().userEntersValuesInLettersField();
     }
 
     @And("user enters data in Other field")
-    public void userEntersDataInOtherField() throws AutomationException {
+    public void userEntersDataInOtherField() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters data in Other field");
         PageFactory.probateFormsRW02Page().userEntersDataInOtherField();
     }
 
     @And("user adds amount in front of the respective fields")
-    public void userAddsAmountInFrontOfTheRespectiveFields() throws AutomationException {
+    public void userAddsAmountInFrontOfTheRespectiveFields() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user adds amount in front of the respective fields");
         PageFactory.probateFormsRW02Page().userAddsAmountInFrontOfTheRespectiveFields();
     }

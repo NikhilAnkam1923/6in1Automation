@@ -805,35 +805,35 @@ public class ProbateFormsRW06Page extends BasePage {
     public void userEntersDateAndReasonDetailsOnEachForm() throws AutomationException, IOException, ParseException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Beneficiary contacts updated successfully.")));
 
-        dateDataForm1 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm1").toString();
-        dateDataForm2 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm2").toString();
-        dateDataForm3 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm3").toString();
-        dateDataForm4 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm4").toString();
-        dateDataForm5 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm5").toString();
-        dateDataForm6 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm6").toString();
-        dateDataForm7 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm7").toString();
-        dateDataForm8 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm8").toString();
-        dateDataForm9 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm9").toString();
-        dateDataForm10 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm10").toString();
-        reasonDataForm1 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm1").toString();
-        reasonDataForm2 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm2").toString();
-        reasonDataForm3 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm3").toString();
-        reasonDataForm4 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm4").toString();
-        reasonDataForm5 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm5").toString();
-        reasonDataForm6 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm6").toString();
-        reasonDataForm7 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm7").toString();
-        reasonDataForm8 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm8").toString();
-        reasonDataForm9 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm9").toString();
-        reasonDataForm10 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm10").toString();
+        String dateData1 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm1").toString();
+        String dateData2 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm2").toString();
+        String dateData3 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm3").toString();
+        String dateData4 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm4").toString();
+        String dateData5 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm5").toString();
+        String dateData6 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm6").toString();
+        String dateData7 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm7").toString();
+        String dateData8 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm8").toString();
+        String dateData9 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm9").toString();
+        String dateData10 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.dateDataForm10").toString();
+        String reasonData1 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm1").toString();
+        String reasonData2 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm2").toString();
+        String reasonData3 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm3").toString();
+        String reasonData4 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm4").toString();
+        String reasonData5 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm5").toString();
+        String reasonData6 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm6").toString();
+        String reasonData7 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm7").toString();
+        String reasonData8 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm8").toString();
+        String reasonData9 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm9").toString();
+        String reasonData10 = CommonUtil.getJsonPath("RW06Form").get("RW06Form.reasonDataForm10").toString();
 
         List<String> dateDataForm = Arrays.asList(
-                dateDataForm1, dateDataForm2, dateDataForm3, dateDataForm4, dateDataForm5,
-                dateDataForm6, dateDataForm7, dateDataForm8, dateDataForm9, dateDataForm10
+                dateData1, dateData2, dateData3, dateData4, dateData5,
+                dateData6, dateData7, dateData8, dateData9, dateData10
         );
 
         List<String> reasonDataForm = Arrays.asList(
-                reasonDataForm1, reasonDataForm2, reasonDataForm3, reasonDataForm4, reasonDataForm5,
-                reasonDataForm6, reasonDataForm7, reasonDataForm8, reasonDataForm9, reasonDataForm10
+                reasonData1, reasonData2, reasonData3, reasonData4, reasonData5,
+                reasonData6, reasonData7, reasonData8, reasonData9, reasonData10
         );
 
         Actions actions = new Actions(DriverFactory.drivers.get());
@@ -905,6 +905,49 @@ public class ProbateFormsRW06Page extends BasePage {
 
             if (!actualReason.equals(reasonDataForm.get(i))) {
                 throw new AutomationException("Reason field did not accept the entered text correctly. Expected: " + reasonDataForm.get(i) + ", Found: " + actualReason);
+            }
+
+            switch (i) {
+                case 0:
+                    dateDataForm1 = actualDate;
+                    reasonDataForm1 = actualReason;
+                    break;
+                case 1:
+                    dateDataForm2 = actualDate;
+                    reasonDataForm2 = actualReason;
+                    break;
+                case 2:
+                    dateDataForm3 = actualDate;
+                    reasonDataForm3 = actualReason;
+                    break;
+                case 3:
+                    dateDataForm4 = actualDate;
+                    reasonDataForm4 = actualReason;
+                    break;
+                case 4:
+                    dateDataForm5 = actualDate;
+                    reasonDataForm5 = actualReason;
+                    break;
+                case 5:
+                    dateDataForm6 = actualDate;
+                    reasonDataForm6 = actualReason;
+                    break;
+                case 6:
+                    dateDataForm7 = actualDate;
+                    reasonDataForm7 = actualReason;
+                    break;
+                case 7:
+                    dateDataForm8 = actualDate;
+                    reasonDataForm8 = actualReason;
+                    break;
+                case 8:
+                    dateDataForm9 = actualDate;
+                    reasonDataForm9 = actualReason;
+                    break;
+                case 9:
+                    dateDataForm10 = actualDate;
+                    reasonDataForm10 = actualReason;
+                    break;
             }
         }
     }

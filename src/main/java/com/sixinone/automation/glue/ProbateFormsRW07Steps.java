@@ -77,7 +77,7 @@ public class ProbateFormsRW07Steps {
     }
 
     @Then("user verifies date is entered in correct format")
-    public void userVerifiesDateIsEnteredInCorrectFormat() throws AutomationException {
+    public void userVerifiesDateIsEnteredInCorrectFormat() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that date is entered in correct format");
         PageFactory.probateFormsRW07Page().verifyDateIsEnteredInCorrectFormat();
         CommonSteps.takeScreenshot();

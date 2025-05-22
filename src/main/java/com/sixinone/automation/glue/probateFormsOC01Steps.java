@@ -269,7 +269,7 @@ public class probateFormsOC01Steps {
     }
 
     @And("user enters proportion for beneficiaries")
-    public void userEntersProportionForBeneficiaries() throws AutomationException {
+    public void userEntersProportionForBeneficiaries() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters proportion for beneficiaries");
         PageFactory.probateFormsOC01Page().userEntersProportionForBeneficiaries();
     }
