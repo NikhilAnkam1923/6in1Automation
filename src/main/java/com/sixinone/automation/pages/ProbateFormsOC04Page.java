@@ -140,7 +140,7 @@ public class ProbateFormsOC04Page extends BasePage{
     private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
     private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
     private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
-
+    private static final String ADDITION_PETITIONER_ADDRESS = "//div[@class='modal-body']//tbody//tr//td//p[contains(text(),'Address')]/ancestor::td/following-sibling::td//input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -483,19 +483,19 @@ public class ProbateFormsOC04Page extends BasePage{
     public void verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm() throws AutomationException, IOException, ParseException {
         String key1 = findFiduciaryKeyByName(Fiduciary1Form, jsonData);
         JSONObject contact1 = (JSONObject) jsonData.get(key1);
-        petitioner1AddressLine1Form = contact1.get("addressLine1").toString();
+        String petitioner1AddressLine1 = contact1.get("addressLine1").toString();
         String city1 = contact1.get("city").toString() + ",";
         String stateCode1 = contact1.get("stateCode").toString();
         String zip1 = contact1.get("zip").toString();
-        petitioner1CityStateCodeZipForm = city1 + " " + stateCode1 + " " + zip1;
+        String petitioner1CityStateCodeZip = city1 + " " + stateCode1 + " " + zip1;
 
         String key2 = findFiduciaryKeyByName(Fiduciary2Form, jsonData);
         JSONObject contact2 = (JSONObject) jsonData.get(key2);
-        petitioner2AddressLine1Form = contact2.get("addressLine1").toString();
+        String petitioner2AddressLine1 = contact2.get("addressLine1").toString();
         String city2 = contact2.get("city").toString() + ",";
         String stateCode2 = contact2.get("stateCode").toString();
         String zip2 = contact2.get("zip").toString();
-        petitioner2CityStateCodeZipForm = city2 + " " + stateCode2 + " " + zip2;
+        String petitioner2CityStateCodeZip = city2 + " " + stateCode2 + " " + zip2;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -504,15 +504,20 @@ public class ProbateFormsOC04Page extends BasePage{
         if (!nameOfPetitionerForm.equals(Fiduciary1Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitionerForm);
         }
-        verifyPetitionerOnForm(petitioner1AddressLine1Form);
-        verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+        verifyPetitionerOnForm(petitioner1AddressLine1);
+        verifyPetitionerOnForm(petitioner1CityStateCodeZip);
 
         nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
         if (!nameOfPetitioner2Form.equals(Fiduciary2Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitioner2Form);
         }
-        verifyPetitionerOnForm(petitioner2AddressLine1Form);
-        verifyPetitionerOnForm(petitioner2CityStateCodeZipForm);
+        verifyPetitionerOnForm(petitioner2AddressLine1);
+        verifyPetitionerOnForm(petitioner2CityStateCodeZip);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
     }
 
     public void verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment() throws AutomationException, IOException, ParseException {
@@ -526,8 +531,8 @@ public class ProbateFormsOC04Page extends BasePage{
         String city3 = contact3.get("city").toString() + ",";
         String stateCode3 = contact3.get("stateCode").toString();
         String zip3 = contact3.get("zip").toString();
-        petitioner3CityStateCodeZipForm = city3 + " " + stateCode3 + " " + zip3;
-        petitioner3AddressLine1Form = address3Line1 + ", " + address3Line2;
+        String petitioner3CityStateCodeZip = city3 + " " + stateCode3 + " " + zip3;
+        String petitioner3AddressLine1 = address3Line1 + ", " + address3Line2;
 
         String key4 = findFiduciaryKeyByName(Fiduciary4Form, jsonData);
 
@@ -537,8 +542,8 @@ public class ProbateFormsOC04Page extends BasePage{
         String city4 = contact4.get("city").toString() + ",";
         String stateCode4 = contact4.get("stateCode").toString();
         String zip4 = contact4.get("zip").toString();
-        petitioner4CityStateCodeZipForm = city4 + " " + stateCode4 + " " + zip4;
-        petitioner4AddressLine1Form = address4Line1 + ", " + address4Line2;
+        String petitioner4CityStateCodeZip = city4 + " " + stateCode4 + " " + zip4;
+        String petitioner4AddressLine1 = address4Line1 + ", " + address4Line2;
 
         verifySelectedFiduciariesPopulateInThePetitionerFieldsOnTheForm();
 
@@ -546,14 +551,35 @@ public class ProbateFormsOC04Page extends BasePage{
         WebDriverUtil.waitForAWhile();
 
         verifyPetitionerOnAttachment(Fiduciary3Form);
-        verifyPetitionerOnAttachment(petitioner3AddressLine1Form);
-        verifyPetitionerOnAttachment(petitioner3CityStateCodeZipForm);
+        verifyPetitionerOnAttachment(petitioner3AddressLine1);
+        verifyPetitionerOnAttachment(petitioner3CityStateCodeZip);
 
         verifyPetitionerOnAttachment(Fiduciary4Form);
-        verifyPetitionerOnAttachment(petitioner4AddressLine1Form);
-        verifyPetitionerOnAttachment(petitioner4CityStateCodeZipForm);
+        verifyPetitionerOnAttachment(petitioner4AddressLine1);
+        verifyPetitionerOnAttachment(petitioner4CityStateCodeZip);
 
         CommonSteps.takeScreenshot();
+
+        List<WebElement> additionalPetitionerAddress = driverUtil.getWebElements(ADDITION_PETITIONER_ADDRESS);
+
+        for (int i=0; i< additionalPetitionerAddress.size(); i++){
+            String value = additionalPetitionerAddress.get(i).getAttribute("value");
+            switch (i){
+                case 0:
+                    petitioner3AddressLine1Form = value;
+                    break;
+                case 1:
+                    petitioner3CityStateCodeZipForm = value;
+                    break;
+                case 2:
+                    petitioner4AddressLine1Form = value;
+                    break;
+                case 3:
+                    petitioner4CityStateCodeZipForm = value;
+                    break;
+
+            }
+        }
 
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
     }
@@ -663,23 +689,23 @@ public class ProbateFormsOC04Page extends BasePage{
 
 
     public void verifyFeeClaimsAmountStartDateAndEndDateAreSavedAndDisplayedCorrectly() throws AutomationException, IOException, ParseException {
-        amountForm1 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.amountForm1").toString();
-        amountForm2 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.amountForm2").toString();
-        amountForm3 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.amountForm3").toString();
+        String amount1 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountForm1").toString();
+        String amount2 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountForm2").toString();
+        String amount3 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountForm3").toString();
 
-        startDateForm1 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.startDateForm1").toString();
-        startDateForm2 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.startDateForm2").toString();
-        startDateForm3 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.startDateForm3").toString();
+        String startDate1 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.startDateForm1").toString();
+        String startDate2 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.startDateForm2").toString();
+        String startDate3 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.startDateForm3").toString();
 
-        endDateForm1 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.endDateForm1").toString();
-        endDateForm2 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.endDateForm2").toString();
-        endDateForm3 = CommonUtil.getJsonPath("OC03Form").get("OC03Form.endDateForm3").toString();
+        String endDate1 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.endDateForm1").toString();
+        String endDate2 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.endDateForm2").toString();
+        String endDate3 = CommonUtil.getJsonPath("OC04Form").get("OC03Form.endDateForm3").toString();
 
-        List<String> amountForms = Arrays.asList( amountForm1, amountForm2, amountForm3 );
+        List<String> amountForms = Arrays.asList(amount1, amount2, amount3);
 
-        List<String> startDateForms = Arrays.asList( startDateForm1, startDateForm2, startDateForm3 );
+        List<String> startDateForms = Arrays.asList(startDate1, startDate2, startDate3);
 
-        List<String> endDateForms = Arrays.asList( endDateForm1, endDateForm2, endDateForm3 );
+        List<String> endDateForms = Arrays.asList(endDate1, endDate2, endDate3);
 
         int maxRetries = 3;
 
@@ -711,6 +737,24 @@ public class ProbateFormsOC04Page extends BasePage{
             }
             if (!actualEndDate.equals(endDateForms.get(i))) {
                 throw new AutomationException("End Date mismatch at row " + (i + 1) + ". Expected: " + endDateForms.get(i) + ", Found: " + actualEndDate);
+            }
+
+            switch (i) {
+                case 0:
+                    amountForm1 = actualAmount;
+                    startDateForm1 = actualStartDate;
+                    endDateForm1 = actualEndDate;
+                    break;
+                case 1:
+                    amountForm2 = actualAmount;
+                    startDateForm2 = actualStartDate;
+                    endDateForm2 = actualEndDate;
+                    break;
+                case 2:
+                    amountForm3 = actualAmount;
+                    startDateForm3 = actualStartDate;
+                    endDateForm3 = actualEndDate;
+                    break;
             }
         }
     }
@@ -1005,7 +1049,18 @@ public class ProbateFormsOC04Page extends BasePage{
         }
     }
 
-    public void userEntersAmountsAndProportionsForBeneficiaries() throws AutomationException {
+    public void userEntersAmountsAndProportionsForBeneficiaries() throws AutomationException, IOException, ParseException {
+        String amountValue1 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountValue1").toString();
+        String amountValue2 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountValue2").toString();
+        String amountValue3 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountValue3").toString();
+        String amountValue4 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountValue4").toString();
+        String amountValue5 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.amountValue5").toString();
+        String proportionValue1 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.proportionValue1").toString();
+        String proportionValue2 = CommonUtil.getJsonPath("OC03Form").get("OC04Form.proportionValue2").toString();
+        String proportionValue3 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.proportionValue3").toString();
+        String proportionValue4 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.proportionValue4").toString();
+        String proportionValue5 = CommonUtil.getJsonPath("OC04Form").get("OC04Form.proportionValue5").toString();
+
         WebDriverUtil.waitForAWhile();
         List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
 
@@ -1031,7 +1086,7 @@ public class ProbateFormsOC04Page extends BasePage{
         List<WebElement> amountFields = driverUtil.getWebElements(AMOUNT_COLUMNS_MODAL);
 
         int[] contactsToEnterAmount = {0, 2, 3, 4, 5};
-        enteredAmountValues = new String[]{"23,000.00", "18,000.00", "34,000.00", "20,000.00", "25,000.00"};
+        enteredAmountValues = new String[]{amountValue1, amountValue2, amountValue3, amountValue4, amountValue5};
 
         for (int i = 0; i < contactsToEnterAmount.length; i++) {
             int index = contactsToEnterAmount[i];
@@ -1048,7 +1103,7 @@ public class ProbateFormsOC04Page extends BasePage{
         List<WebElement> proportionFields = driverUtil.getWebElements(PROPORTION_COLUMNS);
 
         int[] contactsToEnterProportion = {0, 2, 3, 4, 5};
-        enteredProportionValues = new String[]{"25.0000", "35.0000", "20.0000", "20.0000", "23.0000"};
+        enteredProportionValues = new String[]{proportionValue1, proportionValue2, proportionValue3, proportionValue4, proportionValue5};
 
         for (int i = 0; i < contactsToEnterProportion.length; i++) {
             int index = contactsToEnterProportion[i];

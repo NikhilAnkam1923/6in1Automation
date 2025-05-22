@@ -1766,7 +1766,7 @@ public class CommonSteps {
     }
 
     @When("^user enters amounts and proportions for beneficiaries for \"([^\"]*)\" form$")
-    public void userEntersAmountsAndProportionsForBeneficiaries(String formName) throws AutomationException {
+    public void userEntersAmountsAndProportionsForBeneficiaries(String formName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters amounts and proportions for beneficiaries for "+formName+" form");
         switch (formName) {
             case "OC03":

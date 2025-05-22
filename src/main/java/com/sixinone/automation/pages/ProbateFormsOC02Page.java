@@ -168,6 +168,7 @@ public class ProbateFormsOC02Page extends BasePage {
     private static final String PETITIONER_1_CITY_STATE_ZIP = "//td[@class='trnew10 td11']//span[@class='p0 ft0 newstyle']//input";
     private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
     private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
+    private static final String ADDITION_PETITIONER_ADDRESS = "//div[@class='modal-body']//tbody//tr//td//p[contains(text(),'Address')]/ancestor::td/following-sibling::td//input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -626,19 +627,19 @@ public class ProbateFormsOC02Page extends BasePage {
     public void verifySelectedNamesOfPetitionerAreDisplayedWithAddress() throws AutomationException {
         String key1 = findFiduciaryKeyByName(Fiduciary1Form, jsonData);
         JSONObject contact1 = (JSONObject) jsonData.get(key1);
-        petitioner1AddressLine1Form = contact1.get("addressLine1").toString();
+        String petitioner1AddressLine1 = contact1.get("addressLine1").toString();
         String city1 = contact1.get("city").toString() + ",";
         String stateCode1 = contact1.get("stateCode").toString();
         String zip1 = contact1.get("zip").toString();
-        petitioner1CityStateCodeZipForm = city1 + " " + stateCode1 + " " + zip1;
+        String petitioner1CityStateCodeZip = city1 + " " + stateCode1 + " " + zip1;
 
         String key2 = findFiduciaryKeyByName(Fiduciary2Form, jsonData);
         JSONObject contact2 = (JSONObject) jsonData.get(key2);
-        petitioner2AddressLine1Form = contact2.get("addressLine1").toString();
+        String petitioner2AddressLine1 = contact2.get("addressLine1").toString();
         String city2 = contact2.get("city").toString() + ",";
         String stateCode2 = contact2.get("stateCode").toString();
         String zip2 = contact2.get("zip").toString();
-        petitioner2CityStateCodeZipForm = city2 + " " + stateCode2 + " " + zip2;
+        String petitioner2CityStateCodeZip = city2 + " " + stateCode2 + " " + zip2;
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -647,16 +648,21 @@ public class ProbateFormsOC02Page extends BasePage {
         if (!nameOfPetitionerForm.equals(Fiduciary1Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary1Form + " ,Found: " + nameOfPetitionerForm);
         }
-        verifyPetitionerOnForm(petitioner1AddressLine1Form);
-        verifyPetitionerOnForm(petitioner1CityStateCodeZipForm);
+        verifyPetitionerOnForm(petitioner1AddressLine1);
+        verifyPetitionerOnForm(petitioner1CityStateCodeZip);
 
 
         nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
         if (!nameOfPetitioner2Form.equals(Fiduciary2Form)) {
             throw new AutomationException("Fiduciary details not populated correctly in 'Name of Counsel' field. Expected: " + Fiduciary2Form + " ,Found: " + nameOfPetitioner2Form);
         }
-        verifyPetitionerOnForm(petitioner2AddressLine1Form);
-        verifyPetitionerOnForm(petitioner2CityStateCodeZipForm);
+        verifyPetitionerOnForm(petitioner2AddressLine1);
+        verifyPetitionerOnForm(petitioner2CityStateCodeZip);
+
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
     }
 
     public void userSelectsMultiplePetitioners() throws AutomationException {
@@ -697,8 +703,8 @@ public class ProbateFormsOC02Page extends BasePage {
         String city3 = contact3.get("city").toString() + ",";
         String stateCode3 = contact3.get("stateCode").toString();
         String zip3 = contact3.get("zip").toString();
-        petitioner3CityStateCodeZipForm = city3 + " " + stateCode3 + " " + zip3;
-        petitioner3AddressLine1Form = address3Line1 + ", " + address3Line2;
+        String petitioner3CityStateCodeZip = city3 + " " + stateCode3 + " " + zip3;
+        String petitioner3AddressLine1 = address3Line1 + ", " + address3Line2;
 
         String key4 = findFiduciaryKeyByName(Fiduciary4Form, jsonData);
 
@@ -708,8 +714,8 @@ public class ProbateFormsOC02Page extends BasePage {
         String city4 = contact4.get("city").toString() + ",";
         String stateCode4 = contact4.get("stateCode").toString();
         String zip4 = contact4.get("zip").toString();
-        petitioner4CityStateCodeZipForm = city4 + " " + stateCode4 + " " + zip4;
-        petitioner4AddressLine1Form = address4Line1 + ", " + address4Line2;
+        String petitioner4CityStateCodeZip = city4 + " " + stateCode4 + " " + zip4;
+        String petitioner4AddressLine1 = address4Line1 + ", " + address4Line2;
 
         verifySelectedNamesOfPetitionerAreDisplayedWithAddress();
 
@@ -717,14 +723,35 @@ public class ProbateFormsOC02Page extends BasePage {
         WebDriverUtil.waitForAWhile();
 
         verifyPetitionerOnAttachment(Fiduciary3Form);
-        verifyPetitionerOnAttachment(petitioner3AddressLine1Form);
-        verifyPetitionerOnAttachment(petitioner3CityStateCodeZipForm);
+        verifyPetitionerOnAttachment(petitioner3AddressLine1);
+        verifyPetitionerOnAttachment(petitioner3CityStateCodeZip);
 
         verifyPetitionerOnAttachment(Fiduciary4Form);
-        verifyPetitionerOnAttachment(petitioner4AddressLine1Form);
-        verifyPetitionerOnAttachment(petitioner4CityStateCodeZipForm);
+        verifyPetitionerOnAttachment(petitioner4AddressLine1);
+        verifyPetitionerOnAttachment(petitioner4CityStateCodeZip);
 
         CommonSteps.takeScreenshot();
+
+        List<WebElement> additionalPetitionerAddress = driverUtil.getWebElements(ADDITION_PETITIONER_ADDRESS);
+
+        for (int i=0; i< additionalPetitionerAddress.size(); i++){
+            String value = additionalPetitionerAddress.get(i).getAttribute("value");
+            switch (i){
+                case 0:
+                    petitioner3AddressLine1Form = value;
+                    break;
+                case 1:
+                    petitioner3CityStateCodeZipForm = value;
+                    break;
+                case 2:
+                    petitioner4AddressLine1Form = value;
+                    break;
+                case 3:
+                    petitioner4CityStateCodeZipForm = value;
+                    break;
+
+            }
+        }
 
         driverUtil.getWebElement(MODAL_CLOSE_BTN).click();
     }
@@ -932,14 +959,14 @@ public class ProbateFormsOC02Page extends BasePage {
     }
 
     public void verifyAllTheDetailsCanBeEnteredAndAutoSaved() throws AutomationException, IOException, ParseException {
-        dateOfTrust = CommonUtil.getJsonPath("OC02Form").get("OC02Form.dateOfTrust").toString();
-        amendmentDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate1").toString();
-        amendmentDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate2").toString();
-        amendmentDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate3").toString();
-        amendmentDate4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate4").toString();
-        advertisingDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate1").toString();
-        advertisingDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate2").toString();
-        advertisingDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate3").toString();
+        String dateOfTrustValue = CommonUtil.getJsonPath("OC02Form").get("OC02Form.dateOfTrust").toString();
+        String amendmentDate1Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate1").toString();
+        String amendmentDate2Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate2").toString();
+        String amendmentDate3Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate3").toString();
+        String amendmentDate4Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.amendmentDate4").toString();
+        String advertisingDate1Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate1").toString();
+        String advertisingDate2Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate2").toString();
+        String advertisingDate3Value = CommonUtil.getJsonPath("OC02Form").get("OC02Form.advertisingDate3").toString();
 
         List<String> fieldXpaths = Arrays.asList(
                 DATE_OF_TRUST, DATE_OF_AMENDMENT_1, DATE_OF_AMENDMENT_2, DATE_OF_AMENDMENT_3,
@@ -947,8 +974,8 @@ public class ProbateFormsOC02Page extends BasePage {
         );
 
         List<String> Dates = Arrays.asList(
-                dateOfTrust, amendmentDate1, amendmentDate2, amendmentDate3,
-                amendmentDate4, advertisingDate1, advertisingDate2, advertisingDate3
+                dateOfTrustValue, amendmentDate1Value, amendmentDate2Value, amendmentDate3Value,
+                amendmentDate4Value, advertisingDate1Value, advertisingDate2Value, advertisingDate3Value
         );
 
         List<String> enteredDates = new ArrayList<>();
@@ -970,6 +997,32 @@ public class ProbateFormsOC02Page extends BasePage {
 
             String actualValue = driverUtil.getWebElement(xpath).getAttribute("value");
             enteredDates.add(actualValue);
+            switch (i) {
+                case 0:
+                    dateOfTrust = actualValue;
+                    break;
+                case 1:
+                    amendmentDate1 = actualValue;
+                    break;
+                case 2:
+                    amendmentDate2 = actualValue;
+                    break;
+                case 3:
+                    amendmentDate3 = actualValue;
+                    break;
+                case 4:
+                    amendmentDate4 = actualValue;
+                    break;
+                case 5:
+                    advertisingDate1 = actualValue;
+                    break;
+                case 6:
+                    advertisingDate2 = actualValue;
+                    break;
+                case 7:
+                    advertisingDate3 = actualValue;
+                    break;
+            }
         }
 
         switchToPage(4);
@@ -1660,32 +1713,32 @@ public class ProbateFormsOC02Page extends BasePage {
     }
 
     public void verifyPrincipalAmountAndDateCanBeAdded() throws AutomationException, IOException, ParseException {
-        principalAmountForm1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm1").toString();
-        principalAmountForm2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm2").toString();
-        principalAmountForm3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm3").toString();
-        principalAmountForm4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm4").toString();
-        principalAmountForm5 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm5").toString();
-        principalAmountForm6 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm6").toString();
-        principalAmountForm7 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm7").toString();
-        principalAmountForm8 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm8").toString();
+        String principalAmount1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm1").toString();
+        String principalAmount2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm2").toString();
+        String principalAmount3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm3").toString();
+        String principalAmount4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm4").toString();
+        String principalAmount5 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm5").toString();
+        String principalAmount6 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm6").toString();
+        String principalAmount7 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm7").toString();
+        String principalAmount8 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionAmountForm8").toString();
 
-        principalDateForm1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm1").toString();
-        principalDateForm2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm2").toString();
-        principalDateForm3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm3").toString();
-        principalDateForm4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm4").toString();
-        principalDateForm5 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm5").toString();
-        principalDateForm6 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm6").toString();
-        principalDateForm7 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm7").toString();
-        principalDateForm8 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm8").toString();
+        String principalDate1 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm1").toString();
+        String principalDate2 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm2").toString();
+        String principalDate3 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm3").toString();
+        String principalDate4 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm4").toString();
+        String principalDate5 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm5").toString();
+        String principalDate6 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm6").toString();
+        String principalDate7 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm7").toString();
+        String principalDate8 = CommonUtil.getJsonPath("OC02Form").get("OC02Form.PrincipalCommissionDateForm8").toString();
 
         List<String> principalAmounts = Arrays.asList(
-                principalAmountForm1, principalAmountForm2, principalAmountForm3, principalAmountForm4,
-                principalAmountForm5, principalAmountForm6, principalAmountForm7, principalAmountForm8
+                principalAmount1, principalAmount2, principalAmount3, principalAmount4,
+                principalAmount5, principalAmount6, principalAmount7, principalAmount8
         );
 
         List<String> principalDates = Arrays.asList(
-                principalDateForm1, principalDateForm2, principalDateForm3, principalDateForm4,
-                principalDateForm5, principalDateForm6, principalDateForm7, principalDateForm8
+                principalDate1, principalDate2, principalDate3, principalDate4,
+                principalDate5, principalDate6, principalDate7, principalDate8
         );
 
         for (int i = 0; i < 8; i++) {
@@ -1718,6 +1771,41 @@ public class ProbateFormsOC02Page extends BasePage {
             if (!actualAmount.equals(principalAmounts.get(i))) {
                 throw new AutomationException("Principal Amount field mismatch at row " + (i + 1) + ". Expected: " + principalAmounts.get(i) + ", Found: " + actualAmount);
             }
+
+            switch (i) {
+                case 0:
+                    principalAmountForm1 = actualAmount;
+                    principalDateForm1 = actualDate;
+                    break;
+                case 1:
+                    principalAmountForm2 = actualAmount;
+                    principalDateForm2 = actualDate;
+                    break;
+                case 2:
+                    principalAmountForm3 = actualAmount;
+                    principalDateForm3 = actualDate;
+                    break;
+                case 3:
+                    principalAmountForm4 = actualAmount;
+                    principalDateForm4 = actualDate;
+                    break;
+                case 4:
+                    principalAmountForm5 = actualAmount;
+                    principalDateForm5 = actualDate;
+                    break;
+                case 5:
+                    principalAmountForm6 = actualAmount;
+                    principalDateForm6 = actualDate;
+                    break;
+                case 6:
+                    principalAmountForm7 = actualAmount;
+                    principalDateForm7 = actualDate;
+                    break;
+                case 7:
+                    principalAmountForm8 = actualAmount;
+                    principalDateForm8 = actualDate;
+                    break;
+            }
         }
     }
 
@@ -1740,8 +1828,8 @@ public class ProbateFormsOC02Page extends BasePage {
     }
 
     public void verifyBothTheFieldsAreEditableAndAcceptValues() throws AutomationException, IOException, ParseException {
-        reserveAmountForm = CommonUtil.getJsonPath("OC02Form").get("OC02Form.reserveAmount").toString();
-        reservePurposeForm = CommonUtil.getJsonPath("OC02Form").get("OC02Form.reservePurpose").toString();
+        String reserveAmount = CommonUtil.getJsonPath("OC02Form").get("OC02Form.reserveAmount").toString();
+        String reservePurpose = CommonUtil.getJsonPath("OC02Form").get("OC02Form.reservePurpose").toString();
 
         WebElement amountField = driverUtil.getWebElement(RESERVE_AMOUNT_FIELD);
         WebElement purposeField = driverUtil.getWebElement(RESERVE_PURPOSE_FIELD);
@@ -1751,7 +1839,7 @@ public class ProbateFormsOC02Page extends BasePage {
 
         scrollToElement(RESERVE_AMOUNT_FIELD);
         amountField.click();
-        amountField.sendKeys(reserveAmountForm);
+        amountField.sendKeys(reserveAmount);
         amountField.sendKeys(Keys.TAB);
 
         scrollToElement(RESERVE_PURPOSE_FIELD);
@@ -1760,19 +1848,19 @@ public class ProbateFormsOC02Page extends BasePage {
 
         WebElement purposeTextField = driverUtil.getWebElement(RESERVE_PURPOSE_TEXT_FIELD);
         purposeTextField.click();
-        purposeTextField.sendKeys(reservePurposeForm);
+        purposeTextField.sendKeys(reservePurpose);
         driverUtil.getWebElement(SAVE_BTN).click();
         waitForAWhile();
 
-        String actualAmount = amountField.getAttribute("value");
-        String actualPurpose = purposeField.getText();
+        reserveAmountForm = amountField.getAttribute("value");
+        reservePurposeForm = purposeField.getText();
 
-        if (!actualAmount.equals(reserveAmountForm)) {
-            throw new AutomationException("Reserve Amount field not accepted the entered value. Expected: " + reserveAmountForm + " ,Found: " + actualAmount);
+        if (!reserveAmount.equals(reserveAmountForm)) {
+            throw new AutomationException("Reserve Amount field not accepted the entered value. Expected: " + reserveAmount + " ,Found: " + reserveAmountForm);
         }
 
-        if (!actualPurpose.equals(reservePurposeForm)) {
-            throw new AutomationException("Reserve Purpose field not accepted the entered value. Expected: " + reservePurposeForm + " ,Found: " + actualPurpose);
+        if (!reservePurpose.equals(reservePurposeForm)) {
+            throw new AutomationException("Reserve Purpose field not accepted the entered value. Expected: " + reservePurpose + " ,Found: " + reservePurposeForm);
         }
     }
 
@@ -2427,9 +2515,6 @@ public class ProbateFormsOC02Page extends BasePage {
         CommonSteps.logInfo("✅ Verified Reserve Purpose: " + actualPurpose);
         return true;
     }
-
-
-
 }
 
 

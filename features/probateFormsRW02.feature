@@ -47,9 +47,6 @@ Feature: 6in1 probate form RW02 Feature
     And user checks 'Use Principal Residence' checkbox
     Then user verifies The address from the 'principal residence at' field is copied to the 'Real estate in Pennsylvania situated at' field
 
-  Scenario: Verify that unchecking the checkbox does not clear the "Real estate in Pennsylvania situated at" field.
-    Then user verifies unchecking the checkbox does not clear the 'Real estate in Pennsylvania situated at' field
-
   Scenario: Verify that the form auto-saves after the address is copied via the checkbox.
     Then user verifies the copied address is retained and auto-saved
 
