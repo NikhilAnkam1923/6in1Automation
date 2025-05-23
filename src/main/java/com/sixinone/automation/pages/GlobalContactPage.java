@@ -855,9 +855,9 @@ public class GlobalContactPage extends BasePage {
         }
         CommonSteps.logInfo("Verified that Address is added successfully.");
         CommonSteps.takeScreenshot();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
 
     }
 
@@ -892,15 +892,15 @@ public class GlobalContactPage extends BasePage {
         fillAddressInfo();
         verifyAutoFetchedFields();
         clickButtonSave();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         fillAddressInfo();
         verifyAutoFetchedFields();
         clickButtonSave();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
         WebDriverUtil.waitForVisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(GlobalContactPage.CONFIRMATION_MESSAGE, "Address added successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
 
