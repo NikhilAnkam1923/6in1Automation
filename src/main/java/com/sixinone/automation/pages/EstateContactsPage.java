@@ -158,6 +158,7 @@ public class EstateContactsPage extends BasePage {
         waitForInvisibleElement(By.xpath(SPINNER));
         waitForVisibleElement(By.xpath(ADD_CONTACT_BTN));
         driverUtil.getWebElement(ADD_CONTACT_BTN).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     private boolean clickNextPage() throws AutomationException {
