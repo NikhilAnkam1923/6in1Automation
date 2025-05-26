@@ -65,6 +65,11 @@ public class DriverFactory {
         edgeOptions.setCapability("UseChromium", true);
         if (System.getProperty("debug") == null || System.getProperty("debug").equalsIgnoreCase("false"))
             edgeOptions.addArguments("--headless");
+            edgeOptions.addArguments("--disable-gup");
+            edgeOptions.addArguments("--disable-dev-shm-usage");
+            edgeOptions.addArguments("--window-size=1920,1080");
+            edgeOptions.addArguments("force-device-scale-factor=0.75");
+            edgeOptions.addArguments("high-dpi-support=0.75");
         return edgeOptions;
     }
 
