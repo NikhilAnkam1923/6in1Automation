@@ -91,7 +91,7 @@ public class DriverFactory {
             options.addArguments("--headless");
             options.addArguments("--disable-gup");
             options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--window-size=1920,1080");
+            options.addArguments("--window-size=1400,600");
             options.addArguments("force-device-scale-factor=0.75");
             options.addArguments("high-dpi-support=0.75");
         }
