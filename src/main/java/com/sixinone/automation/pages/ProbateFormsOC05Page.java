@@ -1008,12 +1008,12 @@ public class ProbateFormsOC05Page extends BasePage{
         verifyAutoSavedFields("Agent City State Zip 1", agent2cityStateZipForm, actualAgent2cityStateZipForm);
 
         //use in reset
-        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
-        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
-        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
-        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
-        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
-        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
+//        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
+//        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
+//        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
+//        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
+//        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
+//        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
     }
 
     public void clearFieldUntilEmpty(String fieldLocator) {
