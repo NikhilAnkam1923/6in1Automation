@@ -18,7 +18,7 @@ Feature: 6in1 probate form OC02 Feature
   Scenario: Verify, correct County of the decedent, file no is fetched from the decedent info. tab.
     When user navigates to the probate forms tab
     And user click on the "OC 02" form
-    Then user verifies by default page 1 should is opened and correct county name is fetched and displayed at the top of the form
+    Then user verifies by default page 1 should is opened and correct county name is fetched and displayed at the top of the "OC02" form
 
   Scenario: Verify, trust under deed and trust under will fields are enabled based on the checkbox checked.
     When user checks trust under will checkbox
@@ -48,7 +48,7 @@ Feature: 6in1 probate form OC02 Feature
     When user navigates to page number: "2"
     And user click on Petitioner name field
     And user selects two petitioners
-    Then user verifies selected names of petitioner are displayed with address
+    Then user verifies selected names of petitioner are displayed with address on "OC02" form
 
   Scenario: Verify, attachment.
     When user click on Petitioner name field
@@ -139,7 +139,7 @@ Feature: 6in1 probate form OC02 Feature
 
   Scenario: Verify, trust's name is auto fetched.
     When user navigates to page number: "10"
-    Then user verifies estate's name is auto fetched and correctly displayed
+    Then user verifies estate's name is auto fetched and correctly displayed on "OC02" form
 
   Scenario: Verify, if displayed on checkbox is checked, then the contacts are displayed on the form.
     When user checks the Display checkbox for beneficiaries of "OC02" form

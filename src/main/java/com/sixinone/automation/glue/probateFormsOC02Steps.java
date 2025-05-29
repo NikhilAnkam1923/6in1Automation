@@ -10,13 +10,6 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 
 public class probateFormsOC02Steps {
-    @Then("user verifies by default page 1 should is opened and correct county name is fetched and displayed at the top of the form")
-    public void userVerifiesByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm() throws AutomationException {
-        CommonSteps.logInfo("Verified that by default page 1 should is opened and correct county name is fetched and displayed at the top of the form");
-        PageFactory.probateFormsOC02Page().verifyByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm();
-        CommonSteps.takeScreenshot();
-    }
-
     @When("user checks trust under will checkbox")
     public void userChecksTrustUnderWillCheckbox() {
         CommonSteps.logInfo("user checks trust under will checkbox");
@@ -70,13 +63,6 @@ public class probateFormsOC02Steps {
     public void userSelectsTwoPetitioners() throws AutomationException {
         CommonSteps.logInfo("user selects multiple petitioners");
         PageFactory.probateFormsOC02Page().userSelectsTwoPetitioners();
-    }
-
-    @Then("user verifies selected names of petitioner are displayed with address")
-    public void userVerifiesSelectedNamesOfPetitionerAreDisplayedWithAddress() throws AutomationException {
-        CommonSteps.logInfo("Verified that selected names of petitioner are displayed with address");
-        PageFactory.probateFormsOC02Page().verifySelectedNamesOfPetitionerAreDisplayedWithAddress();
-        CommonSteps.takeScreenshot();
     }
 
     @Then("user verifies attachment icon is visible and the petitioner details are correctly visible on the attachment")
@@ -190,13 +176,6 @@ public class probateFormsOC02Steps {
     public void userVerifiesPrincipalAmountAndDateCanBeAdded() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that principal amount and date can be added");
         PageFactory.probateFormsOC02Page().verifyPrincipalAmountAndDateCanBeAdded();
-        CommonSteps.takeScreenshot();
-    }
-
-    @Then("user verifies estate's name is auto fetched and correctly displayed")
-    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayed() throws AutomationException {
-        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed");
-        PageFactory.probateFormsOC02Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed();
         CommonSteps.takeScreenshot();
     }
 

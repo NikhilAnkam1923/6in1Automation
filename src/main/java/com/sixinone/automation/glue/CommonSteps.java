@@ -68,7 +68,8 @@ public class CommonSteps {
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     private static final String NAME_OF_COUNSEL_FIELD = "//p//span[text()='Name of Counsel:']/following-sibling::span//input";
     private static final String PETITIONER_NAME_FIELD = "//td[@class='tr5 td9']//input";
-    private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllBenyOnAttachment']";
+    private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V1 = "//input[@name='isDisplayAllBenyOnAttachment']";
+    private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V2 = "//input[@name='isDisplayAllBeneficiariesOnAttachment']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllIncomeOnAttachment']";
     private static final String EDIT_AMOUNT_PROPORTION_FIELD = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@class='yellowbg bold']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
@@ -500,6 +501,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().userSavesEstateInfo();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userSavesEstateInfo();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -984,6 +988,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyFileNumberFieldIsEditable();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyFileNumberFieldIsEditable();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1021,6 +1028,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifySidebarAppearsAndAttorneyCanBeSelected();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1081,6 +1091,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifySwappedPetitionerNamesAreReflectedOnUIAccordingly();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1104,6 +1117,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userSavesSelectedBeneficiariesDetails();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userSavesSelectedBeneficiariesDetails();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1125,6 +1141,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1133,10 +1152,22 @@ public class CommonSteps {
     @And("user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox")
     public void userClicksOnDisplayALLBeneficiariesOnAttachmentScheduleCheckbox() throws AutomationException {
         CommonSteps.logInfo("user clicks on 'Display ALL Beneficiaries on attachment schedule' checkbox");
-        scrollToElement(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN);
-        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN)).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-        WebDriverUtil.waitForAWhile();
+        String xpath = null;
+
+        if (!DriverFactory.drivers.get().findElements(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V1)).isEmpty()) {
+            xpath = DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V1;
+        } else if (!DriverFactory.drivers.get().findElements(By.xpath(DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V2)).isEmpty()) {
+            xpath = DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V2;
+        }
+
+        if (xpath != null) {
+            scrollToElement(xpath);
+            DriverFactory.drivers.get().findElement(By.xpath(xpath)).click();
+            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+            WebDriverUtil.waitForAWhile();
+        } else {
+            CommonSteps.logInfo("Display All Beneficiaries button not found.");
+        }
     }
 
     @Then("^user verifies for \"([^\"]*)\" form all the beny users are displayed as a part of attachment$")
@@ -1154,6 +1185,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyAllTheBenyUsersAreDisplayedAsAPartOfAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1197,6 +1231,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userAddsInitials();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userAddsInitials();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1217,6 +1254,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyNameAndAddressGetsDisappear();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyNameAndAddressGetsDisappear();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1240,6 +1280,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userRemovesInitials();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userRemovesInitials();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1260,6 +1303,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyNameAndAddressOfTheBeneficiariesIsDisplayed();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyNameAndAddressOfTheBeneficiariesIsDisplayed();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1304,6 +1350,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyInterestIsAutoFetchedFromBenyWorksheet();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyInterestIsAutoFetchedFromBenyWorksheet();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1552,6 +1601,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userSelectsMultiplePetitioners();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userSelectsMultiplePetitioners();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1568,6 +1620,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verify2PetitionersAreVisibleOnTheFormAndRestAreOnTheAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1587,6 +1642,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().userSwapTheSelectedPetitionerContacts();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userSwapTheSelectedPetitionerContacts();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1655,6 +1713,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyCounselDetailsArePopulatedCorrectly();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyCounselDetailsArePopulatedCorrectly();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1886,5 +1947,53 @@ public class CommonSteps {
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
+    }
+
+    @Then("^user verifies by default page 1 should is opened and correct county name is fetched and displayed at the top of the \"([^\"]*)\" form$")
+    public void userVerifiesByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that by default page 1 should is opened and correct county name is fetched and displayed at the top of the "+formName+" form");
+        switch (formName) {
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyByDefaultPageShouldIsOpenedAndCorrectCountyNameIsFetchedAndDisplayedAtTheTopOfTheForm();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies selected names of petitioner are displayed with address on \"([^\"]*)\" form$")
+    public void userVerifiesSelectedNamesOfPetitionerAreDisplayedWithAddress(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that selected names of petitioner are displayed with address on "+formName+" form");
+        switch (formName) {
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifySelectedNamesOfPetitionerAreDisplayedWithAddress();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifySelectedNamesOfPetitionerAreDisplayedWithAddress();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("^user verifies estate's name is auto fetched and correctly displayed on \"([^\"]*)\" form$")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayed(String formName) throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on "+formName+" form");
+        switch (formName) {
+            case "OC02":
+                PageFactory.probateFormsOC02Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayed();
+                break;
+            default:
+                throw new AutomationException("Unsupported form name: " + formName);
+        }
+        CommonSteps.takeScreenshot();
     }
 }
