@@ -2,14 +2,11 @@
 Feature: 6in1 probate form OC05 Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     And user go to application "$6in1_url"
-    When user login using "<user-email>" and "<password>"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                        | password  |
-      | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
     When user opens "Sara Watt" Estate
@@ -44,6 +41,9 @@ Feature: 6in1 probate form OC05 Feature
      When user click on Petitioner name field
      And user swap the selected petitioner contacts for "OC05" form
      Then user verifies for "OC05" form swapped petitioner names are reflected on UI accordingly
+
+   Scenario: Verify, agent's name and address can be added in the agent field.
+     When user enters agent's name and address details
 
    Scenario: Verify, trust's name is auto fetched.
      When user navigates to page number: "5"

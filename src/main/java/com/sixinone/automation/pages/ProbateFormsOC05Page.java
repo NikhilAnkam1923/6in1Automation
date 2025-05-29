@@ -127,6 +127,14 @@ public class ProbateFormsOC05Page extends BasePage{
     private static final String FILE_NUMBER_FIELD = "//input[@name='fileNumberPA']";
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
     private static final String NAME_OF_TRUST_FIELD_OTHER_PAGES = "//p[contains(text(),'Estate of')]//input";
+    private static final String SEE_CONTINUATION_SCHEDULE_ATTACHED_MSG = "//p//span[text()='See continuation schedule attached']";
+    private static final String AGENT_NAME_FIELD_1 = "//input[@name='nameAgent1']";
+    private static final String AGENT_NAME_FIELD_2 = "//input[@name='nameAgent2']";
+    private static final String AGENT_1_ADDRESS_LINE = "//input[@name='addressLine1Agent1']";
+    private static final String AGENT_1_CITY_STATE_ZIP = "//input[@name='cityStateZipAgent1']";
+    private static final String AGENT_2_ADDRESS_LINE = "//input[@name='addressLine1Agent2']";
+    private static final String AGENT_2_CITY_STATE_ZIP = "//input[@name='cityStateZipAgent2']";
+
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -817,13 +825,17 @@ public class ProbateFormsOC05Page extends BasePage{
     }
 
     public void verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment() throws AutomationException {
-        scrollToElement(VIEW_ATTACHMENT_BTN);
-        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
-        WebDriverUtil.waitForAWhile();
-
         if (beneDetails.size() <= 2) {
             throw new AutomationException("There are no additional beneficiaries to verify in the attachment.");
         }
+
+        if(!driverUtil.getWebElement(SEE_CONTINUATION_SCHEDULE_ATTACHED_MSG).isDisplayed()){
+            throw new AutomationException("See Continuation Schedule Attached message not display");
+        }
+
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
 
         List<WebElement> attachmentBeneficiaries = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
 
@@ -929,5 +941,9 @@ public class ProbateFormsOC05Page extends BasePage{
                 throw new AutomationException("Beneficial Interest is not fetched correctly. Expected: " + expectedBeneficialInterest + " ,Found: " + actualBeneficialInterest);
             }
         }
+    }
+
+    public void userEntersAgentSNameAndAddressDetails() {
+
     }
 }
