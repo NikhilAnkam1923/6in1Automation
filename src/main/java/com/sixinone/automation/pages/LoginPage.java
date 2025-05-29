@@ -31,6 +31,7 @@ public class LoginPage extends BasePage {
     public static WebDriverUtil driverUtil = new WebDriverUtil();
     private static final String CREATE_LACKNER_STAFF_BTN = "//button[@aria-label='%s']";
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
+    private static final String CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
 
     public void clickOnLoginButton() throws AutomationException {
         driverUtil.getWebElement(LOGIN_BTN).click();
@@ -97,6 +98,15 @@ public class LoginPage extends BasePage {
     }
 
     public void doLogoutFrom6in1() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> closeButtons = DriverFactory.drivers.get().findElements(By.xpath(CLOSE_BTN));
+        if (!closeButtons.isEmpty() && closeButtons.get(0).isDisplayed()) {
+            closeButtons.get(0).click();
+            CommonSteps.logInfo("Close button was present and clicked.");
+        } else {
+            CommonSteps.logInfo("Close button not present, continuing execution.");
+        }
+
         WebDriverUtil.waitForAWhile();
         List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
         if (!toasterBtns.isEmpty()) {

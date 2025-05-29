@@ -26,6 +26,9 @@ public class EstateContactsPage extends BasePage {
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static final String NAME_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Name']";
     public static final String ROLES_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Roles']";
+    //for UAT
+//    public static final String ADD_CONTACT_BTN = "//button[text()='Create']";
+    //for Prod
     public static final String ADD_CONTACT_BTN = "//button[text()='Add Contact']";
     public static final String ADD_BUTTON = "//button[text()='Add']";
     public static final String CREATE_NEW_INDIVIDUAL_BTN = "//button[text()='Create New Individual']";
@@ -50,7 +53,7 @@ public class EstateContactsPage extends BasePage {
     private static final String CONTACT_NAME_IN_ESTATE_CONTACT = "//td[@aria-colindex='1' and text()='%s']";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input";
-    public static final String MODAL_NAME_FILTER_INPUT = "//div[@class='modal-body']//th[@aria-colindex='2'] //input[@aria-label='Filter']";
+    public static final String MODAL_NAME_FILTER_INPUT = "//div[@class='modal-body']//th[@aria-colindex='2'] //input";
     private static final String CONTACT_NAME_IN_GLOBAL_CONTACT = "//td//a[contains(@class,'column-edit-link') and text()='%s']";
     private static final String CONTACT_NAME_IN_ADD_CONTACT_LIST = "//div[@class='modal-body']//td[@aria-colindex='2' and text()='%s']";
     private static final String NEW_ESTATE_CONTACT_MODAL_TITLE = "//div[contains(@class,'modal-title') and text()='Add a New Estate Contact - %s']";
@@ -61,7 +64,7 @@ public class EstateContactsPage extends BasePage {
     private static final String ROLE_SAVE_BTN = "//div[@class='fade custom-modal center-small-modal modal show']//button[text()='Save']";
     private static final String ESTATE_SPECIFIC_FIELDS_TAB = "//div[@class='nav-item']/a[text()='Estate-Specific Fields']";
     private static final String NO_ROLES_SELECTED_NOTIFICATION = "//div[@class='modal-inner-content']/div[@class='icon-danger']/following-sibling::div/p/span[contains(text(),'You have not selected any role for this contact in this Estate.')]";
-    private static final String ADDCONTACT_CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='5'] //input[@aria-label='Filter']";
+    private static final String ADDCONTACT_CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='5'] //input";
     private static final String SELECTED_ROLES_PAGE_HEADING = "//div[@class='modal-content']//div[text()='Selected Roles']";
     public static final String SAVE_BUTTON_AFTER_SELECTROLE = "//div[@class='fade custom-modal undefined modal show']//button[text()='Save']";
     private static final String NO_ROLES_SAVE_BTN = "//button[@class='btn btn-danger' and text()='Save']";
@@ -158,6 +161,7 @@ public class EstateContactsPage extends BasePage {
         waitForInvisibleElement(By.xpath(SPINNER));
         waitForVisibleElement(By.xpath(ADD_CONTACT_BTN));
         driverUtil.getWebElement(ADD_CONTACT_BTN).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     private boolean clickNextPage() throws AutomationException {
