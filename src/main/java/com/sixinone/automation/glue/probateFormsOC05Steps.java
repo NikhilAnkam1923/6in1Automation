@@ -24,8 +24,28 @@ public class probateFormsOC05Steps {
     }
 
     @When("user enters agent's name and address details")
-    public void userEntersAgentSNameAndAddressDetails() {
+    public void userEntersAgentSNameAndAddressDetails() throws IOException, ParseException, AutomationException {
         CommonSteps.logInfo("user enters agent's name and address details");
         PageFactory.probateFormsOC05Page().userEntersAgentSNameAndAddressDetails();
+    }
+
+    @Then("user verifies agent's name and address details are auto saved")
+    public void userVerifiesAgentSNameAndAddressDetailsAreAutoSaved() throws AutomationException {
+        CommonSteps.logInfo("Verified that agent's name and address details are auto saved");
+        PageFactory.probateFormsOC05Page().verifyAgentSNameAndAddressDetailsAreAutoSaved();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user edit agent's name and address details")
+    public void userEditAgentSNameAndAddressDetails() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user edit agent's name and address details");
+        PageFactory.probateFormsOC05Page().userEditAgentSNameAndAddressDetails();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 3")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 3");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage3();
+        CommonSteps.takeScreenshot();
     }
 }

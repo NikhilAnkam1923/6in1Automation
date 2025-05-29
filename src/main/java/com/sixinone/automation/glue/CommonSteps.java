@@ -531,7 +531,12 @@ public class CommonSteps {
     public void userSelectsTheAkaCheckbox() throws AutomationException {
         CommonSteps.logInfo("user selects the aka checkbox");
         scrollToElement(SHOW_AKA_CHECkBOX);
-        DriverFactory.drivers.get().findElement(By.xpath(SHOW_AKA_CHECkBOX)).click();
+        WebElement akaCheckbox = DriverFactory.drivers.get().findElement(By.xpath(SHOW_AKA_CHECkBOX));
+        if (!akaCheckbox.isSelected()) {
+            akaCheckbox.click();
+        } else {
+            CommonSteps.logInfo("AKA checkbox was already selected. Continuing execution.");
+        }
     }
 
     @When("^user resets the \"([^\"]*)\" form$")

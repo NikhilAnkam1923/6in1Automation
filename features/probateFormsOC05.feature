@@ -43,7 +43,17 @@ Feature: 6in1 probate form OC05 Feature
      Then user verifies for "OC05" form swapped petitioner names are reflected on UI accordingly
 
    Scenario: Verify, agent's name and address can be added in the agent field.
+      #Verify, multiple agents can be added.
      When user enters agent's name and address details
+     Then user verifies agent's name and address details are auto saved
+
+   Scenario: Verify, agents name and address can be edited.
+     When user edit agent's name and address details
+     Then user verifies agent's name and address details are auto saved
+
+   Scenario: Verify, trust's name is auto fetched.
+     When user navigates to page number: "3"
+     Then user verifies estate's name is auto fetched and correctly displayed on page 3
 
    Scenario: Verify, trust's name is auto fetched.
      When user navigates to page number: "5"

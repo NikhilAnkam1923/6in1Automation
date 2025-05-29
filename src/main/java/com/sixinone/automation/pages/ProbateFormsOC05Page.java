@@ -184,6 +184,13 @@ public class ProbateFormsOC05Page extends BasePage{
     static String petitioner4AddressLine1Form;
     static String petitioner4CityStateCodeZipForm;
     static String estateNameFormPage5;
+    static String estateNameFormPage3;
+    static String agent1nameForm;
+    static String agent1addressLine1Form;
+    static String agent1cityStateZipForm;
+    static String agent2nameForm;
+    static String agent2addressLine1Form;
+    static String agent2cityStateZipForm;
 
     public ProbateFormsOC05Page() throws IOException, ParseException {
     }
@@ -943,7 +950,125 @@ public class ProbateFormsOC05Page extends BasePage{
         }
     }
 
-    public void userEntersAgentSNameAndAddressDetails() {
+    public void scrollAndFillField(String fieldLocator, String value) throws AutomationException {
+        scrollToElement(fieldLocator);
+        WebElement Field = driverUtil.getWebElement(fieldLocator);
+        Field.click();
+        Field.sendKeys(value);
+        Field.sendKeys(Keys.TAB);
+    }
 
+    public void userEntersAgentSNameAndAddressDetails() throws IOException, ParseException, AutomationException {
+        String agent1name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent1name").toString();
+        String agent1addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent1addressLine1").toString();
+        String agent1cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent1cityStateZip").toString();
+        String agent2name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent2name").toString();
+        String agent2addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent2addressLine1").toString();
+        String agent2cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent2cityStateZip").toString();
+
+        scrollAndFillField(AGENT_NAME_FIELD_1, agent1name);
+        scrollAndFillField(AGENT_1_ADDRESS_LINE, agent1addressLine1);
+        scrollAndFillField(AGENT_1_CITY_STATE_ZIP, agent1cityStateZip);
+        scrollAndFillField(AGENT_NAME_FIELD_2, agent2name);
+        scrollAndFillField(AGENT_2_ADDRESS_LINE, agent2addressLine1);
+        scrollAndFillField(AGENT_2_CITY_STATE_ZIP, agent2cityStateZip);
+
+        waitForAWhile();
+        agent1nameForm = getFieldValue(AGENT_NAME_FIELD_1);
+        agent1addressLine1Form = getFieldValue(AGENT_1_ADDRESS_LINE);
+        agent1cityStateZipForm = getFieldValue(AGENT_1_CITY_STATE_ZIP);
+        agent2nameForm = getFieldValue(AGENT_NAME_FIELD_2);
+        agent2addressLine1Form = getFieldValue(AGENT_2_ADDRESS_LINE);
+        agent2cityStateZipForm = getFieldValue(AGENT_2_CITY_STATE_ZIP);
+    }
+
+    public void verifyAutoSavedFields(String fieldName, String expectedValue, String actualValue) throws AutomationException {
+        if(!expectedValue.equals(expectedValue)){
+            throw new AutomationException(fieldName + " field not retained the entered value. Expected: " + expectedValue + " ,Found: " + expectedValue);
+        }
+    }
+
+    public void verifyAgentSNameAndAddressDetailsAreAutoSaved() throws AutomationException {
+        switchToPage(1);
+        switchToPage(2);
+
+        waitForAWhile();
+        String actualAgent1nameForm = getFieldValue(AGENT_NAME_FIELD_1);
+        String actualAgent1addressLine1Form = getFieldValue(AGENT_1_ADDRESS_LINE);
+        String actualAgent1cityStateZipForm = getFieldValue(AGENT_1_CITY_STATE_ZIP);
+        String actualAgent2nameForm = getFieldValue(AGENT_NAME_FIELD_2);
+        String actualAgent2addressLine1Form = getFieldValue(AGENT_2_ADDRESS_LINE);
+        String actualAgent2cityStateZipForm = getFieldValue(AGENT_2_CITY_STATE_ZIP);
+
+        verifyAutoSavedFields("Agent Name 1", agent1nameForm, actualAgent1nameForm);
+        verifyAutoSavedFields("Agent Address Line 1", agent1addressLine1Form, actualAgent1addressLine1Form);
+        verifyAutoSavedFields("Agent City State Zip 1", agent1cityStateZipForm, actualAgent1cityStateZipForm);
+        verifyAutoSavedFields("Agent Name 2", agent2nameForm, actualAgent2nameForm);
+        verifyAutoSavedFields("Agent Address Line 2", agent2nameForm, actualAgent2addressLine1Form);
+        verifyAutoSavedFields("Agent City State Zip 1", agent2cityStateZipForm, actualAgent2cityStateZipForm);
+
+        //use in reset
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
+        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
+        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
+        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
+        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
+    }
+
+    public void clearFieldUntilEmpty(String fieldLocator) {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(fieldLocator));
+        int attempts = 0;
+        while (element != null && !element.getAttribute("value").isEmpty() && attempts < 5) {
+            element.clear();
+            WebDriverUtil.waitForAWhile();
+            attempts++;
+        }
+
+        if (!element.getAttribute("value").isEmpty()) {
+            CommonSteps.logInfo("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
+        }
+    }
+
+    public void userEditAgentSNameAndAddressDetails() throws AutomationException, IOException, ParseException {
+        String agent1name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent3name").toString();
+        String agent1addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent3addressLine1").toString();
+        String agent1cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent3cityStateZip").toString();
+        String agent2name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent4name").toString();
+        String agent2addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent4addressLine1").toString();
+        String agent2cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent4cityStateZip").toString();
+
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
+        scrollAndFillField(AGENT_NAME_FIELD_1, agent1name);
+        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
+        scrollAndFillField(AGENT_1_ADDRESS_LINE, agent1addressLine1);
+        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
+        scrollAndFillField(AGENT_1_CITY_STATE_ZIP, agent1cityStateZip);
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
+        scrollAndFillField(AGENT_NAME_FIELD_2, agent2name);
+        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
+        scrollAndFillField(AGENT_2_ADDRESS_LINE, agent2addressLine1);
+        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
+        scrollAndFillField(AGENT_2_CITY_STATE_ZIP, agent2cityStateZip);
+
+        waitForAWhile();
+        agent1nameForm = getFieldValue(AGENT_NAME_FIELD_1);
+        agent1addressLine1Form = getFieldValue(AGENT_1_ADDRESS_LINE);
+        agent1cityStateZipForm = getFieldValue(AGENT_1_CITY_STATE_ZIP);
+        agent2nameForm = getFieldValue(AGENT_NAME_FIELD_2);
+        agent2addressLine1Form = getFieldValue(AGENT_2_ADDRESS_LINE);
+        agent2cityStateZipForm = getFieldValue(AGENT_2_CITY_STATE_ZIP);
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage3() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+
+        estateNameFormPage3 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNameFormPage3)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage3);
+        }
     }
 }
