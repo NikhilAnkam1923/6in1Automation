@@ -9,7 +9,7 @@ Feature: 6in1 probate form RW06 Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "William John" Estate
+    When user opens "John, William Arik Jr." Estate
     And user saves entered Estate information for "RW06" form
 
   Scenario: Verify county, estate and aka names are auto-populated on the form

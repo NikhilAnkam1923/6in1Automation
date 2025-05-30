@@ -140,7 +140,7 @@ public class EstateContactsPage extends BasePage {
     }
 
     public void navigateToEstateContactsTab() throws AutomationException {
-        WebElement tempUser = driverUtil.getWebElement("//a[text()='Baby John']");
+        WebElement tempUser = driverUtil.getWebElement("//a[text()='John, Baby Arik Jr.']");
         tempUser.click();
         waitForInvisibleElement(By.xpath(SPINNER));
         waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));

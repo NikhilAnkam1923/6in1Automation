@@ -9,7 +9,7 @@ Feature: 6in1 probate form RW01 Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "William John" Estate
+    When user opens "John, William Arik Jr." Estate
     And user saves entered Estate information for "REV346" form
 
   Scenario: Verify, file no. is displayed at the top of the form.

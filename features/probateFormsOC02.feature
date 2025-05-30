@@ -9,7 +9,7 @@ Feature: 6in1 probate form OC02 Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "Sara Watt" Estate
+    When user opens "Watt, Sara Arik Jr." Estate
     And user saves entered Estate information for "OC02" form
 
   Scenario: Verify, correct County of the decedent, file no is fetched from the decedent info. tab.

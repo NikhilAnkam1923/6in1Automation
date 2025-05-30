@@ -9,7 +9,7 @@ Feature: 6in1 probate form OC05 Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "Sara Watt" Estate
+    When user opens "Watt, Sara Arik Jr." Estate
     And user saves entered Estate information for "OC05" form
 
   Scenario: Verify, correct County of the decedent is fetched from the decedent info. tab.
@@ -55,6 +55,15 @@ Feature: 6in1 probate form OC05 Feature
      When user navigates to page number: "3"
      Then user verifies estate's name is auto fetched and correctly displayed on page 3
 
+  Scenario: Verify, trust's name is auto fetched.
+    When user navigates to page number: "4"
+    Then user verifies estate's name is auto fetched and correctly displayed on page 4
+
+  Scenario: Verify, institution's address can be added.
+    When user clicks on address section
+    And user add institution address details
+    Then user verifies address is displayed on the form
+  
    Scenario: Verify, trust's name is auto fetched.
      When user navigates to page number: "5"
      Then user verifies estate's name is auto fetched and correctly displayed on "OC05" form
@@ -76,7 +85,15 @@ Feature: 6in1 probate form OC05 Feature
      Then user verifies for "OC05" form all the beny users are displayed as a part of attachment
 
    Scenario: Verify, interest rate is fetched from beny worksheet.
+      #Verify, interest value for each beneficiary.
      Then user verifies interest is auto fetched from beny worksheet for "OC05" form
+
+   Scenario: Verify that on page 5, comments can be added for that particular beneficiary.
+     When user adds comments for "OC05" form
+     Then user verifies comments are added and auto saved for "OC05" form
+
+   Scenario: Verify, relationship of the beneficiary with the given estate is displayed under relationship section.
+     Then user verifies correct relationship is auto fetched and displayed under relationship section for "OC05" form
 
   @Setup
   Scenario:SETUP: Close Browser

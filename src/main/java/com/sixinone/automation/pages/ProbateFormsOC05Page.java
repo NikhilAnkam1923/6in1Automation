@@ -134,6 +134,21 @@ public class ProbateFormsOC05Page extends BasePage{
     private static final String AGENT_1_CITY_STATE_ZIP = "//input[@name='cityStateZipAgent1']";
     private static final String AGENT_2_ADDRESS_LINE = "//input[@name='addressLine1Agent2']";
     private static final String AGENT_2_CITY_STATE_ZIP = "//input[@name='cityStateZipAgent2']";
+    private static final String ADDRESS_SECTION = "//textarea[@name='safeDepositBoxDetails[0].institutionAndAddress']";
+    private static final String INSTITUTION_ADDRESS_FIELD = "//div[@class='modal-content']//input[@name='institutionAndAddress']";
+    private static final String BOX_NO_FIELD = "//div[@class='modal-content']//input[@name='boxNo']";
+    private static final String TITTLE_OF_REGISTRATION_FIELD = "//div[@class='modal-content']//input[@name='titleOrRegistration']";
+    private static final String DATE_CLOSED_FIELD = "//div[@class='modal-content']//input[@name='dateClosed']";
+    private static final String ADD_BUTTON = "//div[@class='modal-content']//button[@type='submit']";
+    private static final String INSTITUTION_ADDRESS_FIELD_TABLE = "//div[@class='modal-content']//tbody//td[position()='1']";
+    private static final String BOX_NO_FIELD_TABLE = "//div[@class='modal-content']//tbody//td[position()='2']";
+    private static final String TITTLE_OF_REGISTRATION_FIELD_TABLE = "//div[@class='modal-content']//tbody//td[position()='3']";
+    private static final String DATE_CLOSED_FIELD_TABLE = "//div[@class='modal-content']//tbody//td[position()='4']";
+    private static final String INSTITUTION_ADDRESS_FIELD_FORM = "//textarea[@name='safeDepositBoxDetails[0].institutionAndAddress']";
+    private static final String BOX_NO_FIELD_FORM = "//textarea[@name='safeDepositBoxDetails[0].boxNo']";
+    private static final String TITTLE_OF_REGISTRATION_FIELD_FORM = "//textarea[@name='safeDepositBoxDetails[0].titleOrRegistration']";
+    private static final String DATE_CLOSED_FIELD_FORM = "//input[@name='safeDepositBoxDetails[0].dateClosed']";
+    private static final String DELETE_BUTTON = "//div[@class='modal-content']//tbody//td[position()='5']//button";
 
 
     private final Map<String, String> estateInfo = new HashMap<>();
@@ -185,12 +200,19 @@ public class ProbateFormsOC05Page extends BasePage{
     static String petitioner4CityStateCodeZipForm;
     static String estateNameFormPage5;
     static String estateNameFormPage3;
+    static String estateNameFormPage4;
     static String agent1nameForm;
     static String agent1addressLine1Form;
     static String agent1cityStateZipForm;
     static String agent2nameForm;
     static String agent2addressLine1Form;
     static String agent2cityStateZipForm;
+    static String InstitutionAddressForm;
+    static String BoxNoForm;
+    static String TitleOfRegistrationForm;
+    static String DateClosedForm;
+    static String comment1Form;
+    static String comment2Form;
 
     public ProbateFormsOC05Page() throws IOException, ParseException {
     }
@@ -1069,6 +1091,138 @@ public class ProbateFormsOC05Page extends BasePage{
 
         if (!estateName.equals(estateNameFormPage3)) {
             throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage3);
+        }
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage4() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+
+        estateNameFormPage4 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNameFormPage4)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage4);
+        }
+    }
+
+    public void userClicksOnAddressSection() throws AutomationException {
+        scrollToElement(ADDRESS_SECTION);
+        driverUtil.getWebElement(ADDRESS_SECTION).click();
+        waitForAWhile();
+    }
+
+    public void userAddInstitutionAddressDetails() throws IOException, ParseException, AutomationException {
+        String InstitutionAddress = CommonUtil.getJsonPath("OC05Form").get("OC05Form.InstitutionAddress").toString();
+        String BoxNo = CommonUtil.getJsonPath("OC05Form").get("OC05Form.BoxNo").toString();
+        String TitleOfRegistration = CommonUtil.getJsonPath("OC05Form").get("OC05Form.TitleOfRegistration").toString();
+        String DateClosed = CommonUtil.getJsonPath("OC05Form").get("OC05Form.DateClosed").toString();
+
+        waitForVisibleElement(By.xpath(INSTITUTION_ADDRESS_FIELD));
+        scrollAndFillField(INSTITUTION_ADDRESS_FIELD, InstitutionAddress);
+        scrollAndFillField(BOX_NO_FIELD, BoxNo);
+        scrollAndFillField(TITTLE_OF_REGISTRATION_FIELD, TitleOfRegistration);
+        WebElement dateField = driverUtil.getWebElement(DATE_CLOSED_FIELD);
+        dateField.click();
+        dateField.clear();
+        dateField.sendKeys(DateClosed);
+        dateField.sendKeys(Keys.TAB);
+
+        driverUtil.getWebElement(ADD_BUTTON).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "New Safe deposit box is added successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "New Safe deposit box is added successfully.")));
+
+        InstitutionAddressForm = getFieldValue(INSTITUTION_ADDRESS_FIELD_TABLE);
+        BoxNoForm = getFieldValue(BOX_NO_FIELD_TABLE);
+        TitleOfRegistrationForm = getFieldValue(TITTLE_OF_REGISTRATION_FIELD_TABLE);
+        DateClosedForm = getFieldValue(DATE_CLOSED_FIELD_TABLE);
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void verifyAddressIsDisplayedOnTheForm() throws AutomationException {
+        waitForAWhile();
+        String actualInstitutionAddressForm = getFieldValue(INSTITUTION_ADDRESS_FIELD_FORM);
+        String actualBoxNoForm = getFieldValue(BOX_NO_FIELD_FORM);
+        String actualTitleOfRegistrationForm = getFieldValue(TITTLE_OF_REGISTRATION_FIELD_FORM);
+        String actualDateClosedForm = getFieldValue(DATE_CLOSED_FIELD_FORM);
+
+        if(!actualInstitutionAddressForm.equals(InstitutionAddressForm)){
+            throw new AutomationException("Institution Address is not displayed correctly on form. Expected: " + InstitutionAddressForm + " ,Found: " + actualInstitutionAddressForm);
+        }
+
+        if(!actualBoxNoForm.equals(BoxNoForm)){
+            throw new AutomationException("Box No. is not displayed correctly on form. Expected: " + BoxNoForm + " ,Found: " + actualBoxNoForm);
+        }
+
+        if(!actualTitleOfRegistrationForm.equals(TitleOfRegistrationForm)){
+            throw new AutomationException("Title of Registration is not displayed correctly on form. Expected: " + TitleOfRegistrationForm + " ,Found: " + actualTitleOfRegistrationForm);
+        }
+
+        if(!actualDateClosedForm.equals(DateClosedForm)){
+            throw new AutomationException("Date Closed is not displayed correctly on form. Expected: " + DateClosedForm + " ,Found: " + actualDateClosedForm);
+        }
+
+        //use in reset
+//        userClicksOnAddressSection();
+//        waitForVisibleElement(By.xpath(INSTITUTION_ADDRESS_FIELD));
+//        scrollToElement(DELETE_BUTTON);
+//        driverUtil.getWebElement(DELETE_BUTTON).click();
+//        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Safe Deposit Box is deleted successfully.")));
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Safe Deposit Box is deleted successfully.")));
+//        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void userAddsComments() throws AutomationException, IOException, ParseException {
+        for (int i = 0; i < 2; i++) {
+            WebElement commentsField = driverUtil.getWebElement(String.format(COMMENTS_FIELD_XPATH, i));
+            String dataKey = String.valueOf(i + 1);
+            String comment = CommonUtil.getJsonPath("OC01Form").get("OC01Form.comment" + dataKey).toString();
+
+            commentsField.click();
+            commentsField.sendKeys(comment);
+            driverUtil.getWebElement("//body").click();
+            WebDriverUtil.waitForAWhile();
+
+            switch (i) {
+                case 0:
+                    comment1Form = commentsField.getText();
+                    break;
+                case 1:
+                    comment2Form = commentsField.getText();
+                    break;
+            }
+
+        }
+    }
+
+    public void verifyCommentsAreAddedAndAutoSaved() throws AutomationException {
+        switchToPage(6);
+        switchToPage(5);
+
+        List<String> comments = Arrays.asList(comment1Form, comment2Form);
+
+        for (int i = 0; i < 2; i++) {
+            scrollToElement(String.format(COMMENTS_FIELD_XPATH, i));
+            WebElement commentsField = driverUtil.getWebElement(String.format(COMMENTS_FIELD_XPATH, i));
+            String actualComment = commentsField.getText();
+            String expectedComment = comments.get(i);
+
+            if (!actualComment.equals(expectedComment)) {
+                throw new AutomationException("Comment " + (i + 1) + " is not auto-saved. Expected: " + expectedComment + " ,Found: " + actualComment);
+            }
+        }
+    }
+
+    public void verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection() throws IOException, ParseException, AutomationException {
+        for (int i = 0; i < 7; i++) {
+            String key = beneficiaryKeys.get(i);
+            String expectedRelationship = CommonUtil.getJsonPath(key).get(key + ".Relationship").toString();
+            String actualRelationship = beneRelationship.get(i).trim();
+
+            if (!actualRelationship.equals(expectedRelationship)) {
+                throw new AutomationException("Relationship is not fetched correctly. Expected: " + expectedRelationship + " ,Found: " + actualRelationship);
+            }
         }
     }
 }
