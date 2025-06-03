@@ -2,17 +2,14 @@
 Feature: 6in1 probate form OC03 Feature
 
   @Setup
-  Scenario Outline: SETUP: Launch Browser and go to application
+  Scenario: SETUP: Launch Browser and go to application
     Given User launched "chrome"
     And user go to application "$6in1_url"
-    When user login using "<user-email>" and "<password>"
+    When user login using "nikhilankam@benchmarkit.solutions" and "Bits@1234"
     Then user verifies the Home page
-    Examples:
-      | user-email                        | password  |
-      | nikhilankam@benchmarkit.solutions | Bits@1234 |
 
   Scenario: Open Estate
-    When user opens "Sara Watt" Estate
+    When user opens "Watt, Sara Arik Jr." Estate
     And user saves entered Estate information for "OC03" form
 
   Scenario: Verify that the “Estate of” field is populated automatically from estate records.
