@@ -9,7 +9,7 @@ Feature: 6in1 probate form RW08 Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "Kris Warner" Estate
+    When user opens "Warner, Kris Arik Jr." Estate
     And user saves entered Estate information for "RW08" form
 
   Scenario: Verify, county, estate and file number aka names are auto populated on the form.

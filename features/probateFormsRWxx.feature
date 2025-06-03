@@ -9,7 +9,7 @@ Feature: 6in1 probate form RWxx Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "William John" Estate
+    When user opens "John, William Arik Jr." Estate
     And user saves entered Estate information for "RWxx" form
 
   Scenario: Verify that the county, estate name, and "Also Known As" (AKA) values are auto-populated from the selected estate.

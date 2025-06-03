@@ -1340,6 +1340,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyCorrectRelationshipIsAutoFetchedAndDisplayedUnderRelationshipSection();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1675,6 +1678,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userAddsComments();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userAddsComments();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1692,6 +1698,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyCommentsAreAddedAndAutoSaved();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyCommentsAreAddedAndAutoSaved();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

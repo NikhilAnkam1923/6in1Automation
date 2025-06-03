@@ -9,7 +9,7 @@ Feature: 6in1 probate form RW04 Feature
     Then user verifies the Home page
 
   Scenario: Open Estate
-    When user opens "William John" Estate
+    When user opens "John, William Arik Jr." Estate
     And user saves entered Estate information for "RW04" form
 
   Scenario: Verify, correct title is displayed on the form's header.

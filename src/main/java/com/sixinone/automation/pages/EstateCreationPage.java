@@ -76,7 +76,7 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_PART_2 = "//input[@name='fileNumberPart2']";
     private static final String FILE_NUMBER_PART_3 = "//input[@name='fileNumberPart3']";
     private static final String ADDRESS_RADIO_BTN_XPATH = "//div//label[text()='%s']/preceding-sibling::input[@name='defaultAddress']";
-    private static final String ESTATE_ACTION_BTN = "//tbody//tr//td//a[text()='%s'] /ancestor::td/following-sibling::td[contains(@class,'action-column')]/div/button";
+    private static final String ESTATE_ACTION_BTN = "//tbody//tr//td//a[contains(text(),'%s')] /ancestor::td/following-sibling::td[contains(@class,'action-column')]/div/button";
     private static final String ACTIONS_OPTION_XPATH = "//div[@role='menu' and @class='slideright dropdown-menu show']/a[@role='menuitem' and text()='%s']";
     private static final String ARCHIVE_DESCRIPTION = "//textarea[@name='description']";
     private static final String ARCHIVE_BUTTON = "//button[text()='Archive']";
@@ -138,6 +138,7 @@ public class EstateCreationPage extends BasePage {
         fillField(LAST_NAME_FIELD, "EstateCreate.lastName");
         fillFieldWithRandom(SSN_FIELD, randomSSN, actions);
         decedentSSN = randomSSN;
+        displayName = getFieldValue(FIRST_NAME_FIELD, "value");
     }
 
     public void clickOnProceedButton() throws AutomationException {
@@ -169,7 +170,6 @@ public class EstateCreationPage extends BasePage {
         fillField(DECEDENT_DISPLAY_NAME, "EstateCreate.displayName");
         selectSuffixOption();
         fillField(DECEDENT_ALSO_KNOWN_AS, "EstateCreate.alsoKnownAs");
-        displayName = getFieldValue(DECEDENT_DISPLAY_NAME, "value");
     }
 
     public void selectMaritalStatusOptionDivorced() throws AutomationException, IOException, ParseException {

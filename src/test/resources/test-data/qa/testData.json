@@ -873,6 +873,10 @@
     "agent3cityStateZip": "Denver, CO 80203",
     "agent4name": "Kris Van Lee",
     "agent4addressLine1": "Elm Street",
-    "agent4cityStateZip": "Seattle, WA 98101"
+    "agent4cityStateZip": "Seattle, WA 98101",
+    "InstitutionAddress": "First National Bank, 123 Main St, Springfield, IL 62701",
+    "BoxNo": "A1024",
+    "TitleOfRegistration": "Sara Watt - Sole Owner",
+    "DateClosed": "11/15/2024"
   }
 }

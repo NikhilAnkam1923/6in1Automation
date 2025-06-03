@@ -14,7 +14,6 @@ import java.io.IOException;
 )
 
 public class TestRunner extends BaseRunner {
-
     @BeforeClass(alwaysRun = true)
     public void beforeClass(ITestContext iTestContext) throws IOException {
         init(iTestContext);
