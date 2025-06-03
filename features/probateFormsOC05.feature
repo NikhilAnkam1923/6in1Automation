@@ -115,6 +115,11 @@ Feature: 6in1 probate form OC05 Feature
     When user navigates to page number: "8"
     Then user verifies estate's name is auto fetched and correctly displayed on page 8
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC05'
+    And verify all the fields entered are correctly reflected in the 'OC05' pdf
+
   @Setup
   Scenario:SETUP: Close Browser
     When user logged out from the application
