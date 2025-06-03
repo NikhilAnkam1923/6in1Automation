@@ -134,6 +134,14 @@ public class ProbateFormsOC05Page extends BasePage {
     private static final String FILE_NUMBER_FIELD = "//input[@name='fileNumberPA']";
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
     private static final String NAME_OF_TRUST_FIELD_OTHER_PAGES = "//p[contains(text(),'Estate of')]//input";
+    private static final String SEE_CONTINUATION_SCHEDULE_ATTACHED_MSG = "//p//span[text()='See continuation schedule attached']";
+    private static final String AGENT_NAME_FIELD_1 = "//input[@name='nameAgent1']";
+    private static final String AGENT_NAME_FIELD_2 = "//input[@name='nameAgent2']";
+    private static final String AGENT_1_ADDRESS_LINE = "//input[@name='addressLine1Agent1']";
+    private static final String AGENT_1_CITY_STATE_ZIP = "//input[@name='cityStateZipAgent1']";
+    private static final String AGENT_2_ADDRESS_LINE = "//input[@name='addressLine1Agent2']";
+    private static final String AGENT_2_CITY_STATE_ZIP = "//input[@name='cityStateZipAgent2']";
+
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -183,6 +191,13 @@ public class ProbateFormsOC05Page extends BasePage {
     static String petitioner4AddressLine1Form;
     static String petitioner4CityStateCodeZipForm;
     static String estateNameFormPage5;
+    static String estateNameFormPage3;
+    static String agent1nameForm;
+    static String agent1addressLine1Form;
+    static String agent1cityStateZipForm;
+    static String agent2nameForm;
+    static String agent2addressLine1Form;
+    static String agent2cityStateZipForm;
 
     static String downloadedFileName;
 
@@ -826,13 +841,17 @@ public class ProbateFormsOC05Page extends BasePage {
     }
 
     public void verifyRestOfTheSelectedBeneficiariesAreDisplayedOnTheAttachment() throws AutomationException {
-        scrollToElement(VIEW_ATTACHMENT_BTN);
-        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
-        WebDriverUtil.waitForAWhile();
-
         if (beneDetails.size() <= 2) {
             throw new AutomationException("There are no additional beneficiaries to verify in the attachment.");
         }
+
+        if (!driverUtil.getWebElement(SEE_CONTINUATION_SCHEDULE_ATTACHED_MSG).isDisplayed()) {
+            throw new AutomationException("See Continuation Schedule Attached message not display");
+        }
+
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
 
         List<WebElement> attachmentBeneficiaries = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
 
@@ -940,6 +959,128 @@ public class ProbateFormsOC05Page extends BasePage {
         }
     }
 
+    public void scrollAndFillField(String fieldLocator, String value) throws AutomationException {
+        scrollToElement(fieldLocator);
+        WebElement Field = driverUtil.getWebElement(fieldLocator);
+        Field.click();
+        Field.sendKeys(value);
+        Field.sendKeys(Keys.TAB);
+    }
+
+    public void userEntersAgentSNameAndAddressDetails() throws IOException, ParseException, AutomationException {
+        String agent1name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent1name").toString();
+        String agent1addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent1addressLine1").toString();
+        String agent1cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent1cityStateZip").toString();
+        String agent2name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent2name").toString();
+        String agent2addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent2addressLine1").toString();
+        String agent2cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent2cityStateZip").toString();
+
+        scrollAndFillField(AGENT_NAME_FIELD_1, agent1name);
+        scrollAndFillField(AGENT_1_ADDRESS_LINE, agent1addressLine1);
+        scrollAndFillField(AGENT_1_CITY_STATE_ZIP, agent1cityStateZip);
+        scrollAndFillField(AGENT_NAME_FIELD_2, agent2name);
+        scrollAndFillField(AGENT_2_ADDRESS_LINE, agent2addressLine1);
+        scrollAndFillField(AGENT_2_CITY_STATE_ZIP, agent2cityStateZip);
+
+        waitForAWhile();
+        agent1nameForm = getFieldValue(AGENT_NAME_FIELD_1);
+        agent1addressLine1Form = getFieldValue(AGENT_1_ADDRESS_LINE);
+        agent1cityStateZipForm = getFieldValue(AGENT_1_CITY_STATE_ZIP);
+        agent2nameForm = getFieldValue(AGENT_NAME_FIELD_2);
+        agent2addressLine1Form = getFieldValue(AGENT_2_ADDRESS_LINE);
+        agent2cityStateZipForm = getFieldValue(AGENT_2_CITY_STATE_ZIP);
+    }
+
+    public void verifyAutoSavedFields(String fieldName, String expectedValue, String actualValue) throws AutomationException {
+        if (!expectedValue.equals(expectedValue)) {
+            throw new AutomationException(fieldName + " field not retained the entered value. Expected: " + expectedValue + " ,Found: " + expectedValue);
+        }
+    }
+
+    public void verifyAgentSNameAndAddressDetailsAreAutoSaved() throws AutomationException {
+        switchToPage(1);
+        switchToPage(2);
+
+        waitForAWhile();
+        String actualAgent1nameForm = getFieldValue(AGENT_NAME_FIELD_1);
+        String actualAgent1addressLine1Form = getFieldValue(AGENT_1_ADDRESS_LINE);
+        String actualAgent1cityStateZipForm = getFieldValue(AGENT_1_CITY_STATE_ZIP);
+        String actualAgent2nameForm = getFieldValue(AGENT_NAME_FIELD_2);
+        String actualAgent2addressLine1Form = getFieldValue(AGENT_2_ADDRESS_LINE);
+        String actualAgent2cityStateZipForm = getFieldValue(AGENT_2_CITY_STATE_ZIP);
+
+        verifyAutoSavedFields("Agent Name 1", agent1nameForm, actualAgent1nameForm);
+        verifyAutoSavedFields("Agent Address Line 1", agent1addressLine1Form, actualAgent1addressLine1Form);
+        verifyAutoSavedFields("Agent City State Zip 1", agent1cityStateZipForm, actualAgent1cityStateZipForm);
+        verifyAutoSavedFields("Agent Name 2", agent2nameForm, actualAgent2nameForm);
+        verifyAutoSavedFields("Agent Address Line 2", agent2nameForm, actualAgent2addressLine1Form);
+        verifyAutoSavedFields("Agent City State Zip 1", agent2cityStateZipForm, actualAgent2cityStateZipForm);
+
+        //use in reset
+//        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
+//        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
+//        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
+//        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
+//        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
+//        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
+    }
+
+    public void clearFieldUntilEmpty(String fieldLocator) {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(fieldLocator));
+        int attempts = 0;
+        while (element != null && !element.getAttribute("value").isEmpty() && attempts < 5) {
+            element.clear();
+            WebDriverUtil.waitForAWhile();
+            attempts++;
+        }
+
+        if (!element.getAttribute("value").isEmpty()) {
+            CommonSteps.logInfo("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
+        }
+    }
+
+    public void userEditAgentSNameAndAddressDetails() throws AutomationException, IOException, ParseException {
+        String agent1name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent3name").toString();
+        String agent1addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent3addressLine1").toString();
+        String agent1cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent3cityStateZip").toString();
+        String agent2name = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent4name").toString();
+        String agent2addressLine1 = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent4addressLine1").toString();
+        String agent2cityStateZip = CommonUtil.getJsonPath("OC05Form").get("OC05Form.agent4cityStateZip").toString();
+
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
+        scrollAndFillField(AGENT_NAME_FIELD_1, agent1name);
+        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
+        scrollAndFillField(AGENT_1_ADDRESS_LINE, agent1addressLine1);
+        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
+        scrollAndFillField(AGENT_1_CITY_STATE_ZIP, agent1cityStateZip);
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
+        scrollAndFillField(AGENT_NAME_FIELD_2, agent2name);
+        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
+        scrollAndFillField(AGENT_2_ADDRESS_LINE, agent2addressLine1);
+        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
+        scrollAndFillField(AGENT_2_CITY_STATE_ZIP, agent2cityStateZip);
+
+        waitForAWhile();
+        agent1nameForm = getFieldValue(AGENT_NAME_FIELD_1);
+        agent1addressLine1Form = getFieldValue(AGENT_1_ADDRESS_LINE);
+        agent1cityStateZipForm = getFieldValue(AGENT_1_CITY_STATE_ZIP);
+        agent2nameForm = getFieldValue(AGENT_NAME_FIELD_2);
+        agent2addressLine1Form = getFieldValue(AGENT_2_ADDRESS_LINE);
+        agent2cityStateZipForm = getFieldValue(AGENT_2_CITY_STATE_ZIP);
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage3() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+
+        estateNameFormPage3 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNameFormPage3)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage3);
+        }
+    }
+
     public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
         boolean isFileFound = false;
         int counter = 0;
@@ -999,7 +1140,15 @@ public class ProbateFormsOC05Page extends BasePage {
             expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine2Form);
             boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
-            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping ) {
+
+            String agentAddressLine1Form = agent1addressLine1Form + " " + agent1cityStateZipForm;
+            String agentAddressLine2Form = agent2addressLine1Form + " " + agent2cityStateZipForm;
+            Map<String, String> expectedAgents = new LinkedHashMap<>();
+            expectedAgents.put(agent1nameForm, agentAddressLine1Form);
+            expectedAgents.put(agent2nameForm, agentAddressLine2Form);
+            boolean isValidatedAgentAddressMapping = validateAgentAddressMapping(pdfFilePath, expectedAgents);
+
+            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedAgentAddressMapping) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -1206,4 +1355,131 @@ public class ProbateFormsOC05Page extends BasePage {
 
         return nameAddressMap;
     }
+
+    public static boolean validateAgentAddressMapping(String pdfFilePath, Map<String, String> expectedAgentMap)
+            throws IOException, AutomationException {
+
+        Map<String, String> extractedMap = extractAgentAddressMapping(pdfFilePath);
+
+        int index = 1;
+        for (Map.Entry<String, String> expectedEntry : expectedAgentMap.entrySet()) {
+            String expectedName = expectedEntry.getKey().trim();
+            String expectedAddress = expectedEntry.getValue().trim();
+
+            String extractedName = "";
+            String extractedAddress = "";
+
+            // Extract values based on index order
+            List<String> extractedNames = new ArrayList<>(extractedMap.keySet());
+            List<String> extractedAddresses = new ArrayList<>(extractedMap.values());
+
+            if (index - 1 < extractedNames.size()) {
+                extractedName = extractedNames.get(index - 1);
+                extractedAddress = extractedAddresses.get(index - 1);
+            }
+
+            String agentLabel = "agent" + index;
+
+            // 🔍 Compare Name
+            CommonSteps.logInfo("🔍 Comparing -> for " + agentLabel + " Name Expected: '" + expectedName + "', Extracted: '" + extractedName + "'");
+            if (expectedName.equalsIgnoreCase(extractedName)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + agentLabel + " Name' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + agentLabel + " Name' mismatch. Expected: '" + expectedName + "', Found: '" + extractedName + "'");
+            }
+
+            // 🔍 Compare Address
+            CommonSteps.logInfo("🔍 Comparing -> for " + agentLabel + " Address Expected: '" + expectedAddress + "', Extracted: '" + extractedAddress + "'");
+            if (expectedAddress.equalsIgnoreCase(extractedAddress)) {
+                CommonSteps.logInfo("✅ Validation Passed: '" + agentLabel + " Address' matches expected.");
+            } else {
+                throw new AutomationException("❌ Validation Failed: '" + agentLabel + " Address' mismatch. Expected: '" + expectedAddress + "', Found: '" + extractedAddress + "'");
+            }
+
+            index++;
+        }
+
+        return true;
+    }
+
+    public static Map<String, String> extractAgentAddressMapping(String pdfFilePath) throws IOException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] lines = pdfText.split("\\r?\\n");
+        List<String> trimmedLines = Arrays.stream(lines).map(String::trim).collect(Collectors.toList());
+
+        Map<String, String> nameAddressMap = new LinkedHashMap<>();
+
+        int nameBlockCount = 0;
+
+        for (int i = 0; i < trimmedLines.size(); i++) {
+            String line = trimmedLines.get(i);
+
+            if (line.startsWith("Name:") && i + 2 < trimmedLines.size()) {
+                nameBlockCount++;
+                if (nameBlockCount == 2) {  // Second occurrence as you requested
+                    String namesLine = trimmedLines.get(i).replace("Name:", "").trim();
+                    String addressLine = trimmedLines.get(i + 1).replace("Address:", "").trim();
+                    String cityStateLine = trimmedLines.get(i + 2).trim();
+
+                    // Split names by spaces between full names: use a regex to split by uppercase words groups
+                    // A heuristic here: assume each name has at least two words and split accordingly
+                    List<String> names = splitAgentNames(namesLine);
+
+                    // Split streets by keywords or multiple spaces
+                    List<String> streets = Arrays.asList(addressLine.split("\\s{2,}|(?<=Street|Avenue|Road|Lane|Drive)\\s+"));
+
+                    // Split cities and states by zip codes
+                    List<String> cities = Arrays.asList(cityStateLine.split("(?<=\\d{5})\\s*"));
+
+                    for (int j = 0; j < names.size(); j++) {
+                        String name = names.get(j).trim();
+                        String street = j < streets.size() ? streets.get(j).trim() : "";
+                        String cityState = j < cities.size() ? cities.get(j).trim() : "";
+
+                        String fullAddress = (street + " " + cityState).trim();
+                        nameAddressMap.put(name, fullAddress);
+
+                        CommonSteps.logInfo("✅ " + name + " -> " + fullAddress);
+                    }
+                    break; // Stop after second block processed
+                }
+            }
+        }
+
+        return nameAddressMap;
+    }
+
+
+    private static List<String> splitAgentNames(String namesLine) {
+        List<String> result = new ArrayList<>();
+
+        // Split by space to get all tokens
+        String[] tokens = namesLine.split("\\s+");
+        // Heuristic: group tokens into names with 3 or 2 words (try 3 first, fallback 2)
+        int i = 0;
+        while (i < tokens.length) {
+            // Try 3-word name if possible
+            if (i + 2 < tokens.length) {
+                // Build 3-word name candidate
+                String threeWordName = tokens[i] + " " + tokens[i + 1] + " " + tokens[i + 2];
+                // If next token is uppercase start, consider it new name (optional: you can check with a dictionary)
+                result.add(threeWordName);
+                i += 3;
+            } else if (i + 1 < tokens.length) {
+                // Fallback to 2-word name
+                String twoWordName = tokens[i] + " " + tokens[i + 1];
+                result.add(twoWordName);
+                i += 2;
+            } else {
+                // Single token left (unlikely for full name, but add as is)
+                result.add(tokens[i]);
+                i++;
+            }
+        }
+        return result;
+    }
+
 }
