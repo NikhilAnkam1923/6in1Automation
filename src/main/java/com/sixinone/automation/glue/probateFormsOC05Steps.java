@@ -75,4 +75,25 @@ public class probateFormsOC05Steps {
         PageFactory.probateFormsOC05Page().verifyAddressIsDisplayedOnTheForm();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 6")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 6");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage6();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 7")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage7() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 7");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage7();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 8")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 8");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8();
+        CommonSteps.takeScreenshot();
+    }
 }

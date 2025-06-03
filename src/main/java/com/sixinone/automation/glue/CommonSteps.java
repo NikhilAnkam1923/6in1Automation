@@ -71,6 +71,7 @@ public class CommonSteps {
     private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V1 = "//input[@name='isDisplayAllBenyOnAttachment']";
     private static final String DISPLAY_ALL_BENE_ON_ATTACHMENT_BTN_V2 = "//input[@name='isDisplayAllBeneficiariesOnAttachment']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllIncomeOnAttachment']";
+    private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05 = "//input[@name='displayAllIncomeDistributeesOnAttachment']";
     private static final String EDIT_AMOUNT_PROPORTION_FIELD = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@class='yellowbg bold']";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
@@ -1378,6 +1379,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().userChecksTheDisplayCheckboxForBeneficiaries();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userChecksTheDisplayCheckboxForBeneficiaries();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1393,6 +1397,9 @@ public class CommonSteps {
             case "OC02":
                 PageFactory.probateFormsOC02Page().userVerifiesDisplayedContactsOnForm();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userVerifiesDisplayedContactsOnForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1402,9 +1409,21 @@ public class CommonSteps {
     @When("user checks 'Display ALL INCOME Distributees on attachment' checkbox")
     public void userChecksDisplayALLINCOMEDistributeesOnAttachmentCheckbox() {
         CommonSteps.logInfo("user checks 'Display ALL INCOME Distributees on attachment' checkbox");
-        scrollToElement(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN);
-        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN)).click();
-        WebDriverUtil.waitForAWhile();
+        String xpath = null;
+
+        if (!DriverFactory.drivers.get().findElements(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN)).isEmpty()) {
+            xpath = DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN;
+        } else if (!DriverFactory.drivers.get().findElements(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05)).isEmpty()) {
+            xpath = DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05;
+        }
+
+        if (xpath != null) {
+            scrollToElement(xpath);
+            DriverFactory.drivers.get().findElement(By.xpath(xpath)).click();
+            WebDriverUtil.waitForAWhile();
+        } else {
+            CommonSteps.logInfo("Display ALL INCOME Distributees on attachment button not found.");
+        }
     }
 
     @Then("^user verifies all the beneficiary contacts are moved to the attachment for \"([^\"]*)\" form$")
@@ -1416,6 +1435,9 @@ public class CommonSteps {
                 break;
             case "OC02":
                 PageFactory.probateFormsOC02Page().verifyAllTheBeneficiaryContactsAreMovedToTheAttachment();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyAllTheBeneficiaryContactsAreMovedToTheAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

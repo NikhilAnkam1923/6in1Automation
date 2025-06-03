@@ -149,7 +149,9 @@ public class ProbateFormsOC05Page extends BasePage{
     private static final String TITTLE_OF_REGISTRATION_FIELD_FORM = "//textarea[@name='safeDepositBoxDetails[0].titleOrRegistration']";
     private static final String DATE_CLOSED_FIELD_FORM = "//input[@name='safeDepositBoxDetails[0].dateClosed']";
     private static final String DELETE_BUTTON = "//div[@class='modal-content']//tbody//td[position()='5']//button";
-
+    private static final String BENE_NAMES_INCOME_PAGE_7 = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@value and normalize-space(@value)]";
+    private static final String BENE_ON_ATTACHMENT_PAGE_7 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
+    private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05 = "//input[@name='displayAllIncomeDistributeesOnAttachment']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -162,6 +164,7 @@ public class ProbateFormsOC05Page extends BasePage{
     private static final List<String> beneRelationship = new ArrayList<>();
     private static final List<String> beneInterest = new ArrayList<>();
     private static final List<String> beneficiaryKeys = new ArrayList<>();
+    private static final List<String> selectedContactNamesPage7 = new ArrayList<>();
     private static final List<String> selectedContactNamesPage5 = new ArrayList<>();
     private static final List<String> beneDetailsAfterRoleRemoved = new ArrayList<>();
     private static final List<String> newSelectedPetitioner = new ArrayList<>();
@@ -201,6 +204,9 @@ public class ProbateFormsOC05Page extends BasePage{
     static String estateNameFormPage5;
     static String estateNameFormPage3;
     static String estateNameFormPage4;
+    static String estateNameFormPage6;
+    static String estateNameFormPage7;
+    static String estateNameFormPage8;
     static String agent1nameForm;
     static String agent1addressLine1Form;
     static String agent1cityStateZipForm;
@@ -1223,6 +1229,123 @@ public class ProbateFormsOC05Page extends BasePage{
             if (!actualRelationship.equals(expectedRelationship)) {
                 throw new AutomationException("Relationship is not fetched correctly. Expected: " + expectedRelationship + " ,Found: " + actualRelationship);
             }
+        }
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage6() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+
+        estateNameFormPage6 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNameFormPage6)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage6);
+        }
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage7() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+
+        estateNameFormPage7 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNameFormPage7)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage7);
+        }
+    }
+
+    public void userChecksTheDisplayCheckboxForBeneficiaries() throws AutomationException {
+        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
+
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
+
+        int[] contactsToDisplay = {0, 2, 3, 4};
+
+        for (int index : contactsToDisplay) {
+            if (index < checkboxElements.size()) {
+                WebElement checkbox = checkboxElements.get(index);
+                if (!checkbox.isSelected()) {
+                    checkbox.click();
+                }
+            }
+        }
+
+        List<WebElement> nameElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_NAME_COLUMNS);
+
+        for (int i = 0; i < checkboxElements.size(); i++) {
+            if (checkboxElements.get(i).isSelected()) {
+                selectedContactNamesPage7.add(nameElements.get(i).getText());
+            }
+        }
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void userVerifiesDisplayedContactsOnForm() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> displayedNameElements = driverUtil.getWebElements(BENE_NAMES_INCOME_PAGE_7);
+
+        List<String> displayedNames = new ArrayList<>();
+        for (WebElement element : displayedNameElements) {
+            displayedNames.add(element.getAttribute("value").trim());
+        }
+
+        for (String expectedName : selectedContactNamesPage7) {
+            if (!displayedNames.contains(expectedName)) {
+                throw new AutomationException("Expected contact name not displayed: " + expectedName);
+            }
+        }
+    }
+
+    public void verifyAllTheBeneficiaryContactsAreMovedToTheAttachment() throws AutomationException {
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile(2);
+
+        for (String contactName : selectedContactNamesPage7) {
+            String contactXpath = String.format(BENE_ON_ATTACHMENT_PAGE_7, contactName);
+            WebElement element = driverUtil.getWebElement(contactXpath);
+
+            if (element == null && !element.getAttribute("value").equals(contactName)) {
+                throw new AutomationException("Beneficiary Contact not found in attachment: " + contactName);
+            }
+        }
+
+        CommonSteps.takeScreenshot();
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+
+
+        //use in reset
+        scrollToElement(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05);
+        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05)).click();
+        WebDriverUtil.waitForAWhile();
+        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
+        int[] contactsToClear = {0, 2, 3, 4};
+        for (int index : contactsToClear) {
+            if (index < checkboxElements.size()) {
+                WebElement checkbox = checkboxElements.get(index);
+                checkbox.click();
+            }
+        }
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(NAME_OF_TRUST_FIELD_OTHER_PAGES);
+
+        estateNameFormPage8 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNameFormPage8)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNameFormPage8);
         }
     }
 }
