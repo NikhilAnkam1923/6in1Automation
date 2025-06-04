@@ -168,7 +168,6 @@ public class ProbateFormsOC05Page extends BasePage {
     private static final List<String> beneInterest = new ArrayList<>();
     private static final List<String> beneficiaryKeys = new ArrayList<>();
     private static final List<String> selectedContactNamesPage7 = new ArrayList<>();
-    private static final List<String> selectedContactNamesPage5 = new ArrayList<>();
     private static final List<String> beneDetailsAfterRoleRemoved = new ArrayList<>();
     private static final List<String> newSelectedPetitioner = new ArrayList<>();
     private static final List<String> newFiduciaries = new ArrayList<>();
@@ -984,10 +983,30 @@ public class ProbateFormsOC05Page extends BasePage {
 
     public void scrollAndFillField(String fieldLocator, String value) throws AutomationException {
         scrollToElement(fieldLocator);
-        WebElement Field = driverUtil.getWebElement(fieldLocator);
-        Field.click();
-        Field.sendKeys(value);
-        Field.sendKeys(Keys.TAB);
+        WebElement field = driverUtil.getWebElement(fieldLocator);
+
+        int maxAttempts = 5;
+        int attempt = 0;
+        boolean isValueSet = false;
+
+        while (attempt < maxAttempts) {
+            field.click();
+            field.clear();
+            field.sendKeys(value);
+            field.sendKeys(Keys.TAB);
+            WebDriverUtil.waitForAWhile();
+
+            String actualValue = field.getAttribute("value");
+            if (value.equals(actualValue)) {
+                isValueSet = true;
+                break;
+            }
+            attempt++;
+        }
+
+        if (!isValueSet) {
+            throw new AutomationException("Failed to set value '" + value + "' in field located by: " + fieldLocator);
+        }
     }
 
     public void userEntersAgentSNameAndAddressDetails() throws IOException, ParseException, AutomationException {
@@ -1978,5 +1997,190 @@ public class ProbateFormsOC05Page extends BasePage {
             }
         }
         driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void filterByContactName(String contactName) throws AutomationException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(CONTACT_NAME_FILTER).click();
+        clearField(CONTACT_NAME_FILTER);
+        driverUtil.getWebElement(CONTACT_NAME_FILTER).sendKeys(contactName);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public String getEstateContactName(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            return "";
+        }
+
+        if (!fullName.contains(" ")) {
+            return fullName.trim();
+        }
+
+        String nameWithoutSuffix = fullName.replaceAll(",\\s*\\w+\\.*", "").trim();
+
+        String[] nameParts = nameWithoutSuffix.split("\\s+");
+
+        if (nameParts.length >= 2) {
+            String firstName = nameParts[0];
+            String lastName = nameParts[nameParts.length - 1];
+            return lastName + ", " + firstName;
+        }
+
+        return nameParts[0].trim();
+    }
+
+    public void checkTheAttorneyRole() throws AutomationException, IOException, ParseException {
+        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAttorney").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
+        driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
+        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
+    }
+
+    public void uncheckTheAttorneyRole() throws AutomationException, IOException, ParseException {
+        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleAttorney").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
+        driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
+        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
+    }
+
+    public void checkTheBeneficiaryRole() throws AutomationException, IOException, ParseException {
+        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleBeneficiary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
+        driverUtil.getWebElement(String.format(ROLE_CHECKBOX, role)).click();
+        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
+    }
+
+    public void uncheckTheBeneficiaryRole() throws AutomationException, IOException, ParseException {
+        String role = CommonUtil.getJsonPath("EstateContact").get("EstateContact.roleBeneficiary").toString();
+        waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(ESTATE_SPECIFIC_SELECT_ROLE_BTN).click();
+        driverUtil.getWebElement(String.format(ROLE_UNCHECK, role)).click();
+        driverUtil.getWebElement(ROLE_SAVE_BTN).click();
+    }
+
+    public void verifyNotificationIsDisplayedOnRemovingTheRole() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        waitForVisibleElement(By.xpath(CONTACT_USED_IN_OC05_FORM_NOTIFICATION));
+        WebElement rolesNotification = driverUtil.getWebElement(CONTACT_USED_IN_OC05_FORM_NOTIFICATION);
+        if (!rolesNotification.isDisplayed()) {
+            throw new AutomationException("Notification is not displayed on removing the role");
+        }
+    }
+
+    public void verifyNotificationIsDisplayedWhenTheContactSelectedAsTheCounselIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
+        String counselName = getEstateContactName(nameOfCounselForm);
+
+        filterByContactName(counselName);
+        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, counselName)).click();
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+        WebDriverUtil.waitForAWhile();
+        uncheckTheAttorneyRole();
+        verifyNotificationIsDisplayedOnRemovingTheRole();
+        CommonSteps.takeScreenshot();
+        driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
+        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
+    }
+
+    public void verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
+        String fullName = extractFullName(beneDetails.get(0));
+        String beneficiaryContact = getEstateContactName(fullName);
+
+        filterByContactName(beneficiaryContact);
+        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, beneficiaryContact)).click();
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+        WebDriverUtil.waitForAWhile();
+        uncheckTheBeneficiaryRole();
+        verifyNotificationIsDisplayedOnRemovingTheRole();
+        CommonSteps.takeScreenshot();
+        driverUtil.getWebElement(NO_ROLES_SAVE_BTN).click();
+        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
+    }
+
+    public void verifyRemovedCounselContactFromTheEstateContactsIsAlsoGetsRemovedFromForm() throws AutomationException {
+        WebElement nameOfCounselField = driverUtil.getWebElement(NAME_OF_COUNSEL_FIELD);
+
+        String nameOfCounsel = nameOfCounselField.getAttribute("value");
+        if (nameOfCounsel.equals(nameOfCounselForm)) {
+            throw new AutomationException("Removed counsel contact " + nameOfCounselForm + " from the estate contacts is not gets removed from the form");
+        }
+    }
+
+    public void verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm() throws AutomationException {
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneDetailsPage4Fields = driverUtil.getWebElements(BENE_DETAILS_FORM);
+        for (int i = 0; i < 2; i++) {
+            beneDetailsAfterRoleRemoved.add(beneDetailsPage4Fields.get(i).getText());
+        }
+
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> beneDetailsOnAttachmentFields = driverUtil.getWebElements(BENE_DETAILS_ATTACHMENT);
+        for (int i = 0; i < 4; i++) {
+            beneDetailsAfterRoleRemoved.add(beneDetailsOnAttachmentFields.get(i).getText());
+        }
+        driverUtil.getWebElement(CLOSE_BTN).click();
+
+        String removedBene = beneDetails.get(0);
+        if (beneDetailsAfterRoleRemoved.contains(removedBene)) {
+            throw new AutomationException("Beneficiary contact still exists on the form even after role was removed: " + removedBene);
+        }
+    }
+
+    public void resetRolesOfContacts() throws AutomationException, IOException, ParseException {
+        waitForVisibleElement(By.xpath(ESTATE_CONTACTS_TAB));
+        driverUtil.getWebElement(ESTATE_CONTACTS_TAB).click();
+        waitForInvisibleElement(By.xpath(SPINNER));
+
+        String counsel = getEstateContactName(nameOfCounselForm);
+
+        filterByContactName(counsel);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, counsel)).click();
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+        WebDriverUtil.waitForAWhile();
+        checkTheAttorneyRole();
+        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
+
+        String fullName = extractFullName(beneDetails.get(0));
+        String beneficiaryContact = getEstateContactName(fullName);
+        String beneKey = beneficiaryKeys.get(0);
+        String relationship = CommonUtil.getJsonPath(beneKey).get(beneKey + ".Relationship").toString();
+
+        filterByContactName(beneficiaryContact);
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(String.format(CONTACT_NAME_IN_ESTATE_CONTACT, beneficiaryContact)).click();
+        driverUtil.getWebElement(ESTATE_SPECIFIC_FIELDS_TAB).click();
+        WebDriverUtil.waitForAWhile();
+        checkTheBeneficiaryRole();
+        driverUtil.getWebElementAndScroll(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully."));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Roles updated successfully.")));
+        driverUtil.getWebElement(SELECT_RELATIONSHIP_BTN).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(String.format(RELATIONSHIP_OPTION, relationship)).click();
+        driverUtil.getWebElement(SAVE_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        String shareOfEstateInWord = CommonUtil.getJsonPath(beneKey).get(beneKey + ".ShareOfEstate").toString();
+        String amountOfEstate = CommonUtil.getJsonPath(beneKey).get(beneKey + ".AmountOfEstate").toString();
+        String beneficialInterest = CommonUtil.getJsonPath(beneKey).get(beneKey + ".BeneficialInterest").toString();
+
+        driverUtil.getWebElement(BENY_WORKSHEET_TAB).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        driverUtil.getWebElement(String.format(SHARE_OF_ESTATE_IN_WORDS, fullName)).sendKeys(shareOfEstateInWord);
+        driverUtil.getWebElement(String.format(SHARE_OF_ESTATE_IN_WORDS, fullName)).sendKeys(Keys.TAB);
+        driverUtil.getWebElement(String.format(AMOUNT_OF_ESTATE, fullName)).sendKeys(amountOfEstate);
+        driverUtil.getWebElement(String.format(AMOUNT_OF_ESTATE, fullName)).sendKeys(Keys.TAB);
+        driverUtil.getWebElement(String.format(BENEFICIAL_INTEREST, fullName)).sendKeys(beneficialInterest);
+        driverUtil.getWebElement(String.format(BENEFICIAL_INTEREST, fullName)).sendKeys(Keys.TAB);
     }
 }

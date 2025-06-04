@@ -103,4 +103,17 @@ public class probateFormsOC05Steps {
         PageFactory.probateFormsOC05Page().verifyTheSystemAllowTheUserToAddDescriptionThroughSidebar();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies notification is displayed when the contact selected as the counsel is removed from the estate contacts")
+    public void userVerifiesNotificationIsDisplayedWhenTheContactSelectedAsTheCounselIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that notification is displayed when the contact selected as the counsel is removed from the estate contacts");
+        PageFactory.probateFormsOC05Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsTheCounselIsRemovedFromTheEstateContacts();
+    }
+
+    @Then("user verifies removed counsel contact from the estate contacts is also gets removed from form")
+    public void userVerifiesRemovedCounselContactFromTheEstateContactsIsAlsoGetsRemovedFromForm() throws AutomationException {
+        CommonSteps.logInfo("Verified that removed counsel contact from the estate contacts is also gets removed from form");
+        PageFactory.probateFormsOC05Page().verifyRemovedCounselContactFromTheEstateContactsIsAlsoGetsRemovedFromForm();
+        CommonSteps.takeScreenshot();
+    }
 }

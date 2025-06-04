@@ -1563,6 +1563,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyNotificationIsDisplayedWhenTheBeneficiaryContactIsRemovedFromTheEstateContacts();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1606,6 +1609,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyRemovedBeneficiaryContactFromTheEstateContactsIsAlsoGetsRemovedFromTheForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1627,6 +1633,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().resetRolesOfContacts();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().resetRolesOfContacts();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
