@@ -1156,19 +1156,19 @@ public class ProbateFormsOC05Page extends BasePage {
         String actualTitleOfRegistrationForm = getFieldValue(TITTLE_OF_REGISTRATION_FIELD_FORM);
         String actualDateClosedForm = getFieldValue(DATE_CLOSED_FIELD_FORM);
 
-        if(!actualInstitutionAddressForm.equals(InstitutionAddressForm)){
+        if (!actualInstitutionAddressForm.equals(InstitutionAddressForm)) {
             throw new AutomationException("Institution Address is not displayed correctly on form. Expected: " + InstitutionAddressForm + " ,Found: " + actualInstitutionAddressForm);
         }
 
-        if(!actualBoxNoForm.equals(BoxNoForm)){
+        if (!actualBoxNoForm.equals(BoxNoForm)) {
             throw new AutomationException("Box No. is not displayed correctly on form. Expected: " + BoxNoForm + " ,Found: " + actualBoxNoForm);
         }
 
-        if(!actualTitleOfRegistrationForm.equals(TitleOfRegistrationForm)){
+        if (!actualTitleOfRegistrationForm.equals(TitleOfRegistrationForm)) {
             throw new AutomationException("Title of Registration is not displayed correctly on form. Expected: " + TitleOfRegistrationForm + " ,Found: " + actualTitleOfRegistrationForm);
         }
 
-        if(!actualDateClosedForm.equals(DateClosedForm)){
+        if (!actualDateClosedForm.equals(DateClosedForm)) {
             throw new AutomationException("Date Closed is not displayed correctly on form. Expected: " + DateClosedForm + " ,Found: " + actualDateClosedForm);
         }
 
@@ -1302,7 +1302,16 @@ public class ProbateFormsOC05Page extends BasePage {
             expectedAgents.put(agent2nameForm, agentAddressLine2Form);
             boolean isValidatedAgentAddressMapping = validateAgentAddressMapping(pdfFilePath, expectedAgents);
 
-            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedAgentAddressMapping) {
+            Map<String, String> expectedSafeDepositDetails = new HashMap<>();
+            expectedSafeDepositDetails.put("InstitutionAddressForm", InstitutionAddressForm);
+            expectedSafeDepositDetails.put("BoxNoForm", BoxNoForm);
+            expectedSafeDepositDetails.put("TitleOfRegistrationForm", TitleOfRegistrationForm);
+            expectedSafeDepositDetails.put("DateClosedForm", DateClosedForm);
+            List<Map<String, String>> expectedSafeDepositDetailsList = new ArrayList<>();
+            expectedSafeDepositDetailsList.add(expectedSafeDepositDetails);
+            boolean isVerifiedDepositBoxDetails = verifySafeDepositBoxDetails(pdfFilePath, expectedSafeDepositDetailsList);
+
+            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedAgentAddressMapping || !isVerifiedDepositBoxDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -1345,35 +1354,35 @@ public class ProbateFormsOC05Page extends BasePage {
 
             // Check for "Name of Counsel" only once
             if (!nameOfCounselFound && line.startsWith("Name of Counsel:")) {
-                extractedDetails.put("Name of Counsel", clean(line.replace("Name of Counsel:", "").trim()));
+                extractedDetails.put("Name of Counsel", cleanCounsel(line.replace("Name of Counsel:", "").trim()));
                 nameOfCounselFound = true;
             }
             // Check for "Name of Law Firm" only once
             else if (!nameOfLawFirmFound && line.startsWith("Name of Law Firm:")) {
-                extractedDetails.put("Name of Law Firm", clean(line.replace("Name of Law Firm:", "").trim()));
+                extractedDetails.put("Name of Law Firm", cleanCounsel(line.replace("Name of Law Firm:", "").trim()));
                 nameOfLawFirmFound = true;
             }
             // Check for "Address" only once
             else if (!addressFound && line.startsWith("Address:")) {
-                addressLine1 = clean(line.replace("Address:", "").trim());
+                addressLine1 = cleanCounsel(line.replace("Address:", "").trim());
                 if (i + 1 < allLines.length) {
-                    addressLine2 = clean(allLines[i + 1].trim()); // Next line contains city/state/zip
+                    addressLine2 = cleanCounsel(allLines[i + 1].trim()); // Next line contains city/state/zip
                 }
                 addressFound = true;
             }
             // Check for "Telephone" only once
             else if (!telephoneFound && line.startsWith("Telephone:")) {
-                extractedDetails.put("Telephone", clean(line.replace("Telephone:", "").trim()));
+                extractedDetails.put("Telephone", cleanCounsel(line.replace("Telephone:", "").trim()));
                 telephoneFound = true;
             }
             // Check for "Fax" only once
             else if (!faxFound && line.startsWith("Fax:")) {
-                extractedDetails.put("Fax", clean(line.replace("Fax:", "").trim()));
+                extractedDetails.put("Fax", cleanCounsel(line.replace("Fax:", "").trim()));
                 faxFound = true;
             }
             // Check for "Email" only once
             else if (!emailFound && line.startsWith("E-mail:")) {
-                extractedDetails.put("Email", clean(line.replace("E-mail:", "").trim()));
+                extractedDetails.put("Email", cleanCounsel(line.replace("E-mail:", "").trim()));
                 emailFound = true;
             }
         }
@@ -1394,8 +1403,8 @@ public class ProbateFormsOC05Page extends BasePage {
             String extractedValue = extractedDetails.get(field);
 
             // Clean both the expected and extracted values before comparing
-            expectedValue = clean(expectedValue);
-            extractedValue = clean(extractedValue);
+            expectedValue = cleanCounsel(expectedValue);
+            extractedValue = cleanCounsel(extractedValue);
 
             CommonSteps.logInfo("🔍 Comparing -> " + field + " | Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
 
@@ -1416,7 +1425,7 @@ public class ProbateFormsOC05Page extends BasePage {
 
 
     // Utility method to clean the string, removing unwanted characters or spaces
-    private static String clean(String value) {
+    private static String cleanCounsel(String value) {
         if (value != null) {
             // Remove unwanted punctuation like commas, periods, etc. and trim spaces
             value = value.replaceAll("[,\\.]", "").trim();
@@ -1636,4 +1645,89 @@ public class ProbateFormsOC05Page extends BasePage {
         return result;
     }
 
+    public static boolean verifySafeDepositBoxDetails(
+            String pdfFilePath,
+            List<Map<String, String>> expectedEntries
+    ) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        PDFTextStripper pdfStripper = new PDFTextStripper();
+        String pdfText = pdfStripper.getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        int startIndex = -1;
+        int endIndex = -1;
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.equalsIgnoreCase("Institution & Address Box No. Title or Registration Date Closed (if applicable)")) {
+                startIndex = i + 1;
+            } else if (line.startsWith("Are the entire contents of each safe deposit box identified in item 7")) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
+            throw new AutomationException("❌ Section boundaries not found.");
+        }
+
+        List<String> sectionLines = new ArrayList<>();
+        for (int i = startIndex; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (!line.isEmpty()) {
+                sectionLines.add(line);
+            }
+        }
+
+        List<Map<String, String>> actualEntries = new ArrayList<>();
+        for (int i = 0; i + 4 < sectionLines.size(); i += 5) {
+            String institutionAddress = sectionLines.get(i) + " " + sectionLines.get(i + 1);
+            String boxNoTitle = sectionLines.get(i + 2) + " " + sectionLines.get(i + 3);
+            String dateClosed = sectionLines.get(i + 4);
+
+            String[] boxNoTitleParts = boxNoTitle.split("\\s+", 2);
+            String boxNo = boxNoTitleParts.length > 0 ? boxNoTitleParts[0] : "";
+            String title = boxNoTitleParts.length > 1 ? boxNoTitleParts[1] : "";
+
+            Map<String, String> entry = new HashMap<>();
+            entry.put("InstitutionAddressForm", institutionAddress.trim());
+            entry.put("BoxNoForm", boxNo.trim());
+            entry.put("TitleOfRegistrationForm", title.trim());
+            entry.put("DateClosedForm", dateClosed.trim());
+
+            actualEntries.add(entry);
+
+            CommonSteps.logInfo("✅ " + entry.get("InstitutionAddressForm") + " -> " + entry.get("DateClosedForm"));
+        }
+
+        if (actualEntries.size() != expectedEntries.size()) {
+            throw new AutomationException("❌ Mismatch in number of entries.");
+        }
+
+        for (int i = 0; i < expectedEntries.size(); i++) {
+            Map<String, String> expected = expectedEntries.get(i);
+            Map<String, String> actual = actualEntries.get(i);
+
+            for (String key : expected.keySet()) {
+                String expectedValue = expected.get(key).trim();
+                String actualValue = actual.get(key).trim();
+
+                String label = key.replace("Form", "");
+
+                CommonSteps.logInfo("🔍 Comparing -> " + label + " | Expected: '" + expectedValue + "', Extracted: '" + actualValue + "'");
+
+                if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                    throw new AutomationException(
+                            "❌ Mismatch at entry " + (i + 1) + " for field '" + key + "': Expected '" + expectedValue + "', Found '" + actualValue + "'"
+                    );
+                }
+
+                CommonSteps.logInfo("✅ Validation Passed: '" + label + "' processed successfully.");
+            }
+        }
+
+        CommonSteps.logInfo("✅ Safe deposit box details successfully verified.");
+        return true;
+    }
 }
