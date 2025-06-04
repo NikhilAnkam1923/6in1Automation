@@ -96,15 +96,8 @@ public class ProbateFormsOC05Page extends BasePage {
     private static final String INITIALS_FIELD = "//input[@name='beneficiaries[0].initials']";
     private static final String SAVE_BTN = "//div[@class='modal-footer']//button[text()='Save']";
     private static final String EDIT_AMOUNT_PROPORTION_FIELD = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@class='yellowbg bold']";
-    private static final String EDIT_AMOUNT_PROPORTION_MODAL = "//div[@class='modal-title h4']";
     private static final String EDIT_AMOUNT_PROPORTION_NAME_COLUMNS = "//div[@class='modal-body']//tbody//tr//td[position()='2']";
     private static final String EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS = "//div[@class='modal-body']//tbody//tr//td[position()='3']//input[@type='checkbox']";
-    private static final String PROPORTION_COLUMNS = "//div[@class='modal-body']//tbody//tr//td[position()='5']//input[@type='text']";
-    private static final String AMOUNT_COLUMNS_MODAL = "//div[@class='modal-body']//tbody//tr//td[position()='4']//input[@type='text']";
-    private static final String BENE_PROPORTION_INCOME_PAGE_5 = "//tr//td[position()='3']//p[@class='p0-3 ft12 newstyle']//input[@value and normalize-space(@value)]";
-    private static final String BENE_AMOUNT_INCOME_PAGE_5 = "//tr//td[position()='2']//p[@class='p0-3 ft12 newstyle']//input[@value and normalize-space(@value)]";
-    private static final String SCHEDULE_ATTACHED_MSG = "//p[text()='See continuation schedule attached']";
-    private static final String BENE_ON_ATTACHMENT_PAGE_5 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     private static final String SIGN_OF_PETITIONER_PAGE_6 = "//div[contains(text(),'Signature of Petitioner')]//input[@id='fullname']";
     private static final String SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_6 = "//div[@class='modal-content']//div[contains(text(),'Signature of')]//span//*[self::input or self::textarea]";
     private static final String CONTACT_NAME_FILTER = "//th[@aria-colindex='1']//input";
@@ -159,6 +152,9 @@ public class ProbateFormsOC05Page extends BasePage {
     private static final String BENE_NAMES_INCOME_PAGE_7 = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@value and normalize-space(@value)]";
     private static final String BENE_ON_ATTACHMENT_PAGE_7 = "//div[@class='modal-body']//tr//td//p//input[@class='ft-1 bold' and @value='%s']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05 = "//input[@name='displayAllIncomeDistributeesOnAttachment']";
+    private static final String QB_TEXTAREA = "//textarea[@name='partyWhoIsNotSuiJuris']";
+    private static final String QC_TEXTAREA = "//textarea[@name='petitionForGuardianTrusteeAdLitem']";
+    private static final String MODAL_TEXTAREA = "//div[@class='modal-content']//div[@class='modal-body']//textarea";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -177,9 +173,6 @@ public class ProbateFormsOC05Page extends BasePage {
     private static final List<String> newSelectedPetitioner = new ArrayList<>();
     private static final List<String> newFiduciaries = new ArrayList<>();
     private static final List<String> newCorporateFiduciaries = new ArrayList<>();
-
-    static String[] enteredProportionValues;
-    static String[] enteredAmountValues;
 
     static String countyNameForm;
     static String fileNumberForm;
@@ -226,6 +219,8 @@ public class ProbateFormsOC05Page extends BasePage {
     static String DateClosedForm;
     static String comment1Form;
     static String comment2Form;
+    static String QBDescriptionForm;
+    static String QCDescriptionForm;
 
     static String downloadedFileName;
 
@@ -1043,14 +1038,6 @@ public class ProbateFormsOC05Page extends BasePage {
         verifyAutoSavedFields("Agent Name 2", agent2nameForm, actualAgent2nameForm);
         verifyAutoSavedFields("Agent Address Line 2", agent2nameForm, actualAgent2addressLine1Form);
         verifyAutoSavedFields("Agent City State Zip 1", agent2cityStateZipForm, actualAgent2cityStateZipForm);
-
-        //use in reset
-//        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
-//        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
-//        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
-//        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
-//        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
-//        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
     }
 
     public void clearFieldUntilEmpty(String fieldLocator) {
@@ -1177,15 +1164,6 @@ public class ProbateFormsOC05Page extends BasePage {
         if(!actualDateClosedForm.equals(DateClosedForm)){
             throw new AutomationException("Date Closed is not displayed correctly on form. Expected: " + DateClosedForm + " ,Found: " + actualDateClosedForm);
         }
-
-        //use in reset
-//        userClicksOnAddressSection();
-//        waitForVisibleElement(By.xpath(INSTITUTION_ADDRESS_FIELD));
-//        scrollToElement(DELETE_BUTTON);
-//        driverUtil.getWebElement(DELETE_BUTTON).click();
-//        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Safe Deposit Box is deleted successfully.")));
-//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Safe Deposit Box is deleted successfully.")));
-//        driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
     public void userAddsComments() throws AutomationException, IOException, ParseException {
@@ -1326,24 +1304,6 @@ public class ProbateFormsOC05Page extends BasePage {
         CommonSteps.takeScreenshot();
 
         driverUtil.getWebElement(CLOSE_BTN).click();
-
-
-        //use in reset
-        scrollToElement(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05);
-        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05)).click();
-        WebDriverUtil.waitForAWhile();
-        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
-        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
-        WebDriverUtil.waitForAWhile();
-        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
-        int[] contactsToClear = {0, 2, 3, 4};
-        for (int index : contactsToClear) {
-            if (index < checkboxElements.size()) {
-                WebElement checkbox = checkboxElements.get(index);
-                checkbox.click();
-            }
-        }
-        driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
     public void verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8() throws AutomationException {
@@ -1410,8 +1370,8 @@ public class ProbateFormsOC05Page extends BasePage {
             expectedCounselDetails.put("Email", attorneyEmailForm);
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
-            String petitionerAddressLine1Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
-            String petitionerAddressLine2Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
+            String petitionerAddressLine1Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
+            String petitionerAddressLine2Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
             expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
             expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine2Form);
@@ -1757,5 +1717,266 @@ public class ProbateFormsOC05Page extends BasePage {
             }
         }
         return result;
+    }
+
+    public void verifyTheSystemAllowTheUserToAddDescriptionThroughSidebar() throws AutomationException, IOException, ParseException {
+        String QBDescription = CommonUtil.getJsonPath("OC05Form").get("OC05Form.QBDescription").toString();
+        String QCDescription = CommonUtil.getJsonPath("OC05Form").get("OC05Form.QCDescription").toString();
+
+        scrollToElement(QB_TEXTAREA);
+        driverUtil.getWebElement(QB_TEXTAREA).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(MODAL_TEXTAREA));
+        driverUtil.getWebElement(MODAL_TEXTAREA).click();
+        driverUtil.getWebElement(MODAL_TEXTAREA).sendKeys(QBDescription);
+        driverUtil.getWebElement(SAVE_BTN).click();
+        waitForAWhile(2);
+
+        scrollToElement(QC_TEXTAREA);
+        driverUtil.getWebElement(QC_TEXTAREA).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(MODAL_TEXTAREA));
+        driverUtil.getWebElement(MODAL_TEXTAREA).click();
+        clearField(MODAL_TEXTAREA);
+        driverUtil.getWebElement(MODAL_TEXTAREA).sendKeys(QCDescription);
+        driverUtil.getWebElement(SAVE_BTN).click();
+        waitForAWhile(2);
+
+        QBDescriptionForm = getFieldValue(QB_TEXTAREA);
+        QCDescriptionForm = getFieldValue(QC_TEXTAREA);
+
+    }
+
+    public void verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner() throws AutomationException {
+        WebElement signOfPetitionerField = driverUtil.getWebElement(SIGN_OF_PETITIONER_PAGE_6);
+        String petitionerNamePage11 = signOfPetitionerField.getAttribute("value");
+        String expectedPetitionerName = Fiduciaries.get(0);
+
+        if (!petitionerNamePage11.equals(expectedPetitionerName)) {
+            throw new AutomationException("1st individual petitioner selected on page 2 is not displayed under individual petitioner. Expected: " + expectedPetitionerName + " ,Found: " + petitionerNamePage11);
+        }
+    }
+
+    public void verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        List<String> expectedPetitionersOnAttachment = new ArrayList<>();
+        List<String> expectedFiduciary = new ArrayList<>();
+        List<String> expectedCorporateFiduciary =new ArrayList<>();
+
+        for(int i=0; i<Fiduciaries.size(); i++){
+            if(i!=0){
+                expectedFiduciary.add(Fiduciaries.get(i));
+            }
+        }
+
+        for(int i=0; i<corporateFiduciaries.size(); i++){
+            if(i!=0){
+                expectedCorporateFiduciary.add(corporateFiduciaries.get(i));
+            }
+        }
+
+        expectedPetitionersOnAttachment.addAll(expectedFiduciary);
+        expectedPetitionersOnAttachment.addAll(expectedCorporateFiduciary);
+
+        List<WebElement> petitionerOnAttachmentFields = driverUtil.getWebElements(SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_6);
+        List<String> actualPetitionersOnAttachment = new ArrayList<>();
+
+        for (WebElement element : petitionerOnAttachmentFields) {
+            actualPetitionersOnAttachment.add(getFieldValue(element));
+        }
+
+        for (int i = 0; i < expectedPetitionersOnAttachment.size(); i++) {
+            String expected = expectedPetitionersOnAttachment.get(i);
+            String actual = actualPetitionersOnAttachment.get(i);
+
+            if (!actual.contains(expected)) {
+                throw new AutomationException("Petitioner mismatch at sign " + (i + 1) +
+                        "\nExpected: " + expected + "\nActual: " + actual);
+            }
+        }
+
+        CommonSteps.takeScreenshot();
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void userAddsNewPetitioner() throws AutomationException {
+        Actions actions = new Actions(DriverFactory.drivers.get());
+
+        WebDriverUtil.waitForAWhile();
+
+        WebElement dropHereSection = driverUtil.getWebElement(DROP_CONTACT_FIELD_XPATH);
+
+        waitForVisibleElement(By.xpath(DRAG_CONTACT_XPATH));
+        newlyAddedPetitioner = driverUtil.getWebElement(DRAG_CONTACT_XPATH).getText();
+        actions.dragAndDrop(driverUtil.getWebElement(DRAG_CONTACT_XPATH), dropHereSection).perform();
+        WebDriverUtil.waitForAWhile();
+
+        WebDriverUtil.waitForAWhile(2);
+        List<WebElement> fiduciaryNames = driverUtil.getWebElements(SELECTED_PETITIONER_NAMES);
+
+        for (int i = 0; i < fiduciaryNames.size(); i++) {
+            String name = fiduciaryNames.get(i).getText().trim();
+            switch (i) {
+                case 0:
+                    Fiduciary1Form = name;
+                    break;
+                case 1:
+                    Fiduciary2Form = name;
+                    break;
+                case 2:
+                    Fiduciary3Form = name;
+                    break;
+                case 3:
+                    Fiduciary4Form = name;
+                    break;
+                case 4:
+                    Fiduciary5Form = name;
+                    break;
+            }
+        }
+
+        List<WebElement> selectedContacts = driverUtil.getWebElements(SELECTED_PETITIONER_NAMES);
+        for (WebElement selectedContact : selectedContacts) {
+            String petitioner = selectedContact.getText().trim();
+            newSelectedPetitioner.add(petitioner);
+
+            if (isIndividualFiduciary(petitioner)) {
+                newFiduciaries.add(petitioner);
+            } else {
+                newCorporateFiduciaries.add(petitioner);
+            }
+        }
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
+        WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
+        nameOfPetitionerForm = nameOfPetitionerField.getAttribute("value");
+        nameOfPetitioner2Form = nameOfPetitioner2Field.getAttribute("value");
+        petitioner1AddressLine1Form = driverUtil.getWebElement(PETITIONER_1_ADDRESS_LINE).getAttribute("value");
+        petitioner1CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_1_CITY_STATE_ZIP).getAttribute("value");
+        petitioner2AddressLine1Form = driverUtil.getWebElement(PETITIONER_2_ADDRESS_LINE).getAttribute("value");
+        petitioner2CityStateCodeZipForm = driverUtil.getWebElement(PETITIONER_2_CITY_STATE_ZIP).getAttribute("value");
+    }
+
+    public void verifyNewlyAddedPetitionerIsDisplayedInTheAttachment() throws AutomationException {
+        scrollToElement(VIEW_ATTACHMENT_BTN);
+        driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> petitionerOnAttachmentFields = driverUtil.getWebElements(SIGN_OF_PETITIONER_ON_ATTACHMENT_PAGE_6);
+        List<String> actualPetitionersOnAttachment = new ArrayList<>();
+
+        for (WebElement element : petitionerOnAttachmentFields) {
+            actualPetitionersOnAttachment.add(getFieldValue(element));
+        }
+
+        if (!actualPetitionersOnAttachment.contains(newlyAddedPetitioner)) {
+            throw new AutomationException("Newly added petitioner: " + newlyAddedPetitioner + " not found on attachment.");
+        }
+
+        CommonSteps.takeScreenshot();
+
+        driverUtil.getWebElement(CLOSE_BTN).click();
+    }
+
+    public void userResetsTheRWForm() throws AutomationException {
+        //page 1
+        switchToPage(1);
+        WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+        fileNumberField.clear();
+        fileNumberField.sendKeys(initialFileNumber);
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
+
+        //page 2
+        switchToPage(2);
+        scrollToElement(PETITIONER_NAME_FIELD);
+        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement("//span[@class='cursor']").click();
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(ACCEPT_BTN).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_1);
+        clearFieldUntilEmpty(AGENT_1_ADDRESS_LINE);
+        clearFieldUntilEmpty(AGENT_1_CITY_STATE_ZIP);
+        clearFieldUntilEmpty(AGENT_NAME_FIELD_2);
+        clearFieldUntilEmpty(AGENT_2_ADDRESS_LINE);
+        clearFieldUntilEmpty(AGENT_2_CITY_STATE_ZIP);
+
+        //page 4
+        switchToPage(4);
+        userClicksOnAddressSection();
+        waitForVisibleElement(By.xpath(INSTITUTION_ADDRESS_FIELD));
+        scrollToElement(DELETE_BUTTON);
+        driverUtil.getWebElement(DELETE_BUTTON).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Safe Deposit Box is deleted successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Safe Deposit Box is deleted successfully.")));
+        driverUtil.getWebElement(CLOSE_BTN).click();
+
+        //page 5
+        switchToPage(5);
+        for (int i = 0; i < 2; i++) {
+            scrollToElement(String.format(COMMENTS_FIELD_XPATH, i));
+            WebElement commentsField = driverUtil.getWebElement(String.format(COMMENTS_FIELD_XPATH, i));
+            commentsField.clear();
+        }
+
+        //page 6
+        switchToPage(6);
+        scrollToElement(QB_TEXTAREA);
+        driverUtil.getWebElement(QB_TEXTAREA).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(MODAL_TEXTAREA));
+        driverUtil.getWebElement(MODAL_TEXTAREA).click();
+        clearField(MODAL_TEXTAREA);
+        driverUtil.getWebElement(SAVE_BTN).click();
+        waitForAWhile(2);
+
+        scrollToElement(QC_TEXTAREA);
+        driverUtil.getWebElement(QC_TEXTAREA).click();
+        WebDriverUtil.waitForVisibleElement(By.xpath(MODAL_TEXTAREA));
+        driverUtil.getWebElement(MODAL_TEXTAREA).click();
+        clearField(MODAL_TEXTAREA);
+        driverUtil.getWebElement(SAVE_BTN).click();
+        waitForAWhile(2);
+
+        //page 7
+        switchToPage(7);
+        scrollToElement(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05);
+        DriverFactory.drivers.get().findElement(By.xpath(DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05)).click();
+        WebDriverUtil.waitForAWhile();
+        scrollToElement(EDIT_AMOUNT_PROPORTION_FIELD);
+        driverUtil.getWebElement(EDIT_AMOUNT_PROPORTION_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> checkboxElements = driverUtil.getWebElements(EDIT_AMOUNT_PROPORTION_DISPLAY_CHECKBOX_COLUMNS);
+        int[] contactsToClear = {0, 2, 3, 4};
+        for (int index : contactsToClear) {
+            if (index < checkboxElements.size()) {
+                WebElement checkbox = checkboxElements.get(index);
+                checkbox.click();
+            }
+        }
+        driverUtil.getWebElement(CLOSE_BTN).click();
     }
 }

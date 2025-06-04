@@ -586,6 +586,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userResetsTheRWForm();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userResetsTheRWForm();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1482,6 +1485,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verify1StIndividualPetitionerSelectedOnPage2IsDisplayedUnderIndividualPetitioner();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1503,6 +1509,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyAllTheRemainingPetitionersAreDisplayedAsAPartOfAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1940,6 +1949,9 @@ public class CommonSteps {
             case "OC04":
                 PageFactory.probateFormsOC04Page().userAddsNewPetitioner();
                 break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().userAddsNewPetitioner();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -1954,6 +1966,9 @@ public class CommonSteps {
                 break;
             case "OC04":
                 PageFactory.probateFormsOC04Page().verifyNewlyAddedPetitionerIsDisplayedInTheAttachment();
+                break;
+            case "OC05":
+                PageFactory.probateFormsOC05Page().verifyNewlyAddedPetitionerIsDisplayedInTheAttachment();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

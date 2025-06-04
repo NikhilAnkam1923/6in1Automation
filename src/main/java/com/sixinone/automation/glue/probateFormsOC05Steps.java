@@ -96,4 +96,11 @@ public class probateFormsOC05Steps {
         PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies the system allow the user to add description through sidebar")
+    public void userVerifiesTheSystemAllowTheUserToAddDescriptionThroughSidebar() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that the system allow the user to add description through sidebar");
+        PageFactory.probateFormsOC05Page().verifyTheSystemAllowTheUserToAddDescriptionThroughSidebar();
+        CommonSteps.takeScreenshot();
+    }
 }
