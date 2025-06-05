@@ -1600,7 +1600,7 @@ public class ProbateFormsRW02Page extends BasePage {
 
         // Define start and end markers
         String beforeLine = "Name: William John  File No: 22-23-1234";
-        String afterLine = "Date of Death: 12/05/2020  Age at Death: 70";
+        String afterLine = "Date of Death: 12/05/2020  Age at Death: 73";
 
         Set<String> extractedAKANames = new HashSet<>();
         String[] allLines = pdfText.split("\\r?\\n");
@@ -1624,7 +1624,8 @@ public class ProbateFormsRW02Page extends BasePage {
             // Extract AKA names
             if (startIndex != -1) {
                 if (trimmedLine.startsWith("a/k/a:")) {
-                    extractedAKANames.addAll(extractAKANames(trimmedLine));
+                    String akaContent = trimmedLine.replaceFirst("(?i)a/k/a:\\s*", "");
+                    extractedAKANames.addAll(extractAKANames(akaContent));
                     captureNextLine = true;  // Enable flag to capture next line
                 } else if (captureNextLine) {
                     extractedAKANames.addAll(extractAKANames(trimmedLine));
@@ -1653,9 +1654,7 @@ public class ProbateFormsRW02Page extends BasePage {
         return true;
     }
 
-    /**
-     * Extracts AKA names while handling edge cases like SSNs, unnecessary text, and multi-word names.
-     */
+      //For UAT
     private static Set<String> extractAKANames(String rawText) {
         Set<String> akaNames = new HashSet<>();
 
@@ -1687,6 +1686,27 @@ public class ProbateFormsRW02Page extends BasePage {
 
         return akaNames;
     }
+
+    //For production
+//    private static List<String> extractAKANames(String line) {
+//        List<String> names = new ArrayList<>();
+//
+//        // Remove prefix
+//        String cleaned = line.replace("a/k/a:", "").trim();
+//
+//        // Remove trailing metadata (e.g., "(Assigned by Register)", "Social Security No: ...")
+//        cleaned = cleaned.replaceAll("\\(.*?\\)", ""); // removes (Assigned by Register)
+//        cleaned = cleaned.replaceAll("Social Security No:.*", ""); // removes everything after "Social Security No:"
+//
+//        // Tokenize and extract actual name words (allowing for multiple names)
+//        for (String token : cleaned.split("\\s+")) {
+//            if (!token.isBlank()) names.add(token.trim());
+//        }
+//
+//        return names;
+//    }
+
+
 
 
     public static boolean verifyPropertyAmounts(String pdfFilePath, Map<String, String> expectedValues) throws IOException, AutomationException {
