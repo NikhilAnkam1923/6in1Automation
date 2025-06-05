@@ -75,4 +75,45 @@ public class probateFormsOC05Steps {
         PageFactory.probateFormsOC05Page().verifyAddressIsDisplayedOnTheForm();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 6")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 6");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage6();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 7")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage7() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 7");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage7();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies estate's name is auto fetched and correctly displayed on page 8")
+    public void userVerifiesEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8() throws AutomationException {
+        CommonSteps.logInfo("Verified that estate's name is auto fetched and correctly displayed on page 8");
+        PageFactory.probateFormsOC05Page().verifyEstateSNameIsAutoFetchedAndCorrectlyDisplayedOnPage8();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies the system allow the user to add description through sidebar")
+    public void userVerifiesTheSystemAllowTheUserToAddDescriptionThroughSidebar() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that the system allow the user to add description through sidebar");
+        PageFactory.probateFormsOC05Page().verifyTheSystemAllowTheUserToAddDescriptionThroughSidebar();
+        CommonSteps.takeScreenshot();
+    }
+
+    @Then("user verifies notification is displayed when the contact selected as the counsel is removed from the estate contacts")
+    public void userVerifiesNotificationIsDisplayedWhenTheContactSelectedAsTheCounselIsRemovedFromTheEstateContacts() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that notification is displayed when the contact selected as the counsel is removed from the estate contacts");
+        PageFactory.probateFormsOC05Page().verifyNotificationIsDisplayedWhenTheContactSelectedAsTheCounselIsRemovedFromTheEstateContacts();
+    }
+
+    @Then("user verifies removed counsel contact from the estate contacts is also gets removed from form")
+    public void userVerifiesRemovedCounselContactFromTheEstateContactsIsAlsoGetsRemovedFromForm() throws AutomationException {
+        CommonSteps.logInfo("Verified that removed counsel contact from the estate contacts is also gets removed from form");
+        PageFactory.probateFormsOC05Page().verifyRemovedCounselContactFromTheEstateContactsIsAlsoGetsRemovedFromForm();
+        CommonSteps.takeScreenshot();
+    }
 }

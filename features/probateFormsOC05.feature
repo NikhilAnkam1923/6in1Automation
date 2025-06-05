@@ -95,10 +95,70 @@ Feature: 6in1 probate form OC05 Feature
    Scenario: Verify, relationship of the beneficiary with the given estate is displayed under relationship section.
      Then user verifies correct relationship is auto fetched and displayed under relationship section for "OC05" form
 
+   Scenario: Verify, estate name is auto fetched.
+     When user navigates to page number: "6"
+     Then user verifies estate's name is auto fetched and correctly displayed on page 6
+
+   Scenario: Verify that Q.B & C should allow user to input values through sidebar.
+     Then user verifies the system allow the user to add description through sidebar
+
+  Scenario: Verify, estate name is auto fetched.
+    When user navigates to page number: "7"
+    Then user verifies estate's name is auto fetched and correctly displayed on page 7
+
+  Scenario: Verify, if displayed on checkbox is checked, then the contacts are displayed on the form.
+    When user checks the Display checkbox for beneficiaries of "OC05" form
+    Then user verifies the contacts for which the checkbox is checked are displayed on the "OC05" form
+
+  Scenario: Verify, all the contacts are moved to attachment if the display all bene in attachment checkbox is checked.
+    When user checks 'Display ALL INCOME Distributees on attachment' checkbox
+    Then user verifies all the beneficiary contacts are moved to the attachment for "OC05" form
+
+  Scenario: Verify, Estate name is auto fetched and correctly displayed.
+    When user navigates to page number: "8"
+    Then user verifies estate's name is auto fetched and correctly displayed on page 8
+
+  Scenario: Verify, first individual petitioner selected in page 2 is displayed here under individual petitioner.
+    Then user verifies 1st individual petitioner selected on page 2 is displayed under individual petitioner on "OC05" form
+
+  Scenario: Verify, rest of the individual petitioners are displayed as a part of attachment.
+    Then user verifies all the remaining petitioners are displayed as a part of attachment for "OC05" form
+
+  Scenario: Verify, if any new petitioner is added, it is reflected in the attachment.
+    When user navigates to page number: "2"
+    And user click on Petitioner name field
+    And user adds new petitioner for "OC05" form
+    When user navigates to page number: "8"
+    Then user verifies newly added petitioner is displayed in the attachment for "OC05" form
+
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'OC05'
     And verify all the fields entered are correctly reflected in the 'OC05' pdf
+
+  Scenario: Verify, if the contact removed from estate contacts is also removed from the form.
+    When user navigates to Estate Contacts tab
+    Then user verifies notification is displayed when the contact selected as the counsel is removed from the estate contacts
+      #Verify, notification popup is shown for removal of contact already in use.
+    Then user verifies for "OC05" form notification is displayed when the beneficiary contact is removed from the estate contacts
+
+  Scenario: Verify, if the contact selected as counsel is removed from the estate contact.
+    When user navigates to the probate forms tab
+    And user click on the "OC 05" form
+    And user navigates to page number: "1"
+    Then user verifies removed counsel contact from the estate contacts is also gets removed from form
+
+  Scenario: Verify, if for a user role of beny is removed.
+    When user navigates to page number: "5"
+    Then user verifies removed beneficiary contact from the estate contacts is also gets removed from the "OC05" form
+
+  Scenario: Reset Roles of Removed Contacts
+    When user resets roles of removed contacts from the Estate Contacts of "OC05" form
+
+  Scenario: Reset the OC05 form
+    When user navigates to the probate forms tab
+    And user click on the "OC 05" form
+    Then user resets the "OC05" form
 
   @Setup
   Scenario:SETUP: Close Browser
