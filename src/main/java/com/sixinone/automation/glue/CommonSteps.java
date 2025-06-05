@@ -73,6 +73,7 @@ public class CommonSteps {
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN = "//input[@name='isDisplayAllIncomeOnAttachment']";
     private static final String DISPLAY_ALL_INCOME_ON_ATTACHMENT_BTN_OC05 = "//input[@name='displayAllIncomeDistributeesOnAttachment']";
     private static final String EDIT_AMOUNT_PROPORTION_FIELD = "//p[@class='p0-3 ft12 newstyle position-relative']//input[@class='yellowbg bold']";
+    private static final String ACCOUNT_OF_FIELDS = "//p[contains(text(),'ACCOUNT OF')]//input";
     public static ThreadLocal<Scenario> CURRENT_SCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_SCENARIO_MESSAGE = new ThreadLocal<>();
     public static ThreadLocal<String> CURRENT_STEP_MESSAGE = new ThreadLocal<>();
@@ -2061,5 +2062,12 @@ public class CommonSteps {
                 throw new AutomationException("Unsupported form name: " + formName);
         }
         CommonSteps.takeScreenshot();
+    }
+
+    @When("user click on 'Account of' name field")
+    public void userClickOnAccountOfNameField() throws AutomationException {
+        CommonSteps.logInfo("user click on 'Account of' name field");
+        scrollToElement(ACCOUNT_OF_FIELDS);
+        driverUtil.getWebElement(ACCOUNT_OF_FIELDS).click();
     }
 }

@@ -141,6 +141,7 @@ public class ProbateFormsOC04Page extends BasePage{
     private static final String PETITIONER_2_ADDRESS_LINE = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[not(contains(@value,','))]";
     private static final String PETITIONER_2_CITY_STATE_ZIP = "//td[@class='trnew10 td12']//span[@class='p0 ft12 newstyle']//input[contains(@value,',')]";
     private static final String ADDITION_PETITIONER_ADDRESS = "//div[@class='modal-body']//tbody//tr//td//p[contains(text(),'Address')]/ancestor::td/following-sibling::td//input";
+    private static final String ACCOUNT_OF_FIELDS = "//p[contains(text(),'ACCOUNT OF')]//input";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -424,7 +425,11 @@ public class ProbateFormsOC04Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+        //for prod
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        //for UAT
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
     }
 
     public static String findFiduciaryKeyByName(String name, JSONObject jsonObject) {
@@ -621,7 +626,11 @@ public class ProbateFormsOC04Page extends BasePage{
 
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+        //for prod
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        //for UAT
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
     }
 
     public void verifySwappedPetitionerNamesAreReflectedOnUIAccordingly() throws AutomationException, IOException, ParseException {
@@ -1290,7 +1299,13 @@ public class ProbateFormsOC04Page extends BasePage{
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+        //for prod
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        //for UAT
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
+        switchToPage(2);
+        waitForAWhile();
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -1604,17 +1619,30 @@ public class ProbateFormsOC04Page extends BasePage{
     }
 
     public void userResetsTheRWForm() throws AutomationException {
-        //Page 2
-        switchToPage(2);
-        scrollToElement(PETITIONER_NAME_FIELD);
-        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+        //Page 2 (for prod)
+//        switchToPage(2);
+//        scrollToElement(PETITIONER_NAME_FIELD);
+//        driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElement("//span[@class='cursor']").click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElement("//span[@class='cursor']").click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElement(ACCEPT_BTN).click();
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+
+        //Page 1 (for UAT)
+        switchToPage(1);
+        scrollToElement(ACCOUNT_OF_FIELDS);
+        driverUtil.getWebElement(ACCOUNT_OF_FIELDS).click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement("//span[@class='cursor']").click();
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
 
         //Page 3
         switchToPage(3);
