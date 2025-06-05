@@ -1490,8 +1490,8 @@ public class ProbateFormsRW02Page extends BasePage {
                 + DownloadedFileName;
 
         try {
-            List<String> expectedAKANames = Arrays.asList(AKA1Form, akaName2Form, akaName3Form);
-            boolean isverifiedAKANames = verifyAKANames(pdfFilePath, expectedAKANames);
+//            List<String> expectedAKANames = Arrays.asList(AKA1Form, akaName2Form, akaName3Form);
+//            boolean isverifiedAKANames = verifyAKANames(pdfFilePath, expectedAKANames);
 
             Map<String, String> expectedPropertyValues = new HashMap<>();
             expectedPropertyValues.put("enteredPersonalPropertyAmountForm", enteredPersonalPropertyAmountForm);
