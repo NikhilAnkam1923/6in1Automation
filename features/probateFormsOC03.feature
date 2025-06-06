@@ -30,32 +30,32 @@ Feature: 6in1 probate form OC03 Feature
     Then user verifies the estate name is pre-filled from the estate records for "OC03" form
 
     #for prod (2 TCs)
-  Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
-    When user click on Petitioner name field
-    And user selects multiple petitioners for "OC03" form
-      #Verify, attachment.
-    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC03" form
-
-  Scenario: Verify, selected petitioner can be swapped and deleted.
-    When user click on Petitioner name field
-    And user swap the selected petitioner contacts for "OC03" form
-    Then user verifies for "OC03" form swapped petitioner names are reflected on UI accordingly
-
-    #for UAT (2 TCs)
 #  Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
-#    When user navigates to page number: "1"
-#    When user click on 'Account of' name field
+#    When user click on Petitioner name field
 #    And user selects multiple petitioners for "OC03" form
-#    When user navigates to page number: "2"
 #      #Verify, attachment.
 #    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC03" form
 #
 #  Scenario: Verify, selected petitioner can be swapped and deleted.
-#    When user navigates to page number: "1"
-#    When user click on 'Account of' name field
+#    When user click on Petitioner name field
 #    And user swap the selected petitioner contacts for "OC03" form
-#    When user navigates to page number: "2"
 #    Then user verifies for "OC03" form swapped petitioner names are reflected on UI accordingly
+
+    #for UAT (2 TCs)
+  Scenario: Verify, only 2 petitioners are visible on the form and rest are attached.
+    When user navigates to page number: "1"
+    When user click on 'Account of' name field
+    And user selects multiple petitioners for "OC03" form
+    When user navigates to page number: "2"
+      #Verify, attachment.
+    Then user verifies out of the selected petitioners only 2 are visible on the form and rest are on the attachment for "OC03" form
+
+  Scenario: Verify, selected petitioner can be swapped and deleted.
+    When user navigates to page number: "1"
+    When user click on 'Account of' name field
+    And user swap the selected petitioner contacts for "OC03" form
+    When user navigates to page number: "2"
+    Then user verifies for "OC03" form swapped petitioner names are reflected on UI accordingly
 
   Scenario: Verify that the "Estate of" field is auto-populated with the estate name.
     When user navigates to page number: "3"
@@ -119,20 +119,20 @@ Feature: 6in1 probate form OC03 Feature
     Then user verifies all the remaining petitioners are displayed as a part of attachment for "OC03" form
 
     #for prod
-  Scenario: Verify, if any new petitioner is added, it is reflected in the attachment.
-    When user navigates to page number: "2"
-    And user click on Petitioner name field
-    And user adds new petitioner for "OC03" form
-    When user navigates to page number: "6"
-    Then user verifies newly added petitioner is displayed in the attachment for "OC03" form
-
-    #for UAT
 #  Scenario: Verify, if any new petitioner is added, it is reflected in the attachment.
-#    When user navigates to page number: "1"
-#    When user click on 'Account of' name field
+#    When user navigates to page number: "2"
+#    And user click on Petitioner name field
 #    And user adds new petitioner for "OC03" form
 #    When user navigates to page number: "6"
 #    Then user verifies newly added petitioner is displayed in the attachment for "OC03" form
+
+    #for UAT
+  Scenario: Verify, if any new petitioner is added, it is reflected in the attachment.
+    When user navigates to page number: "1"
+    When user click on 'Account of' name field
+    And user adds new petitioner for "OC03" form
+    When user navigates to page number: "6"
+    Then user verifies newly added petitioner is displayed in the attachment for "OC03" form
 
   Scenario: Verify form can be printed in pdf
     When user click on print form button

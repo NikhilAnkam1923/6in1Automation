@@ -1284,17 +1284,13 @@ public class ProbateFormsOC02Page extends BasePage {
             expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
             expectedCounselDetails.put("Fax", attorneyFaxForm);
             expectedCounselDetails.put("Email", attorneyEmailForm);
-
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
             String petitionerAddressLine1Form = petitioner1AddressLine1Form + " " + petitioner1CityStateCodeZipForm;
             String petitionerAddressLine2Form = petitioner2AddressLine1Form + " " + petitioner2CityStateCodeZipForm;
-
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
             expectedPetitioners.put(nameOfPetitionerForm, petitionerAddressLine1Form);
             expectedPetitioners.put(nameOfPetitioner2Form, petitionerAddressLine2Form);
-
-
             boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
             Map<String, String> expectedTrustData = new LinkedHashMap<>();
@@ -1306,11 +1302,9 @@ public class ProbateFormsOC02Page extends BasePage {
             expectedTrustData.put("Advertising Date 1", advertisingDate1);
             expectedTrustData.put("Advertising Date 2", advertisingDate2);
             expectedTrustData.put("Advertising Date 3", advertisingDate3);
-
             boolean isValidatedInterVivosTrustDetails = validateInterVivosTrustDetails(pdfFilePath, expectedTrustData);
 
             Map<String, String> expectedAmountDateMap = new LinkedHashMap<>();
-
             expectedAmountDateMap.put(principalAmountForm1, principalDateForm1);
             expectedAmountDateMap.put(principalAmountForm2, principalDateForm2);
             expectedAmountDateMap.put(principalAmountForm3, principalDateForm3);
@@ -1319,7 +1313,6 @@ public class ProbateFormsOC02Page extends BasePage {
             expectedAmountDateMap.put(principalAmountForm6, principalDateForm6);
             expectedAmountDateMap.put(principalAmountForm7, principalDateForm7);
             expectedAmountDateMap.put(principalAmountForm8, principalDateForm8);
-
             boolean isVerifiedPrincipalCommissionAmountsAndDates = verifyPrincipalCommissionAmountsAndDates(
                     pdfFilePath,
                     "If a principal commission is claimed, state amount.B.",
@@ -1334,8 +1327,6 @@ public class ProbateFormsOC02Page extends BasePage {
                     reserveAmountForm,
                     reservePurposeForm
             );
-
-
 
             // If any verification fails, throw an exception
             if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedInterVivosTrustDetails || !isVerifiedPrincipalCommissionAmountsAndDates || !isverifiedReserveAmountAndPurpose) {
