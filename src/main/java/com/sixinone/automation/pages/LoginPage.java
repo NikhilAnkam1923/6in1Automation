@@ -71,7 +71,7 @@ public class LoginPage extends BasePage {
     public void verifyInvalidCredErrorMessage(String errorMessage) throws AutomationException {
         String actualMessage = driverUtil.getWebElement(ERROR_MSG, 0, "Unable to locate error message field").getText().trim();
         if (actualMessage.equals(errorMessage)) {
-            System.out.println("Error message matches expected value.");
+            CommonSteps.logInfo("Error message matches expected value.");
         } else {
             throw new AutomationException("Expected error message: '" + errorMessage + "' but found: '" + actualMessage + "'");
         }
@@ -153,7 +153,7 @@ public class LoginPage extends BasePage {
     public void verifyEyeIconVisibility() throws AutomationException {
         WebElement passwordField = driverUtil.getWebElement(PASSWORD_INPUT);
         String passwordFieldType = passwordField.getAttribute("value");
-        System.out.println("the given string - " + passwordFieldType);
+       CommonSteps.logInfo("the given string - " + passwordFieldType);
         if (passwordFieldType == null || passwordFieldType.isEmpty()) {
             throw new AutomationException("Password field is empty or null");
         }
