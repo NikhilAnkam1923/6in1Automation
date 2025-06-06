@@ -10,7 +10,7 @@ Feature: 6in1 probate form OC05 Feature
 
   Scenario: Open Estate
     When user opens "Watt, Sara Arik Jr." Estate
-    And user saves entered Estate information for "OC05" form
+    Then user saves entered Estate information for "OC05" form
 
   Scenario: Verify, correct County of the decedent is fetched from the decedent info. tab.
     When user navigates to the probate forms tab

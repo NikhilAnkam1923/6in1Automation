@@ -10,7 +10,7 @@ Feature: 6in1 probate form RW02 Feature
 
   Scenario: Open Estate
     When user opens "John, William Arik Jr." Estate
-    And user saves entered Estate information for "RW02" form
+    Then user saves entered Estate information for "RW02" form
 
   Scenario: Verify, correct county name is auto fetched.
     When user navigates to the probate forms tab

@@ -9,7 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
-public class probateFormsOC02Steps {
+public class ProbateFormsOC02Steps {
     @When("user checks trust under will checkbox")
     public void userChecksTrustUnderWillCheckbox() {
         CommonSteps.logInfo("user checks trust under will checkbox");

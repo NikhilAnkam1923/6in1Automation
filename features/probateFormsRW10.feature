@@ -10,7 +10,7 @@ Feature: 6in1 probate form RW10 Feature
 
   Scenario: Open Estate
     When user opens "Warner, Kris Arik Jr." Estate
-    And user saves entered Estate information for "RW10" form
+    Then user saves entered Estate information for "RW10" form
 
   Scenario: Verify, title of the form and if county is fetched from the decedent info.
     When user navigates to the probate forms tab

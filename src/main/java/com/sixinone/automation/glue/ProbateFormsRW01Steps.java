@@ -9,7 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
-public class probateFormsRW01Steps {
+public class ProbateFormsRW01Steps {
 
     @When("user verifies correct file number is displayed at the top of the form")
     public void userVerifyCorrectFileNumber() throws AutomationException {

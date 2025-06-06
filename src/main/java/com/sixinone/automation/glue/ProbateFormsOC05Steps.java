@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 
 
-public class probateFormsOC05Steps {
+public class ProbateFormsOC05Steps {
     @Then("user selects new Counsel")
     public void userSelectsNewCounsel() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user selects new Counsel");

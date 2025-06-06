@@ -458,7 +458,7 @@ public class CommonSteps {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    @And("^user saves entered Estate information for \"([^\"]*)\" form$")
+    @Then("^user saves entered Estate information for \"([^\"]*)\" form$")
     public void userSavesEstateInformation(String formName) throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user saves Estate Information for " + formName + " form");
         switch (formName) {
@@ -506,6 +506,9 @@ public class CommonSteps {
                 break;
             case "OC05":
                 PageFactory.probateFormsOC05Page().userSavesEstateInfo();
+                break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().userSavesEstateInfo();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

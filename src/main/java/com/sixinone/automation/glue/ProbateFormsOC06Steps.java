@@ -1,0 +1,31 @@
+package com.sixinone.automation.glue;
+
+import com.sixinone.automation.exception.AutomationException;
+import com.sixinone.automation.pages.PageFactory;
+import com.sixinone.automation.util.CommonUtil;
+import cucumber.api.java.en.*;
+import org.json.simple.parser.ParseException;
+import org.openqa.selenium.WebElement;
+
+import java.io.IOException;
+
+public class ProbateFormsOC06Steps {
+
+    @Then("user verifies by default page 1 should be opened and correct estate name and file number are auto-filled")
+    public void userVerifiesByDefaultPage1ShouldBeOpenedAndCorrectEstateNameAndFileNumberAreAutoFilled() throws AutomationException, IOException, ParseException {
+        PageFactory.probateFormsOC06Page().verifyEstateNameAndFileNumberAutofetch();
+    }
+
+    @When("user enters a valid numeric value into the file number field")
+    public void userEntersValidNumericValueIntoFileNumberField() throws AutomationException, IOException, ParseException {
+        PageFactory.probateFormsOC06Page().enterValidFileNumber();
+    }
+
+    @Then("the file number should be updated and saved automatically")
+    public void theFileNumberShouldBeUpdatedAndSavedAutomatically() throws AutomationException, IOException, ParseException {
+        PageFactory.probateFormsOC06Page().verifyFileNumberUpdatedAndSaved();
+    }
+
+
+
+}

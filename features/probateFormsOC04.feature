@@ -10,7 +10,7 @@ Feature: 6in1 probate form OC04 Feature
 
   Scenario: Open Estate
     When user opens "Watt, Sara Arik Jr." Estate
-    And user saves entered Estate information for "OC04" form
+    Then user saves entered Estate information for "OC04" form
 
   Scenario: Verify that the “Estate of” field is populated automatically from estate records.
     When user navigates to the probate forms tab

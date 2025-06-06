@@ -1,4 +1,4 @@
 package com.sixinone.automation.glue;
 
-public class probateFormsOC04Steps {
+public class ProbateFormsOC04Steps {
 }

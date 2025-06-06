@@ -10,7 +10,7 @@ Feature: 6in1 probate form RW01 Feature
 
   Scenario: Open Estate
     When user opens "John, William Arik Jr." Estate
-    And user saves entered Estate information for "REV346" form
+    Then user saves entered Estate information for "REV346" form
 
   Scenario: Verify, file no. is displayed at the top of the form.
     When user navigates to the probate forms tab

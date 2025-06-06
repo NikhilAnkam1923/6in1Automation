@@ -10,7 +10,7 @@ Feature: 6in1 probate form RW07 Feature
 
   Scenario: Open Estate
     When user opens "John, William Arik Jr." Estate
-    And user saves entered Estate information for "RW07" form
+    Then user saves entered Estate information for "RW07" form
 
   Scenario: Verify, county, estate and file number aka names are auto populated on the form.
     When user navigates to the probate forms tab

@@ -10,7 +10,7 @@ Feature: 6in1 probate form OC01 Feature
 
   Scenario: Open Estate
     When user opens "Watt, Sara Arik Jr." Estate
-    And user saves entered Estate information for "OC01" form
+    Then user saves entered Estate information for "OC01" form
 
   Scenario: Verify that the Estate Name and County fields, file no are preloaded and displayed correctly as read-only fields.
     When user navigates to the probate forms tab

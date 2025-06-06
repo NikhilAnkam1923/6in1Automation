@@ -844,9 +844,9 @@ public class ProbateFormsOC01Page extends BasePage {
 
         List<WebElement> additionalPetitonerAddress = driverUtil.getWebElements(ADDITION_PETITIONER_ADDRESS);
 
-        for (int i=0; i< additionalPetitonerAddress.size(); i++){
+        for (int i = 0; i < additionalPetitonerAddress.size(); i++) {
             String value = additionalPetitonerAddress.get(i).getAttribute("value");
-            switch (i){
+            switch (i) {
                 case 0:
                     petitioner3AddressLine1Form = value;
                     break;
@@ -2789,7 +2789,7 @@ public class ProbateFormsOC01Page extends BasePage {
                 ? System.getProperty("user.dir") + "\\downloads\\"
                 : System.getProperty("user.dir") + "/downloads/") + downloadedFileName;
         try {
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
                     "ORPHANS' COURT DIVISION",
                     "This form shall be used in all cases involving the Audit or Confirmation of the Account of a",
                     fileNumberForm,
@@ -2804,17 +2804,14 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedCounselDetails.put("Telephone 1", attorneyTelephoneForm);
             expectedCounselDetails.put("Telephone 2", attorneyFaxForm);
             expectedCounselDetails.put("Email", attorneyEmailForm);
-
-            verifyCounselDetails(pdfFilePath, expectedCounselDetails);
+            boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
             Map<String, String> expectedPetitioners = new LinkedHashMap<>();
             expectedPetitioners.put(nameOfPetitionerForm, petitioner1AddressLineForm);
             expectedPetitioners.put(nameOfPetitioner2Form, petitioner2AddressLineForm);
+            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
-
-            validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
-
-            verifyFieldsInPDF(pdfFilePath,
+            boolean isverifiedDateOfWill = verifyFieldsInPDF(pdfFilePath,
                     "Letters Testamentary or  Letters of Administration were granted to Petitioner(s) on",
                     "Date(s) of Codicil(s) (if applicable): 02/17/2023 02/20/2023 02/26/2023",
                     dateOfWillForm,
@@ -2824,8 +2821,7 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedCodicilValues.put("Codicil Date1", codicilDate1Form);
             expectedCodicilValues.put("Codicil Date2", codicilDate2Form);
             expectedCodicilValues.put("Codicil Date3", codicilDate3Form);
-
-            verifyCodicilDates(pdfFilePath,
+            boolean isVerifiedCodicilDates = verifyCodicilDates(pdfFilePath,
                     "Date of Will (if applicable): 10/26/2015",
                     "Date of probate (if different from date Letters granted):",
                     expectedCodicilValues,
@@ -2838,8 +2834,7 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedValues.put("additionalPetitioner2 Name", Fiduciary4Form);
             String petitioner4AddressLineForm = petitioner4AddressLine1Form + " " + petitioner4CityStateCodeZipForm;
             expectedValues.put("additionalPetitioner2 Address", petitioner4AddressLineForm);
-
-            verifyAdditionalPetitioners(pdfFilePath,
+            boolean isVerifiedAdditionalPetitioners = verifyAdditionalPetitioners(pdfFilePath,
                     "(Additional Petitioner)",               // beforeLine
                     "PETITION FOR ADJUDICATION", // afterLine
                     expectedValues
@@ -2856,8 +2851,7 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedChildren.put(childrenDetailDataForm8, dateDataForm8);
             expectedChildren.put(childrenDetailDataForm9, dateDataForm9);
             expectedChildren.put(childrenDetailDataForm10, dateDataForm10);
-
-            verifyChildrenNamesAndDOBs(
+            boolean isVerifiedChildrenNamesAndDOBs = verifyChildrenNamesAndDOBs(
                     pdfFilePath,
                     "If yes, give names and dates of birth:",
                     "7. Was a request for a statement of claim, as required by the Medical",
@@ -2868,37 +2862,28 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedDatePaymentInterestMap.put("Date_1", paDateForm1);
             expectedDatePaymentInterestMap.put("Payment_1", paPaymentForm1);
             expectedDatePaymentInterestMap.put("Interest_1", paInterestForm1);
-
             expectedDatePaymentInterestMap.put("Date_2", paDateForm2);
             expectedDatePaymentInterestMap.put("Payment_2", paPaymentForm2);
             expectedDatePaymentInterestMap.put("Interest_2", paInterestForm2);
-
             expectedDatePaymentInterestMap.put("Date_3", paDateForm3);
             expectedDatePaymentInterestMap.put("Payment_3", paPaymentForm3);
             expectedDatePaymentInterestMap.put("Interest_3", paInterestForm3);
-
             expectedDatePaymentInterestMap.put("Date_4", paDateForm4);
             expectedDatePaymentInterestMap.put("Payment_4", paPaymentForm4);
             expectedDatePaymentInterestMap.put("Interest_4", paInterestForm4);
-
             expectedDatePaymentInterestMap.put("Date_5", paDateForm5);
             expectedDatePaymentInterestMap.put("Payment_5", paPaymentForm5);
             expectedDatePaymentInterestMap.put("Interest_5", paInterestForm5);
-
             expectedDatePaymentInterestMap.put("Date_6", paDateForm6);
             expectedDatePaymentInterestMap.put("Payment_6", paPaymentForm6);
             expectedDatePaymentInterestMap.put("Interest_6", paInterestForm6);
-
             expectedDatePaymentInterestMap.put("Date_7", paDateForm7);
             expectedDatePaymentInterestMap.put("Payment_7", paPaymentForm7);
             expectedDatePaymentInterestMap.put("Interest_7", paInterestForm7);
-
             expectedDatePaymentInterestMap.put("Date_8", paDateForm8);
             expectedDatePaymentInterestMap.put("Payment_8", paPaymentForm8);
             expectedDatePaymentInterestMap.put("Interest_8", paInterestForm8);
-
-
-            verifyTaxPaymentData(pdfFilePath,
+            boolean isVerifiedTaxPaymentData = verifyTaxPaymentData(pdfFilePath,
                     "Date Payment Interest",
                     "13. On the date of death, was the decedent a fiduciary",
                     expectedDatePaymentInterestMap);
@@ -2907,41 +2892,31 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedDateDescriptionAmountMap.put("Date_1", radDateForm1);
             expectedDateDescriptionAmountMap.put("Description_1", radDescriptionForm1);
             expectedDateDescriptionAmountMap.put("Amount_1", radAmountForm1);
-
             expectedDateDescriptionAmountMap.put("Date_2", radDateForm2);
             expectedDateDescriptionAmountMap.put("Description_2", radDescriptionForm2);
             expectedDateDescriptionAmountMap.put("Amount_2", radAmountForm2);
-
             expectedDateDescriptionAmountMap.put("Date_3", radDateForm3);
             expectedDateDescriptionAmountMap.put("Description_3", radDescriptionForm3);
             expectedDateDescriptionAmountMap.put("Amount_3", radAmountForm3);
-
             expectedDateDescriptionAmountMap.put("Date_4", radDateForm4);
             expectedDateDescriptionAmountMap.put("Description_4", radDescriptionForm4);
             expectedDateDescriptionAmountMap.put("Amount_4", radAmountForm4);
-
             expectedDateDescriptionAmountMap.put("Date_5", radDateForm5);
             expectedDateDescriptionAmountMap.put("Description_5", radDescriptionForm5);
             expectedDateDescriptionAmountMap.put("Amount_5", radAmountForm5);
-
             expectedDateDescriptionAmountMap.put("Date_6", radDateForm6);
             expectedDateDescriptionAmountMap.put("Description_6", radDescriptionForm6);
             expectedDateDescriptionAmountMap.put("Amount_6", radAmountForm6);
-
             expectedDateDescriptionAmountMap.put("Date_7", radDateForm7);
             expectedDateDescriptionAmountMap.put("Description_7", radDescriptionForm7);
             expectedDateDescriptionAmountMap.put("Amount_7", radAmountForm7);
-
             expectedDateDescriptionAmountMap.put("Date_8", radDateForm8);
             expectedDateDescriptionAmountMap.put("Description_8", radDescriptionForm8);
             expectedDateDescriptionAmountMap.put("Amount_8", radAmountForm8);
-
             expectedDateDescriptionAmountMap.put("Date_9", radDateForm9);
             expectedDateDescriptionAmountMap.put("Description_9", radDescriptionForm9);
             expectedDateDescriptionAmountMap.put("Amount_9", radAmountForm9);
-
-
-            verifyTransactionDetails(
+            boolean isVerifiedTransactionDetails = verifyTransactionDetails(
                     pdfFilePath,
                     "Date Description Amount",
                     "B. Has notice of the additional receipts and disbursements been",
@@ -2949,12 +2924,10 @@ public class ProbateFormsOC01Page extends BasePage {
 
             );
 
-
             Map<String, String> expectedSubmittedByPetitioners = new LinkedHashMap<>();
             expectedSubmittedByPetitioners.put("Name of Petitioner1", nameOfPetitionerForm);
             expectedSubmittedByPetitioners.put("Name of Petitioner2", nameOfPetitioner2Form);
-
-            verifySubmittedByPetitionerNames(
+            boolean isVerifiedSubmittedByPetitionerNames = verifySubmittedByPetitionerNames(
                     pdfFilePath,
                     "in proportions, not amounts) are as follows:",
                     "Signature of Petitioner",
@@ -2962,56 +2935,47 @@ public class ProbateFormsOC01Page extends BasePage {
             );
 
             List<Map<String, String>> expectedClaimants = new ArrayList<>();
-
             Map<String, String> claimant1 = new LinkedHashMap<>();
             claimant1.put("Claimant", Initials1Form);
             claimant1.put("Amount", Amount_of_Claim1Form);
             claimant1.put("ClaimAdmitted", Claim_Admitted1Form);
             claimant1.put("PaidInFull", Will_Claim_Be_Paid_In_Full1Form);
             expectedClaimants.add(claimant1);
-
             Map<String, String> claimant2 = new LinkedHashMap<>();
             claimant2.put("Claimant", Initials2Form);
             claimant2.put("Amount", Amount_of_Claim2Form);
-            claimant2.put("ClaimAdmitted",Claim_Admitted2Form);
+            claimant2.put("ClaimAdmitted", Claim_Admitted2Form);
             claimant2.put("PaidInFull", Will_Claim_Be_Paid_In_Full2Form);
             expectedClaimants.add(claimant2);
-
             Map<String, String> claimant3 = new LinkedHashMap<>();
             claimant3.put("Claimant", Initials3Form);
             claimant3.put("Amount", Amount_of_Claim3Form);
             claimant3.put("ClaimAdmitted", Claim_Admitted3Form);
             claimant3.put("PaidInFull", Will_Claim_Be_Paid_In_Full3Form);
             expectedClaimants.add(claimant3);
-
             Map<String, String> claimant4 = new LinkedHashMap<>();
             claimant4.put("Claimant", Initials4Form);
             claimant4.put("Amount", Amount_of_Claim4Form);
             claimant4.put("ClaimAdmitted", Claim_Admitted4Form);
             claimant4.put("PaidInFull", Will_Claim_Be_Paid_In_Full4Form);
             expectedClaimants.add(claimant4);
-
-            // Define the expected summary data
             String expectedAbove = aboveAmountForm;
             String expectedAttachment = attachmentAmountForm;
             String expectedTotal = totalAmountForm;
+            boolean isVerifiedClaimantsData =  verifyClaimantsData(pdfFilePath, expectedClaimants, expectedAbove, expectedAttachment, expectedTotal);
 
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isverifiedDateOfWill || !isVerifiedCodicilDates || !isVerifiedAdditionalPetitioners || !isVerifiedChildrenNamesAndDOBs || !isVerifiedTaxPaymentData || !isVerifiedTransactionDetails || !isVerifiedSubmittedByPetitionerNames || !isVerifiedClaimantsData) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
 
-
-
-            verifyClaimantsData(pdfFilePath, expectedClaimants, expectedAbove, expectedAttachment, expectedTotal);
-
-//            if (!isVerifiedTaxPaymentData) {
-//                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
-//            }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
-        } catch (AutomationException | IOException e) {
+        } catch (
+                Exception e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }
 
-
-    private static void verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3061,12 +3025,13 @@ public class ProbateFormsOC01Page extends BasePage {
             }
 
             CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+            return true;
         } else {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
     }
 
-    private static void verifyCounselDetails(String pdfFilePath, Map<String, String> expectedDetails) throws IOException, AutomationException {
+    private static boolean verifyCounselDetails(String pdfFilePath, Map<String, String> expectedDetails) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3155,6 +3120,7 @@ public class ProbateFormsOC01Page extends BasePage {
         }
 
         CommonSteps.logInfo("✅ Validation Passed: Counsel details successfully verified.");
+        return true;
     }
 
 
@@ -3197,7 +3163,7 @@ public class ProbateFormsOC01Page extends BasePage {
     }
 
 
-    public static void validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
+    public static boolean validatePetitionerAddressMapping(String pdfFilePath, Map<String, String> expectedNameAddressMap)
             throws IOException, AutomationException {
         Map<String, String> extractedMap = extractPetitionerAddressMapping(pdfFilePath);
 
@@ -3235,9 +3201,9 @@ public class ProbateFormsOC01Page extends BasePage {
             } else {
                 throw new AutomationException("❌ Validation Failed: '" + petitionerLabel + " Address' mismatch. Expected: '" + expectedAddress + "', Found: '" + extractedAddress + "'");
             }
-
             index++;
         }
+        return true;
     }
 
     public static Map<String, String> extractPetitionerAddressMapping(String pdfFilePath) throws IOException {
@@ -3279,7 +3245,7 @@ public class ProbateFormsOC01Page extends BasePage {
         return nameAddressMap;
     }
 
-    private static void verifyCodicilDates(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues, String fieldName) throws IOException, AutomationException {
+    private static boolean verifyCodicilDates(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues, String fieldName) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3337,9 +3303,10 @@ public class ProbateFormsOC01Page extends BasePage {
         } else {
             throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
         }
+        return true;
     }
 
-    private static void verifyAdditionalPetitioners(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues) throws IOException, AutomationException {
+    private static boolean verifyAdditionalPetitioners(String pdfFilePath, String beforeLine, String afterLine, Map<String, String> expectedValues) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3417,13 +3384,13 @@ public class ProbateFormsOC01Page extends BasePage {
         } else {
             CommonSteps.logInfo("✅ Validation Passed: All addresses matched expected values.");
         }
-
+        return true;
     }
 
-    private static void verifyChildrenNamesAndDOBs(String pdfFilePath,
-                                                   String beforeLine,
-                                                   String afterLine,
-                                                   Map<String, String> expectedNameDobMap) throws IOException, AutomationException {
+    private static boolean verifyChildrenNamesAndDOBs(String pdfFilePath,
+                                                      String beforeLine,
+                                                      String afterLine,
+                                                      Map<String, String> expectedNameDobMap) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3477,12 +3444,13 @@ public class ProbateFormsOC01Page extends BasePage {
 
             CommonSteps.logInfo("✅ Verified: " + expectedName + " → DOB: " + actualDob);
         }
+        return true;
     }
 
-    public static void verifyTaxPaymentData(String pdfFilePath,
-                                            String beforeLine,
-                                            String afterLine,
-                                            Map<String, String> expectedMap) throws IOException, AutomationException {
+    public static boolean verifyTaxPaymentData(String pdfFilePath,
+                                               String beforeLine,
+                                               String afterLine,
+                                               Map<String, String> expectedMap) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3540,12 +3508,13 @@ public class ProbateFormsOC01Page extends BasePage {
                         " → " + expectedKey + ": " + actualValue);
             }
         }
+        return true;
     }
 
-    public static void verifyTransactionDetails(String pdfFilePath,
-                                                String beforeLine,
-                                                String afterLine,
-                                                Map<String, String> expectedMap) throws IOException, AutomationException {
+    public static boolean verifyTransactionDetails(String pdfFilePath,
+                                                   String beforeLine,
+                                                   String afterLine,
+                                                   Map<String, String> expectedMap) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -3606,13 +3575,13 @@ public class ProbateFormsOC01Page extends BasePage {
                 CommonSteps.logInfo("✅ Verified → " + expectedKey + ": " + actualValue);
             }
         }
-
+        return true;
     }
 
-    public static void verifySubmittedByPetitionerNames(String pdfFilePath,
-                                                        String beforeLine,
-                                                        String afterLine,
-                                                        Map<String, String> expectedPetitionerMap)
+    private static boolean verifySubmittedByPetitionerNames(String pdfFilePath,
+                                                            String beforeLine,
+                                                            String afterLine,
+                                                            Map<String, String> expectedPetitionerMap)
             throws IOException, AutomationException {
 
         PDDocument document = PDDocument.load(new File(pdfFilePath));
@@ -3688,9 +3657,10 @@ public class ProbateFormsOC01Page extends BasePage {
         }
 
         CommonSteps.logInfo("✅ All petitioner names verified successfully.");
+        return true;
     }
 
-    public static void verifyClaimantsData(String pdfFilePath,
+    private static boolean verifyClaimantsData(String pdfFilePath,
                                            List<Map<String, String>> expectedClaimants,
                                            String expectedAbove,
                                            String expectedAttachment,
@@ -3805,6 +3775,6 @@ public class ProbateFormsOC01Page extends BasePage {
         } else {
             CommonSteps.logInfo("✅ Verified → Total: " + total);
         }
+        return true;
     }
-
 }

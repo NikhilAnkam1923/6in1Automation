@@ -314,7 +314,7 @@ public class ProbateFormsOC05Page extends BasePage {
         countyNameForm = countyName.getText();
 
         if (!page1.isDisplayed()) {
-            throw new AutomationException("On clicking OC02, page 1 is not opened by default.");
+            throw new AutomationException("On clicking OC05, page 1 is not opened by default.");
         }
 
         if (!countyNameForm.equals(enteredCountyName)) {

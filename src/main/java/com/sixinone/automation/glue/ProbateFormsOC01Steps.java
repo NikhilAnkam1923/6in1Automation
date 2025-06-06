@@ -1,19 +1,17 @@
 package com.sixinone.automation.glue;
 
-import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.pages.PageFactory;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.json.simple.parser.ParseException;
-import org.openqa.selenium.By;
 
 import java.io.IOException;
 
 import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
-public class probateFormsOC01Steps {
+public class ProbateFormsOC01Steps {
     @Then("user verifies estate name and county fields display preloaded data and are non-editable")
     public void userVerifiesEstateNameAndCountyFieldsDisplayPreloadedDataAndAreNonEditable() throws AutomationException {
         PageFactory.probateFormsOC01Page().verifyEstateNameAndCountyFieldsDisplayPreloadedDataAndAreNonEditable();
