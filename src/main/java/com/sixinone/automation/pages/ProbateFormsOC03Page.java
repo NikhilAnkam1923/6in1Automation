@@ -475,7 +475,11 @@ public class ProbateFormsOC03Page extends BasePage {
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
+        //for prod
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        //for UAT
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
     }
 
     public static String findFiduciaryKeyByName(String name, JSONObject jsonObject) {
@@ -672,7 +676,11 @@ public class ProbateFormsOC03Page extends BasePage {
 
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
+        //for prod
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        //for UAT
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
     }
 
     public void verifySwappedPetitionerNamesAreReflectedOnUIAccordingly() throws AutomationException, IOException, ParseException {
@@ -1336,7 +1344,14 @@ public class ProbateFormsOC03Page extends BasePage {
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
 
+        //for prod
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+        //for UAT
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
+//        switchToPage(2);
+//        waitForAWhile();
+
 
         WebElement nameOfPetitionerField = driverUtil.getWebElement(PETITIONER_NAME_FIELD);
         WebElement nameOfPetitioner2Field = driverUtil.getWebElement(PETITIONER_NAME_FIELD_2);
@@ -1652,7 +1667,7 @@ public class ProbateFormsOC03Page extends BasePage {
     }
 
     public void userResetsTheRWForm() throws AutomationException {
-        //Page 2
+        //Page 2 (for prod)
         switchToPage(2);
         scrollToElement(PETITIONER_NAME_FIELD);
         driverUtil.getWebElement(PETITIONER_NAME_FIELD).click();
@@ -1663,6 +1678,19 @@ public class ProbateFormsOC03Page extends BasePage {
         WebDriverUtil.waitForAWhile();
         driverUtil.getWebElement(ACCEPT_BTN).click();
         WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Petitioner(s) updated successfully.")));
+
+
+        //Page 1 (for UAT)
+//        switchToPage(1);
+//        scrollToElement(ACCOUNT_OF_FIELDS);
+//        driverUtil.getWebElement(ACCOUNT_OF_FIELDS).click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElement("//span[@class='cursor']").click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElement("//span[@class='cursor']").click();
+//        WebDriverUtil.waitForAWhile();
+//        driverUtil.getWebElement(ACCEPT_BTN).click();
+//        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Fiduciary(s) updated successfully.")));
 
         //Page 3
         switchToPage(3);
