@@ -74,10 +74,8 @@ public class GlobalContactPage extends BasePage {
     public static final String ALL_DATA_ROWS_XPATH = "//tbody//tr";
     public static final String RADIO_BUTTONS_XPATH = "//td//div//input[@type='radio']";
     private static final String BUTTON_IN_FOOTER = "//div[@class='modal-footer']//button[contains(text(),'%s')]";
-    private static final String CONTACT_NAMES_COLUMN = "//td[@aria-colindex='2']";
     public static final String RADIO_BUTTON = "//input[@type='radio']";
     public static final String EDIT_BUTTON = "//a[text()='Edit']";
-    public static final String SELECT_AND_PROCEED_BTN ="//button[contains(text(),'Select & Proceed')]";
     public static final String NAME_FILTER_INPUT = "//th[@aria-colindex='1'] //input";
     public static final String CONTACT_TYPE_FILTER_INPUT = "//th[@aria-colindex='3'] //input";
     public static final String CONTACT_TYPE_FILTER_INPUT_RECORDS = "//th[@aria-colindex='5'] //input";
@@ -85,7 +83,6 @@ public class GlobalContactPage extends BasePage {
     public static final String ENTITY_NAME_FIELD = "//input[@name='entityName']";
     public static final String EIN_ERROR = "//div[contains(text(),'EIN')]";
     public static final String REQUIRED_FIELD_ERROR_XPATH = "//input[contains(@aria-required,'true')]/following-sibling::div";
-    public static final String STATE_ERROR_REQUIRED_XPATH = "//div[@id='State']";
     public static final String CLOSE_BUTTON = "//button[text()='Close']";
     public static final String NEXT_BUTTON = "//button[text()='Next']";
     public static final String MANAGE_ADDRESS_BTN = "//button[text()='Manage Addresses']";

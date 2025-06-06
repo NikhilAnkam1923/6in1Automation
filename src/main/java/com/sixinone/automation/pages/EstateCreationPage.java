@@ -103,15 +103,6 @@ public class EstateCreationPage extends BasePage {
         field.sendKeys(CommonUtil.getJsonPath("EstateCreate").get(jsonKey).toString());
     }
 
-    private void fillField(String fieldLocator, String jsonKey, Actions actions) throws AutomationException, IOException, ParseException {
-        WebElement field = driverUtil.getWebElement(fieldLocator);
-        actions.moveToElement(field)
-                .click()
-                .sendKeys(CommonUtil.getJsonPath("EstateCreate").get(jsonKey).toString())
-                .build()
-                .perform();
-    }
-
     private void fillFieldWithRandom(String fieldLocator, String value, Actions actions) throws AutomationException {
         WebElement field = driverUtil.getWebElement(fieldLocator);
         actions.moveToElement(field)

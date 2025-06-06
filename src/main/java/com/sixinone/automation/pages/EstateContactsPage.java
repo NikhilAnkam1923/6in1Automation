@@ -26,10 +26,7 @@ public class EstateContactsPage extends BasePage {
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static final String NAME_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Name']";
     public static final String ROLES_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Roles']";
-    //for UAT
     public static final String ADD_CONTACT_BTN = "//button[text()='Create']";
-    //for Prod
-//    public static final String ADD_CONTACT_BTN = "//button[text()='Add Contact']";
     public static final String ADD_BUTTON = "//button[text()='Add']";
     public static final String CREATE_NEW_INDIVIDUAL_BTN = "//button[text()='Create New Individual']";
     public static final String CREATE_NEW_ENTITY_BTN = "//button[text()='Create New Entity']";

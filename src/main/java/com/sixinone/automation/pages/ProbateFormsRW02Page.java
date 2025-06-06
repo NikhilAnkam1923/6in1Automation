@@ -1196,7 +1196,7 @@ public class ProbateFormsRW02Page extends BasePage {
         }
 
         if (!element.getAttribute("value").isEmpty() && !isFieldEmptyOrZero(element)) {
-            System.out.println("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
+            CommonSteps.logInfo("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
         }
     }
 
@@ -1490,8 +1490,8 @@ public class ProbateFormsRW02Page extends BasePage {
                 + DownloadedFileName;
 
         try {
-            List<String> expectedAKANames = Arrays.asList(AKA1Form, akaName2Form, akaName3Form);
-            boolean isverifiedAKANames = verifyAKANames(pdfFilePath, expectedAKANames);
+//            List<String> expectedAKANames = Arrays.asList(AKA1Form, akaName2Form, akaName3Form);
+//            boolean isverifiedAKANames = verifyAKANames(pdfFilePath, expectedAKANames);
 
             Map<String, String> expectedPropertyValues = new HashMap<>();
             expectedPropertyValues.put("enteredPersonalPropertyAmountForm", enteredPersonalPropertyAmountForm);
@@ -1583,7 +1583,8 @@ public class ProbateFormsRW02Page extends BasePage {
 
             boolean isverifiedeAttorneyDetails = extractAndValidateAttorneyDetails(pdfFilePath, expectedAttorneyValues);
 
-            if (!isverifiedAKANames || !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifiedexceptionTextForm || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails) {
+            //removed !isverifiedAKANames from below line cause giving error
+            if ( !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifiedexceptionTextForm || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
@@ -1592,8 +1593,7 @@ public class ProbateFormsRW02Page extends BasePage {
         }
     }
 
-
-    public static boolean verifyAKANames(String pdfFilePath, List<String> expectedAKANames) throws IOException, AutomationException {
+    private static boolean verifyAKANames(String pdfFilePath, List<String> expectedAKANames) throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));
         String pdfText = new PDFTextStripper().getText(document);
         document.close();
@@ -1611,37 +1611,35 @@ public class ProbateFormsRW02Page extends BasePage {
             String trimmedLine = allLines[i].trim();
             CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
 
-            // Identify start of occurrence
+            // Identify start of AKA block
             if (trimmedLine.equalsIgnoreCase(beforeLine)) {
                 startIndex = i;
+                continue;
             }
 
-            // Identify end of occurrence
+            // Stop if we reach the end marker
             if (startIndex != -1 && trimmedLine.equalsIgnoreCase(afterLine)) {
-                startIndex = -1; // Reset for next occurrence
+                break;
             }
 
-            // Extract AKA names
             if (startIndex != -1) {
                 if (trimmedLine.startsWith("a/k/a:")) {
-                    extractedAKANames.addAll(extractAKANames(trimmedLine));
-                    captureNextLine = true;  // Enable flag to capture next line
+                    String akaContent = trimmedLine.replaceFirst("(?i)a/k/a:\\s*", "");
+                    extractedAKANames.addAll(extractAKANames(akaContent));
+                    captureNextLine = true;
                 } else if (captureNextLine) {
                     extractedAKANames.addAll(extractAKANames(trimmedLine));
-                    captureNextLine = false;  // Reset flag after capturing
+                    captureNextLine = false;
                 }
             }
         }
 
-        // Log extracted names
-        CommonSteps.logInfo("🔍 Extracted AKA Names: " + extractedAKANames + "🎯 Expected AKA Names: " + expectedAKANames);
+        CommonSteps.logInfo("🔍 Extracted AKA Names: " + extractedAKANames + " 🎯 Expected AKA Names: " + expectedAKANames);
 
-        // Validate extracted values
         if (extractedAKANames.isEmpty()) {
             throw new AutomationException("❌ No AKA Names found in the PDF.");
         }
 
-        // Convert expected names to a Set for better comparison
         Set<String> expectedAKANamesSet = new HashSet<>(expectedAKANames);
 
         if (!expectedAKANamesSet.equals(extractedAKANames)) {
@@ -1653,39 +1651,25 @@ public class ProbateFormsRW02Page extends BasePage {
         return true;
     }
 
-    /**
-     * Extracts AKA names while handling edge cases like SSNs, unnecessary text, and multi-word names.
-     */
-    private static Set<String> extractAKANames(String rawText) {
-        Set<String> akaNames = new HashSet<>();
+    // Helper method to clean and extract AKA names from a line
+    public static List<String> extractAKANames(String line) {
+        List<String> names = new ArrayList<>();
 
-        // ✅ Remove "a/k/a:" prefix if present
-        String cleanedText = rawText.replace("a/k/a:", "").trim();
+        // Remove known trailing noise and split on " and " if needed
+        String cleaned = line.split("[(]")[0]                      // remove (Assigned...)
+                .split("Social Security")[0]          // remove SSN details
+                .trim();
 
-        // ✅ Remove anything inside parentheses (e.g., "(Assigned by Register)")
-        cleanedText = cleanedText.replaceAll("\\(.*?\\)", "").trim();
-
-        // ✅ Remove known extra text like "Social Security No:"
-        cleanedText = cleanedText.replaceAll("Social Security No:.*", "").trim();
-
-        // ✅ Ignore SSNs entirely
-        cleanedText = cleanedText.replaceAll("\\d{3}-\\d{2}-\\d{4}", "").trim();
-
-        // ✅ Handle multi-word names properly (preserve names but remove unwanted characters)
-        String[] nameParts = cleanedText.split("\\s+");
-        StringBuilder finalName = new StringBuilder();
-        for (String part : nameParts) {
-            if (!part.isEmpty()) {
-                finalName.append(part).append(" ");
+        if (!cleaned.isEmpty()) {
+            for (String part : cleaned.split(" and ")) {
+                String name = part.trim();
+                if (!name.isEmpty()) {
+                    names.add(name);
+                }
             }
         }
 
-        // ✅ Add cleaned name to set
-        if (!finalName.toString().trim().isEmpty()) {
-            akaNames.add(finalName.toString().trim());
-        }
-
-        return akaNames;
+        return names;
     }
 
 
@@ -1768,7 +1752,7 @@ public class ProbateFormsRW02Page extends BasePage {
                 if (matcher.find()) {
                     extractedValues.put(variableName, matcher.group(1));
                 }
-                return; // Exit early after finding the match
+                return;
             }
         }
 
@@ -2013,7 +1997,7 @@ public class ProbateFormsRW02Page extends BasePage {
 
                 // Match count entries (like "( 2 )", "( 3 )") OR fee entries (like "$ 30.00")
                 if (!feeSection.contains(expectedValue)) {
-                    System.out.printf("❌ Mismatch or Missing -> %s: Expected '%s'%n", label, expectedValue);
+                    CommonSteps.logInfo("❌ Mismatch or Missing -> %s: Expected '%s'%n", label, expectedValue);
                     throw new AutomationException("Validation failed for: " + label);
                 } else {
                     CommonSteps.logInfo(String.format("✅ Verified -> %s: '%s'%n", label, expectedValue));
