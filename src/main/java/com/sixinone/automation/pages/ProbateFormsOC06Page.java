@@ -3,14 +3,22 @@ package com.sixinone.automation.pages;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 
 public class ProbateFormsOC06Page extends BasePage {
 
@@ -58,6 +66,8 @@ public class ProbateFormsOC06Page extends BasePage {
     private static final String FILE_NUMBER_FIELD = "//input[@name='fileNumberPA']";
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
     private static final String OC_FORM_XPATH = "//a//p[text()='%s']";
+
+    static String downloadedFileName;
 
     static String estateNameForm;
     static String fileNumberForm;
@@ -184,6 +194,10 @@ public class ProbateFormsOC06Page extends BasePage {
         fileNumberField.clear();
         fileNumberField.sendKeys(newFileNumber);
 
+        WebElement toasterbtn = driverUtil.getWebElement(CLOSE_TOASTER_BTN);
+        toasterbtn.click();
+
+
         WebDriverUtil.waitForAWhile(); // small wait for UI update
     }
 
@@ -201,11 +215,17 @@ public class ProbateFormsOC06Page extends BasePage {
         String enteredFileNumber = CommonUtil.getJsonPath("OC01Form").get("OC01Form.fileNumber").toString();
         String actualFileNumber = fileNumberField.getAttribute("value");
 
-        if (actualFileNumber.equals(enteredFileNumber)) {
-            CommonSteps.logInfo("File number not updated correctly and saved automatically");
-        } else {
+        if (!actualFileNumber.equals(enteredFileNumber)) {
             throw new AutomationException("File number not updated correctly. Expected: " + enteredFileNumber + ", Found: " + actualFileNumber);
         }
+
+        WebElement filenumberfield = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+        filenumberfield.clear();
+        filenumberfield.sendKeys("22-23-1234");
+
+        WebElement toasterbtn = driverUtil.getWebElement(CLOSE_TOASTER_BTN);
+        toasterbtn.click();
+
     }
 
     public void verifyCountyName(String formName) throws AutomationException {
@@ -213,8 +233,122 @@ public class ProbateFormsOC06Page extends BasePage {
         String enteredCountyName = getEstateValue("DomicileCountry").toUpperCase();
         countyNameForm = countyName.getText();
         if (!countyNameForm.equals(enteredCountyName)) {
-            throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm + "for" + formName );
+            throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm + "for" + formName);
         }
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS)) ? System.getProperty("user.dir") + "\\downloads" : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/")
+                + downloadedFileName;
+        try {
+
+            boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
+                    "ESTATE OF Sara Watt   SETTLOR    DECEASED",
+                    "Dear Sir or Madam:",
+                    fileNumberForm,
+                    "file number");
+
+            if (!isVerifiedFileNumber) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (Exception e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
+    }
+
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName)
+            throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        // 🔍 Log Full PDF Content with Line Numbers
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+        }
+        int startIndex = -1, endIndex = -1;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (line.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1) {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+
+        StringBuilder extractedBlock = new StringBuilder();
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (!line.isEmpty()) {
+                extractedBlock.append(line).append(" ");
+            }
+        }
+
+        String actual = extractedBlock.toString()
+                .replaceFirst("(?i)^No\\.\\s*", "") // Remove leading 'No.' (case-insensitive)
+                .replaceAll("\\s+", " ")
+                .trim();
+        String expected = expectedValue.replaceAll("\\s+", " ").trim();
+
+        CommonSteps.logInfo("🔍 Comparing block -> Expected: '" + expected + "', Extracted: '" + actual + "'");
+
+        if (!expected.equalsIgnoreCase(actual)) {
+            throw new AutomationException("❌ Validation Failed: Block content does not match for '" + fieldName + "'");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' block matches expected.");
+        return true;
+    }
+
 }
 

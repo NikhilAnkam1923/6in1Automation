@@ -22,7 +22,6 @@ public class ProbateFormsOC06Steps {
     public void userEntersValidNumericValueIntoFileNumberField() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("user enters a valid numeric value into the file number field");
         PageFactory.probateFormsOC06Page().enterValidFileNumber();
-        CommonSteps.takeScreenshot();
     }
 
     @Then("the file number should be updated and saved automatically")
@@ -38,6 +37,4 @@ public class ProbateFormsOC06Steps {
         PageFactory.probateFormsOC06Page().verifyCountyName(formName);
         CommonSteps.takeScreenshot();
     }
-
-
 }

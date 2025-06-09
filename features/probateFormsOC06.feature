@@ -24,6 +24,11 @@ Feature: 6in1 probate form OC05 Feature
   Scenario: Verify that county is fetched correctly from the decedent information
     Then user verifies correct county name is fetched and displayed at the top of the "OC06" form
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC06'
+    And verify all the fields entered are correctly reflected in the 'OC06' pdf
+
   @Setup
   Scenario:SETUP: Close Browser
     When user logged out from the application

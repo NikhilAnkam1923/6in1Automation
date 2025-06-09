@@ -930,6 +930,9 @@ public class CommonSteps {
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifyFormPrintedInPDFForm(formName);
                 break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().verifyFormPrintedInPDFForm(formName);
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -984,6 +987,9 @@ public class CommonSteps {
                 break;
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifyAllFieldsInDownloadedPDF();
+                break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().verifyAllFieldsInDownloadedPDF();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
