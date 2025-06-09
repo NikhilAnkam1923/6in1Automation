@@ -1,5 +1,5 @@
 @6in1 @Smoke @Regression
-Feature: 6in1 probate form OC05 Feature
+Feature: 6in1 probate form OC06 Feature
 
   @Setup
   Scenario: SETUP: Launch Browser and go to application
