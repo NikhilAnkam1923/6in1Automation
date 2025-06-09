@@ -21,6 +21,9 @@ Feature: 6in1 probate form OC05 Feature
     When user enters a valid numeric value into the file number field
     Then the file number should be updated and saved automatically
 
+  Scenario: Verify that county is fetched correctly from the decedent information
+    Then user verifies correct county name is fetched and displayed at the top of the "OC06" form
+
   @Setup
   Scenario:SETUP: Close Browser
     When user logged out from the application

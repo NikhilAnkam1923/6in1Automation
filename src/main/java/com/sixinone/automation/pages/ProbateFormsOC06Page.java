@@ -61,6 +61,7 @@ public class ProbateFormsOC06Page extends BasePage {
 
     static String estateNameForm;
     static String fileNumberForm;
+    static String countyNameForm;
 
     public ProbateFormsOC06Page() throws IOException, ParseException {
     }
@@ -204,6 +205,15 @@ public class ProbateFormsOC06Page extends BasePage {
             CommonSteps.logInfo("File number not updated correctly and saved automatically");
         } else {
             throw new AutomationException("File number not updated correctly. Expected: " + enteredFileNumber + ", Found: " + actualFileNumber);
+        }
+    }
+
+    public void verifyCountyName(String formName) throws AutomationException {
+        WebElement countyName = driverUtil.getWebElement(COUNTY_PAGE_1_XPATH);
+        String enteredCountyName = getEstateValue("DomicileCountry").toUpperCase();
+        countyNameForm = countyName.getText();
+        if (!countyNameForm.equals(enteredCountyName)) {
+            throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm + "for" + formName );
         }
     }
 }
