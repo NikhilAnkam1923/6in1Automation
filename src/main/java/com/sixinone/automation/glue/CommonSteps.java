@@ -1784,6 +1784,9 @@ public class CommonSteps {
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifyCounselDetailsArePopulatedCorrectly();
                 break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().verifyCounselDetailsArePopulatedCorrectly();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }

@@ -52,6 +52,10 @@ Feature: 6in1 probate form OC06 Feature
   Scenario: Verify that (Settlor & Deceased) checkbox selections from Page 1 are carried forward to Page 4.
     Then user verifies the selections made on Page 1 are accurately displayed on Page 4
 
+  Scenario: Verify that the default attorney displayed is the first attorney entered for the estate.
+    When user selects attorney contact
+    Then user verifies Counsel details are populated correctly for "OC06" form
+
   Scenario: Reset the OC06 form
     Then user resets the "OC06" form
 

@@ -101,4 +101,10 @@ public class ProbateFormsOC06Steps {
         PageFactory.probateFormsOC06Page().verifyTheSelectionsMadeOnPage1AreAccuratelyDisplayedOnPage4();
         CommonSteps.takeScreenshot();
     }
+
+    @When("user selects attorney contact")
+    public void userSelectsAttorneyContact() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user selects attorney contact");
+        PageFactory.probateFormsOC06Page().userSelectsAttorneyContact();
+    }
 }
