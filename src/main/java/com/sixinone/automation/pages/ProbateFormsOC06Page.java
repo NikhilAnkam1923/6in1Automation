@@ -286,7 +286,6 @@ public class ProbateFormsOC06Page extends BasePage {
         }
 
         fileNumberForm = fourDigitFileNumberForm;
-        System.out.println("File number: "+fileNumberForm);
     }
 
     public void verifyTwoCheckboxesAreThereOnThePageAndEitherOfThemCanBeSelected() throws AutomationException {
