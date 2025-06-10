@@ -1,5 +1,6 @@
 package com.sixinone.automation.pages;
 
+import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
@@ -9,13 +10,17 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
@@ -66,12 +71,33 @@ public class ProbateFormsOC06Page extends BasePage {
     private static final String FILE_NUMBER_FIELD = "//input[@name='fileNumberPA']";
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
     private static final String OC_FORM_XPATH = "//a//p[text()='%s']";
+    private static final String USE_4_DIGIT_YEAR_CHECKBOX = "//input[@name='isUseFourDigit']";
+    private static final String SETTLOR_CHECKBOX = "//input[@name='isSettlorOrDeceased' and @value='1']";
+    private static final String DECEASED_CHECKBOX = "//input[@name='isSettlorOrDeceased' and @value='0']";
+    private static final String ESTATE_NAME_PAGE_2 = "//input[@id='Decedent_fullname']";
+    private static final String ESTATE_NAME_PAGE_3 = "//input[@id='Decedent_fullname']";
+    private static final String ESTATE_NAME_PAGE_4 = "//input[@id='Decedent_fullname']";
+    private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
 
     static String downloadedFileName;
 
     static String estateNameForm;
     static String fileNumberForm;
     static String countyNameForm;
+    static String initialFileNumber;
+    static String fourDigitFileNumberForm;
+    static String estateNamePage2;
+    static String selectedRolePage1;
+    static String estateNamePage3;
+    static String estateNamePage4;
+    static String nameOfCounselForm;
+    static String nameOfLawFirmForm;
+    static String attorneyTelephoneForm;
+    static String attorneyFaxForm;
+    static String attorneyEmailForm;
+    static String attorneyAddressLine1Form;
+    static String attorneyAddressLine2Form;
+
 
     public ProbateFormsOC06Page() throws IOException, ParseException {
     }
@@ -83,15 +109,6 @@ public class ProbateFormsOC06Page extends BasePage {
             return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
         } else {
             throw new AutomationException("Failed to locate element for locator: " + locator);
-        }
-    }
-
-    private static String getFieldValue(WebElement field) throws AutomationException {
-        if (field != null) {
-            String value = field.getAttribute("value");
-            return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
-        } else {
-            throw new AutomationException("WebElement is null.");
         }
     }
 
@@ -189,6 +206,8 @@ public class ProbateFormsOC06Page extends BasePage {
             throw new AutomationException("File number field is not editable.");
         }
 
+        initialFileNumber = fileNumberField.getAttribute("value");
+
         String newFileNumber = CommonUtil.getJsonPath("OC01Form").get("OC01Form.fileNumber").toString();
 
         fileNumberField.clear();
@@ -199,6 +218,15 @@ public class ProbateFormsOC06Page extends BasePage {
 
 
         WebDriverUtil.waitForAWhile(); // small wait for UI update
+
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
     }
 
     public void clickOnOCForm(String formToSelect) throws AutomationException {
@@ -235,6 +263,194 @@ public class ProbateFormsOC06Page extends BasePage {
         if (!countyNameForm.equals(enteredCountyName)) {
             throw new AutomationException("County name not fetched correctly. Expected: " + enteredCountyName + " ,Found: " + countyNameForm + "for" + formName);
         }
+    }
+
+    private void scrollToElement(String elementLocator) {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(elementLocator));
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void userClicksTheUseDigitYearCheckbox() {
+        scrollToElement(USE_4_DIGIT_YEAR_CHECKBOX);
+        DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
+    }
+
+    public void verifyFileNumberWithFourDigitYearFormatIsDisplayedInTheFileNumberBox() throws AutomationException {
+        fourDigitFileNumberForm = driverUtil.getWebElement(FILE_NUMBER_FIELD).getAttribute("value");
+
+        String expectedFourDigitFileNumber = fileNumberForm.replaceFirst("-(\\d{2})-", "-20$1-");
+
+        if (!fourDigitFileNumberForm.equals(expectedFourDigitFileNumber)) {
+            throw new AutomationException("File number did not update correctly. Expected: " + expectedFourDigitFileNumber + ", Found: " + fourDigitFileNumberForm);
+        }
+    }
+
+    public void verifyTwoCheckboxesAreThereOnThePageAndEitherOfThemCanBeSelected() throws AutomationException {
+        WebElement settlorCheckbox = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX));
+        WebElement deceasedCheckbox = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX));
+
+        if (settlorCheckbox == null || deceasedCheckbox == null) {
+            throw new AutomationException("Either 'Settlor' or 'Deceased' checkbox is not present on the page.");
+        }
+
+        scrollToElement(SETTLOR_CHECKBOX);
+        DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).click();
+
+        boolean isSettlorSelected = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).isSelected();
+        boolean isDeceasedSelected = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX)).isSelected();
+
+        if (!isSettlorSelected && !isDeceasedSelected) {
+            throw new AutomationException("Neither 'Settlor' nor 'Deceased' checkbox is selected. One must be selected.");
+        }
+
+        selectedRolePage1 = null;
+        if (isSettlorSelected) {
+            selectedRolePage1 = "Settlor";
+        } else if (isDeceasedSelected) {
+            selectedRolePage1 = "Deceased";
+        } else {
+            throw new AutomationException("Neither 'Settlor' nor 'Deceased' checkbox is selected on Page 1.");
+        }
+    }
+
+    public void verifyTheEstateNameIsPreloadedCorrectlyFromTheEstateRecords() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_2);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(ESTATE_NAME_PAGE_2);
+
+        estateNamePage2 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNamePage2)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNamePage2);
+        }
+    }
+
+    public void verifySelectedCheckboxesFromPage1AreDisplayedAccuratelyOnPage2() throws AutomationException {
+        WebElement settlorCheckbox = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX));
+        WebElement deceasedCheckbox = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX));
+
+        if (settlorCheckbox == null || deceasedCheckbox == null) {
+            throw new AutomationException("Either 'Settlor' or 'Deceased' checkbox is not present on the page 2.");
+        }
+
+        boolean isSettlorSelected = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).isSelected();
+        boolean isDeceasedSelected = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX)).isSelected();
+
+        String selectedRolePage2 = null;
+        if (isSettlorSelected) {
+            selectedRolePage2 = "Settlor";
+        } else if (isDeceasedSelected) {
+            selectedRolePage2 = "Deceased";
+        } else {
+            throw new AutomationException("Neither 'Settlor' nor 'Deceased' checkbox is selected on Page 2.");
+        }
+
+        if (!selectedRolePage2.equals(selectedRolePage1)) {
+            throw new AutomationException("Selected checkboxes \"Settlor & Deceased\" from Page 1 are not displayed accurately on Page 2.");
+        }
+    }
+
+    public void verifyTheEstateNameIsPreloadedCorrectlyFromTheEstateRecordsOnPage3() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_3);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(ESTATE_NAME_PAGE_3);
+
+        estateNamePage3 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNamePage3)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNamePage3);
+        }
+    }
+
+    public void verifySelectedCheckboxesFromAreDisplayedAccuratelyOnPage3() throws AutomationException {
+        WebElement settlorCheckbox = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX));
+        WebElement deceasedCheckbox = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX));
+
+        if (settlorCheckbox == null || deceasedCheckbox == null) {
+            throw new AutomationException("Either 'Settlor' or 'Deceased' checkbox is not present on the page 3.");
+        }
+
+        boolean isSettlorSelected = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).isSelected();
+        boolean isDeceasedSelected = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX)).isSelected();
+
+        String selectedRolePage3 = null;
+        if (isSettlorSelected) {
+            selectedRolePage3 = "Settlor";
+        } else if (isDeceasedSelected) {
+            selectedRolePage3 = "Deceased";
+        } else {
+            throw new AutomationException("Neither 'Settlor' nor 'Deceased' checkbox is selected on Page 3.");
+        }
+
+        if (!selectedRolePage3.equals(selectedRolePage1)) {
+            throw new AutomationException("Selected checkboxes \"Settlor & Deceased\" from Page 1 are not displayed accurately on Page 3.");
+        }
+    }
+
+    public void verifyTheEstateNameIsPreloadedCorrectlyFromTheEstateRecordsOnPage4() throws AutomationException {
+        WebElement estateNameField = driverUtil.getWebElement(ESTATE_NAME_PAGE_4);
+        String estateName = getEstateValue("DisplayName");
+        scrollToElement(ESTATE_NAME_PAGE_4);
+
+        estateNamePage4 = estateNameField.getAttribute("value");
+
+        if (!estateName.equals(estateNamePage4)) {
+            throw new AutomationException("Estate name not fetched correctly. Expected: " + estateName + " ,Found: " + estateNamePage4);
+        }
+    }
+
+    public void verifyTheSelectionsMadeOnPage1AreAccuratelyDisplayedOnPage4() throws AutomationException {
+        WebElement settlorCheckbox = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX));
+        WebElement deceasedCheckbox = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX));
+
+        if (settlorCheckbox == null || deceasedCheckbox == null) {
+            throw new AutomationException("Either 'Settlor' or 'Deceased' checkbox is not present on the page 4.");
+        }
+
+        boolean isSettlorSelected = DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).isSelected();
+        boolean isDeceasedSelected = DriverFactory.drivers.get().findElement(By.xpath(DECEASED_CHECKBOX)).isSelected();
+
+        String selectedRolePage4 = null;
+        if (isSettlorSelected) {
+            selectedRolePage4 = "Settlor";
+        } else if (isDeceasedSelected) {
+            selectedRolePage4 = "Deceased";
+        } else {
+            throw new AutomationException("Neither 'Settlor' nor 'Deceased' checkbox is selected on Page 4.");
+        }
+
+        if (!selectedRolePage4.equals(selectedRolePage1)) {
+            throw new AutomationException("Selected checkboxes \"Settlor & Deceased\" from Page 1 are not displayed accurately on Page 4.");
+        }
+    }
+
+    private static void switchToPage(int pageNumber) throws AutomationException {
+        driverUtil.getWebElement(String.format(PAGE_NUMBER_DYNAMIC_XPATH, pageNumber)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    public void userResetsTheRWForm() throws AutomationException {
+        switchToPage(1);
+        userClicksTheUseDigitYearCheckbox();
+        WebDriverUtil.waitForAWhile();
+        WebElement fileNumberFieldReset = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+        fileNumberFieldReset.clear();
+        fileNumberFieldReset.sendKeys(initialFileNumber);
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
+
+        scrollToElement(SETTLOR_CHECKBOX);
+        DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).click();
     }
 
     public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
@@ -285,7 +501,16 @@ public class ProbateFormsOC06Page extends BasePage {
                     fileNumberForm,
                     "file number");
 
-            if (!isVerifiedFileNumber) {
+            Map<String, String> expectedCounselDetails = new HashMap<>();
+            expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
+            expectedCounselDetails.put("Name of Law Firm", nameOfLawFirmForm);
+            expectedCounselDetails.put("Address", attorneyAddressForm);
+            expectedCounselDetails.put("CityStateZip", attorneyCityStateZipForm);
+            expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
+            expectedCounselDetails.put("Email", attorneyEmailForm);
+            boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
+
+            if (!isVerifiedFileNumber || isVerifiedCounselDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -350,5 +575,57 @@ public class ProbateFormsOC06Page extends BasePage {
         return true;
     }
 
+    public static boolean verifyCounselDetails(String pdfFilePath, Map<String, String> expected) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        PDFTextStripper pdfStripper = new PDFTextStripper();
+        String pdfText = pdfStripper.getText(document);
+        document.close();
+
+        // Normalize text by removing extra spaces and splitting by lines
+        List<String> lines = Arrays.stream(pdfText.split("\\r?\\n"))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .toList();
+
+        Map<String, String> extracted = new HashMap<>();
+
+        for (int i = 0; i < lines.size(); i++) {
+            switch (lines.get(i)) {
+                case "Name of Counsel":
+                    extracted.put("Name of Counsel", lines.get(i - 1));
+                    break;
+                case "Name of Law Firm":
+                    extracted.put("Name of Law Firm", lines.get(i - 1));
+                    break;
+                case "Address":
+                    extracted.put("Address", lines.get(i - 1));
+                    break;
+                case "City, State, Zip":
+                    extracted.put("CityStateZip", lines.get(i - 1));
+                    break;
+                case "Telephone":
+                    extracted.put("Telephone", lines.get(i - 1));
+                    break;
+                case "Email":
+                    extracted.put("Email", lines.get(i - 1));
+                    break;
+            }
+        }
+
+        boolean isValid = true;
+        for (String key : expected.keySet()) {
+            String expectedValue = expected.get(key).trim();
+            String actualValue = extracted.getOrDefault(key, "").trim();
+
+            CommonSteps.logInfo("🔍 Comparing -> Field: " + key + " | Expected: '" + expectedValue + "' | Extracted: '" + actualValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(actualValue)) {
+                throw new AutomationException("❌ Mismatch in field '" + key + "': Expected '" + expectedValue + "' but found '" + actualValue + "'");
+            }
+        }
+
+        CommonSteps.logInfo("[SUCCESS] ✅ All Counsel Details Matched.");
+        return true;
+    }
 }
 

@@ -510,6 +510,9 @@ public class CommonSteps {
             case "OC06":
                 PageFactory.probateFormsOC06Page().userSavesEstateInfo();
                 break;
+            case "OC07":
+                PageFactory.probateFormsOC07Page().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -592,6 +595,9 @@ public class CommonSteps {
                 break;
             case "OC05":
                 PageFactory.probateFormsOC05Page().userResetsTheRWForm();
+                break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().userResetsTheRWForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
