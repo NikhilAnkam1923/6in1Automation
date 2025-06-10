@@ -220,4 +220,10 @@ public class EstateCreationSteps {
         PageFactory.estateCreationPage().verifyEstateOnListingPage();
         CommonSteps.takeScreenshot();
     }
+
+    @When("user clicks on the Create button")
+    public void userClicksOnTheCreateButton() throws AutomationException {
+        CommonSteps.logInfo("User clicks on the Create button");
+        PageFactory.estateCreationPage().clickButtonCreate();
+    }
 }

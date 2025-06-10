@@ -880,5 +880,8 @@
     "DateClosed": "11/15/2024",
     "QBDescription": "Party: Jane Doe; Date of Birth: 2012-07-15; Status: Minor; Guardian: Mary Doe (Mother), Appointed as Natural Guardian (no formal court appointment); Next of Kin: None. Party: John Smith; Date of Birth: 1945-03-02; Status: Incapacitated; Guardian: None; Next of Kin: Susan Smith, 123 Main Street, Philadelphia, PA 19107 (Daughter); Robert Smith, 456 Oak Lane, Pittsburgh, PA 15213 (Son).",
     "QCDescription": "A Petition for Guardian Ad Litem has been filed for Jane Doe (minor) and John Smith (incapacitated), as neither had a court-appointed guardian authorized to represent them in these proceedings. The petition was necessary under Pa. O.C. Rule 5.5 to ensure proper representation of their interests."
+  },
+  "UTAForm": {
+    "dateOfNotice": "01/31/2023"
   }
 }

@@ -26,7 +26,7 @@ public class EstateContactsPage extends BasePage {
     public static final String ESTATE_CONTACTS_TAB = "//span[text()='Estate Contacts']";
     public static final String NAME_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Name']";
     public static final String ROLES_COLUMN_XPATH = "//span[@class='k-column-title' and text()='Roles']";
-    public static final String ADD_CONTACT_BTN = "//button[text()='Create']";
+    public static final String ADD_CONTACT_BTN = "//button[contains(text(),'Create New Estate Contact')]";
     public static final String ADD_BUTTON = "//button[text()='Add']";
     public static final String CREATE_NEW_INDIVIDUAL_BTN = "//button[text()='Create New Individual']";
     public static final String CREATE_NEW_ENTITY_BTN = "//button[text()='Create New Entity']";
@@ -87,7 +87,7 @@ public class EstateContactsPage extends BasePage {
     private static final String FAX_FIELD = "//input[@name='contact.faxNumber']";
     private static final String SSN_FIELD = "//input[@name='contact.SSN']";
     private static final String ADDED_CONTACT_NAME = "//div[@class='modal-body']//tr[@aria-rowindex='3']//td[@aria-colindex='2']";
-    private static final String ADDED_ENTITY_CONTACT_NAME = "//div[@class='modal-body']//tr[@aria-rowindex='3']//td[@aria-colindex='4']";
+    private static final String ADDED_ENTITY_CONTACT_NAME = "//div[@class='modal-body']//tr[@aria-rowindex='3']//td[@aria-colindex='3']";
 
     public static String firstName;
     public static String lastName;

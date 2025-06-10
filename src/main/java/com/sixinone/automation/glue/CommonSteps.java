@@ -510,6 +510,9 @@ public class CommonSteps {
             case "OC06":
                 PageFactory.probateFormsOC06Page().userSavesEstateInfo();
                 break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -595,6 +598,9 @@ public class CommonSteps {
                 break;
             case "OC06":
                 PageFactory.probateFormsOC06Page().userResetsTheRWForm();
+                break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().userResetsTheRWForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1053,6 +1059,9 @@ public class CommonSteps {
                 break;
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+                break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().verifySidebarAppearsAndAttorneyCanBeSelected();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1786,6 +1795,9 @@ public class CommonSteps {
                 break;
             case "OC06":
                 PageFactory.probateFormsOC06Page().verifyCounselDetailsArePopulatedCorrectly();
+                break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().verifyCounselDetailsArePopulatedCorrectly();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);

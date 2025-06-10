@@ -194,12 +194,6 @@ public class GlobalContactsSteps {
 
     }
 
-    @When("user clicks on the Create button")
-    public void userClicksOnTheCreateButton() throws AutomationException {
-        CommonSteps.logInfo("User clicks on the Create button");
-        PageFactory.globalContactPage().clickButtonCreate();
-    }
-
     @And("user click on the Close button")
     public void userClickOnTheCloseButton() throws AutomationException {
         CommonSteps.logInfo("User clicks on the Close button");
@@ -327,5 +321,10 @@ public class GlobalContactsSteps {
         CommonSteps.takeScreenshot();
     }
 
+    @When("user clicks on the Create Global Contact button")
+    public void userClicksOnTheCreateGlobalContactButton() throws AutomationException {
+        CommonSteps.logInfo("user clicks on the Create Global Contact button");
+        PageFactory.globalContactPage().userClicksOnTheCreateGlobalContactButton();
+    }
 }
 
