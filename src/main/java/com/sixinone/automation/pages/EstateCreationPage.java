@@ -87,6 +87,9 @@ public class EstateCreationPage extends BasePage {
     private static final String FILE_NUMBER_3_ERR = "//div[@class='invalid-feedback' and contains(text(),'File Number must be at least 4 digits.')]";
     private static final String ESTATE_BREADCRUMB = "//a[@class='breadcrumb-item' and @href='/law-firm/estate']";
     private static final String NAME_FILTER = "//th[@aria-colindex='1'] //input";
+    public static final String FAILED_TO_SAVE_DATA_ALERT = "//div[@role='alert']//div[text()='Failed to save data. Please try again later.']";
+    public static final String ALERT_CLOSE_BTN = "//div[@role='alert']/following-sibling::button[@class='Toastify__close-button Toastify__close-button--light']";
+    public static final String CREATE_BUTTON = "//button[text()=' Create']";
 
     static String ageAtDeath;
     static String decedentSSN;
@@ -652,5 +655,21 @@ public class EstateCreationPage extends BasePage {
         actions.sendKeys(Keys.ENTER);
 
         ageAtDeath = driverUtil.getWebElement(AGE_AT_DEATH_FIELD).getAttribute("value");
+    }
+
+    public void clickButtonCreate() throws AutomationException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+
+        WebDriverUtil.waitForAWhile(3);
+        List<WebElement> alerts = DriverFactory.drivers.get().findElements(By.xpath(FAILED_TO_SAVE_DATA_ALERT));
+        if (!alerts.isEmpty() && alerts.get(0).isDisplayed()) {
+            WebElement closeBtn = DriverFactory.drivers.get().findElement(By.xpath(ALERT_CLOSE_BTN));
+            closeBtn.click();
+            CommonSteps.logInfo("Alert appeared and was closed.");
+        } else {
+            CommonSteps.logInfo("No alert appeared, continuing execution.");
+        }
+
+        driverUtil.getWebElement(CREATE_BUTTON).click();
     }
 }

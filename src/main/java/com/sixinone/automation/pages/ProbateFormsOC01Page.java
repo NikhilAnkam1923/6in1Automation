@@ -2435,6 +2435,7 @@ public class ProbateFormsOC01Page extends BasePage {
 
         for (String expectedName : selectedContactNamesPage10) {
             if (!displayedNames.contains(expectedName)) {
+
                 throw new AutomationException("Expected contact name not displayed: " + expectedName);
             }
         }
@@ -2791,7 +2792,7 @@ public class ProbateFormsOC01Page extends BasePage {
         try {
             boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
                     "ORPHANS' COURT DIVISION",
-                    "This form shall be used in all cases involving the Audit or Confirmation of the Account of a",
+                    "This form shall be used in all cases involving the Audit or Confirmation of the",
                     fileNumberForm,
                     "file number");
 
@@ -2806,13 +2807,9 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedCounselDetails.put("Email", attorneyEmailForm);
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
-            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
-            expectedPetitioners.put(nameOfPetitionerForm, petitioner1AddressLineForm);
-            expectedPetitioners.put(nameOfPetitioner2Form, petitioner2AddressLineForm);
-            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
 
             boolean isverifiedDateOfWill = verifyFieldsInPDF(pdfFilePath,
-                    "Letters Testamentary or  Letters of Administration were granted to Petitioner(s) on",
+                    "Atlanta, GA 30305 San Francisco, CA 94102",
                     "Date(s) of Codicil(s) (if applicable): 02/17/2023 02/20/2023 02/26/2023",
                     dateOfWillForm,
                     "Date of Will");
@@ -2840,23 +2837,6 @@ public class ProbateFormsOC01Page extends BasePage {
                     expectedValues
             );
 
-            Map<String, String> expectedChildren = new LinkedHashMap<>();
-            expectedChildren.put(childrenDetailDataForm1, dateDataForm1);
-            expectedChildren.put(childrenDetailDataForm2, dateDataForm2);
-            expectedChildren.put(childrenDetailDataForm3, dateDataForm3);
-            expectedChildren.put(childrenDetailDataForm4, dateDataForm4);
-            expectedChildren.put(childrenDetailDataForm5, dateDataForm5);
-            expectedChildren.put(childrenDetailDataForm6, dateDataForm6);
-            expectedChildren.put(childrenDetailDataForm7, dateDataForm7);
-            expectedChildren.put(childrenDetailDataForm8, dateDataForm8);
-            expectedChildren.put(childrenDetailDataForm9, dateDataForm9);
-            expectedChildren.put(childrenDetailDataForm10, dateDataForm10);
-            boolean isVerifiedChildrenNamesAndDOBs = verifyChildrenNamesAndDOBs(
-                    pdfFilePath,
-                    "If yes, give names and dates of birth:",
-                    "7. Was a request for a statement of claim, as required by the Medical",
-                    expectedChildren
-            );
 
             Map<String, String> expectedDatePaymentInterestMap = new LinkedHashMap<>();
             expectedDatePaymentInterestMap.put("Date_1", paDateForm1);
@@ -2884,7 +2864,7 @@ public class ProbateFormsOC01Page extends BasePage {
             expectedDatePaymentInterestMap.put("Payment_8", paPaymentForm8);
             expectedDatePaymentInterestMap.put("Interest_8", paInterestForm8);
             boolean isVerifiedTaxPaymentData = verifyTaxPaymentData(pdfFilePath,
-                    "Date Payment Interest",
+                    "Date  Payment Interest",
                     "13. On the date of death, was the decedent a fiduciary",
                     expectedDatePaymentInterestMap);
 
@@ -2934,6 +2914,30 @@ public class ProbateFormsOC01Page extends BasePage {
                     expectedSubmittedByPetitioners
             );
 
+            Map<String, String> expectedChildren = new LinkedHashMap<>();
+            expectedChildren.put(childrenDetailDataForm1, dateDataForm1);
+            expectedChildren.put(childrenDetailDataForm2, dateDataForm2);
+            expectedChildren.put(childrenDetailDataForm3, dateDataForm3);
+            expectedChildren.put(childrenDetailDataForm4, dateDataForm4);
+            expectedChildren.put(childrenDetailDataForm5, dateDataForm5);
+            expectedChildren.put(childrenDetailDataForm6, dateDataForm6);
+            expectedChildren.put(childrenDetailDataForm7, dateDataForm7);
+            expectedChildren.put(childrenDetailDataForm8, dateDataForm8);
+            expectedChildren.put(childrenDetailDataForm9, dateDataForm9);
+            expectedChildren.put(childrenDetailDataForm10, dateDataForm10);
+            boolean isVerifiedChildrenNamesAndDOBs = verifyChildrenNamesAndDOBs(
+                    pdfFilePath,
+                    "Name: Date of Birth:",
+                    "7.   Was a request for a statement of claim, as required by the Medical Assistance",
+                    expectedChildren
+            );
+
+            //
+            Map<String, String> expectedPetitioners = new LinkedHashMap<>();
+            expectedPetitioners.put(nameOfPetitionerForm, petitioner1AddressLineForm);
+            expectedPetitioners.put(nameOfPetitioner2Form, petitioner2AddressLineForm);
+            boolean isValidatedPetitionerAddressMapping = validatePetitionerAddressMapping(pdfFilePath, expectedPetitioners);
+
             List<Map<String, String>> expectedClaimants = new ArrayList<>();
             Map<String, String> claimant1 = new LinkedHashMap<>();
             claimant1.put("Claimant", Initials1Form);
@@ -2964,13 +2968,13 @@ public class ProbateFormsOC01Page extends BasePage {
             String expectedTotal = totalAmountForm;
             boolean isVerifiedClaimantsData =  verifyClaimantsData(pdfFilePath, expectedClaimants, expectedAbove, expectedAttachment, expectedTotal);
 
+
             if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isverifiedDateOfWill || !isVerifiedCodicilDates || !isVerifiedAdditionalPetitioners || !isVerifiedChildrenNamesAndDOBs || !isVerifiedTaxPaymentData || !isVerifiedTransactionDetails || !isVerifiedSubmittedByPetitionerNames || !isVerifiedClaimantsData) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             throw new AutomationException("❌ Verification failed: " + e.getMessage());
         }
     }

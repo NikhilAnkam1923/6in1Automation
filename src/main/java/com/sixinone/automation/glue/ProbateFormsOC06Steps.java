@@ -39,7 +39,6 @@ public class ProbateFormsOC06Steps {
         CommonSteps.takeScreenshot();
     }
 
-
     @When("user clicks the Use 4 digit year checkbox")
     public void userClicksTheUseDigitYearCheckbox() {
         CommonSteps.logInfo("user clicks the Use 4 digit year checkbox");
@@ -100,5 +99,11 @@ public class ProbateFormsOC06Steps {
         CommonSteps.logInfo("Verified that the selections made on Page 1 are accurately displayed on Page 4");
         PageFactory.probateFormsOC06Page().verifyTheSelectionsMadeOnPage1AreAccuratelyDisplayedOnPage4();
         CommonSteps.takeScreenshot();
+    }
+
+    @When("user selects attorney contact")
+    public void userSelectsAttorneyContact() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user selects attorney contact");
+        PageFactory.probateFormsOC06Page().userSelectsAttorneyContact();
     }
 }

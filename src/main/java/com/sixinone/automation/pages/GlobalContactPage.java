@@ -27,7 +27,7 @@ import static com.sixinone.automation.util.WebDriverUtil.waitForVisibleElement;
 
 public class GlobalContactPage extends BasePage {
 
-    public static final String CREATE_BUTTON = "//button[text()='Create']";
+    public static final String CREATE_BUTTON = "//button[text()=' Create Global Contact']";
     private static final String FIRST_NAME_FIELD = "//input[contains(@name,'firstName')]";
     private static final String LAST_NAME_FIELD = "//input[contains(@name,'lastName')]";
     private static final String CONTACT_NAME = "//td//a[text()='%s']";
@@ -110,22 +110,6 @@ public class GlobalContactPage extends BasePage {
         driverUtil.getWebElement(String.format("//div[@class='nav']//div//*[contains(text(),'%s')]//parent::a", tab)).click();
     }
 
-    public void clickButtonCreate() throws AutomationException {
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
-
-        WebDriverUtil.waitForAWhile(3);
-        List<WebElement> alerts = DriverFactory.drivers.get().findElements(By.xpath(FAILED_TO_SAVE_DATA_ALERT));
-        if (!alerts.isEmpty() && alerts.get(0).isDisplayed()) {
-            WebElement closeBtn = DriverFactory.drivers.get().findElement(By.xpath(ALERT_CLOSE_BTN));
-            closeBtn.click();
-            CommonSteps.logInfo("Alert appeared and was closed.");
-        } else {
-            CommonSteps.logInfo("No alert appeared, continuing execution.");
-        }
-
-        driverUtil.getWebElement(CREATE_BUTTON).click();
-    }
-
     public void clickButtonCreateIndividualContact() throws AutomationException {
         waitForAWhile(1);
         driverUtil.getWebElement(CREATE_INDIVIDUAL_CONTACT_BTN).click();
@@ -177,7 +161,7 @@ public class GlobalContactPage extends BasePage {
                 clickButtonCreateIndividualContact();
                 break;
             case "Entity Global Contact":
-                clickButtonCreate();
+                userClicksOnTheCreateGlobalContactButton();
                 waitForVisibleElement(By.xpath(CREATE_ENTITY_CONTACT_BTN));
                 driverUtil.getWebElementAndScroll(ENTITY_NAME_FIELD).sendKeys(CommonUtil.getJsonPath("Create").get("Create.entityName").toString() + CommonUtil.currentDateAndTime());
                 entityName = driverUtil.getWebElement(ENTITY_NAME_FIELD).getAttribute("value");
@@ -1058,6 +1042,22 @@ public class GlobalContactPage extends BasePage {
         verifyField("PIN e-File",expectedPINeFile,actualPINeFile);
         verifyField("Bar ID",expectedBarID,actualBarID);
         verifyField("CAF",expectedCAF,actualCAF);
+    }
+
+    public void userClicksOnTheCreateGlobalContactButton() throws AutomationException {
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+
+        WebDriverUtil.waitForAWhile(3);
+        List<WebElement> alerts = DriverFactory.drivers.get().findElements(By.xpath(FAILED_TO_SAVE_DATA_ALERT));
+        if (!alerts.isEmpty() && alerts.get(0).isDisplayed()) {
+            WebElement closeBtn = DriverFactory.drivers.get().findElement(By.xpath(ALERT_CLOSE_BTN));
+            closeBtn.click();
+            CommonSteps.logInfo("Alert appeared and was closed.");
+        } else {
+            CommonSteps.logInfo("No alert appeared, continuing execution.");
+        }
+
+        driverUtil.getWebElement(CREATE_BUTTON).click();
     }
 }
 

@@ -17,7 +17,7 @@ Feature: 6in1 Global Contacts Feature
     Then user verifies the Global Contacts page
     #verify user authorization for "Licensed" user
     Then user verifies authorization for "Licensed"
-    When user clicks on the Create button
+    When user clicks on the Create Global Contact button
     Then user verifies the Global Contact Creation page
 
   Scenario: Create and then Edit the same contact for Individual Global Contact
@@ -92,7 +92,7 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario: Verify Select & Proceed button is enabled after selecting a radio button
     When user navigate to "Global Contact"
-    When user clicks on the Create button
+    When user clicks on the Create Global Contact button
     When user enters "Joe" as the first name and "Root" as the last name
     Then user navigates to the page with the records
     Then user verifies the Contact (Select or Create New) page
@@ -112,7 +112,7 @@ Feature: 6in1 Global Contacts Feature
 
   Scenario: Verify display result on entity name
     When user navigate to "Global Contact"
-    When user clicks on the Create button
+    When user clicks on the Create Global Contact button
     And user "Create" global contact of "Entity Global Contact" with leading and trailing spaces
     Then user verifies all the matching records are displayed for Entity Global Contact
     Then user verifies background color of the "Entity Global Contact"

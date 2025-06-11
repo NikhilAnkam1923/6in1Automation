@@ -513,17 +513,20 @@ public class CommonSteps {
             case "OC07":
                 PageFactory.probateFormsOC07Page().userSavesEstateInfo();
                 break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().userSavesEstateInfo();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
     }
 
     @When("user navigates to the probate forms tab")
-    public void userNavigatesToTheProbateFormsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigates to the probate forms tab");
-        waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
-        driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        public void userNavigatesToTheProbateFormsTab() throws AutomationException {
+            CommonSteps.logInfo("user navigates to the probate forms tab");
+            waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
+            driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
+            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     @And("^user click on the \"([^\"]*)\" form$")
@@ -598,6 +601,9 @@ public class CommonSteps {
                 break;
             case "OC06":
                 PageFactory.probateFormsOC06Page().userResetsTheRWForm();
+                break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().userResetsTheRWForm();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1062,6 +1068,9 @@ public class CommonSteps {
                 break;
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifySidebarAppearsAndAttorneyCanBeSelected();
+                break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().verifySidebarAppearsAndAttorneyCanBeSelected();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -1793,6 +1802,12 @@ public class CommonSteps {
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifyCounselDetailsArePopulatedCorrectly();
                 break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().verifyCounselDetailsArePopulatedCorrectly();
+                break;
+            case "UTA":
+                PageFactory.probateFormsUTAPage().verifyCounselDetailsArePopulatedCorrectly();
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -2085,4 +2100,5 @@ public class CommonSteps {
         scrollToElement(ACCOUNT_OF_FIELDS);
         driverUtil.getWebElement(ACCOUNT_OF_FIELDS).click();
     }
+
 }

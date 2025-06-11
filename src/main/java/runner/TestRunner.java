@@ -7,7 +7,7 @@ import org.testng.annotations.BeforeClass;
 import java.io.IOException;
 
 @CucumberOptions(
-        features = {"features/probateFormsOC06.feature"},
+        features = {"features/probateFormsOC07.feature"},
         glue = { "com.sixinone.automation.glue"},
         monochrome = true
 )

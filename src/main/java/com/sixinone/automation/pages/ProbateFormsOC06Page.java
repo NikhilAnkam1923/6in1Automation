@@ -78,6 +78,17 @@ public class ProbateFormsOC06Page extends BasePage {
     private static final String ESTATE_NAME_PAGE_3 = "//input[@id='Decedent_fullname']";
     private static final String ESTATE_NAME_PAGE_4 = "//input[@id='Decedent_fullname']";
     private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
+    private static final String NAME_OF_COUNSEL_FIELD = "//p[@class='p35']/following-sibling::p//input[@id='Contact_indfullnamecommasuffix_6578']";
+    private static final String NAME_OF_LAW_FIRM = "//input[@id='Contact_organization_name']";
+    private static final String ATTORNEY_ADDRESS = "//input[@id='Contact_fulladdress']";
+    private static final String ATTORNEY_CITY_STATE_ZIP = "//input[@id='Contact_citystatezip']";
+    private static final String ATTORNEY_TELEPHONE = "//input[@id='Contact_phone_number']";
+    private static final String ATTORNEY_EMAIL = "//input[@id='Contact_email_address']";
+    private static final String PROCEED_BTN = "//div[@class='modal-footer']//button[text()='Proceed']";
+    private static final String MODAL_HEADER = "//div[@class='modal-title h4']";
+    private static final String CONTACT_RADIO_BTN_DYNAMIC_XPATH = "//label[text()='%s']/preceding-sibling::input[@type='radio']";
+    public static final String CONFIRMATION_MESSAGE = "//div[@class='Toastify__toast Toastify__toast-theme--light Toastify__toast--success']//div[text()='%s']";
+
 
     static String downloadedFileName;
 
@@ -90,14 +101,13 @@ public class ProbateFormsOC06Page extends BasePage {
     static String selectedRolePage1;
     static String estateNamePage3;
     static String estateNamePage4;
+    static String selectedAttorney;
     static String nameOfCounselForm;
     static String nameOfLawFirmForm;
+    static String attorneyAddressForm;
+    static String attorneyCityStateZipForm;
     static String attorneyTelephoneForm;
-    static String attorneyFaxForm;
     static String attorneyEmailForm;
-    static String attorneyAddressLine1Form;
-    static String attorneyAddressLine2Form;
-
 
     public ProbateFormsOC06Page() throws IOException, ParseException {
     }
@@ -109,6 +119,15 @@ public class ProbateFormsOC06Page extends BasePage {
             return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
         } else {
             throw new AutomationException("Failed to locate element for locator: " + locator);
+        }
+    }
+
+    private static String getFieldValue(WebElement field) throws AutomationException {
+        if (field != null) {
+            String value = field.getAttribute("value");
+            return (value != null && !value.trim().isEmpty()) ? value.trim() : field.getText().trim();
+        } else {
+            throw new AutomationException("WebElement is null.");
         }
     }
 
@@ -453,6 +472,82 @@ public class ProbateFormsOC06Page extends BasePage {
         DriverFactory.drivers.get().findElement(By.xpath(SETTLOR_CHECKBOX)).click();
     }
 
+    public void userSelectsAttorneyContact() throws IOException, ParseException, AutomationException {
+        String attorneyFirstName = CommonUtil.getJsonPath("attorney1").get("attorney1.firstName").toString();
+        String attorneyLastName = CommonUtil.getJsonPath("attorney1").get("attorney1.lastName").toString();
+        String attorneyMiddleName = CommonUtil.getJsonPath("attorney1").get("attorney1.middleName").toString();
+        String attorneySuffix = CommonUtil.getJsonPath("attorney1").get("attorney1.suffix").toString();
+
+        scrollToElement(NAME_OF_COUNSEL_FIELD);
+        driverUtil.getWebElement(NAME_OF_COUNSEL_FIELD).click();
+
+        WebElement modalHeader = driverUtil.getWebElement(MODAL_HEADER);
+
+        if (!modalHeader.getText().contains("Attorney")) {
+            throw new AutomationException("Sidebar is not displayed for attorney contact.");
+        }
+
+        selectedAttorney = attorneyFirstName + " " + attorneyMiddleName + " " + attorneyLastName + ", " + attorneySuffix;
+
+        WebElement attorneyToSelect = driverUtil.getWebElement(String.format(CONTACT_RADIO_BTN_DYNAMIC_XPATH, selectedAttorney));
+
+        WebDriverUtil.waitForAWhile();
+        attorneyToSelect.click();
+
+        if (!attorneyToSelect.isSelected()) {
+            throw new AutomationException("Unable to select the attorney contact.");
+        }
+
+        CommonSteps.takeScreenshot();
+
+        driverUtil.getWebElement(PROCEED_BTN).click();
+
+        WebDriverUtil.waitForInvisibleElement(By.xpath(String.format(CONFIRMATION_MESSAGE, "Counsel updated successfully.")));
+    }
+
+    public void verifyCounselDetailsArePopulatedCorrectly() throws AutomationException, IOException, ParseException {
+        String attorneyFirmName = CommonUtil.getJsonPath("attorney1").get("attorney1.entityName").toString();
+        String attorneyAddress = CommonUtil.getJsonPath("attorney1").get("attorney1.addressLine1").toString();
+        String attorneyCity = CommonUtil.getJsonPath("attorney1").get("attorney1.city").toString();
+        String attorneySateCode = CommonUtil.getJsonPath("attorney1").get("attorney1.stateCode").toString();
+        String attorneyZip = CommonUtil.getJsonPath("attorney1").get("attorney1.zip").toString();
+        String attorneyTelephone = CommonUtil.getJsonPath("attorney1").get("attorney1.phoneNumber").toString();
+        String attorneyEmail = CommonUtil.getJsonPath("attorney1").get("attorney1.emailId").toString();
+
+        nameOfCounselForm = getFieldValue(NAME_OF_COUNSEL_FIELD);
+        if (!nameOfCounselForm.equals(selectedAttorney)) {
+            throw new AutomationException("Attorney details not populated correctly in 'Name of Counsel' field. Expected: " + selectedAttorney + " ,Found: " + nameOfCounselForm);
+        }
+
+        String attorneyCitySateZip = attorneyCity + ", " + attorneySateCode + " " + attorneyZip;
+
+        nameOfLawFirmForm = getFieldValue(NAME_OF_LAW_FIRM);
+        attorneyAddressForm = getFieldValue(ATTORNEY_ADDRESS);
+        attorneyCityStateZipForm = getFieldValue(ATTORNEY_CITY_STATE_ZIP);
+        attorneyTelephoneForm = getFieldValue(ATTORNEY_TELEPHONE);
+        attorneyEmailForm = getFieldValue(ATTORNEY_EMAIL);
+
+        if (!attorneyFirmName.equals(nameOfLawFirmForm)) {
+            throw new AutomationException("Name of Law Firm not correctly fetched. Expected: " + attorneyFirmName + ", Found: " + nameOfLawFirmForm);
+        }
+
+        if (!attorneyAddress.equals(attorneyAddressForm)) {
+            throw new AutomationException("Attorney Address Line 1 not correctly fetched. Expected: " + attorneyAddress + ", Found: " + attorneyAddressForm);
+        }
+
+        if (!attorneyCitySateZip.equals(attorneyCityStateZipForm)) {
+            throw new AutomationException("Attorney Address Line 2 (City, State code, Zip) not correctly fetched. Expected: " + attorneyCitySateZip + ", Found: " + attorneyCityStateZipForm);
+        }
+
+        if (!attorneyTelephone.equals(attorneyTelephoneForm)) {
+            throw new AutomationException("Attorney Telephone not correctly fetched. Expected: " + attorneyTelephone + ", Found: " + attorneyTelephoneForm);
+        }
+
+        if (!attorneyEmail.equals(attorneyEmailForm)) {
+            throw new AutomationException("Attorney Email not correctly fetched. Expected: " + attorneyEmail + ", Found: " + attorneyEmailForm);
+        }
+    }
+
     public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
         boolean isFileFound = false;
         int counter = 0;
@@ -510,7 +605,7 @@ public class ProbateFormsOC06Page extends BasePage {
             expectedCounselDetails.put("Email", attorneyEmailForm);
             boolean isVerifiedCounselDetails = verifyCounselDetails(pdfFilePath, expectedCounselDetails);
 
-            if (!isVerifiedFileNumber || isVerifiedCounselDetails) {
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 

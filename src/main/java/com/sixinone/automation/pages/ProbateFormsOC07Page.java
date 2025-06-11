@@ -1,16 +1,18 @@
 package com.sixinone.automation.pages;
 
+import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
 import com.sixinone.automation.util.WebDriverUtil;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ProbateFormsOC07Page extends BasePage {
 
@@ -58,18 +60,17 @@ public class ProbateFormsOC07Page extends BasePage {
     private static final String CLOSE_TOASTER_BTN = "//button[@class='Toastify__close-button Toastify__close-button--light']";
     private static final String OC_FORM_XPATH = "//a//p[text()='%s']";
     private static final String USE_4_DIGIT_YEAR_CHECKBOX = "//input[@name='isUseFourDigit']";
-    private static final String SETTLOR_CHECKBOX = "//input[@name='isSettlorOrDeceased' and @value='1']";
-    private static final String DECEASED_CHECKBOX = "//input[@name='isSettlorOrDeceased' and @value='0']";
-    private static final String ESTATE_NAME_PAGE_2 = "//input[@id='Decedent_fullname']";
-    private static final String ESTATE_NAME_PAGE_3 = "//input[@id='Decedent_fullname']";
-    private static final String ESTATE_NAME_PAGE_4 = "//input[@id='Decedent_fullname']";
-    private static final String PAGE_NUMBER_DYNAMIC_XPATH = "//a[@role='tab' and text()='%s']";
     private static final String ESTATE_ADDRESS_FIELD1 = "//p[contains(text(), 'The Decedent, who resided at')]//span//input";
     private static final String ESTATE_ADDRESS_FIELD2 = "//p[contains(text(), 'The Decedent, who resided at')]/following-sibling::p//span[1]//input";
     private static final String DATE_OF_DEATH_FIELDOC7 = "//p[contains(text(), 'The Decedent, who resided at')]/following-sibling::p//span[2]//input";
+    private static final String INPUT_FIELD_BY_NAME = "//input[@name='%s']";
+    private static final String INPUT_CLAIMOFFIELD = "//p[contains(text(), 'Enter the claim of')]//input[@name='claimantName']";
+    private static final String INPUT_CLAIMANTFIELD = "//p[text()='(Street Address)']/preceding::input[@name='claimantStreetAddress']/parent::p/preceding-sibling::p[@class='p9 ft3']/input[@name='claimantName']";
 
     static String estateNameForm;
     static String fileNumberForm;
+    static String initialFileNumber;
+    static String fourDigitFileNumberForm;
 
     public void userSavesEstateInfo() throws AutomationException {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
@@ -164,7 +165,7 @@ public class ProbateFormsOC07Page extends BasePage {
             expectedAddress4State = "PA";
         }
 
-        String expectedAddress = expectedAddressLine1 + ", " + expectedAddressLine2 + " " + expectedAddress3City +", "+expectedAddress4State +" " + expectedAddress5Zip;
+        String expectedAddress = expectedAddressLine1 + ", " + expectedAddressLine2 + " " + expectedAddress3City + ", " + expectedAddress4State + " " + expectedAddress5Zip;
 
         WebElement addressElement1 = driverUtil.getWebElement(ESTATE_ADDRESS_FIELD1);
         WebElement addressElement2 = driverUtil.getWebElement(ESTATE_ADDRESS_FIELD2);
@@ -208,5 +209,224 @@ public class ProbateFormsOC07Page extends BasePage {
         }
     }
 
+    public void enterValidFileNumber() throws AutomationException, IOException, ParseException {
+        WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+
+        if (!fileNumberField.isEnabled()) {
+            throw new AutomationException("File number field is not editable.");
+        }
+
+        initialFileNumber = fileNumberField.getAttribute("value");
+
+        String newFileNumber = CommonUtil.getJsonPath("OC01Form").get("OC01Form.fileNumber").toString();
+
+        fileNumberField.clear();
+        fileNumberField.sendKeys(newFileNumber);
+
+        WebDriverUtil.waitForAWhile(); // small wait for UI update
+
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
+    }
+
+    public void clickOnOCForm(String formToSelect) throws AutomationException {
+        driverUtil.getWebElement(String.format(OC_FORM_XPATH, formToSelect)).click();
+        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+    }
+
+    public void verifyFileNumberUpdatedAndSaved() throws AutomationException, IOException, ParseException {
+        clickOnOCForm("OC 06");
+        clickOnOCForm("OC 07");
+
+        WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+
+        String enteredFileNumber = CommonUtil.getJsonPath("OC01Form").get("OC01Form.fileNumber").toString();
+        String actualFileNumber = fileNumberField.getAttribute("value");
+
+        if (!actualFileNumber.equals(enteredFileNumber)) {
+            throw new AutomationException("File number not updated correctly. Expected: " + enteredFileNumber + ", Found: " + actualFileNumber);
+        }
+        String fileNumber = CommonUtil.getJsonPath("OC07Form").get("OC07Form.fileNumber").toString();
+        WebElement filenumberfield = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+        filenumberfield.clear();
+        filenumberfield.sendKeys(fileNumber);
+
+        WebElement toasterbtn = driverUtil.getWebElement(CLOSE_TOASTER_BTN);
+        toasterbtn.click();
+
+    }
+
+    private void scrollToElement(String elementLocator) {
+        WebElement element = DriverFactory.drivers.get().findElement(By.xpath(elementLocator));
+        JavascriptExecutor js = (JavascriptExecutor) DriverFactory.drivers.get();
+
+        js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void userClicksTheUseDigitYearCheckbox() {
+        scrollToElement(USE_4_DIGIT_YEAR_CHECKBOX);
+        DriverFactory.drivers.get().findElement(By.xpath(USE_4_DIGIT_YEAR_CHECKBOX)).click();
+    }
+
+    public void verifyFileNumberWithFourDigitYearFormatIsDisplayedInTheFileNumberBox() throws AutomationException {
+        fourDigitFileNumberForm = driverUtil.getWebElement(FILE_NUMBER_FIELD).getAttribute("value");
+
+        String expectedFourDigitFileNumber = fileNumberForm.replaceFirst("-(\\d{2})-", "-20$1-");
+
+        if (!fourDigitFileNumberForm.equals(expectedFourDigitFileNumber)) {
+            throw new AutomationException("File number did not update correctly. Expected: " + expectedFourDigitFileNumber + ", Found: " + fourDigitFileNumberForm);
+        }
+
+        userClicksTheUseDigitYearCheckbox();   //for uncheck fourdigit checkbox
+    }
+
+    public void userNavigatesToTheAmountField() throws AutomationException {
+        WebElement claimAmountField = driverUtil.getWebElement(String.format(INPUT_FIELD_BY_NAME, "claimAmount"));
+        ((JavascriptExecutor) DriverFactory.drivers.get())
+                .executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", claimAmountField);
+        WebDriverUtil.waitForAWhile();
+    }
+
+    public void verifyEditabilityofAmountField() throws AutomationException {
+        WebElement claimAmountField = driverUtil.getWebElement(String.format(INPUT_FIELD_BY_NAME, "claimAmount"));
+        if (!claimAmountField.isEnabled() || !claimAmountField.isDisplayed()) {
+            throw new AutomationException("❌ Amount field is not editable.");
+        }
+    }
+
+    public void verifyAmountFieldAcceptOnlyNumericValue() throws AutomationException {
+        WebElement claimAmountField = driverUtil.getWebElement(String.format(INPUT_FIELD_BY_NAME, "claimAmount"));
+
+        for (String input : generateValidNumericInputs()) {
+            claimAmountField.clear();
+            claimAmountField.sendKeys(input);
+            claimAmountField.sendKeys(Keys.TAB);
+            WebDriverUtil.waitForAWhile(3);
+
+            String captured = claimAmountField.getAttribute("value").trim();
+
+            // Normalize both input and captured
+            String normalizedInput = normalizeNumeric(input);
+            String normalizedCaptured = normalizeNumeric(captured);
+
+            if (!normalizedInput.equals(normalizedCaptured)) {
+                throw new AutomationException("❌ Input rejected: '" + input + "' -> Captured: '" + captured + "'");
+            }
+
+            CommonSteps.logInfo("✅ Valid input accepted: '" + input + "' -> Captured: '" + captured + "'");
+        }
+
+        CommonSteps.logInfo("✅ Amount field validation completed with formatting support.");
+    }
+
+    private String normalizeNumeric(String value) {
+        // Remove commas and ensure two decimal places
+        if (value == null || value.isEmpty()) return "";
+        try {
+            double d = Double.parseDouble(value.replace(",", ""));
+            return String.format("%.2f", d);
+        } catch (NumberFormatException e) {
+            return value.replace(",", ""); // fallback for partial input
+        }
+    }
+
+
+    private List<String> generateValidNumericInputs() {
+        List<String> inputs = new ArrayList<>();
+        inputs.add(generateRandomDigits(1));
+        inputs.add(generateRandomDigits(2));
+        inputs.add(generateRandomDigits(4));
+        inputs.add(generateRandomDigits(6));
+        inputs.add("0." + generateRandomDigits(2));
+        inputs.add(generateRandomDigits(2) + "." + generateRandomDigits(1));
+        inputs.add("." + generateRandomDigits(1)); // e.g., .5
+        return inputs;
+    }
+
+    private String generateRandomDigits(int length) {
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
+    }
+
+    public void verifyUserCanAddWillNumber() throws AutomationException, IOException, ParseException {
+        WebElement willNumberField = driverUtil.getWebElement(String.format(INPUT_FIELD_BY_NAME, "willNumber"));
+        String existingValue = willNumberField.getAttribute("value").trim();
+        String newWillNumber = CommonUtil.getJsonPath("OC07Form").get("OC07Form.willNumber").toString();
+
+        if (!existingValue.isEmpty()) {
+            CommonSteps.logInfo("Existing Will Number found: '" + existingValue + "'. It will be cleared and updated.");
+        } else {
+            CommonSteps.logInfo("Will Number field is blank. Adding new value.");
+        }
+
+        willNumberField.clear();
+        willNumberField.sendKeys(newWillNumber);
+
+        String finalValue = willNumberField.getAttribute("value").trim();
+        if (!finalValue.equals(newWillNumber)) {
+            throw new AutomationException("❌ Will number not set correctly. Expected: " + newWillNumber + ", Found: " + finalValue);
+        }
+
+        CommonSteps.logInfo("✅ Will number field successfully updated to: " + finalValue);
+    }
+
+    public void entersClaimantNameXInTheClaimOfField() throws AutomationException, IOException, ParseException {
+        String claimantNameX = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameX").toString();
+        WebElement claimOfField = driverUtil.getWebElement(INPUT_CLAIMOFFIELD);
+
+        clearAndType(claimOfField, claimantNameX);
+        WebDriverUtil.waitForAWhile(2); // Adjust if needed
+    }
+
+    public void verifyClaimantFieldDisplaySameClaimantName() throws AutomationException, IOException, ParseException {
+        String expectedClaimantNameX = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameX").toString();
+        WebElement claimantField = driverUtil.getWebElement(INPUT_CLAIMANTFIELD);
+        String claimantFieldValue = claimantField.getAttribute("value").trim();
+
+        if (!claimantFieldValue.equals(expectedClaimantNameX)) {
+            throw new AutomationException("❌ Claimant field mismatch. Expected: " + expectedClaimantNameX + ", Found: " + claimantFieldValue);
+        }
+    }
+
+    public void userClearsAndEntersClaimantNameYInTheClaimantField() throws AutomationException, IOException, ParseException {
+        String claimantNameY = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameY").toString();
+        WebElement claimantField = driverUtil.getWebElement(INPUT_CLAIMANTFIELD);
+
+        clearAndType(claimantField, claimantNameY);
+        WebDriverUtil.waitForAWhile(2);
+    }
+
+    private void clearAndType(WebElement field, String value) {
+        field.click();
+        field.clear();
+
+        field.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        field.sendKeys(Keys.DELETE);
+
+        field.sendKeys(value);
+        field.sendKeys(Keys.TAB);
+    }
+
+    public void verifyClaimOfFieldDisplaySameClaimantName() throws AutomationException, IOException, ParseException {
+        String expectedClaimantNameY = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameY").toString();
+        WebElement claimOfField = driverUtil.getWebElement(INPUT_CLAIMOFFIELD);
+        String claimOfFieldValue = claimOfField.getAttribute("value").trim();
+
+        if (!claimOfFieldValue.equals(expectedClaimantNameY)) {
+            throw new AutomationException("❌ Claim of field mismatch. Expected: " + expectedClaimantNameY + ", Found: " + claimOfFieldValue);
+        }
+    }
 
 }

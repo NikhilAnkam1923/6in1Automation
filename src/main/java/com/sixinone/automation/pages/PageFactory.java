@@ -27,6 +27,7 @@ public class PageFactory {
     public ProbateFormsOC05Page probateFormsOC05Page;
     public ProbateFormsOC06Page probateFormsOC06Page;
     public ProbateFormsOC07Page probateFormsOC07Page;
+    public ProbateFormsUTAPage probateFormsUTAPage;
 
     private PageFactory() throws IOException, ParseException {
 
@@ -51,6 +52,7 @@ public class PageFactory {
         probateFormsOC05Page = new ProbateFormsOC05Page();
         probateFormsOC06Page = new ProbateFormsOC06Page();
         probateFormsOC07Page = new ProbateFormsOC07Page();
+        probateFormsUTAPage =new ProbateFormsUTAPage();
     }
 
     public static void init() throws IOException, ParseException {
@@ -104,45 +106,27 @@ public class PageFactory {
         return factory.get().probateFormsRWxxPage;
     }
 
-    public static ProbateFormsRW07Page probateFormsRW07Page() {
-        return factory.get().probateFormsRW07Page;
-    }
+    public static ProbateFormsRW07Page probateFormsRW07Page() { return factory.get().probateFormsRW07Page; }
 
-    public static ProbateFormsRW08Page probateFormsRW08Page() {
-        return factory.get().probateFormsRW08Page;
-    }
+    public static ProbateFormsRW08Page probateFormsRW08Page() { return factory.get().probateFormsRW08Page; }
 
-    public static ProbateFormsRW10Page probateFormsRW10Page() {
-        return factory.get().probateFormsRW10Page;
-    }
+    public static ProbateFormsRW10Page probateFormsRW10Page() { return factory.get().probateFormsRW10Page; }
 
-    public static ProbateFormsOC01Page probateFormsOC01Page() {
-        return factory.get().probateFormsOC01Page;
-    }
+    public static ProbateFormsOC01Page probateFormsOC01Page() { return factory.get().probateFormsOC01Page; }
 
-    public static ProbateFormsOC02Page probateFormsOC02Page() {
-        return factory.get().probateFormsOC02Page;
-    }
+    public static ProbateFormsOC02Page probateFormsOC02Page() { return factory.get().probateFormsOC02Page; }
 
-    public static ProbateFormsOC03Page probateFormsOC03Page() {
-        return factory.get().probateFormsOC03Page;
-    }
+    public static ProbateFormsOC03Page probateFormsOC03Page() { return factory.get().probateFormsOC03Page; }
 
-    public static ProbateFormsOC04Page probateFormsOC04Page() {
-        return factory.get().probateFormsOC04Page;
-    }
+    public static ProbateFormsOC04Page probateFormsOC04Page() { return factory.get().probateFormsOC04Page; }
 
-    public static ProbateFormsOC05Page probateFormsOC05Page() {
-        return factory.get().probateFormsOC05Page;
-    }
+    public static ProbateFormsOC05Page probateFormsOC05Page() { return factory.get().probateFormsOC05Page; }
 
-    public static ProbateFormsOC06Page probateFormsOC06Page() {
-        return factory.get().probateFormsOC06Page;
-    }
+    public static ProbateFormsOC06Page probateFormsOC06Page() { return factory.get().probateFormsOC06Page; }
 
-    public static ProbateFormsOC07Page probateFormsOC07Page() {
-        return factory.get().probateFormsOC07Page;
-    }
+    public static ProbateFormsOC07Page probateFormsOC07Page() { return factory.get().probateFormsOC07Page; }
+
+    public static ProbateFormsUTAPage probateFormsUTAPage() { return factory.get().probateFormsUTAPage; }
 }
 
 
