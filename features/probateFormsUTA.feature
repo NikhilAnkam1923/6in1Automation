@@ -32,6 +32,9 @@ Feature: 6in1 probate form UTA Feature
   Scenario: Verify that 'Date of Notice' field is editable.
     Then user verifies the 'Date of Notice' field is editable
 
+  Scenario: Verify that the beneficiary name should be displayed at the bottom of the form which is selected at the top 'Name and Address' field along with one editable date filed.
+    Then user verifies Beneficiary name is displayed at the bottom of the form along with a editable date field where user can enter date
+
   Scenario: Reset the UTA form
     When user resets the "UTA" form
 

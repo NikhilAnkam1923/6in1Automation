@@ -483,4 +483,22 @@ public class ProbateFormsUTAPage extends BasePage {
 
         userSelectsTheCheckbox();
     }
+
+    public void verifyBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate() throws AutomationException {
+        List<WebElement> beneNamesAtBottomFields = driverUtil.getWebElements(BENEFICIARY_NAMES_AT_BOTTOM);
+        List<String> beneNamesAtBottom = new ArrayList<>();
+        for (WebElement element : beneNamesAtBottomFields) {
+            String actualName = getFieldValue(element);
+            beneNamesAtBottom.add(actualName);
+        }
+
+        for (int i=0; i<beneDetails.size(); i++) {
+            String selectedBene = beneDetails.get(i);
+            String beneAtBottom = beneNamesAtBottom.get(i);
+
+            if (!selectedBene.equals(beneAtBottom)) {
+                throw new AutomationException("Beneficiary names mismatch on page " + (i+1) + " ,Expected: " + selectedBene + " ,Found: " + beneAtBottom);
+            }
+        }
+    }
 }
