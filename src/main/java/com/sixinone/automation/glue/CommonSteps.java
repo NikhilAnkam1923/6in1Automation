@@ -510,6 +510,9 @@ public class CommonSteps {
             case "OC06":
                 PageFactory.probateFormsOC06Page().userSavesEstateInfo();
                 break;
+            case "OC07":
+                PageFactory.probateFormsOC07Page().userSavesEstateInfo();
+                break;
             case "UTA":
                 PageFactory.probateFormsUTAPage().userSavesEstateInfo();
                 break;
@@ -519,11 +522,11 @@ public class CommonSteps {
     }
 
     @When("user navigates to the probate forms tab")
-    public void userNavigatesToTheProbateFormsTab() throws AutomationException {
-        CommonSteps.logInfo("user navigates to the probate forms tab");
-        waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
-        driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
-        WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
+        public void userNavigatesToTheProbateFormsTab() throws AutomationException {
+            CommonSteps.logInfo("user navigates to the probate forms tab");
+            waitForVisibleElement(By.xpath(PROBATE_FORMS_TAB));
+            driverUtil.getWebElement(PROBATE_FORMS_TAB).click();
+            WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
     @And("^user click on the \"([^\"]*)\" form$")
@@ -939,6 +942,9 @@ public class CommonSteps {
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifyFormPrintedInPDFForm(formName);
                 break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().verifyFormPrintedInPDFForm(formName);
+                break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
         }
@@ -993,6 +999,9 @@ public class CommonSteps {
                 break;
             case "OC05":
                 PageFactory.probateFormsOC05Page().verifyAllFieldsInDownloadedPDF();
+                break;
+            case "OC06":
+                PageFactory.probateFormsOC06Page().verifyAllFieldsInDownloadedPDF();
                 break;
             default:
                 throw new AutomationException("Unsupported form name: " + formName);
@@ -2091,4 +2100,5 @@ public class CommonSteps {
         scrollToElement(ACCOUNT_OF_FIELDS);
         driverUtil.getWebElement(ACCOUNT_OF_FIELDS).click();
     }
+
 }

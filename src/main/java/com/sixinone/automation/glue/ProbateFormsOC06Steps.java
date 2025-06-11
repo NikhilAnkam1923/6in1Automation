@@ -39,7 +39,6 @@ public class ProbateFormsOC06Steps {
         CommonSteps.takeScreenshot();
     }
 
-
     @When("user clicks the Use 4 digit year checkbox")
     public void userClicksTheUseDigitYearCheckbox() {
         CommonSteps.logInfo("user clicks the Use 4 digit year checkbox");

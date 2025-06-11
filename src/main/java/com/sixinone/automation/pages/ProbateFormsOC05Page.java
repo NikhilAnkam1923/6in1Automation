@@ -1378,6 +1378,11 @@ public class ProbateFormsOC05Page extends BasePage {
                 : System.getProperty("user.dir") + "/downloads/")
                 + downloadedFileName;
         try {
+            boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
+                    "Solutions, sigmaEnterprises, thetaCorporation, lambdaGroup , GUARDIANS",
+                    "PETITION FOR ADJUDICATION /",
+                    fileNumberForm,
+                    "file number");
 
             Map<String, String> expectedCounselDetails = new HashMap<>();
             expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
@@ -1425,7 +1430,7 @@ public class ProbateFormsOC05Page extends BasePage {
                     QCDescriptionForm,
                     "Guardian Ad Litem Reason");
 
-            if (!isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedAgentAddressMapping || !isVerifiedDepositBoxDetails || !isVerifiedGuardianInfoBlock || !isVerifiedGuardianAdLitemReasonInfoBlock ) {
+            if (!isVerifiedFileNumber || !isVerifiedCounselDetails || !isValidatedPetitionerAddressMapping || !isValidatedAgentAddressMapping || !isVerifiedDepositBoxDetails || !isVerifiedGuardianInfoBlock || !isVerifiedGuardianAdLitemReasonInfoBlock ) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -2322,7 +2327,11 @@ public class ProbateFormsOC05Page extends BasePage {
             }
         }
 
-        String actual = extractedBlock.toString().replaceAll("\\s+", " ").trim();
+        String actual = extractedBlock.toString()
+                .replaceFirst("(?i)^\\s*(No\\.|File No:|Ref:|Number:|ID:)\\s*", "") // Strip common prefixes dynamically
+                .replaceAll("\\s+", " ")
+                .trim();
+
         String expected = expectedValue.replaceAll("\\s+", " ").trim();
 
         CommonSteps.logInfo("🔍 Comparing block -> Expected: '" + expected + "', Extracted: '" + actual + "'");

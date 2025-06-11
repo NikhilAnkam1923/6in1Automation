@@ -26,6 +26,7 @@ public class PageFactory {
     public ProbateFormsOC04Page probateFormsOC04Page;
     public ProbateFormsOC05Page probateFormsOC05Page;
     public ProbateFormsOC06Page probateFormsOC06Page;
+    public ProbateFormsOC07Page probateFormsOC07Page;
     public ProbateFormsUTAPage probateFormsUTAPage;
 
     private PageFactory() throws IOException, ParseException {
@@ -35,21 +36,22 @@ public class PageFactory {
         estateCreationPage = new EstateCreationPage();
         estateContactsPage = new EstateContactsPage();
         probateFormsRW03Page = new ProbateFormsRW03Page();
-        probateFormsRW01Page =new ProbateFormsRW01Page();
-        probateFormsRW02Page =new ProbateFormsRW02Page();
-        probateFormsRW04Page =new ProbateFormsRW04Page();
-        probateFormsRW05Page =new ProbateFormsRW05Page();
-        probateFormsRW06Page =new ProbateFormsRW06Page();
-        probateFormsRWxxPage =new ProbateFormsRWxxPage();
-        probateFormsRW07Page =new ProbateFormsRW07Page();
-        probateFormsRW08Page =new ProbateFormsRW08Page();
-        probateFormsRW10Page =new ProbateFormsRW10Page();
-        probateFormsOC01Page =new ProbateFormsOC01Page();
-        probateFormsOC02Page =new ProbateFormsOC02Page();
-        probateFormsOC03Page =new ProbateFormsOC03Page();
-        probateFormsOC04Page =new ProbateFormsOC04Page();
-        probateFormsOC05Page =new ProbateFormsOC05Page();
-        probateFormsOC06Page =new ProbateFormsOC06Page();
+        probateFormsRW01Page = new ProbateFormsRW01Page();
+        probateFormsRW02Page = new ProbateFormsRW02Page();
+        probateFormsRW04Page = new ProbateFormsRW04Page();
+        probateFormsRW05Page = new ProbateFormsRW05Page();
+        probateFormsRW06Page = new ProbateFormsRW06Page();
+        probateFormsRWxxPage = new ProbateFormsRWxxPage();
+        probateFormsRW07Page = new ProbateFormsRW07Page();
+        probateFormsRW08Page = new ProbateFormsRW08Page();
+        probateFormsRW10Page = new ProbateFormsRW10Page();
+        probateFormsOC01Page = new ProbateFormsOC01Page();
+        probateFormsOC02Page = new ProbateFormsOC02Page();
+        probateFormsOC03Page = new ProbateFormsOC03Page();
+        probateFormsOC04Page = new ProbateFormsOC04Page();
+        probateFormsOC05Page = new ProbateFormsOC05Page();
+        probateFormsOC06Page = new ProbateFormsOC06Page();
+        probateFormsOC07Page = new ProbateFormsOC07Page();
         probateFormsUTAPage =new ProbateFormsUTAPage();
     }
 
@@ -122,7 +124,11 @@ public class PageFactory {
 
     public static ProbateFormsOC06Page probateFormsOC06Page() { return factory.get().probateFormsOC06Page; }
 
+    public static ProbateFormsOC07Page probateFormsOC07Page() { return factory.get().probateFormsOC07Page; }
+
     public static ProbateFormsUTAPage probateFormsUTAPage() { return factory.get().probateFormsUTAPage; }
 }
+
+
 
 
