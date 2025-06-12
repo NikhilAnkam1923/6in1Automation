@@ -23,20 +23,24 @@ Feature: 6in1 probate form OC06 Feature
     And user click the Use 4 digit year checkbox
     Then user verifies the file number with four digit year format is displayed in the file number box
 
-  Scenario: Verify that the amount field is editable and only accepts numeric characters
-    When the user navigates to the amount field
-    Then user verify that able to edit the amount field
-    And user verify amount field should accept only numeric characters
-
-
-  Scenario: Verify that user can add will number on the form
-    Then user verify that user can add will number on the form
-
   Scenario: Verify that 'Claim of' and 'Claimant' fields are synchronized
     When user enters claimantNameX in the Claim of field
     Then the Claimant field should display claimantNameX
     When user clears and enters claimantNameY in the Claimant field
     Then the Claim of field should display claimantNameY
+
+  Scenario: Verify that the amount field is editable and only accepts numeric characters
+    When the user navigates to the amount field
+    Then user verify that able to edit the amount field
+    And user verify amount field should accept only numeric characters
+
+  Scenario: Verify that user can add will number on the form
+    Then user verify that user can add will number on the form
+
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'OC07'
+    And verify all the fields entered are correctly reflected in the 'OC07' pdf
 
   @Setup
   Scenario:SETUP: Close Browser
