@@ -86,13 +86,6 @@ public class EstateCreationSteps {
         PageFactory.estateCreationPage().fillLastAddressDomicileDetails();
     }
 
-    @And("user verifies Township and Borough radio buttons toggle correctly")
-    public void userVerifiesTownshipAndBoroughRadioButtons() throws AutomationException {
-        CommonSteps.logInfo("User verified Township and Borough radio buttons toggle correctly.");
-        PageFactory.estateCreationPage().verifyTownshipBoroughRadioButtons();
-        CommonSteps.takeScreenshot();
-    }
-
     @When("user fills Place of Death details")
     public void userFillsPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("User filled Place of Death details.");

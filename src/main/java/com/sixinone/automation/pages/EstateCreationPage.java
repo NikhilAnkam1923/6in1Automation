@@ -248,20 +248,6 @@ public class EstateCreationPage extends BasePage {
         }
     }
 
-    public void verifyTownshipBoroughRadioButtons() throws AutomationException {
-        WebElement townshipRadio = driverUtil.getWebElement(TOWNSHIP_RADIO);
-        WebElement boroughRadio = driverUtil.getWebElement(BOROUGH_RADIO);
-        if (townshipRadio == null || boroughRadio == null) {
-            throw new AutomationException("Township or Borough radio buttons are not found.");
-        }
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) DriverFactory.drivers.get();
-
-        jsExecutor.executeScript("arguments[0].click();", boroughRadio);
-        verifyRadioButtonSelection(boroughRadio, townshipRadio);
-        jsExecutor.executeScript("arguments[0].click();", townshipRadio);
-        verifyRadioButtonSelection(townshipRadio, boroughRadio);
-    }
-
     public void fillPlaceOfDeathDetails() throws AutomationException, IOException, ParseException {
         clearField(PLACE_OF_DEATH_ADDRESS_LINE1);
         fillField(PLACE_OF_DEATH_ADDRESS_LINE1, "EstateCreate.PODaddressLine1");

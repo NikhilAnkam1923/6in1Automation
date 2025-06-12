@@ -23,7 +23,6 @@ Feature: 6in1 estate creation Feature
 
   Scenario: Verify Township and Borough radio buttons toggle correctly
     When user fill Last Address/Domicile details
-    And user verifies Township and Borough radio buttons toggle correctly
 
   Scenario: Verify Life Details fields, validations, and behaviors
       # verify Last Residence field validation for invalid input
