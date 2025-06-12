@@ -1844,7 +1844,7 @@ public class ProbateFormsOC01Page extends BasePage {
     }
 
 
-    public void userResetsTheRWForm() throws AutomationException {
+    public void userResetsTheOCForm() throws AutomationException {
         //page 1
         switchToPage(1);
         WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);

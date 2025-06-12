@@ -446,6 +446,7 @@ public class ProbateFormsOC07Page extends BasePage {
             throw new AutomationException("❌ Claim of field mismatch. Expected: " + expectedClaimantNameY + ", Found: " + claimOfFieldValue);
         }
     }
+
     private void clearAndType(WebElement field, String value) {
         field.click();
         field.clear();
@@ -459,7 +460,6 @@ public class ProbateFormsOC07Page extends BasePage {
     }
 
 
-
     public void waitUntilClaimantFieldIsUpdated(String expected) throws AutomationException {
         WebElement field = driverUtil.getWebElement(INPUT_CLAIMANTFIELD);
         for (int i = 0; i < 5; i++) {
@@ -470,6 +470,39 @@ public class ProbateFormsOC07Page extends BasePage {
         throw new AutomationException("❌ Claimant field mismatch after waiting. Expected: " + expected + ", Found: " + field.getAttribute("value").trim());
     }
 
+    public void userResetsTheOCForm() throws AutomationException {
+        WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);
+        fileNumberField.clear();
+        fileNumberField.sendKeys(initialFileNumber);
+        WebDriverUtil.waitForAWhile();
+        List<WebElement> toasterBtns = driverUtil.getWebElements(CLOSE_TOASTER_BTN);
+        if (!toasterBtns.isEmpty() && toasterBtns.get(0).isDisplayed()) {
+            toasterBtns.get(0).click();
+            CommonSteps.logInfo("Toaster close button clicked.");
+        } else {
+            CommonSteps.logInfo("Toaster close button not present.");
+        }
+
+        WebElement claimOfAndClaimant = driverUtil.getWebElement(INPUT_CLAIMOFFIELD);
+        clearFieldUntilEmpty(claimOfAndClaimant);
+
+        WebElement claimAmount = driverUtil.getWebElement(String.format(INPUT_FIELD_BY_NAME, "claimAmount"));
+        clearFieldUntilEmpty(claimAmount);
+    }
+
+
+    public void clearFieldUntilEmpty(WebElement element) {
+        int attempts = 0;
+        while (element != null && !element.getAttribute("value").isEmpty() && attempts < 5) {
+            element.clear();
+            WebDriverUtil.waitForAWhile(1);
+            attempts++;
+        }
+
+        if (!element.getAttribute("value").isEmpty()) {
+            CommonSteps.logInfo("⚠️ Field not cleared after max attempts. Value: " + element.getAttribute("value"));
+        }
+    }
 
     public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
         boolean isFileFound = false;
@@ -518,15 +551,16 @@ public class ProbateFormsOC07Page extends BasePage {
                     "To the Clerk of the Orphans’ Court Division:",
                     fileNumberForm,
                     "file number");
-        if (!isVerifiedFileNumber) {
-            throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
-        }
+            if (!isVerifiedFileNumber) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
 
-        CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
-    } catch (Exception e) {
-        throw new AutomationException("❌ Verification failed: " + e.getMessage());
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (Exception e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
     }
-}
+
     private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName)
             throws IOException, AutomationException {
         PDDocument document = PDDocument.load(new File(pdfFilePath));

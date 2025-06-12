@@ -452,7 +452,7 @@ public class ProbateFormsOC06Page extends BasePage {
         WebDriverUtil.waitForInvisibleElement(By.xpath(SPINNER));
     }
 
-    public void userResetsTheRWForm() throws AutomationException {
+    public void userResetsTheOCForm() throws AutomationException {
         switchToPage(1);
         userClicksTheUseDigitYearCheckbox();
         WebDriverUtil.waitForAWhile();

@@ -40,6 +40,11 @@ Feature: 6in1 probate form UTA Feature
   Scenario: Verify that the beneficiary name should be displayed at the bottom of the form which is selected at the top 'Name and Address' field along with one editable date filed.
     Then user verifies Beneficiary name is displayed at the bottom of the form along with a editable date field where user can enter date
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'UTA'
+    And verify all the fields entered are correctly reflected in the 'UTA' pdf
+
   Scenario: Reset the UTA form
     When user resets the "UTA" form
 
