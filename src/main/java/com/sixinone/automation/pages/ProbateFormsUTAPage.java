@@ -70,6 +70,7 @@ public class ProbateFormsUTAPage extends BasePage {
     private static final String DATE_OF_NOTICE_FIELD = "//input[@name='data[0].noticeDate']";
     private static final String BENEFICIARY_NAMES_AT_BOTTOM = "//p[@class='p20 ft4']//span[contains(text(),' ')]";
     private static final String DATE_FIELD_BOTTOM = "//input[@name='data[%s].utaSignatureDate']";
+    private static final String BENE_DATE_FIELD = "//input[contains(@name,'utaSignatureDate')]";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -96,6 +97,11 @@ public class ProbateFormsUTAPage extends BasePage {
     static String attorneyAddressLine1Form;
     static String attorneyAddressLine2Form;
     static String attorneyCityStateZipForm;
+    static String beneDateAtBottom1Form;
+    static String beneDateAtBottom2Form;
+    static String beneDateAtBottom3Form;
+    static String beneDateAtBottom4Form;
+    static String beneDateAtBottom5Form;
 
     public ProbateFormsUTAPage() throws IOException, ParseException {
     }
@@ -484,7 +490,15 @@ public class ProbateFormsUTAPage extends BasePage {
         userSelectsTheCheckbox();
     }
 
-    public void verifyBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate() throws AutomationException {
+    private void verifyFieldIsEditable(String fieldName, String fieldLocator) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(fieldLocator);
+        if (!field.isEnabled()) {
+            throw new AutomationException(fieldName + " is not editable.");
+        }
+    }
+
+    public void verifyBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate() throws AutomationException, IOException, ParseException {
+        String beneDateAtBottom = CommonUtil.getJsonPath("UTAForm").get("UTAForm.beneDateAtBottom").toString();
         List<WebElement> beneNamesAtBottomFields = driverUtil.getWebElements(BENEFICIARY_NAMES_AT_BOTTOM);
         List<String> beneNamesAtBottom = new ArrayList<>();
         for (WebElement element : beneNamesAtBottomFields) {
@@ -498,6 +512,37 @@ public class ProbateFormsUTAPage extends BasePage {
 
             if (!selectedBene.equals(beneAtBottom)) {
                 throw new AutomationException("Beneficiary names mismatch on page " + (i+1) + " ,Expected: " + selectedBene + " ,Found: " + beneAtBottom);
+            }
+        }
+
+        for (int i=0; i<beneNamesAtBottomFields.size(); i++) {
+            WebElement beneField = driverUtil.getWebElement(String.format(DATE_FIELD_BOTTOM,i));
+            if (beneField == null) {
+                throw new AutomationException("Date field along with Beneficiary name at the bottom is not present on page: " + (i+1));
+            }
+
+            verifyFieldIsEditable("Bene Date Field on page " + (i+1),String.format(DATE_FIELD_BOTTOM,i));
+
+            scrollAndFillField(String.format(DATE_FIELD_BOTTOM,i),beneDateAtBottom);
+            WebDriverUtil.waitForAWhile();
+            String actualDate = getFieldValue(String.format(DATE_FIELD_BOTTOM,i));
+
+            switch (i) {
+                case 0:
+                    beneDateAtBottom1Form = actualDate;
+                    break;
+                case 1:
+                    beneDateAtBottom2Form = actualDate;
+                    break;
+                case 2:
+                    beneDateAtBottom3Form = actualDate;
+                    break;
+                case 3:
+                    beneDateAtBottom4Form = actualDate;
+                    break;
+                case 4:
+                    beneDateAtBottom5Form = actualDate;
+                    break;
             }
         }
     }

@@ -54,7 +54,7 @@ public class ProbateFormsUTASteps {
     }
 
     @Then("user verifies Beneficiary name is displayed at the bottom of the form along with a editable date field where user can enter date")
-    public void userVerifiesBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate() throws AutomationException {
+    public void userVerifiesBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate() throws AutomationException, IOException, ParseException {
         CommonSteps.logInfo("Verified that Beneficiary name is displayed at the bottom of the form along with a editable date field where user can enter date");
         PageFactory.probateFormsUTAPage().verifyBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate();
         CommonSteps.takeScreenshot();
