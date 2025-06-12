@@ -18,7 +18,10 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.sixinone.automation.drivers.DriverFactory.OS;
 import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
@@ -552,6 +555,7 @@ public class ProbateFormsUTAPage extends BasePage {
                     beneDateAtBottom5Form = actualDate;
                     break;
             }
+
         }
     }
 
@@ -603,6 +607,15 @@ public class ProbateFormsUTAPage extends BasePage {
                     dateOfNoticeForm,
                     "Date Of Notice");
 
+            Map<String, String> expectedBeneficiaries = new HashMap<>();
+            expectedBeneficiaries.put("Beneficiary 1", beneficiary1NameAddressForm);
+            expectedBeneficiaries.put("Beneficiary 2", beneficiary2NameAddressForm);
+            expectedBeneficiaries.put("Beneficiary 3", beneficiary3NameAddressForm);
+            expectedBeneficiaries.put("Beneficiary 4", beneficiary4NameAddressForm);
+            expectedBeneficiaries.put("Beneficiary 5", beneficiary5NameAddressForm);
+            boolean isValidatedBeneficiaries = validateBeneficiaries(pdfFilePath, expectedBeneficiaries);
+
+
             boolean isVerifiedSettlorOrTrustName = verifyFieldsInPDF(pdfFilePath,
                     "1. The Trust is currently in existence and was created under a trust agreement dated:",
                     "who was adjudicated incapacitated on December 05, 2023",
@@ -610,17 +623,23 @@ public class ProbateFormsUTAPage extends BasePage {
                     "Settlor Or TrustName");
 
 
-            Map<String, String> expected = new HashMap<>();
-            expected.put("Name of Counsel", nameOfCounselForm);
-            expected.put("Address Line 1", attorneyAddressLine1Form);
-            expected.put("Address Line 2", attorneyAddressLine2Form);
-            expected.put("City/State/Zip", attorneyCityStateZipForm);
-            expected.put("Telephone", attorneyTelephoneForm);
+            Map<String, String> expectedCounselDetails = new HashMap<>();
+            expectedCounselDetails.put("Name of Counsel", nameOfCounselForm);
+            expectedCounselDetails.put("Address Line 1", attorneyAddressLine1Form);
+            expectedCounselDetails.put("Address Line 2", attorneyAddressLine2Form);
+            expectedCounselDetails.put("City/State/Zip", attorneyCityStateZipForm);
+            expectedCounselDetails.put("Telephone", attorneyTelephoneForm);
+            boolean isValidatedCounselDetails = validateCounselDetails(pdfFilePath, expectedCounselDetails);
 
-            boolean isValidatedCounselDetails = validateCounselDetails(pdfFilePath, expected);
+            Map<String, String> expectedBeneficiaryDate = new HashMap<>();
+            expectedBeneficiaryDate.put("Beneficiary Date 1", beneDateAtBottom1Form);
+            expectedBeneficiaryDate.put("Beneficiary Date 2", beneDateAtBottom2Form);
+            expectedBeneficiaryDate.put("Beneficiary Date 3", beneDateAtBottom3Form);
+            expectedBeneficiaryDate.put("Beneficiary Date 4", beneDateAtBottom4Form);
+            expectedBeneficiaryDate.put("Beneficiary Date 5", beneDateAtBottom5Form);
+            boolean isValidatedBeneficiaryDateAtBottom = validateBeneficiaryDateAtBottom(pdfFilePath, expectedBeneficiaryDate);
 
-
-            if (!isVerifiedDateOfNotice || !isVerifiedSettlorOrTrustName || !isValidatedCounselDetails) {
+            if (!isVerifiedDateOfNotice || !isValidatedBeneficiaries || !isVerifiedSettlorOrTrustName || !isValidatedCounselDetails || !isValidatedBeneficiaryDateAtBottom) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
 
@@ -636,13 +655,6 @@ public class ProbateFormsUTAPage extends BasePage {
         document.close();
 
         String[] allLines = pdfText.split("\\r?\\n");
-
-        // 🔍 Log Full PDF Content with Line Numbers
-        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
-        for (int i = 0; i < allLines.length; i++) {
-            String trimmedLine = allLines[i].trim();
-            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
-        }
 
         int startIndex = -1, endIndex = -1;
         String extractedValue = "";
@@ -773,12 +785,6 @@ public class ProbateFormsUTAPage extends BasePage {
             throw new AutomationException("❌ Mismatch in field '" + fieldName + "'. Expected: '" + expected + "', Found: '" + actual + "'");
         }
         CommonSteps.logInfo("✅ Validation Passed: " + fieldName);
-        CommonSteps.logInfo(beneficiary1NameAddressForm);
-        CommonSteps.logInfo(beneficiary2NameAddressForm);
-        CommonSteps.logInfo(beneficiary3NameAddressForm);
-        CommonSteps.logInfo(beneficiary4NameAddressForm);
-        CommonSteps.logInfo(beneficiary5NameAddressForm);
-
 
     }
 
@@ -789,6 +795,96 @@ public class ProbateFormsUTAPage extends BasePage {
         return value;
     }
 
+    public static boolean validateBeneficiaries(String pdfFilePath, Map<String, String> expectedBeneficiaries) throws IOException, AutomationException {
+        // Load PDF and extract all lines
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+        String[] allLines = pdfText.split("\\r?\\n");
+        List<String> pdfLines = Arrays.stream(allLines)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+
+        for (Map.Entry<String, String> entry : expectedBeneficiaries.entrySet()) {
+            String beneficiaryLabel = entry.getKey();
+            String expectedBlock = entry.getValue();
+
+            if (expectedBlock == null || expectedBlock.trim().isEmpty()) {
+                CommonSteps.logInfo(String.format("[⚠️] %s has no expected data. Skipping validation.", beneficiaryLabel));
+                continue;
+            }
+
+            List<String> expectedLines = Arrays.stream(expectedBlock.split("\\r?\\n"))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+
+            boolean matched = false;
+
+            for (int i = 0; i <= pdfLines.size() - expectedLines.size(); i++) {
+                boolean allMatch = true;
+                StringBuilder extractedBlock = new StringBuilder();
+
+                for (int j = 0; j < expectedLines.size(); j++) {
+                    String expected = expectedLines.get(j);
+                    String actual = pdfLines.get(i + j).trim();
+                    extractedBlock.append(actual);
+                    if (j < expectedLines.size() - 1) extractedBlock.append("\n");
+
+                    if (!expected.equalsIgnoreCase(actual)) {
+                        allMatch = false;
+                        break;
+                    }
+                }
+
+                if (allMatch) {
+                    matched = true;
+                    CommonSteps.logInfo(String.format("[✅] %s validated successfully.", beneficiaryLabel));
+                    CommonSteps.logInfo(String.format("🔍 Comparing -> %s | Expected:\n%s\nExtracted:\n%s\n",
+                            beneficiaryLabel, expectedBlock.trim(), extractedBlock.toString().trim()));
+                    break;
+                }
+            }
+
+            if (!matched) {
+                throw new AutomationException(String.format("❌ Validation failed for %s. Expected:\n%s", beneficiaryLabel, expectedBlock));
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean validateBeneficiaryDateAtBottom(String pdfFilePath, Map<String, String> expectedDates) throws IOException, AutomationException {
+        // Load the PDF content and extract text
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        // Extract all "Date: ..." lines from the PDF
+        List<String> allDateLines = Arrays.stream(pdfText.split("\\r?\\n"))
+                .filter(line -> line.trim().startsWith("Date:"))
+                .map(line -> line.replace("Date:", "").trim())
+                .collect(Collectors.toList());
+
+        int index = 0;
+        for (Map.Entry<String, String> entry : expectedDates.entrySet()) {
+            String label = entry.getKey(); // e.g., "Beneficiary Date 1"
+            String expectedDate = entry.getValue();
+
+            String extractedDate = index < allDateLines.size() ? allDateLines.get(index) : "";
+
+            if (expectedDate.equalsIgnoreCase(extractedDate)) {
+                CommonSteps.logInfo(String.format("[✅] %s Signature Date validated successfully.", label));
+                CommonSteps.logInfo(String.format("🔍 Comparing -> %s | Expected: %s, Extracted: %s%n", label, expectedDate, extractedDate));
+            } else {
+                throw new AutomationException(String.format("❌ Mismatch in %s:\nExpected: %s\nFound: %s", label, expectedDate, extractedDate));
+            }
+            index++;
+        }
+
+        return true;
+    }
 
 
 }
