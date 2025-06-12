@@ -4,15 +4,21 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static com.sixinone.automation.drivers.DriverFactory.*;
 
 public class ProbateFormsOC07Page extends BasePage {
 
@@ -66,6 +72,8 @@ public class ProbateFormsOC07Page extends BasePage {
     private static final String INPUT_FIELD_BY_NAME = "//input[@name='%s']";
     private static final String INPUT_CLAIMOFFIELD = "//p[contains(text(), 'Enter the claim of')]//input[@name='claimantName']";
     private static final String INPUT_CLAIMANTFIELD = "//p[text()='(Street Address)']/preceding::input[@name='claimantStreetAddress']/parent::p/preceding-sibling::p[@class='p9 ft3']/input[@name='claimantName']";
+
+    static String downloadedFileName;
 
     static String estateNameForm;
     static String fileNumberForm;
@@ -306,26 +314,46 @@ public class ProbateFormsOC07Page extends BasePage {
         WebElement claimAmountField = driverUtil.getWebElement(String.format(INPUT_FIELD_BY_NAME, "claimAmount"));
 
         for (String input : generateValidNumericInputs()) {
-            claimAmountField.clear();
-            claimAmountField.sendKeys(input);
-            claimAmountField.sendKeys(Keys.TAB);
-            WebDriverUtil.waitForAWhile(3);
-
-            String captured = claimAmountField.getAttribute("value").trim();
-
-            // Normalize both input and captured
-            String normalizedInput = normalizeNumeric(input);
-            String normalizedCaptured = normalizeNumeric(captured);
-
-            if (!normalizedInput.equals(normalizedCaptured)) {
-                throw new AutomationException("❌ Input rejected: '" + input + "' -> Captured: '" + captured + "'");
-            }
-
-            CommonSteps.logInfo("✅ Valid input accepted: '" + input + "' -> Captured: '" + captured + "'");
+            enterAmountAndValidate(claimAmountField, input);
         }
 
         CommonSteps.logInfo("✅ Amount field validation completed with formatting support.");
     }
+
+    private void enterAmountAndValidate(WebElement field, String input) throws AutomationException {
+        for (int attempt = 0; attempt < 2; attempt++) {
+            clearAndTypeSlowly(field, input);
+            field.sendKeys(Keys.TAB);
+            WebDriverUtil.waitForAWhile(2); // allow JS formatting
+
+            String captured = field.getAttribute("value").trim();
+            String normalizedInput = normalizeNumeric(input);
+            String normalizedCaptured = normalizeNumeric(captured);
+
+            if (normalizedInput.equals(normalizedCaptured)) {
+                CommonSteps.logInfo("✅ Valid input accepted: '" + input + "' -> Captured: '" + captured + "'");
+                return;
+            }
+
+            WebDriverUtil.waitForAWhile(1); // small wait before retry
+        }
+
+        throw new AutomationException("❌ Input rejected: '" + input + "' -> Captured: '" + field.getAttribute("value").trim() + "'");
+    }
+
+    private void clearAndTypeSlowly(WebElement field, String value) {
+        field.click();
+        field.clear();
+        field.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        field.sendKeys(Keys.DELETE);
+        WebDriverUtil.waitForAWhile(1);
+
+        for (char ch : value.toCharArray()) {
+            field.sendKeys(Character.toString(ch));
+            //WebDriverUtil.waitForAWhile(1); // slow typing if needed
+        }
+    }
+
 
     private String normalizeNumeric(String value) {
         // Remove commas and ensure two decimal places
@@ -385,9 +413,9 @@ public class ProbateFormsOC07Page extends BasePage {
     public void entersClaimantNameXInTheClaimOfField() throws AutomationException, IOException, ParseException {
         String claimantNameX = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameX").toString();
         WebElement claimOfField = driverUtil.getWebElement(INPUT_CLAIMOFFIELD);
-
         clearAndType(claimOfField, claimantNameX);
-        WebDriverUtil.waitForAWhile(2); // Adjust if needed
+        waitUntilClaimantFieldIsUpdated(claimantNameX);
+
     }
 
     public void verifyClaimantFieldDisplaySameClaimantName() throws AutomationException, IOException, ParseException {
@@ -403,21 +431,11 @@ public class ProbateFormsOC07Page extends BasePage {
     public void userClearsAndEntersClaimantNameYInTheClaimantField() throws AutomationException, IOException, ParseException {
         String claimantNameY = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameY").toString();
         WebElement claimantField = driverUtil.getWebElement(INPUT_CLAIMANTFIELD);
-
         clearAndType(claimantField, claimantNameY);
-        WebDriverUtil.waitForAWhile(2);
+        waitUntilClaimantFieldIsUpdated(claimantNameY);
+
     }
 
-    private void clearAndType(WebElement field, String value) {
-        field.click();
-        field.clear();
-
-        field.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        field.sendKeys(Keys.DELETE);
-
-        field.sendKeys(value);
-        field.sendKeys(Keys.TAB);
-    }
 
     public void verifyClaimOfFieldDisplaySameClaimantName() throws AutomationException, IOException, ParseException {
         String expectedClaimantNameY = CommonUtil.getJsonPath("OC07Form").get("OC07Form.claimantNameY").toString();
@@ -428,5 +446,139 @@ public class ProbateFormsOC07Page extends BasePage {
             throw new AutomationException("❌ Claim of field mismatch. Expected: " + expectedClaimantNameY + ", Found: " + claimOfFieldValue);
         }
     }
+    private void clearAndType(WebElement field, String value) {
+        field.click();
+        field.clear();
 
+        ((JavascriptExecutor) DriverFactory.drivers.get())
+                .executeScript("arguments[0].value = '';", field);
+
+        field.sendKeys(value);
+        field.sendKeys(Keys.TAB);
+        WebDriverUtil.waitForAWhile(2);
+    }
+
+
+
+    public void waitUntilClaimantFieldIsUpdated(String expected) throws AutomationException {
+        WebElement field = driverUtil.getWebElement(INPUT_CLAIMANTFIELD);
+        for (int i = 0; i < 5; i++) {
+            String val = field.getAttribute("value").trim();
+            if (val.equals(expected)) return;
+            WebDriverUtil.waitForAWhile(1);
+        }
+        throw new AutomationException("❌ Claimant field mismatch after waiting. Expected: " + expected + ", Found: " + field.getAttribute("value").trim());
+    }
+
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS)) ? System.getProperty("user.dir") + "\\downloads" : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/")
+                + downloadedFileName;
+        try {
+
+            boolean isVerifiedFileNumber = verifyFieldsInPDF(pdfFilePath,
+                    "ESTATE OF Sara Watt , DECEASED",
+                    "To the Clerk of the Orphans’ Court Division:",
+                    fileNumberForm,
+                    "file number");
+        if (!isVerifiedFileNumber) {
+            throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+        }
+
+        CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+    } catch (Exception e) {
+        throw new AutomationException("❌ Verification failed: " + e.getMessage());
+    }
+}
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName)
+            throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        // 🔍 Log Full PDF Content with Line Numbers
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+        }
+        int startIndex = -1, endIndex = -1;
+
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+            if (line.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (line.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex == -1 || endIndex == -1) {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+
+        StringBuilder extractedBlock = new StringBuilder();
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            String line = allLines[i].trim();
+            if (!line.isEmpty()) {
+                extractedBlock.append(line).append(" ");
+            }
+        }
+
+        String actual = extractedBlock.toString()
+                .replaceFirst("(?i)^No\\.\\s*", "") // Remove leading 'No.' (case-insensitive)
+                .replaceAll("\\s+", " ")
+                .trim();
+        String expected = expectedValue.replaceAll("\\s+", " ").trim();
+
+        CommonSteps.logInfo("🔍 Comparing block -> Expected: '" + expected + "', Extracted: '" + actual + "'");
+
+        if (!expected.equalsIgnoreCase(actual)) {
+            throw new AutomationException("❌ Validation Failed: Block content does not match for '" + fieldName + "'");
+        }
+
+        CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' block matches expected.");
+        return true;
+    }
 }

@@ -195,7 +195,8 @@ public class WebDriverUtil {
         waitForAWhile(1, TimeUnit.SECONDS);
     }
 
-    public static void waitForAWhile(int waitTime) {
+    public static void
+    waitForAWhile(int waitTime) {
         waitForAWhile(waitTime, TimeUnit.SECONDS);
     }
 
