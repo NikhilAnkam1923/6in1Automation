@@ -23,6 +23,11 @@ Feature: 6in1 probate form UTA Feature
     Then user selects multiple beneficiaries from sidebar
     And user verifies form is repeated depending on the number of beneficiaries selected
 
+  Scenario: Verify that Trustee table allow users to select Trustees through sidebar.
+    When user saves trustees information
+    Then user verifies selected trustees are displayed in the table
+    Then user verifies if more than 4 trustees are selected then rest are displayed in attachment
+
   Scenario: Verify that the sidebar appears and allows attorney selection.
     Then user verifies for "UTA" form a sidebar appears and attorney can be selected
 

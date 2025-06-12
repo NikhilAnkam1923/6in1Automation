@@ -16,6 +16,8 @@ import org.openqa.selenium.interactions.Actions;
 import java.io.IOException;
 import java.util.*;
 
+import static com.sixinone.automation.util.WebDriverUtil.waitForAWhile;
+
 public class ProbateFormsUTAPage extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
     private static final String DECEDENT_FIRST_NAME_FIELD = "//input[@name='decedentInfo.firstName']";
@@ -70,7 +72,15 @@ public class ProbateFormsUTAPage extends BasePage {
     private static final String DATE_OF_NOTICE_FIELD = "//input[@name='data[0].noticeDate']";
     private static final String BENEFICIARY_NAMES_AT_BOTTOM = "//p[@class='p20 ft4']//span[contains(text(),' ')]";
     private static final String DATE_FIELD_BOTTOM = "//input[@name='data[%s].utaSignatureDate']";
-    private static final String BENE_DATE_FIELD = "//input[contains(@name,'utaSignatureDate')]";
+    private static final String TRUSTEE_SELECTION_FIELD = "//td[@class='tr14 td79 td82 ']//div[@id='trusteeSection']//input";
+    private static final String TRUSTEE_NAME_COLUMN = "//p[@class='ft3 data-name']//input";
+    private static final String TRUSTEE_ADDRESS_COLUMN = "//p[@class='ft3 data-address']//input";
+    private static final String TRUSTEE_TELEPHONE_COLUMN = "//p[@class='ft3 data-telephone']//input";
+    private static final String VIEW_ATTACHMENT_BTN = "//span[contains(@class,'view-attachment')]";
+    private static final String CLOSE_BTN = "//div[@class='modal-footer']//button[text()='Close']";
+    private static final String TRUSTEE_NAME_COLUMN_ATTACHMENT = "//div[@class='modal-body']//tbody//td[position()='1']";
+    private static final String TRUSTEE_ADDRESS_COLUMN_ATTACHMENT = "//div[@class='modal-body']//tbody//td[position()='2']";
+    private static final String TRUSTEE_TELEPHONE_COLUMN_ATTACHMENT = "//div[@class='modal-body']//tbody//td[position()='3']";
 
     private final Map<String, String> estateInfo = new HashMap<>();
 
@@ -78,6 +88,11 @@ public class ProbateFormsUTAPage extends BasePage {
 
     private static final List<String> beneDetails = new ArrayList<>();
     private static final List<String> beneficiaryKeys = new ArrayList<>();
+    private static final List<String> trusteeDetails = new ArrayList<>();
+    private static final List<String> trusteeKeys = new ArrayList<>();
+    private static final List<String> selectedTrusteeNameForm = new ArrayList<>();
+    private static final List<String> selectedTrusteeAddressForm = new ArrayList<>();
+    private static final List<String> selectedTrusteeTelephoneForm = new ArrayList<>();
 
     static String settlorOrTrustNameForm;
     static String Beneficiary1Form;
@@ -102,6 +117,27 @@ public class ProbateFormsUTAPage extends BasePage {
     static String beneDateAtBottom3Form;
     static String beneDateAtBottom4Form;
     static String beneDateAtBottom5Form;
+    static String Trustee1Form;
+    static String Trustee2Form;
+    static String Trustee3Form;
+    static String Trustee4Form;
+    static String Trustee5Form;
+    static String Trustee1NameForm;
+    static String Trustee2NameForm;
+    static String Trustee3NameForm;
+    static String Trustee4NameForm;
+    static String Trustee5NameForm;
+    static String Trustee1AddressForm;
+    static String Trustee2AddressForm;
+    static String Trustee3AddressForm;
+    static String Trustee4AddressForm;
+    static String Trustee5AddressForm;
+    static String Trustee1TelephoneForm;
+    static String Trustee2TelephoneForm;
+    static String Trustee3TelephoneForm;
+    static String Trustee4TelephoneForm;
+    static String Trustee5TelephoneForm;
+
 
     public ProbateFormsUTAPage() throws IOException, ParseException {
     }
@@ -235,6 +271,27 @@ public class ProbateFormsUTAPage extends BasePage {
                         beneData.getOrDefault("middleName", "") + " " +
                         beneData.getOrDefault("lastName", "") + ", " +
                         beneData.getOrDefault("suffix", "");
+
+                jsonFullName = jsonFullName.trim().replaceAll(" +", " ");
+
+                if (fullName.equalsIgnoreCase(jsonFullName)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String findTrusteeKeyByName(String fullName, JSONObject jsonData) {
+        for (Object keyObj : jsonData.keySet()) {
+            String key = keyObj.toString();
+            if (key.startsWith("trustee")) {
+                JSONObject trusteeData = (JSONObject) jsonData.get(key);
+
+                String jsonFullName = trusteeData.getOrDefault("firstName", "") + " " +
+                        trusteeData.getOrDefault("middleName", "") + " " +
+                        trusteeData.getOrDefault("lastName", "") + ", " +
+                        trusteeData.getOrDefault("suffix", "");
 
                 jsonFullName = jsonFullName.trim().replaceAll(" +", " ");
 
@@ -544,6 +601,164 @@ public class ProbateFormsUTAPage extends BasePage {
                     beneDateAtBottom5Form = actualDate;
                     break;
             }
+        }
+    }
+
+    public void userSavesTrusteesInformation() throws AutomationException, IOException, ParseException {
+        scrollToElement(TRUSTEE_SELECTION_FIELD);
+        driverUtil.getWebElement(TRUSTEE_SELECTION_FIELD).click();
+        WebDriverUtil.waitForAWhile();
+
+        List<WebElement> trusteeNames = driverUtil.getWebElements(SELECTED_CONTACT);
+
+        for (int i = 0; i < trusteeNames.size(); i++) {
+            String name = trusteeNames.get(i).getText().trim();
+            trusteeDetails.add(name);
+            switch (i) {
+                case 0:
+                    Trustee1Form = name;
+                    break;
+                case 1:
+                    Trustee2Form = name;
+                    break;
+                case 2:
+                    Trustee3Form = name;
+                    break;
+                case 3:
+                    Trustee4Form = name;
+                    break;
+                case 4:
+                    Trustee5Form = name;
+                    break;
+            }
+        }
+
+        for (String detail : trusteeDetails) {
+            String matchedKey = findTrusteeKeyByName(detail, jsonData);
+
+            if (matchedKey != null) {
+                trusteeKeys.add(matchedKey);
+            } else {
+                throw new AutomationException("Trustee key not found for full name: " + detail);
+            }
+        }
+
+        WebDriverUtil.waitForAWhile();
+        driverUtil.getWebElement(SAVE_BTN).click();
+
+        for (int i = 0; i < trusteeDetails.size(); i++) {
+            String trusteeKey = trusteeKeys.get(i);
+
+            String expectedFirstName = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".firstName").toString();
+            String expectedMiddleName = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".middleName").toString();
+            String expectedLastName = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".lastName").toString();
+            String expectedAddressLine1 = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".addressLine1").toString();
+            String expectedCity = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".city").toString();
+            String expectedState = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".stateCode").toString();
+            String expectedZip = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".zip").toString();
+
+            String Name = expectedFirstName + " " + expectedMiddleName + " " + expectedLastName;
+            String Address = expectedAddressLine1 + ", " + expectedCity + ", " + expectedState + " " + expectedZip;
+            String Telephone = CommonUtil.getJsonPath(trusteeKey).get(trusteeKey + ".phoneNumber").toString();
+
+            selectedTrusteeNameForm.add(Name);
+            selectedTrusteeAddressForm.add(Address);
+            selectedTrusteeTelephoneForm.add(Telephone);
+        }
+    }
+
+    public void verifySelectedTrusteesAreDisplayedInTheTable() throws AutomationException, IOException, ParseException {
+        List<WebElement> trusteeNameColumn = driverUtil.getWebElements(TRUSTEE_NAME_COLUMN);
+        List<WebElement> trusteeAddressColumn = driverUtil.getWebElements(TRUSTEE_ADDRESS_COLUMN);
+        List<WebElement> trusteeTelephoneColumn = driverUtil.getWebElements(TRUSTEE_TELEPHONE_COLUMN);
+
+        for (int i=0; i<4; i++) {
+            String expectedName = selectedTrusteeNameForm.get(i);
+            String expectedAddress = selectedTrusteeAddressForm.get(i);
+            String expectedTelephone = selectedTrusteeTelephoneForm.get(i);
+
+            String actualName = getFieldValue(trusteeNameColumn.get(i));
+            String actualAddress = getFieldValue(trusteeAddressColumn.get(i));
+            String actualTelephone = getFieldValue(trusteeTelephoneColumn.get(i));
+
+            if (!actualName.equals(expectedName)) {
+                throw new AutomationException("Trustee Name is not displayed correctly at row " + (i+1) + ". Expected: " + expectedName + " ,Found: " + actualName);
+            }
+
+            if (!actualAddress.equals(expectedAddress)) {
+                throw new AutomationException("Trustee Address is not displayed correctly at row " + (i+1) + ". Expected: " + expectedAddress + " ,Found: " + actualAddress);
+            }
+
+            if (!actualTelephone.equals(expectedTelephone)) {
+                throw new AutomationException("Trustee Telephone is not displayed correctly at row " + (i+1) + ". Expected: " + expectedTelephone + " ,Found: " + actualTelephone);
+            }
+
+            switch (i) {
+                case 0:
+                    Trustee1NameForm = actualName;
+                    Trustee1AddressForm = actualAddress;
+                    Trustee1TelephoneForm = actualTelephone;
+                    break;
+                case 1:
+                    Trustee2NameForm = actualName;
+                    Trustee2AddressForm = actualAddress;
+                    Trustee2TelephoneForm = actualTelephone;
+                    break;
+                case 2:
+                    Trustee3NameForm = actualName;
+                    Trustee3AddressForm = actualAddress;
+                    Trustee3TelephoneForm = actualTelephone;
+                    break;
+                case 3:
+                    Trustee4NameForm = actualName;
+                    Trustee4AddressForm = actualAddress;
+                    Trustee4TelephoneForm = actualTelephone;
+                    break;
+
+            }
+        }
+    }
+
+    public void verifyIfMoreThanTrusteesAreSelectedThenRestAreDisplayedInAttachment() throws AutomationException {
+        if (trusteeDetails.size() <= 4) {
+            CommonSteps.logInfo("There are no additional trustees to verify in the attachment.");
+        } else {
+            scrollToElement(VIEW_ATTACHMENT_BTN);
+            driverUtil.getWebElement(VIEW_ATTACHMENT_BTN).click();
+            waitForAWhile();
+            List<WebElement> trusteeNameColumnAttachment = driverUtil.getWebElements(TRUSTEE_NAME_COLUMN_ATTACHMENT);
+            List<WebElement> trusteeAddressColumnAttachment = driverUtil.getWebElements(TRUSTEE_ADDRESS_COLUMN_ATTACHMENT);
+            List<WebElement> trusteeTelephoneColumnAttachment = driverUtil.getWebElements(TRUSTEE_TELEPHONE_COLUMN_ATTACHMENT);
+
+            for (int i = 0; i < trusteeNameColumnAttachment.size(); i++) {
+                int index = i + 4;
+                String expectedName = selectedTrusteeNameForm.get(index);
+                String expectedAddress = selectedTrusteeAddressForm.get(index);
+                String expectedTelephone = selectedTrusteeTelephoneForm.get(index);
+
+                String actualName = getFieldValue(trusteeNameColumnAttachment.get(i));
+                String actualAddress = getFieldValue(trusteeAddressColumnAttachment.get(i));
+                String actualTelephone = getFieldValue(trusteeTelephoneColumnAttachment.get(i));
+
+                if (!actualName.equals(expectedName)) {
+                    throw new AutomationException("Trustee Name is not displayed correctly on attachment at row " + (i+1) + ". Expected: " + expectedName + " ,Found: " + actualName);
+                }
+
+                if (!actualAddress.equals(expectedAddress)) {
+                    throw new AutomationException("Trustee Address is not displayed correctly on attachment at row " + (i+1) + ". Expected: " + expectedAddress + " ,Found: " + actualAddress);
+                }
+
+                if (!actualTelephone.equals(expectedTelephone)) {
+                    throw new AutomationException("Trustee Telephone is not displayed correctly on attachment at row " + (i+1) + ". Expected: " + expectedTelephone + " ,Found: " + actualTelephone);
+                }
+
+                Trustee5NameForm = actualName;
+                Trustee5AddressForm = actualAddress;
+                Trustee5TelephoneForm = actualTelephone;
+            }
+
+            CommonSteps.takeScreenshot();
+            driverUtil.getWebElement(CLOSE_BTN).click();
         }
     }
 }

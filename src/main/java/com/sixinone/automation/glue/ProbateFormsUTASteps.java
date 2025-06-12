@@ -59,4 +59,23 @@ public class ProbateFormsUTASteps {
         PageFactory.probateFormsUTAPage().verifyBeneficiaryNameIsDisplayedAtTheBottomOfTheFormAlongWithAEditableDateFieldWhereUserCanEnterDate();
         CommonSteps.takeScreenshot();
     }
+
+    @Then("user verifies selected trustees are displayed in the table")
+    public void userVerifiesSelectedTrusteesAreDisplayedInTheTable() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("Verified that selected trustees are displayed in the table");
+        PageFactory.probateFormsUTAPage().verifySelectedTrusteesAreDisplayedInTheTable();
+        CommonSteps.takeScreenshot();
+    }
+
+    @When("user saves trustees information")
+    public void userSavesTrusteesInformation() throws AutomationException, IOException, ParseException {
+        CommonSteps.logInfo("user saves trustees information");
+        PageFactory.probateFormsUTAPage().userSavesTrusteesInformation();
+    }
+
+    @Then("user verifies if more than 4 trustees are selected then rest are displayed in attachment")
+    public void userVerifiesIfMoreThanTrusteesAreSelectedThenRestAreDisplayedInAttachment() throws AutomationException {
+        CommonSteps.logInfo("Verified that if more than 4 trustees are selected then rest are displayed in attachment");
+        PageFactory.probateFormsUTAPage().verifyIfMoreThanTrusteesAreSelectedThenRestAreDisplayedInAttachment();
+    }
 }
