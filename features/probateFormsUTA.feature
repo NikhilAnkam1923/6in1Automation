@@ -32,6 +32,11 @@ Feature: 6in1 probate form UTA Feature
   Scenario: Verify that 'Date of Notice' field is editable.
     Then user verifies the 'Date of Notice' field is editable
 
+  Scenario: Verify form can be printed in pdf
+    When user click on print form button
+    Then verify form can be printed in pdf with name as 'UTA'
+    And verify all the fields entered are correctly reflected in the 'UTA' pdf
+
   Scenario: Reset the UTA form
     When user resets the "UTA" form
 

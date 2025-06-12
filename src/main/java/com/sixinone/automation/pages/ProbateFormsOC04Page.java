@@ -1618,7 +1618,7 @@ public class ProbateFormsOC04Page extends BasePage{
         driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
-    public void userResetsTheRWForm() throws AutomationException {
+    public void userResetsTheOCForm() throws AutomationException {
         //Page 2 (for prod)
 //        switchToPage(2);
 //        scrollToElement(PETITIONER_NAME_FIELD);

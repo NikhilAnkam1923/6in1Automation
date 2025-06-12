@@ -2015,7 +2015,7 @@ public class ProbateFormsOC05Page extends BasePage {
         driverUtil.getWebElement(CLOSE_BTN).click();
     }
 
-    public void userResetsTheRWForm() throws AutomationException {
+    public void userResetsTheOCForm() throws AutomationException {
         //page 1
         switchToPage(1);
         WebElement fileNumberField = driverUtil.getWebElement(FILE_NUMBER_FIELD);

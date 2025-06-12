@@ -42,6 +42,9 @@ Feature: 6in1 probate form OC06 Feature
     Then verify form can be printed in pdf with name as 'OC07'
     And verify all the fields entered are correctly reflected in the 'OC07' pdf
 
+  Scenario: Reset the OC07 form
+    When user resets the "OC07" form
+
   @Setup
   Scenario:SETUP: Close Browser
     When user logged out from the application

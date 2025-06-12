@@ -4,7 +4,10 @@ import com.sixinone.automation.drivers.DriverFactory;
 import com.sixinone.automation.exception.AutomationException;
 import com.sixinone.automation.glue.CommonSteps;
 import com.sixinone.automation.util.CommonUtil;
+import com.sixinone.automation.util.FileUtil;
 import com.sixinone.automation.util.WebDriverUtil;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
@@ -13,8 +16,12 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static com.sixinone.automation.drivers.DriverFactory.OS;
+import static com.sixinone.automation.drivers.DriverFactory.WINDOWS;
 
 public class ProbateFormsUTAPage extends BasePage {
     public static final String SPINNER = "//div[contains(@class,'spinner')]";
@@ -78,6 +85,7 @@ public class ProbateFormsUTAPage extends BasePage {
     private static final List<String> beneDetails = new ArrayList<>();
     private static final List<String> beneficiaryKeys = new ArrayList<>();
 
+    static String downloadedFileName;
     static String settlorOrTrustNameForm;
     static String Beneficiary1Form;
     static String Beneficiary2Form;
@@ -209,7 +217,7 @@ public class ProbateFormsUTAPage extends BasePage {
         String expectedDecedentName = decedentFirstName + " " + decedentMiddleName + " " + decedentLastName + " " + decedentSuffix;
         settlorOrTrustNameForm = getFieldValue(SETTLOR_OR_TRUST_NAME);
 
-        if(!settlorOrTrustNameForm.equals(expectedDecedentName)){
+        if (!settlorOrTrustNameForm.equals(expectedDecedentName)) {
             throw new AutomationException("The Settlor of the Trust was: field not displayed the correct decedent's name. Expected: " + expectedDecedentName + " ,Found: " + settlorOrTrustNameForm);
         }
     }
@@ -398,7 +406,7 @@ public class ProbateFormsUTAPage extends BasePage {
                     attorneyAddressLine1Form = value;
                     break;
                 case 1:
-                    attorneyAddressLine2Form =  value;
+                    attorneyAddressLine2Form = value;
                     break;
                 case 2:
                     attorneyCityStateZipForm = value;
@@ -461,7 +469,7 @@ public class ProbateFormsUTAPage extends BasePage {
         dateOfNoticeForm = getFieldValue(DATE_OF_NOTICE_FIELD);
     }
 
-    public void userResetsTheRWForm() throws AutomationException {
+    public void userResetsTheUTAForm() throws AutomationException {
         WebDriverUtil.waitForAWhile();
         scrollToElement(NAME_AND_ADDRESS_FIELD);
         driverUtil.getWebElement(NAME_AND_ADDRESS_FIELD).click();
@@ -483,4 +491,241 @@ public class ProbateFormsUTAPage extends BasePage {
 
         userSelectsTheCheckbox();
     }
+
+    public void verifyFormPrintedInPDFForm(String fileName) throws AutomationException {
+        boolean isFileFound = false;
+        int counter = 0;
+        File[] files = null;
+        do {
+            try {
+                files = FileUtil.getAllFiles((System.getProperty(OS) == null || System.getProperty(OS).equals(WINDOWS)) ? System.getProperty("user.dir") + "\\downloads" : System.getProperty("user.dir").replace("\\", "/") + "/downloads");
+
+                CommonSteps.logInfo("Iterating over files");
+                for (File file : files) {
+                    if (file.exists() && !file.isDirectory()) {
+                        CommonSteps.logInfo(file.getName());
+                        downloadedFileName = file.getName();
+
+                        // Check if file is a PDF
+                        if (file.getName().toLowerCase().endsWith(".pdf")) {
+                            // Check if the file name matches the expected file name
+                            if (file.getName().toLowerCase().contains(fileName.toLowerCase())) {
+                                isFileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            counter++;
+            WebDriverUtil.waitForAWhile(10);
+        } while (!isFileFound && counter < 5);
+        if (!isFileFound)
+            throw new AutomationException("The expected file was probably not downloaded or taking to long time to download");
+    }
+
+
+    public void verifyAllFieldsInDownloadedPDF() throws AutomationException, IOException {
+        String pdfFilePath = ((System.getProperty("os.name").toLowerCase().contains("win"))
+                ? System.getProperty("user.dir") + "\\downloads\\"
+                : System.getProperty("user.dir") + "/downloads/")
+                + downloadedFileName;
+        try {
+
+            boolean isVerifiedDateOfNotice = verifyFieldsInPDF(pdfFilePath,
+                    "Alexander James Henderson, Sr.",
+                    "Name",
+                    dateOfNoticeForm,
+                    "Date Of Notice");
+
+            boolean isVerifiedSettlorOrTrustName = verifyFieldsInPDF(pdfFilePath,
+                    "1. The Trust is currently in existence and was created under a trust agreement dated:",
+                    "who was adjudicated incapacitated on December 05, 2023",
+                    settlorOrTrustNameForm,
+                    "Settlor Or TrustName");
+
+
+            Map<String, String> expected = new HashMap<>();
+            expected.put("Name of Counsel", nameOfCounselForm);
+            expected.put("Address Line 1", attorneyAddressLine1Form);
+            expected.put("Address Line 2", attorneyAddressLine2Form);
+            expected.put("City/State/Zip", attorneyCityStateZipForm);
+            expected.put("Telephone", attorneyTelephoneForm);
+
+            boolean isValidatedCounselDetails = validateCounselDetails(pdfFilePath, expected);
+
+
+            if (!isVerifiedDateOfNotice || !isVerifiedSettlorOrTrustName || !isValidatedCounselDetails) {
+                throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
+            }
+
+            CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
+        } catch (Exception e) {
+            throw new AutomationException("❌ Verification failed: " + e.getMessage());
+        }
+    }
+
+    private static boolean verifyFieldsInPDF(String pdfFilePath, String beforeLine, String afterLine, String expectedValue, String fieldName) throws IOException, AutomationException {
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        // 🔍 Log Full PDF Content with Line Numbers
+        CommonSteps.logInfo("🔍 Full PDF Content with Line Numbers:");
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            CommonSteps.logInfo("Line " + (i + 1) + ": " + trimmedLine);
+        }
+
+        int startIndex = -1, endIndex = -1;
+        String extractedValue = "";
+
+        for (int i = 0; i < allLines.length; i++) {
+            String trimmedLine = allLines[i].trim();
+            if (trimmedLine.contains(beforeLine.trim())) {
+                startIndex = i;
+            }
+            if (trimmedLine.contains(afterLine.trim()) && startIndex != -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                String currentLine = allLines[i].trim();
+                if (!currentLine.isBlank()) {
+                    extractedValue = clean(currentLine, fieldName);
+                    break; // Assuming only one line needs to be extracted
+                }
+            }
+
+            if (extractedValue.isEmpty()) {
+                throw new AutomationException("❌ Validation Failed: No '" + fieldName + "' found between specified lines.");
+            }
+
+            CommonSteps.logInfo("🔍 Comparing -> for " + fieldName + " Expected: '" + expectedValue + "', Extracted: '" + extractedValue + "'");
+
+            if (!expectedValue.equalsIgnoreCase(extractedValue)) {
+                throw new AutomationException("❌ Validation Failed: '" + fieldName + "' does not match expected value.");
+            }
+
+            CommonSteps.logInfo("✅ Validation Passed: '" + fieldName + "' matches expected.");
+        } else {
+            throw new AutomationException("❌ Before or after line not found for '" + fieldName + "'!");
+        }
+        return true;
+    }
+
+    private static String clean(String rawText, String fieldType) {
+        if (rawText == null || rawText.trim().isEmpty()) return "";
+
+        String cleanedText = rawText.trim();
+
+        switch (fieldType.toLowerCase()) {
+            case "settlor or trustname":
+                cleanedText = cleanedText.replaceAll("(?i)\\b(2. The Settlor of the Trust was: )\\b", "").trim();
+                break;
+        }
+        return cleanedText;
+    }
+
+    public static boolean validateCounselDetails(String pdfFilePath, Map<String, String> expectedDetails)
+            throws IOException, AutomationException {
+
+        PDDocument document = PDDocument.load(new File(pdfFilePath));
+        String pdfText = new PDFTextStripper().getText(document);
+        document.close();
+
+        String[] allLines = pdfText.split("\\r?\\n");
+
+        // Extracted Fields
+        String nameOfCounselForm = "";
+        String attorneyAddressLine1Form = "";
+        String attorneyAddressLine2Form = "";
+        String attorneyCityStateZipForm = "";
+        String attorneyTelephoneForm = "";
+
+        // Extract Lines
+        for (int i = 0; i < allLines.length; i++) {
+            String line = allLines[i].trim();
+
+            // Detect "Name of Counsel" block
+            if (line.equalsIgnoreCase("Name of Counsel") && i > 0) {
+                nameOfCounselForm = cleanCounsel(allLines[i - 1].trim());
+
+                // Look ahead to find Address Line 1 and 2
+                for (int j = i + 1; j < allLines.length; j++) {
+                    String nextLine = allLines[j].trim();
+                    if (nextLine.equalsIgnoreCase("Address") && j >= 2) {
+                        attorneyAddressLine1Form = cleanCounsel(allLines[j - 2].trim());
+                        attorneyAddressLine2Form = cleanCounsel(allLines[j - 1].trim());
+                        break;
+                    }
+                }
+            }
+
+            if (line.equalsIgnoreCase("City, State, Zip") && i > 0) {
+                attorneyCityStateZipForm = cleanCounsel(allLines[i - 1].trim());
+            }
+
+            if (line.equalsIgnoreCase("Telephone") && i > 0) {
+                attorneyTelephoneForm = cleanCounsel(allLines[i - 1].trim());
+            }
+        }
+
+        // 🔍 Log extracted values
+        CommonSteps.logInfo("👤 Name of Counsel: " + nameOfCounselForm);
+        CommonSteps.logInfo("🏠 Address Line 1: " + attorneyAddressLine1Form);
+        CommonSteps.logInfo("🏠 Address Line 2: " + attorneyAddressLine2Form);
+        CommonSteps.logInfo("📍 City/State/Zip: " + attorneyCityStateZipForm);
+        CommonSteps.logInfo("📞 Telephone: " + attorneyTelephoneForm);
+
+        // ✅ Validation
+        validateField("Name of Counsel", nameOfCounselForm, expectedDetails.get("Name of Counsel"));
+        validateField("Address Line 1", attorneyAddressLine1Form, expectedDetails.get("Address Line 1"));
+        validateField("Address Line 2", attorneyAddressLine2Form, expectedDetails.get("Address Line 2"));
+        validateField("City/State/Zip", attorneyCityStateZipForm, expectedDetails.get("City/State/Zip"));
+        validateField("Telephone", attorneyTelephoneForm, expectedDetails.get("Telephone"));
+
+        CommonSteps.logInfo("✅ All counsel details validated successfully.");
+        return true;
+    }
+
+    private static void validateField(String fieldName, String actual, String expected) throws AutomationException {
+        actual = cleanCounsel(actual);
+        expected = cleanCounsel(expected);
+
+        CommonSteps.logInfo("🔍 Comparing -> " + fieldName + " | Expected: '" + expected + "', Extracted: '" + actual + "'");
+
+        if (actual == null || actual.isEmpty()) {
+            throw new AutomationException("❌ Missing value for field: " + fieldName);
+        }
+
+        if (!actual.equalsIgnoreCase(expected)) {
+            throw new AutomationException("❌ Mismatch in field '" + fieldName + "'. Expected: '" + expected + "', Found: '" + actual + "'");
+        }
+        CommonSteps.logInfo("✅ Validation Passed: " + fieldName);
+        CommonSteps.logInfo(beneficiary1NameAddressForm);
+        CommonSteps.logInfo(beneficiary2NameAddressForm);
+        CommonSteps.logInfo(beneficiary3NameAddressForm);
+        CommonSteps.logInfo(beneficiary4NameAddressForm);
+        CommonSteps.logInfo(beneficiary5NameAddressForm);
+
+
+    }
+
+    private static String cleanCounsel(String value) {
+        if (value != null) {
+            value = value.replaceAll("[,\\.]", "").trim();
+        }
+        return value;
+    }
+
+
+
 }
