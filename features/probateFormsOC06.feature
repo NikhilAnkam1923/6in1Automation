@@ -56,13 +56,13 @@ Feature: 6in1 probate form OC06 Feature
     When user selects attorney contact
     Then user verifies Counsel details are populated correctly for "OC06" form
 
-  Scenario: Reset the OC06 form
-    Then user resets the "OC06" form
-
   Scenario: Verify form can be printed in pdf
     When user click on print form button
     Then verify form can be printed in pdf with name as 'OC06'
     And verify all the fields entered are correctly reflected in the 'OC06' pdf
+
+  Scenario: Reset the OC06 form
+    Then user resets the "OC06" form
 
   @Setup
   Scenario:SETUP: Close Browser
