@@ -306,6 +306,8 @@ public class ProbateFormsOC06Page extends BasePage {
         if (!fourDigitFileNumberForm.equals(expectedFourDigitFileNumber)) {
             throw new AutomationException("File number did not update correctly. Expected: " + expectedFourDigitFileNumber + ", Found: " + fourDigitFileNumberForm);
         }
+
+        fileNumberForm = fourDigitFileNumberForm;
     }
 
     public void verifyTwoCheckboxesAreThereOnThePageAndEitherOfThemCanBeSelected() throws AutomationException {
