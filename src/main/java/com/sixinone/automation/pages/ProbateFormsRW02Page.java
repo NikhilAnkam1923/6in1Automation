@@ -1583,7 +1583,6 @@ public class ProbateFormsRW02Page extends BasePage {
 
             boolean isverifiedeAttorneyDetails = extractAndValidateAttorneyDetails(pdfFilePath, expectedAttorneyValues);
 
-            //removed !isverifiedAKANames from below line cause giving error
             if ( !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifiedexceptionTextForm || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails || !isverifiedAKANames) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
