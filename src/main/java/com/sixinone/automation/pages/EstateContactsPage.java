@@ -262,6 +262,7 @@ public class EstateContactsPage extends BasePage {
                 firstName = driverUtil.getWebElement(FIRST_NAME_FIELD).getAttribute("value");
                 lastName = driverUtil.getWebElement(LAST_NAME_FIELD).getAttribute("value");
                 individualContactName = lastName + ", " + firstName;
+                addedIndividualContactName = individualContactName;
                 break;
             case "New Entity Global Contact":
                 waitForVisibleElement(By.xpath(ENTITY_GLOBAL_CONTACT_CREATION_PAGE));
