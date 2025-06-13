@@ -1490,8 +1490,8 @@ public class ProbateFormsRW02Page extends BasePage {
                 + DownloadedFileName;
 
         try {
-//            List<String> expectedAKANames = Arrays.asList(AKA1Form, akaName2Form, akaName3Form);
-//            boolean isverifiedAKANames = verifyAKANames(pdfFilePath, expectedAKANames);
+            List<String> expectedAKANames = Arrays.asList(AKA1Form, akaName2Form, akaName3Form);
+            boolean isverifiedAKANames = verifyAKANames(pdfFilePath, expectedAKANames);
 
             Map<String, String> expectedPropertyValues = new HashMap<>();
             expectedPropertyValues.put("enteredPersonalPropertyAmountForm", enteredPersonalPropertyAmountForm);
@@ -1584,7 +1584,7 @@ public class ProbateFormsRW02Page extends BasePage {
             boolean isverifiedeAttorneyDetails = extractAndValidateAttorneyDetails(pdfFilePath, expectedAttorneyValues);
 
             //removed !isverifiedAKANames from below line cause giving error
-            if ( !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifiedexceptionTextForm || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails) {
+            if ( !isverifiedPropertyAmount || !isverifiedAddressDetails || !isverifiedCodicilDates || !isverifiedStateRelevantCircumstances || !isverifiedexceptionTextForm || !isverifyPetitionerNames || !isverifiedeFeesDetails || !isverifiedprintedName || !isverifiedeAttorneyDetails || !isverifiedAKANames) {
                 throw new AutomationException("❌ Verification failed: One or more checks did not pass.");
             }
             CommonSteps.logInfo("✅ Verification of downloaded PDF is done successfully.");
